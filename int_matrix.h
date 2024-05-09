@@ -1,6 +1,13 @@
 #ifndef INT_MATRIX_H
 #define INT_MATRIX_H 1
 
+typedef struct INT_SUB_MATRIX_T {
+    unsigned int row_cnt;
+    unsigned int col_cnt;
+
+    int ** vals;
+} int_sub_matrix_t, *p_int_sub_matrix_t;
+
 struct INT_MATRIX_T;
 typedef struct INT_MATRIX_T * p_int_matrix_t;
 
@@ -17,10 +24,13 @@ extern void imtx_destroy(p_int_matrix_t mtx);
 
 extern int imtx_can_do_multiply(p_int_matrix_t lhs, p_int_matrix_t rhs);
 
-extern void imtx_set_at(p_int_matrix_t mtx, unsigned int row, unsigned int col, int val);
-extern void imtx_set_each_to(p_int_matrix_t mtx, int val);
-extern void imtx_set_slice_to(p_int_matrix_t mtx, unsigned int row, unsigned int col, int vals[], unsigned val_cnt);
-extern void imtx_set_from_array(p_int_matrix_t mtx, int * vals[]);
+extern int imtx_get_at(p_int_matrix_t mtx, unsigned int row, unsigned int col);
+extern void imtx_get_slice_at(p_int_matrix_t mtx, unsigned int row, unsigned int col, int ** vals, unsigned int * max_cnt);
+
+extern void imtx_set_at(p_int_matrix_t mtx, unsigned int row, unsigned int col, int src_val);
+extern void imtx_set_each_to(p_int_matrix_t mtx, int src_val);
+extern void imtx_set_slice_to(p_int_matrix_t mtx, unsigned int row, unsigned int col, int src_vals[], unsigned int val_cnt);
+extern void imtx_set_from_array(p_int_matrix_t mtx, int * src_vals[]);
 
 extern p_int_matrix_t imtx_multiply_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs);
 

@@ -76,29 +76,16 @@ inline static p_int_matrix_t imtx_multiply(p_int_matrix_t lhs, p_int_matrix_t rh
     return imtx_multiply_and_store(mtx, lhs, rhs, opt);
 } /* imtx_multiply */
 
-extern p_int_matrix_t imtx_fast_multiply_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs);
+extern p_int_matrix_t imtx_scalar_multiply_and_store(p_int_matrix_t mtx, int lhs, p_int_matrix_t rhs, mtx_option_t opt);
 
-extern p_int_matrix_t imtx_multiply_by_scalar_and_store(p_int_matrix_t mtx, int lhs, p_int_matrix_t rhs);
-
-inline static p_int_matrix_t imtx_multiply_by_scalar(int lhs, p_int_matrix_t rhs)
+inline static p_int_matrix_t imtx_multiply_by_scalar(int lhs, p_int_matrix_t rhs, mtx_option_t opt)
 {
     p_int_matrix_t mtx = imtx_allocate_in_shape_of(rhs);
     if (! mtx) {
         return NULL;
     } /* if */
-    return imtx_multiply_by_scalar_and_store(mtx, lhs, rhs);
+    return imtx_scalar_multiply_and_store(mtx, lhs, rhs, opt);
 } /* imtx_multiply_by_scalar */
-
-extern p_int_matrix_t imtx_fast_multiply_by_scalar_and_store(p_int_matrix_t mtx, int lhs, p_int_matrix_t rhs);
-
-inline static p_int_matrix_t imtx_fast_multiply_by_scalar(int lhs, p_int_matrix_t rhs)
-{
-    p_int_matrix_t mtx = imtx_allocate_in_shape_of(rhs);
-    if (! mtx) {
-        return NULL;
-    } /* if */
-    return imtx_fast_multiply_by_scalar_and_store(mtx, lhs, rhs);
-} /* imtx_fast_multiply_by_scalar */
 
 inline static p_int_matrix_t imtx_zeros(unsigned int row_cnt, unsigned int col_cnt)
 {

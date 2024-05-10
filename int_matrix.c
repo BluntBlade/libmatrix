@@ -24,6 +24,9 @@ typedef struct INT_MATRIX_T {
     int * values[1];
 } int_matrix_t; 
 
+typedef p_int_matrix_t (*imtx_matrix_operation_fn)(p_int_matrix_t, p_int_matrix_t, p_int_matrix_t);
+typedef p_int_matrix_t (*imtx_scalar_operation_fn)(p_int_matrix_t, int, p_int_matrix_t);
+
 inline static unsigned int imtx_round_to_multiples_of(unsigned int cnt, unsigned int n)
 {
     return (cnt & ~(n - 1)) + (cnt & (n - 1)) ? n : 0;
@@ -161,7 +164,7 @@ void imtx_set_from_array(p_int_matrix_t mtx, int * src_vals[])
     } /* for */
 } /* imtx_set_from_array */
 
-p_int_matrix_t imtx_add_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs, mtx_option_t opt)
+static p_int_matrix_t imtx_add_and_store_plain_impl(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs)
 {
     unsigned int i = 0;
     unsigned int j = 0;
@@ -171,9 +174,19 @@ p_int_matrix_t imtx_add_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_
         } /* for */
     } /* for */
     return mtx;
+} /* imtx_add_and_store_plain_impl */
+
+static imtx_matrix_operation_fn imtx_matrix_addition_ops[2] = {
+    &imtx_add_and_store_plain_impl,
+    &imtx_add_and_store_plain_impl
+};
+
+p_int_matrix_t imtx_add_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs, mtx_option_t opt)
+{
+    return (*imtx_matrix_addition_ops[opt & 0x3])(mtx, lhs, rhs);
 } /* imtx_add_and_store */
 
-p_int_matrix_t imtx_sub_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs, mtx_option_t opt)
+static p_int_matrix_t imtx_sub_and_store_plain_impl(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs)
 {
     unsigned int i = 0;
     unsigned int j = 0;
@@ -183,9 +196,19 @@ p_int_matrix_t imtx_sub_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_
         } /* for */
     } /* for */
     return mtx;
+} /* imtx_sub_and_store_plain_impl */
+
+static imtx_matrix_operation_fn imtx_matrix_subtraction_ops[2] = {
+    &imtx_sub_and_store_plain_impl,
+    &imtx_sub_and_store_plain_impl
+};
+
+p_int_matrix_t imtx_sub_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs, mtx_option_t opt)
+{
+    return (*imtx_matrix_subtraction_ops[opt & 0x3])(mtx, lhs, rhs);
 } /* imtx_sub_and_store */
 
-p_int_matrix_t imtx_multiply_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs, mtx_option_t opt)
+static p_int_matrix_t imtx_multiply_and_store_plain_impl(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs)
 {
     unsigned int i = 0;
     unsigned int j = 0;
@@ -202,7 +225,7 @@ p_int_matrix_t imtx_multiply_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p
         } /* for j */
     } /* for i */
     return mtx;
-} /* imtx_multiply_and_store */
+} /* imtx_multiply_and_store_plain_impl */
 
 inline static int imtx_sum(v4si * src)
 {
@@ -210,7 +233,7 @@ inline static int imtx_sum(v4si * src)
     return vals[0] + vals[1] + vals[2] + vals[3];
 } /* imtx_sum */
 
-p_int_matrix_t imtx_fast_multiply_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs)
+static p_int_matrix_t imtx_multiply_and_store_simd_impl(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs)
 {
     unsigned int i = 0;
     unsigned int j = 0;
@@ -234,9 +257,32 @@ p_int_matrix_t imtx_fast_multiply_and_store(p_int_matrix_t mtx, p_int_matrix_t l
         } /* for */
     } /* for */
     return mtx;
-} /* imtx_fast_multiply_and_store */
+} /* imtx_multiply_and_store_simd_impl */
 
-p_int_matrix_t imtx_fast_multiply_by_scalar_and_store(p_int_matrix_t mtx, int lhs, p_int_matrix_t rhs)
+static imtx_matrix_operation_fn imtx_matrix_multiplication_ops[2] = {
+    &imtx_multiply_and_store_plain_impl,
+    &imtx_multiply_and_store_simd_impl
+};
+
+p_int_matrix_t imtx_multiply_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs, mtx_option_t opt)
+{
+    return (*imtx_matrix_multiplication_ops[opt & 0x3])(mtx, lhs, rhs);
+} /* imtx_multiply_and_store */
+
+static p_int_matrix_t imtx_scalar_multiply_and_store_plain_impl(p_int_matrix_t mtx, int lhs, p_int_matrix_t rhs)
+{
+    unsigned int i = 0;
+    unsigned int j = 0;
+
+    for (i = 0; i < mtx->row_cnt; i += 1) {
+        for (j = 0; j < mtx->col_cnt; j += 1) {
+            mtx->values[i][j] = lhs * rhs->values[i][j];
+        } /* for j */
+    } /* for i */
+    return mtx;
+} /* imtx_scalar_multiply_and_store_plain_impl */
+
+p_int_matrix_t imtx_scalar_multiply_and_store_simd_impl(p_int_matrix_t mtx, int lhs, p_int_matrix_t rhs)
 {
 #undef IMTX_CALL_INTRINSIC_AND_STORE
 #define IMTX_CALL_INTRINSIC_AND_STORE(func, pack, val) (pack) = func((pack), (val))
@@ -278,20 +324,17 @@ p_int_matrix_t imtx_fast_multiply_by_scalar_and_store(p_int_matrix_t mtx, int lh
     } /* switch */
     return mtx;
 #undef IMTX_CALL_INTRINSIC_AND_STORE
-} /* imtx_fast_multiply_by_scalar_and_store */
+} /* imtx_scalar_multiply_and_store_simd_impl */
 
-p_int_matrix_t imtx_multiply_by_scalar_and_store(p_int_matrix_t mtx, int lhs, p_int_matrix_t rhs)
+static imtx_scalar_operation_fn imtx_scalar_multiplication_ops[2] = {
+    &imtx_scalar_multiply_and_store_plain_impl,
+    &imtx_scalar_multiply_and_store_simd_impl
+};
+
+p_int_matrix_t imtx_scalar_multiply_and_store(p_int_matrix_t mtx, int lhs, p_int_matrix_t rhs, mtx_option_t opt)
 {
-    unsigned int i = 0;
-    unsigned int j = 0;
-
-    for (i = 0; i < mtx->row_cnt; i += 1) {
-        for (j = 0; j < mtx->col_cnt; j += 1) {
-            mtx->values[i][j] = lhs * rhs->values[i][j];
-        } /* for j */
-    } /* for i */
-    return mtx;
-} /* imtx_multiply_by_scalar_and_store */
+    return (*imtx_scalar_multiplication_ops[opt & 0x3])(mtx, lhs, rhs);
+} /* imtx_scalar_multiply_and_store */
 
 p_int_matrix_t imtx_transpose_and_store(p_int_matrix_t mtx, p_int_matrix_t src)
 {

@@ -129,12 +129,12 @@ int mtx_can_do_multiply(p_matrix_t lhs, p_matrix_t rhs)
     return (lhs->col_cnt == rhs->row_cnt);
 } /* mtx_can_do_multiply */
 
-void mtx_set_at(p_matrix_t mtx, mtx_count_t row, mtx_count_t col, mtx_int32_t src_val)
+void mtx_i32_set_at(p_matrix_t mtx, mtx_count_t row, mtx_count_t col, mtx_int32_t src_val)
 {
     mtx->values[row][col] = src_val;
-} /* mtx_set_at */
+} /* mtx_i32_set_at */
 
-void mtx_set_each_to(p_matrix_t mtx, mtx_int32_t src_val)
+void mtx_i32_set_all_to(p_matrix_t mtx, mtx_int32_t src_val)
 {
     mtx_count_t i = 0;
     mtx_count_t j = 0;
@@ -144,9 +144,9 @@ void mtx_set_each_to(p_matrix_t mtx, mtx_int32_t src_val)
         } /* for */
     } /* for */
     return;
-} /* mtx_set_each_to */
+} /* mtx_i32_set_all_to */
 
-void mtx_set_slice_to(p_matrix_t mtx, mtx_count_t row, mtx_count_t col, mtx_int32_t src_vals[], mtx_count_t val_cnt)
+void mtx_i32_set_slice_to(p_matrix_t mtx, mtx_count_t row, mtx_count_t col, mtx_int32_t src_vals[], mtx_count_t val_cnt)
 {
     mtx_count_t end = col + val_cnt;
     if (mtx->col_cnt < end) {
@@ -154,15 +154,15 @@ void mtx_set_slice_to(p_matrix_t mtx, mtx_count_t row, mtx_count_t col, mtx_int3
         end = mtx->col_cnt;
     } /* if */
     memcpy(&mtx->values[row][col], src_vals, sizeof(mtx->padded_values[0]) * (end - col));
-} /* mtx_set_slice_to */
+} /* mtx_i32_set_slice_to */
 
-void mtx_set_from_array(p_matrix_t mtx, mtx_int32_t * src_vals[])
+void mtx_i32_set_from_array(p_matrix_t mtx, mtx_int32_t * src_vals[])
 {
     mtx_count_t i = 0;
     for (i = 0; i < mtx->row_cnt; i += 1) {
         memcpy(mtx->values[i], src_vals[i], sizeof(mtx->padded_values[0]) * mtx->col_cnt);
     } /* for */
-} /* mtx_set_from_array */
+} /* mtx_i32_set_from_array */
 
 static p_matrix_t mtx_add_and_store_plain_impl(p_matrix_t mtx, p_matrix_t lhs, p_matrix_t rhs)
 {

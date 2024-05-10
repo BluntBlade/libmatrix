@@ -24,7 +24,7 @@ struct MATRIX_T;
 typedef struct MATRIX_T * p_matrix_t;
 
 extern p_matrix_t mtx_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt);
-extern p_matrix_t mtx_allocate_before_mulplicate(p_matrix_t lhs, p_matrix_t rhs);
+extern p_matrix_t mtx_allocate_before_multiply(p_matrix_t lhs, p_matrix_t rhs);
 extern p_matrix_t mtx_allocate_before_transpose(p_matrix_t src);
 extern p_matrix_t mtx_allocate_in_shape_of(p_matrix_t src);
 
@@ -77,7 +77,7 @@ inline static p_matrix_t mtx_sub(p_matrix_t lhs, p_matrix_t rhs, mtx_option_t op
 
 inline static p_matrix_t mtx_multiply(p_matrix_t lhs, p_matrix_t rhs, mtx_option_t opt)
 {
-    p_matrix_t mtx = mtx_allocate_before_mulplicate(lhs, rhs);
+    p_matrix_t mtx = mtx_allocate_before_multiply(lhs, rhs);
     if (! mtx) {
         return NULL;
     } /* if */

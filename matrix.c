@@ -64,10 +64,10 @@ p_matrix_t mtx_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt)
     return mtx;
 } /* mtx_allocate */
 
-p_matrix_t mtx_allocate_before_mulplicate(p_matrix_t lhs, p_matrix_t rhs)
+p_matrix_t mtx_allocate_before_multiply(p_matrix_t lhs, p_matrix_t rhs)
 {
     return mtx_allocate(lhs->row_cnt, rhs->col_cnt);
-} /* mtx_allocate_before_mulplicate */
+} /* mtx_allocate_before_multiply */
 
 p_matrix_t mtx_allocate_before_transpose(p_matrix_t src)
 {

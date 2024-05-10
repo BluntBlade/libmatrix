@@ -10,8 +10,8 @@ typedef size_t mtx_count_t;
 
 typedef int32_t mtx_int32_t;
 typedef uint32_t mtx_uint32_t;
-typedef float mtx_float_t;
-typedef double mtx_double_t;
+typedef float mtx_float32_t;
+typedef double mtx_double64_t;
 
 typedef struct INT_SUBMATRIX_T {
     mtx_count_t row_cnt;
@@ -23,22 +23,25 @@ typedef struct INT_SUBMATRIX_T {
 struct MATRIX_T;
 typedef struct MATRIX_T * p_matrix_t;
 
-extern p_matrix_t mtx_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt);
+extern p_matrix_t mtx_i32_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt);
+extern p_matrix_t mtx_u32_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt); /* TODO */
+extern p_matrix_t mtx_f32_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt); /* TODO */
+extern p_matrix_t mtx_d64_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt); /* TODO */
+
 extern p_matrix_t mtx_allocate_before_multiply(p_matrix_t lhs, p_matrix_t rhs);
 extern p_matrix_t mtx_allocate_before_transpose(p_matrix_t src);
 extern p_matrix_t mtx_allocate_in_shape_of(p_matrix_t src);
 
-extern p_matrix_t mtx_create(mtx_count_t row_cnt, mtx_count_t col_cnt);
-extern p_matrix_t mtx_create_an_identity(mtx_count_t n);
 extern p_matrix_t mtx_duplicate(p_matrix_t src);
 
 extern void mtx_destroy(p_matrix_t mtx);
 
+extern void mtx_initiate_identity(p_matrix_t mtx, mtx_option_t opt); /* TODO */
+extern void mtx_initiate_zeros(p_matrix_t mtx, mtx_option_t opt); /* TODO */
+extern void mtx_initiate_ones(p_matrix_t mtx, mtx_option_t opt); /* TODO */
+
 extern int mtx_can_do_add(p_matrix_t lhs, p_matrix_t rhs);
 extern int mtx_can_do_multiply(p_matrix_t lhs, p_matrix_t rhs);
-
-extern int mtx_i32_get_at(p_matrix_t mtx, mtx_count_t row, mtx_count_t col);
-extern void mtx_i32_get_slice_at(p_matrix_t mtx, mtx_count_t row, mtx_count_t col, mtx_int32_t ** vals, mtx_count_t * max_cnt);
 
 extern void mtx_i32_set_at(p_matrix_t mtx, mtx_count_t row, mtx_count_t col, mtx_int32_t src_val);
 extern void mtx_i32_set_all_to(p_matrix_t mtx, mtx_int32_t src_val);
@@ -51,6 +54,36 @@ extern p_matrix_t mtx_multiply_and_store(p_matrix_t mtx, p_matrix_t lhs, p_matri
 extern p_matrix_t mtx_scalar_multiply_and_store(p_matrix_t mtx, int lhs, p_matrix_t rhs, mtx_option_t opt);
 
 extern p_matrix_t mtx_transpose_and_store(p_matrix_t mtx, p_matrix_t src);
+
+inline static p_matrix_t mtx_i32_create_zeros(mtx_count_t row_cnt, mtx_count_t col_cnt, mtx_option_t opt)
+{
+    p_matrix_t mtx = mtx_i32_allocate(row_cnt, col_cnt);
+    if (! mtx) {
+        return NULL;
+    } /* if */
+    mtx_initiate_zeros(mtx, opt);
+    return mtx;
+} /* mtx_i32_create_zeros */
+
+inline static p_matrix_t mtx_i32_create_ones(mtx_count_t row_cnt, mtx_count_t col_cnt, mtx_option_t opt)
+{
+    p_matrix_t mtx = mtx_i32_allocate(row_cnt, col_cnt);
+    if (! mtx) {
+        return NULL;
+    } /* if */
+    mtx_initiate_ones(mtx, opt);
+    return mtx;
+} /* mtx_i32_create_ones */
+
+inline static p_matrix_t mtx_i32_create_identity(mtx_count_t row_cnt, mtx_count_t col_cnt, mtx_option_t opt)
+{
+    p_matrix_t mtx = mtx_i32_allocate(row_cnt, col_cnt);
+    if (! mtx) {
+        return NULL;
+    } /* if */
+    mtx_initiate_identity(mtx, opt);
+    return mtx;
+} /* mtx_i32_create_identity */
 
 inline static int mtx_can_do_sub(p_matrix_t lhs, p_matrix_t rhs)
 {
@@ -92,20 +125,6 @@ inline static p_matrix_t mtx_scalar_multiply(int lhs, p_matrix_t rhs, mtx_option
     } /* if */
     return mtx_scalar_multiply_and_store(mtx, lhs, rhs, opt);
 } /* mtx_scalar_multiply */
-
-inline static p_matrix_t mtx_zeros(mtx_count_t row_cnt, mtx_count_t col_cnt)
-{
-    return mtx_create(row_cnt, col_cnt);
-} /* mtx_zeros */
-
-inline static p_matrix_t mtx_ones(mtx_count_t row_cnt, mtx_count_t col_cnt)
-{
-    p_matrix_t mtx = mtx_create(row_cnt, col_cnt);
-    if (mtx) {
-        mtx_i32_set_all_to(mtx, 1);
-    } /* if */
-    return mtx;
-} /* mtx_ones */
 
 inline static p_matrix_t mtx_transpose(p_matrix_t src)
 {

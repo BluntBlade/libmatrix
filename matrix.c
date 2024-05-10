@@ -3,7 +3,12 @@
 
 #include "matrix.h"
 
-#define I32_PACK_LENGTH 4
+enum {
+    MTX_I32_PACK_LENGTH = 4,
+    MTX_U32_PACK_LENGTH = 4,
+    MTX_F32_PACK_LENGTH = 4,
+    MTX_D64_PACK_LENGTH = 2
+};
 
 typedef mtx_int32_t v4si __attribute__ ((vector_size (16)));
 
@@ -11,13 +16,16 @@ typedef struct MATRIX_T {
     mtx_count_t row_cnt;           /* The actual number of rows. */ 
     mtx_count_t col_cnt;           /* The actual number of columns. */
     mtx_count_t padded_row_cnt;    /* Round to the power of <value type>_PACK_LENGTH. */
-    mtx_count_t padded_col_cnt;    /* Round to the power of <value type>_I32_PACK_LENGTH. */
+    mtx_count_t padded_col_cnt;    /* Round to the power of <value type>_PACK_LENGTH. */
     mtx_count_t padded_byte_cnt;   /* Allocated bytes, including pads. */
     mtx_count_t pack_cnt_per_row;
+    mtx_count_t pack_len;
+    mtx_count_t value_size;
 
     union {
-       mtx_int32_t *    i32_padded_values;
-       v4si *           i32_packs;
+        mtx_int32_t *    i32_padded;
+        v4si *           i32_packs;
+        void *           data;
     };
     
     union {
@@ -33,13 +41,12 @@ inline static mtx_count_t mtx_round_to_multiples_of(mtx_count_t cnt, mtx_count_t
     return (cnt & ~(n - 1)) + (cnt & (n - 1)) ? n : 0;
 } /* mtx_round_to_multiples_of */
 
-p_matrix_t mtx_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt)
+static p_matrix_t mtx_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt, size_t val_size, mtx_count_t pack_len)
 {
     p_matrix_t mtx = NULL;
-    mtx_count_t i = 0;
-    mtx_count_t padded_row_cnt = mtx_round_to_multiples_of(row_cnt, I32_PACK_LENGTH);
+    mtx_count_t padded_row_cnt = mtx_round_to_multiples_of(row_cnt, pack_len);
 
-    mtx = calloc(sizeof(matrix_t) + sizeof(mtx_int32_t *) * padded_row_cnt, 1);
+    mtx = calloc(sizeof(matrix_t) + sizeof(void *) * padded_row_cnt, 1);
     if (! mtx) {
         return NULL;
     } /* if */
@@ -47,75 +54,66 @@ p_matrix_t mtx_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt)
     mtx->row_cnt = row_cnt;
     mtx->col_cnt = col_cnt;
     mtx->padded_row_cnt = padded_row_cnt;
-    mtx->padded_col_cnt = mtx_round_to_multiples_of(col_cnt, I32_PACK_LENGTH);
-    mtx->pack_cnt_per_row = mtx->padded_col_cnt / I32_PACK_LENGTH;
-    mtx->padded_byte_cnt = sizeof(mtx->i32_padded_values[0]) * mtx->padded_row_cnt * mtx->padded_col_cnt;
+    mtx->padded_col_cnt = mtx_round_to_multiples_of(col_cnt, pack_len);
+    mtx->padded_byte_cnt = val_size * mtx->padded_row_cnt * mtx->padded_col_cnt;
+    mtx->pack_cnt_per_row = mtx->padded_col_cnt / pack_len;
+    mtx->pack_len = pack_len;
+    mtx->value_size = val_size;
 
-    mtx->i32_padded_values = (mtx_int32_t *)malloc(mtx->padded_byte_cnt);
-    if (! mtx->i32_padded_values) {
+    mtx->data = malloc(mtx->padded_byte_cnt);
+    if (! mtx->data) {
         free(mtx);
         return NULL;
     } /* if */
 
-    for (i = 0; i < mtx->row_cnt; i += 1) {
-        mtx->i32_values[i] = &mtx->i32_padded_values[i * mtx->padded_col_cnt];
-    } /* for */
-
     return mtx;
 } /* mtx_allocate */
 
+p_matrix_t mtx_i32_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt)
+{
+    mtx_count_t i = 0;
+    p_matrix_t mtx = NULL;
+
+    mtx = mtx_allocate(row_cnt, col_cnt, sizeof(mtx_int32_t), MTX_I32_PACK_LENGTH);
+    if (! mtx) {
+        return NULL;
+    } /* if */
+
+    for (i = 0; i < mtx->row_cnt; i += 1) {
+        mtx->i32_values[i] = &mtx->i32_padded[i * mtx->padded_col_cnt];
+    } /* for */
+    return mtx;
+} /* mtx_i32_allocate */
+
 p_matrix_t mtx_allocate_before_multiply(p_matrix_t lhs, p_matrix_t rhs)
 {
-    return mtx_allocate(lhs->row_cnt, rhs->col_cnt);
+    return mtx_allocate(lhs->row_cnt, rhs->col_cnt, lhs->value_size, lhs->pack_len);
 } /* mtx_allocate_before_multiply */
 
 p_matrix_t mtx_allocate_before_transpose(p_matrix_t src)
 {
-    return mtx_allocate(src->col_cnt, src->row_cnt);
+    return mtx_allocate(src->col_cnt, src->row_cnt, src->value_size, src->pack_len);
 } /* mtx_allocate_before_transpose */
 
 p_matrix_t mtx_allocate_in_shape_of(p_matrix_t src)
 {
-    return mtx_allocate(src->row_cnt, src->col_cnt);
+    return mtx_allocate(src->row_cnt, src->col_cnt, src->value_size, src->pack_len);
 } /* mtx_allocate_in_shape_of */
-
-p_matrix_t mtx_create(mtx_count_t row_cnt, mtx_count_t col_cnt)
-{
-    p_matrix_t mtx = mtx_allocate(row_cnt, col_cnt);
-    if (mtx) {
-        memset(mtx->i32_padded_values, 0, mtx->padded_byte_cnt);
-    } /* if */
-    return mtx;
-} /* mtx_create */
-
-p_matrix_t mtx_create_an_identity(mtx_count_t n)
-{
-    mtx_count_t i = 0;
-    p_matrix_t mtx = mtx_zeros(n, n);
-    if (! mtx) {
-        return NULL;
-    } /* if */
-
-    for (i = 0; i < n; i += 1) {
-        mtx->i32_values[i][i] = 1;
-    } /* for */
-    return mtx;
-} /* mtx_create_an_identity */
 
 p_matrix_t mtx_duplicate(p_matrix_t src)
 {
-    p_matrix_t mtx = mtx_allocate(src->row_cnt, src->col_cnt);
+    p_matrix_t mtx = mtx_allocate(src->row_cnt, src->col_cnt, src->value_size, src->pack_len);
     if (! mtx) {
         return NULL;
     } /* if */
-    memcpy(mtx->i32_padded_values, src->i32_padded_values, src->padded_byte_cnt);
+    memcpy(mtx->data, src->data, src->padded_byte_cnt);
     return mtx;
 } /* mtx_duplicate */
 
 void mtx_destroy(p_matrix_t mtx)
 {
     if (mtx) {
-        free(mtx->i32_padded_values);
+        free(mtx->data);
     } /* if */
     free(mtx);
 } /* mtx_destroy */
@@ -154,14 +152,14 @@ void mtx_i32_set_slice_to(p_matrix_t mtx, mtx_count_t row, mtx_count_t col, mtx_
         /* Copy enough values from the source and don't cross the row boundary. */
         end = mtx->col_cnt;
     } /* if */
-    memcpy(&mtx->i32_values[row][col], src_vals, sizeof(mtx->i32_padded_values[0]) * (end - col));
+    memcpy(&mtx->i32_values[row][col], src_vals, sizeof(mtx->i32_padded[0]) * (end - col));
 } /* mtx_i32_set_slice_to */
 
 void mtx_i32_set_from_array(p_matrix_t mtx, mtx_int32_t * src_vals[])
 {
     mtx_count_t i = 0;
     for (i = 0; i < mtx->row_cnt; i += 1) {
-        memcpy(mtx->i32_values[i], src_vals[i], sizeof(mtx->i32_padded_values[0]) * mtx->col_cnt);
+        memcpy(mtx->i32_values[i], src_vals[i], sizeof(mtx->i32_padded[0]) * mtx->col_cnt);
     } /* for */
 } /* mtx_i32_set_from_array */
 
@@ -243,7 +241,7 @@ static p_matrix_t mtx_multiply_and_store_simd_impl(p_matrix_t mtx, p_matrix_t lh
     v4si pack_rhs = {0};
     v4si ret = {0};
 
-    for (k = 0; k < rhs->padded_row_cnt; k += I32_PACK_LENGTH) {
+    for (k = 0; k < rhs->padded_row_cnt; k += MTX_I32_PACK_LENGTH) {
         for (j = 0; j < rhs->col_cnt; j += 1) {
             pack_rhs = __builtin_ia32_vec_set_v4si(pack_rhs, rhs->i32_values[k + 0][j], 0);
             pack_rhs = __builtin_ia32_vec_set_v4si(pack_rhs, rhs->i32_values[k + 1][j], 1);
@@ -251,7 +249,7 @@ static p_matrix_t mtx_multiply_and_store_simd_impl(p_matrix_t mtx, p_matrix_t lh
             pack_rhs = __builtin_ia32_vec_set_v4si(pack_rhs, rhs->i32_values[k + 3][j], 3);
 
             for (i = 0; i < lhs->row_cnt; i += 1) {
-                pack_lhs = lhs->i32_packs[i * lhs->pack_cnt_per_row + k / I32_PACK_LENGTH];
+                pack_lhs = lhs->i32_packs[i * lhs->pack_cnt_per_row + k / MTX_I32_PACK_LENGTH];
                 ret = __builtin_ia32_pmuldq128(pack_lhs, pack_rhs);
                 mtx->i32_values[i][j] += mtx_sum(&ret);
             } /* for */

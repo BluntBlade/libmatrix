@@ -173,6 +173,18 @@ p_int_matrix_t imtx_add_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_
     return mtx;
 } /* imtx_add_and_store */
 
+p_int_matrix_t imtx_sub_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs)
+{
+    unsigned int i = 0;
+    unsigned int j = 0;
+    for (i = 0; i < lhs->row_cnt; i += 1) {
+        for (j = 0; j < lhs->col_cnt; j += 1) {
+            mtx->values[i][j] = lhs->values[i][j] - rhs->values[i][j];
+        } /* for */
+    } /* for */
+    return mtx;
+} /* imtx_sub_and_store */
+
 p_int_matrix_t imtx_multiply_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs)
 {
     unsigned int i = 0;

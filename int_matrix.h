@@ -25,6 +25,11 @@ extern void imtx_destroy(p_int_matrix_t mtx);
 extern int imtx_can_do_add(p_int_matrix_t lhs, p_int_matrix_t rhs);
 extern int imtx_can_do_multiply(p_int_matrix_t lhs, p_int_matrix_t rhs);
 
+inline static int imtx_can_do_sub(p_int_matrix_t lhs, p_int_matrix_t rhs)
+{
+    return imtx_can_do_add(lhs, rhs);
+} /* imtx_can_do_sub */
+
 extern int imtx_get_at(p_int_matrix_t mtx, unsigned int row, unsigned int col);
 extern void imtx_get_slice_at(p_int_matrix_t mtx, unsigned int row, unsigned int col, int ** vals, unsigned int * max_cnt);
 
@@ -42,7 +47,18 @@ inline static p_int_matrix_t imtx_add(p_int_matrix_t lhs, p_int_matrix_t rhs)
         return NULL;
     } /* if */
     return imtx_add_and_store(mtx, lhs, rhs);
-} /* imtx_multiply */
+} /* imtx_add */
+
+extern p_int_matrix_t imtx_sub_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs);
+
+inline static p_int_matrix_t imtx_sub(p_int_matrix_t lhs, p_int_matrix_t rhs)
+{
+    p_int_matrix_t mtx = imtx_allocate_in_shape_of(lhs);
+    if (! mtx) {
+        return NULL;
+    } /* if */
+    return imtx_sub_and_store(mtx, lhs, rhs);
+} /* imtx_sub */
 
 extern p_int_matrix_t imtx_multiply_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs);
 

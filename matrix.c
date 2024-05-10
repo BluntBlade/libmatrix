@@ -10,7 +10,26 @@ enum {
     MTX_D64_PACK_LENGTH = 2
 };
 
-typedef mtx_int32_t v4si __attribute__ ((vector_size (16)));
+typedef mtx_int32_t mtx_v4si_t __attribute__ ((vector_size (16)));
+
+typedef p_matrix_t (*mtx_matrix_operation_fn)(p_matrix_t, p_matrix_t, p_matrix_t);
+typedef p_matrix_t (*mtx_i32_scalar_operation_fn)(p_matrix_t, mtx_int32_t, p_matrix_t);
+typedef p_matrix_t (*mtx_u32_scalar_operation_fn)(p_matrix_t, mtx_uint32_t, p_matrix_t);
+typedef p_matrix_t (*mtx_f32_scalar_operation_fn)(p_matrix_t, mtx_float32_t, p_matrix_t);
+typedef p_matrix_t (*mtx_d64_scalar_operation_fn)(p_matrix_t, mtx_double64_t, p_matrix_t);
+
+typedef struct MATRIX_OPERATION_T {
+    mtx_matrix_operation_fn matrix_addition[2];
+    mtx_matrix_operation_fn matrix_subtraction[2];
+    mtx_matrix_operation_fn matrix_multiplication[2];
+
+    union {
+        mtx_i32_scalar_operation_fn i32_scalar_multiplication[2];
+        mtx_u32_scalar_operation_fn u32_scalar_multiplication[2];
+        mtx_f32_scalar_operation_fn f32_scalar_multiplication[2];
+        mtx_d64_scalar_operation_fn d64_scalar_multiplication[2];
+    };
+} mtx_operation_t, *mtx_operation_ptr_t;
 
 typedef struct MATRIX_T {
     mtx_count_t row_cnt;           /* The actual number of rows. */ 
@@ -22,26 +41,28 @@ typedef struct MATRIX_T {
     mtx_count_t pack_len;
     mtx_count_t value_size;
 
+    mtx_operation_ptr_t ops;
+
     union {
         mtx_int32_t *    i32_padded;
-        v4si *           i32_packs;
+        mtx_v4si_t *     i32_packs;
         void *           data;
     };
     
     union {
-        mtx_int32_t * i32_values[1];
+        mtx_int32_t *    i32_values[1];
+        mtx_uint32_t *   u32_values[1];
+        mtx_float32_t *  f32_values[1];
+        mtx_double64_t * d64_values[1];
     };
 } matrix_t; 
-
-typedef p_matrix_t (*mtx_matrix_operation_fn)(p_matrix_t, p_matrix_t, p_matrix_t);
-typedef p_matrix_t (*mtx_i32_scalar_operation_fn)(p_matrix_t, mtx_int32_t, p_matrix_t);
 
 inline static mtx_count_t mtx_round_to_multiples_of(mtx_count_t cnt, mtx_count_t n)
 {
     return (cnt & ~(n - 1)) + (cnt & (n - 1)) ? n : 0;
 } /* mtx_round_to_multiples_of */
 
-static p_matrix_t mtx_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt, size_t val_size, mtx_count_t pack_len)
+static p_matrix_t mtx_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt, size_t val_size, mtx_count_t pack_len, mtx_operation_ptr_t ops)
 {
     p_matrix_t mtx = NULL;
     mtx_count_t padded_row_cnt = mtx_round_to_multiples_of(row_cnt, pack_len);
@@ -60,6 +81,8 @@ static p_matrix_t mtx_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt, size_t 
     mtx->pack_len = pack_len;
     mtx->value_size = val_size;
 
+    mtx->ops = ops;
+
     mtx->data = malloc(mtx->padded_byte_cnt);
     if (! mtx->data) {
         free(mtx);
@@ -69,12 +92,24 @@ static p_matrix_t mtx_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt, size_t 
     return mtx;
 } /* mtx_allocate */
 
+static p_matrix_t mtx_add_and_store_plain_impl(p_matrix_t mtx, p_matrix_t lhs, p_matrix_t rhs);
+static p_matrix_t mtx_sub_and_store_plain_impl(p_matrix_t mtx, p_matrix_t lhs, p_matrix_t rhs);
+static p_matrix_t mtx_multiply_and_store_plain_impl(p_matrix_t mtx, p_matrix_t lhs, p_matrix_t rhs);
+static p_matrix_t mtx_multiply_and_store_simd_impl(p_matrix_t mtx, p_matrix_t lhs, p_matrix_t rhs);
+
+static mtx_operation_t mtx_i32_operations = {
+    {&mtx_add_and_store_plain_impl, &mtx_add_and_store_plain_impl},
+    {&mtx_sub_and_store_plain_impl, &mtx_sub_and_store_plain_impl},
+    {&mtx_multiply_and_store_plain_impl, &mtx_multiply_and_store_simd_impl},
+    {NULL, NULL},
+};
+
 p_matrix_t mtx_i32_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt)
 {
     mtx_count_t i = 0;
     p_matrix_t mtx = NULL;
 
-    mtx = mtx_allocate(row_cnt, col_cnt, sizeof(mtx_int32_t), MTX_I32_PACK_LENGTH);
+    mtx = mtx_allocate(row_cnt, col_cnt, sizeof(mtx_int32_t), MTX_I32_PACK_LENGTH, &mtx_i32_operations);
     if (! mtx) {
         return NULL;
     } /* if */
@@ -87,22 +122,22 @@ p_matrix_t mtx_i32_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt)
 
 p_matrix_t mtx_allocate_before_multiply(p_matrix_t lhs, p_matrix_t rhs)
 {
-    return mtx_allocate(lhs->row_cnt, rhs->col_cnt, lhs->value_size, lhs->pack_len);
+    return mtx_allocate(lhs->row_cnt, rhs->col_cnt, lhs->value_size, lhs->pack_len, lhs->ops);
 } /* mtx_allocate_before_multiply */
 
 p_matrix_t mtx_allocate_before_transpose(p_matrix_t src)
 {
-    return mtx_allocate(src->col_cnt, src->row_cnt, src->value_size, src->pack_len);
+    return mtx_allocate(src->col_cnt, src->row_cnt, src->value_size, src->pack_len, src->ops);
 } /* mtx_allocate_before_transpose */
 
 p_matrix_t mtx_allocate_in_shape_of(p_matrix_t src)
 {
-    return mtx_allocate(src->row_cnt, src->col_cnt, src->value_size, src->pack_len);
+    return mtx_allocate(src->row_cnt, src->col_cnt, src->value_size, src->pack_len, src->ops);
 } /* mtx_allocate_in_shape_of */
 
 p_matrix_t mtx_duplicate(p_matrix_t src)
 {
-    p_matrix_t mtx = mtx_allocate(src->row_cnt, src->col_cnt, src->value_size, src->pack_len);
+    p_matrix_t mtx = mtx_allocate(src->row_cnt, src->col_cnt, src->value_size, src->pack_len, src->ops);
     if (! mtx) {
         return NULL;
     } /* if */
@@ -175,14 +210,9 @@ static p_matrix_t mtx_add_and_store_plain_impl(p_matrix_t mtx, p_matrix_t lhs, p
     return mtx;
 } /* mtx_add_and_store_plain_impl */
 
-static mtx_matrix_operation_fn mtx_matrix_addition_ops[2] = {
-    &mtx_add_and_store_plain_impl,
-    &mtx_add_and_store_plain_impl
-};
-
 p_matrix_t mtx_add_and_store(p_matrix_t mtx, p_matrix_t lhs, p_matrix_t rhs, mtx_option_t opt)
 {
-    return (*mtx_matrix_addition_ops[opt & 0x3])(mtx, lhs, rhs);
+    return (*mtx->ops->matrix_addition[opt & 0x3])(mtx, lhs, rhs);
 } /* mtx_add_and_store */
 
 static p_matrix_t mtx_sub_and_store_plain_impl(p_matrix_t mtx, p_matrix_t lhs, p_matrix_t rhs)
@@ -197,14 +227,9 @@ static p_matrix_t mtx_sub_and_store_plain_impl(p_matrix_t mtx, p_matrix_t lhs, p
     return mtx;
 } /* mtx_sub_and_store_plain_impl */
 
-static mtx_matrix_operation_fn mtx_matrix_subtraction_ops[2] = {
-    &mtx_sub_and_store_plain_impl,
-    &mtx_sub_and_store_plain_impl
-};
-
 p_matrix_t mtx_sub_and_store(p_matrix_t mtx, p_matrix_t lhs, p_matrix_t rhs, mtx_option_t opt)
 {
-    return (*mtx_matrix_subtraction_ops[opt & 0x3])(mtx, lhs, rhs);
+    return (*mtx->ops->matrix_subtraction[opt & 0x3])(mtx, lhs, rhs);
 } /* mtx_sub_and_store */
 
 static p_matrix_t mtx_multiply_and_store_plain_impl(p_matrix_t mtx, p_matrix_t lhs, p_matrix_t rhs)
@@ -226,7 +251,7 @@ static p_matrix_t mtx_multiply_and_store_plain_impl(p_matrix_t mtx, p_matrix_t l
     return mtx;
 } /* mtx_multiply_and_store_plain_impl */
 
-inline static mtx_int32_t mtx_sum(v4si * src)
+inline static mtx_int32_t mtx_sum(mtx_v4si_t * src)
 {
     mtx_int32_t * vals = (mtx_int32_t *) src;
     return vals[0] + vals[1] + vals[2] + vals[3];
@@ -237,9 +262,9 @@ static p_matrix_t mtx_multiply_and_store_simd_impl(p_matrix_t mtx, p_matrix_t lh
     mtx_count_t i = 0;
     mtx_count_t j = 0;
     mtx_count_t k = 0;
-    v4si pack_lhs = {0};
-    v4si pack_rhs = {0};
-    v4si ret = {0};
+    mtx_v4si_t pack_lhs = {0};
+    mtx_v4si_t pack_rhs = {0};
+    mtx_v4si_t ret = {0};
 
     for (k = 0; k < rhs->padded_row_cnt; k += MTX_I32_PACK_LENGTH) {
         for (j = 0; j < rhs->col_cnt; j += 1) {
@@ -258,14 +283,9 @@ static p_matrix_t mtx_multiply_and_store_simd_impl(p_matrix_t mtx, p_matrix_t lh
     return mtx;
 } /* mtx_multiply_and_store_simd_impl */
 
-static mtx_matrix_operation_fn mtx_matrix_multiplication_ops[2] = {
-    &mtx_multiply_and_store_plain_impl,
-    &mtx_multiply_and_store_simd_impl
-};
-
 p_matrix_t mtx_multiply_and_store(p_matrix_t mtx, p_matrix_t lhs, p_matrix_t rhs, mtx_option_t opt)
 {
-    return (*mtx_matrix_multiplication_ops[opt & 0x3])(mtx, lhs, rhs);
+    return (*mtx->ops->matrix_multiplication[opt & 0x3])(mtx, lhs, rhs);
 } /* mtx_multiply_and_store */
 
 static p_matrix_t mtx_i32_scalar_multiply_and_store_plain_impl(p_matrix_t mtx, mtx_int32_t lhs, p_matrix_t rhs)
@@ -286,7 +306,7 @@ p_matrix_t mtx_i32_scalar_multiply_and_store_simd_impl(p_matrix_t mtx, mtx_int32
 #undef IMTX_CALL_INTRINSIC_AND_STORE
 #define IMTX_CALL_INTRINSIC_AND_STORE(func, pack, val) (pack) = func((pack), (val))
 
-    v4si scalar = {0};
+    mtx_v4si_t scalar = {0};
     mtx_count_t i = 0;
     mtx_count_t itr_cnt = 0;
     mtx_count_t rmd_cnt = 0;
@@ -325,14 +345,9 @@ p_matrix_t mtx_i32_scalar_multiply_and_store_simd_impl(p_matrix_t mtx, mtx_int32
 #undef IMTX_CALL_INTRINSIC_AND_STORE
 } /* mtx_i32_scalar_multiply_and_store_simd_impl */
 
-static mtx_i32_scalar_operation_fn mtx_scalar_multiplication_ops[2] = {
-    &mtx_i32_scalar_multiply_and_store_plain_impl,
-    &mtx_i32_scalar_multiply_and_store_simd_impl
-};
-
 p_matrix_t mtx_i32_scalar_multiply_and_store(p_matrix_t mtx, mtx_int32_t lhs, p_matrix_t rhs, mtx_option_t opt)
 {
-    return (*mtx_scalar_multiplication_ops[opt & 0x3])(mtx, lhs, rhs);
+    return (*mtx->ops->i32_scalar_multiplication[opt & 0x3])(mtx, lhs, rhs);
 } /* mtx_i32_scalar_multiply_and_store */
 
 p_matrix_t mtx_transpose_and_store(p_matrix_t mtx, p_matrix_t src)

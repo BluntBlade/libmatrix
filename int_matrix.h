@@ -14,7 +14,7 @@ typedef struct INT_MATRIX_T * p_int_matrix_t;
 extern p_int_matrix_t imtx_allocate(unsigned int row_cnt, unsigned int col_cnt);
 extern p_int_matrix_t imtx_allocate_before_mulplicate(p_int_matrix_t lhs, p_int_matrix_t rhs);
 extern p_int_matrix_t imtx_allocate_before_transpose(p_int_matrix_t src);
-extern p_int_matrix_t imtx_allocate_like_shape_of(p_int_matrix_t src);
+extern p_int_matrix_t imtx_allocate_in_shape_of(p_int_matrix_t src);
 
 extern p_int_matrix_t imtx_create(unsigned int row_cnt, unsigned int col_cnt);
 extern p_int_matrix_t imtx_create_an_identity(unsigned int n);

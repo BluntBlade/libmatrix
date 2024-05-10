@@ -70,10 +70,10 @@ p_int_matrix_t imtx_allocate_before_transpose(p_int_matrix_t src)
     return imtx_allocate(src->col_cnt, src->row_cnt);
 } /* imtx_allocate_before_transpose */
 
-p_int_matrix_t imtx_allocate_like_shape_of(p_int_matrix_t src)
+p_int_matrix_t imtx_allocate_in_shape_of(p_int_matrix_t src)
 {
     return imtx_allocate(src->row_cnt, src->col_cnt);
-} /* imtx_allocate_like_shape_of */
+} /* imtx_allocate_in_shape_of */
 
 p_int_matrix_t imtx_create(unsigned int row_cnt, unsigned int col_cnt)
 {

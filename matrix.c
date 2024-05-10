@@ -5,7 +5,7 @@
 
 #define IMTX_PACK_LENGTH 4
 
-typedef int v4si __attribute__ ((vector_size (16)));
+typedef mtx_int32_t v4si __attribute__ ((vector_size (16)));
 
 typedef struct MATRIX_T {
     mtx_count_t row_cnt;           /* The actual number of rows. */ 
@@ -15,17 +15,17 @@ typedef struct MATRIX_T {
     mtx_count_t padded_byte_cnt;   /* Allocated bytes, including pads. */
 
     union {
-       int *    padded_values;
+       mtx_int32_t *    padded_values;
        v4si *   packs;
     };
 
     mtx_count_t pack_cnt_per_row;
     
-    int * values[1];
+    mtx_int32_t * values[1];
 } matrix_t; 
 
 typedef p_matrix_t (*mtx_matrix_operation_fn)(p_matrix_t, p_matrix_t, p_matrix_t);
-typedef p_matrix_t (*mtx_scalar_operation_fn)(p_matrix_t, int, p_matrix_t);
+typedef p_matrix_t (*mtx_i32_scalar_operation_fn)(p_matrix_t, mtx_int32_t, p_matrix_t);
 
 inline static mtx_count_t mtx_round_to_multiples_of(mtx_count_t cnt, mtx_count_t n)
 {
@@ -38,7 +38,7 @@ p_matrix_t mtx_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt)
     mtx_count_t i = 0;
     mtx_count_t padded_row_cnt = mtx_round_to_multiples_of(row_cnt, IMTX_PACK_LENGTH);
 
-    mtx = calloc(sizeof(matrix_t) + sizeof(int *) * padded_row_cnt, 1);
+    mtx = calloc(sizeof(matrix_t) + sizeof(mtx_int32_t *) * padded_row_cnt, 1);
     if (! mtx) {
         return NULL;
     } /* if */
@@ -50,7 +50,7 @@ p_matrix_t mtx_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt)
     mtx->pack_cnt_per_row = mtx->padded_col_cnt / IMTX_PACK_LENGTH;
     mtx->padded_byte_cnt = sizeof(mtx->padded_values[0]) * mtx->padded_row_cnt * mtx->padded_col_cnt;
 
-    mtx->padded_values = (int *)malloc(mtx->padded_byte_cnt);
+    mtx->padded_values = (mtx_int32_t *)malloc(mtx->padded_byte_cnt);
     if (! mtx->padded_values) {
         free(mtx);
         return NULL;
@@ -129,12 +129,12 @@ int mtx_can_do_multiply(p_matrix_t lhs, p_matrix_t rhs)
     return (lhs->col_cnt == rhs->row_cnt);
 } /* mtx_can_do_multiply */
 
-void mtx_set_at(p_matrix_t mtx, mtx_count_t row, mtx_count_t col, int src_val)
+void mtx_set_at(p_matrix_t mtx, mtx_count_t row, mtx_count_t col, mtx_int32_t src_val)
 {
     mtx->values[row][col] = src_val;
 } /* mtx_set_at */
 
-void mtx_set_each_to(p_matrix_t mtx, int src_val)
+void mtx_set_each_to(p_matrix_t mtx, mtx_int32_t src_val)
 {
     mtx_count_t i = 0;
     mtx_count_t j = 0;
@@ -146,7 +146,7 @@ void mtx_set_each_to(p_matrix_t mtx, int src_val)
     return;
 } /* mtx_set_each_to */
 
-void mtx_set_slice_to(p_matrix_t mtx, mtx_count_t row, mtx_count_t col, int src_vals[], mtx_count_t val_cnt)
+void mtx_set_slice_to(p_matrix_t mtx, mtx_count_t row, mtx_count_t col, mtx_int32_t src_vals[], mtx_count_t val_cnt)
 {
     mtx_count_t end = col + val_cnt;
     if (mtx->col_cnt < end) {
@@ -156,7 +156,7 @@ void mtx_set_slice_to(p_matrix_t mtx, mtx_count_t row, mtx_count_t col, int src_
     memcpy(&mtx->values[row][col], src_vals, sizeof(mtx->padded_values[0]) * (end - col));
 } /* mtx_set_slice_to */
 
-void mtx_set_from_array(p_matrix_t mtx, int * src_vals[])
+void mtx_set_from_array(p_matrix_t mtx, mtx_int32_t * src_vals[])
 {
     mtx_count_t i = 0;
     for (i = 0; i < mtx->row_cnt; i += 1) {
@@ -213,7 +213,7 @@ static p_matrix_t mtx_multiply_and_store_plain_impl(p_matrix_t mtx, p_matrix_t l
     mtx_count_t i = 0;
     mtx_count_t j = 0;
     mtx_count_t k = 0;
-    int sum = 0;
+    mtx_int32_t sum = 0;
 
     for (i = 0; i < lhs->row_cnt; i += 1) {
         for (j = 0; j < rhs->col_cnt; j += 1) {
@@ -227,9 +227,9 @@ static p_matrix_t mtx_multiply_and_store_plain_impl(p_matrix_t mtx, p_matrix_t l
     return mtx;
 } /* mtx_multiply_and_store_plain_impl */
 
-inline static int mtx_sum(v4si * src)
+inline static mtx_int32_t mtx_sum(v4si * src)
 {
-    int * vals = (int *) src;
+    mtx_int32_t * vals = (mtx_int32_t *) src;
     return vals[0] + vals[1] + vals[2] + vals[3];
 } /* mtx_sum */
 
@@ -269,7 +269,7 @@ p_matrix_t mtx_multiply_and_store(p_matrix_t mtx, p_matrix_t lhs, p_matrix_t rhs
     return (*mtx_matrix_multiplication_ops[opt & 0x3])(mtx, lhs, rhs);
 } /* mtx_multiply_and_store */
 
-static p_matrix_t mtx_scalar_multiply_and_store_plain_impl(p_matrix_t mtx, int lhs, p_matrix_t rhs)
+static p_matrix_t mtx_i32_scalar_multiply_and_store_plain_impl(p_matrix_t mtx, mtx_int32_t lhs, p_matrix_t rhs)
 {
     mtx_count_t i = 0;
     mtx_count_t j = 0;
@@ -280,9 +280,9 @@ static p_matrix_t mtx_scalar_multiply_and_store_plain_impl(p_matrix_t mtx, int l
         } /* for j */
     } /* for i */
     return mtx;
-} /* mtx_scalar_multiply_and_store_plain_impl */
+} /* mtx_i32_scalar_multiply_and_store_plain_impl */
 
-p_matrix_t mtx_scalar_multiply_and_store_simd_impl(p_matrix_t mtx, int lhs, p_matrix_t rhs)
+p_matrix_t mtx_i32_scalar_multiply_and_store_simd_impl(p_matrix_t mtx, mtx_int32_t lhs, p_matrix_t rhs)
 {
 #undef IMTX_CALL_INTRINSIC_AND_STORE
 #define IMTX_CALL_INTRINSIC_AND_STORE(func, pack, val) (pack) = func((pack), (val))
@@ -324,17 +324,17 @@ p_matrix_t mtx_scalar_multiply_and_store_simd_impl(p_matrix_t mtx, int lhs, p_ma
     } /* switch */
     return mtx;
 #undef IMTX_CALL_INTRINSIC_AND_STORE
-} /* mtx_scalar_multiply_and_store_simd_impl */
+} /* mtx_i32_scalar_multiply_and_store_simd_impl */
 
-static mtx_scalar_operation_fn mtx_scalar_multiplication_ops[2] = {
-    &mtx_scalar_multiply_and_store_plain_impl,
-    &mtx_scalar_multiply_and_store_simd_impl
+static mtx_i32_scalar_operation_fn mtx_scalar_multiplication_ops[2] = {
+    &mtx_i32_scalar_multiply_and_store_plain_impl,
+    &mtx_i32_scalar_multiply_and_store_simd_impl
 };
 
-p_matrix_t mtx_scalar_multiply_and_store(p_matrix_t mtx, int lhs, p_matrix_t rhs, mtx_option_t opt)
+p_matrix_t mtx_i32_scalar_multiply_and_store(p_matrix_t mtx, mtx_int32_t lhs, p_matrix_t rhs, mtx_option_t opt)
 {
     return (*mtx_scalar_multiplication_ops[opt & 0x3])(mtx, lhs, rhs);
-} /* mtx_scalar_multiply_and_store */
+} /* mtx_i32_scalar_multiply_and_store */
 
 p_matrix_t mtx_transpose_and_store(p_matrix_t mtx, p_matrix_t src)
 {

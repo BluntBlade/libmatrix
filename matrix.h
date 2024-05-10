@@ -37,13 +37,13 @@ extern void mtx_destroy(p_matrix_t mtx);
 extern int mtx_can_do_add(p_matrix_t lhs, p_matrix_t rhs);
 extern int mtx_can_do_multiply(p_matrix_t lhs, p_matrix_t rhs);
 
-extern int mtx_get_at(p_matrix_t mtx, mtx_count_t row, mtx_count_t col);
-extern void mtx_get_slice_at(p_matrix_t mtx, mtx_count_t row, mtx_count_t col, int ** vals, mtx_count_t * max_cnt);
+extern int mtx_i32_get_at(p_matrix_t mtx, mtx_count_t row, mtx_count_t col);
+extern void mtx_i32_get_slice_at(p_matrix_t mtx, mtx_count_t row, mtx_count_t col, mtx_int32_t ** vals, mtx_count_t * max_cnt);
 
-extern void mtx_set_at(p_matrix_t mtx, mtx_count_t row, mtx_count_t col, int src_val);
-extern void mtx_set_each_to(p_matrix_t mtx, int src_val);
-extern void mtx_set_slice_to(p_matrix_t mtx, mtx_count_t row, mtx_count_t col, int src_vals[], mtx_count_t val_cnt);
-extern void mtx_set_from_array(p_matrix_t mtx, int * src_vals[]);
+extern void mtx_i32_set_at(p_matrix_t mtx, mtx_count_t row, mtx_count_t col, mtx_int32_t src_val);
+extern void mtx_i32_set_each_to(p_matrix_t mtx, mtx_int32_t src_val);
+extern void mtx_i32_set_slice_to(p_matrix_t mtx, mtx_count_t row, mtx_count_t col, mtx_int32_t src_vals[], mtx_count_t val_cnt);
+extern void mtx_i32_set_from_array(p_matrix_t mtx, mtx_int32_t * src_vals[]);
 
 extern p_matrix_t mtx_add_and_store(p_matrix_t mtx, p_matrix_t lhs, p_matrix_t rhs, mtx_option_t opt);
 extern p_matrix_t mtx_sub_and_store(p_matrix_t mtx, p_matrix_t lhs, p_matrix_t rhs, mtx_option_t opt);
@@ -102,7 +102,7 @@ inline static p_matrix_t mtx_ones(mtx_count_t row_cnt, mtx_count_t col_cnt)
 {
     p_matrix_t mtx = mtx_create(row_cnt, col_cnt);
     if (mtx) {
-        mtx_set_each_to(mtx, 1);
+        mtx_i32_set_each_to(mtx, 1);
     } /* if */
     return mtx;
 } /* mtx_ones */

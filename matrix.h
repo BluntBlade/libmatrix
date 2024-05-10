@@ -36,9 +36,9 @@ extern p_matrix_t mtx_duplicate(p_matrix_t src);
 
 extern void mtx_destroy(p_matrix_t mtx);
 
-extern void mtx_initiate_identity(p_matrix_t mtx, mtx_option_t opt); /* TODO */
-extern void mtx_initiate_zeros(p_matrix_t mtx, mtx_option_t opt); /* TODO */
-extern void mtx_initiate_ones(p_matrix_t mtx, mtx_option_t opt); /* TODO */
+extern void mtx_initialize_identity(p_matrix_t mtx, mtx_option_t opt);
+extern void mtx_initialize_zeros(p_matrix_t mtx, mtx_option_t opt);
+extern void mtx_initialize_ones(p_matrix_t mtx, mtx_option_t opt);
 
 extern int mtx_can_do_add(p_matrix_t lhs, p_matrix_t rhs);
 extern int mtx_can_do_multiply(p_matrix_t lhs, p_matrix_t rhs);
@@ -61,7 +61,7 @@ inline static p_matrix_t mtx_i32_create_zeros(mtx_count_t row_cnt, mtx_count_t c
     if (! mtx) {
         return NULL;
     } /* if */
-    mtx_initiate_zeros(mtx, opt);
+    mtx_initialize_zeros(mtx, opt);
     return mtx;
 } /* mtx_i32_create_zeros */
 
@@ -71,7 +71,7 @@ inline static p_matrix_t mtx_i32_create_ones(mtx_count_t row_cnt, mtx_count_t co
     if (! mtx) {
         return NULL;
     } /* if */
-    mtx_initiate_ones(mtx, opt);
+    mtx_initialize_ones(mtx, opt);
     return mtx;
 } /* mtx_i32_create_ones */
 
@@ -81,7 +81,7 @@ inline static p_matrix_t mtx_i32_create_identity(mtx_count_t row_cnt, mtx_count_
     if (! mtx) {
         return NULL;
     } /* if */
-    mtx_initiate_identity(mtx, opt);
+    mtx_initialize_identity(mtx, opt);
     return mtx;
 } /* mtx_i32_create_identity */
 

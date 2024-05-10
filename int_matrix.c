@@ -116,6 +116,11 @@ void imtx_destroy(p_int_matrix_t mtx)
     free(mtx);
 } /* imtx_destroy */
 
+int imtx_can_do_add(p_int_matrix_t lhs, p_int_matrix_t rhs)
+{
+    return (lhs->row_cnt == rhs->row_cnt) && (lhs->col_cnt == rhs->col_cnt);
+} /* imtx_can_do_add */
+
 int imtx_can_do_multiply(p_int_matrix_t lhs, p_int_matrix_t rhs)
 {
     return (lhs->col_cnt == rhs->row_cnt);
@@ -155,6 +160,18 @@ void imtx_set_from_array(p_int_matrix_t mtx, int * src_vals[])
         memcpy(mtx->values[i], src_vals[i], sizeof(mtx->padded_values[0]) * mtx->col_cnt);
     } /* for */
 } /* imtx_set_from_array */
+
+p_int_matrix_t imtx_add_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs)
+{
+    unsigned int i = 0;
+    unsigned int j = 0;
+    for (i = 0; i < lhs->row_cnt; i += 1) {
+        for (j = 0; j < lhs->col_cnt; j += 1) {
+            mtx->values[i][j] = lhs->values[i][j] + rhs->values[i][j];
+        } /* for */
+    } /* for */
+    return mtx;
+} /* imtx_add_and_store */
 
 p_int_matrix_t imtx_multiply_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs)
 {

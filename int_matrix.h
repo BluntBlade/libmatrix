@@ -1,6 +1,11 @@
 #ifndef INT_MATRIX_H
 #define INT_MATRIX_H 1
 
+typedef enum MATRIX_OPTION_T {
+    MTX_PLAIN_CODE = 0x0000,
+    MTX_SIMD_CODE = 0x0001,
+} mtx_option_t;
+
 typedef struct INT_SUB_MATRIX_T {
     unsigned int row_cnt;
     unsigned int col_cnt;
@@ -38,37 +43,37 @@ extern void imtx_set_each_to(p_int_matrix_t mtx, int src_val);
 extern void imtx_set_slice_to(p_int_matrix_t mtx, unsigned int row, unsigned int col, int src_vals[], unsigned int val_cnt);
 extern void imtx_set_from_array(p_int_matrix_t mtx, int * src_vals[]);
 
-extern p_int_matrix_t imtx_add_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs);
+extern p_int_matrix_t imtx_add_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs, mtx_option_t opt);
 
-inline static p_int_matrix_t imtx_add(p_int_matrix_t lhs, p_int_matrix_t rhs)
+inline static p_int_matrix_t imtx_add(p_int_matrix_t lhs, p_int_matrix_t rhs, mtx_option_t opt)
 {
     p_int_matrix_t mtx = imtx_allocate_in_shape_of(lhs);
     if (! mtx) {
         return NULL;
     } /* if */
-    return imtx_add_and_store(mtx, lhs, rhs);
+    return imtx_add_and_store(mtx, lhs, rhs, opt);
 } /* imtx_add */
 
-extern p_int_matrix_t imtx_sub_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs);
+extern p_int_matrix_t imtx_sub_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs, mtx_option_t opt);
 
-inline static p_int_matrix_t imtx_sub(p_int_matrix_t lhs, p_int_matrix_t rhs)
+inline static p_int_matrix_t imtx_sub(p_int_matrix_t lhs, p_int_matrix_t rhs, mtx_option_t opt)
 {
     p_int_matrix_t mtx = imtx_allocate_in_shape_of(lhs);
     if (! mtx) {
         return NULL;
     } /* if */
-    return imtx_sub_and_store(mtx, lhs, rhs);
+    return imtx_sub_and_store(mtx, lhs, rhs, opt);
 } /* imtx_sub */
 
-extern p_int_matrix_t imtx_multiply_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs);
+extern p_int_matrix_t imtx_multiply_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs, mtx_option_t opt);
 
-inline static p_int_matrix_t imtx_multiply(p_int_matrix_t lhs, p_int_matrix_t rhs)
+inline static p_int_matrix_t imtx_multiply(p_int_matrix_t lhs, p_int_matrix_t rhs, mtx_option_t opt)
 {
     p_int_matrix_t mtx = imtx_allocate_before_mulplicate(lhs, rhs);
     if (! mtx) {
         return NULL;
     } /* if */
-    return imtx_multiply_and_store(mtx, lhs, rhs);
+    return imtx_multiply_and_store(mtx, lhs, rhs, opt);
 } /* imtx_multiply */
 
 extern p_int_matrix_t imtx_fast_multiply_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs);

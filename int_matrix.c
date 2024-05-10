@@ -161,7 +161,7 @@ void imtx_set_from_array(p_int_matrix_t mtx, int * src_vals[])
     } /* for */
 } /* imtx_set_from_array */
 
-p_int_matrix_t imtx_add_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs)
+p_int_matrix_t imtx_add_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs, mtx_option_t opt)
 {
     unsigned int i = 0;
     unsigned int j = 0;
@@ -173,7 +173,7 @@ p_int_matrix_t imtx_add_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_
     return mtx;
 } /* imtx_add_and_store */
 
-p_int_matrix_t imtx_sub_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs)
+p_int_matrix_t imtx_sub_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs, mtx_option_t opt)
 {
     unsigned int i = 0;
     unsigned int j = 0;
@@ -185,7 +185,7 @@ p_int_matrix_t imtx_sub_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_
     return mtx;
 } /* imtx_sub_and_store */
 
-p_int_matrix_t imtx_multiply_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs)
+p_int_matrix_t imtx_multiply_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs, mtx_option_t opt)
 {
     unsigned int i = 0;
     unsigned int j = 0;

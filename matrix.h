@@ -1,113 +1,120 @@
-#ifndef INT_MATRIX_H
-#define INT_MATRIX_H 1
+#ifndef MATRIX_H
+#define MATRIX_H 1
 
 typedef enum MATRIX_OPTION_T {
     MTX_PLAIN_CODE = 0x0000,
     MTX_SIMD_CODE = 0x0001,
 } mtx_option_t;
 
-typedef struct INT_SUB_MATRIX_T {
-    unsigned int row_cnt;
-    unsigned int col_cnt;
+typedef size_t mtx_count_t;
 
-    int ** vals;
-} int_sub_matrix_t, *p_int_sub_matrix_t;
+typedef int32_t mtx_int32_t;
+typedef uint32_t mtx_uint32_t;
+typedef float mtx_float_t;
+typedef double mtx_double_t;
 
-struct INT_MATRIX_T;
-typedef struct INT_MATRIX_T * p_int_matrix_t;
+typedef struct INT_SUBMATRIX_T {
+    mtx_count_t row_cnt;
+    mtx_count_t col_cnt;
 
-extern p_int_matrix_t imtx_allocate(unsigned int row_cnt, unsigned int col_cnt);
-extern p_int_matrix_t imtx_allocate_before_mulplicate(p_int_matrix_t lhs, p_int_matrix_t rhs);
-extern p_int_matrix_t imtx_allocate_before_transpose(p_int_matrix_t src);
-extern p_int_matrix_t imtx_allocate_in_shape_of(p_int_matrix_t src);
+    mtx_int32_t ** vals;
+} int_submatrix_t, *p_int_submatrix_t;
 
-extern p_int_matrix_t imtx_create(unsigned int row_cnt, unsigned int col_cnt);
-extern p_int_matrix_t imtx_create_an_identity(unsigned int n);
-extern p_int_matrix_t imtx_duplicate(p_int_matrix_t src);
+struct MATRIX_T;
+typedef struct MATRIX_T * p_matrix_t;
 
-extern void imtx_destroy(p_int_matrix_t mtx);
+extern p_matrix_t mtx_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt);
+extern p_matrix_t mtx_allocate_before_mulplicate(p_matrix_t lhs, p_matrix_t rhs);
+extern p_matrix_t mtx_allocate_before_transpose(p_matrix_t src);
+extern p_matrix_t mtx_allocate_in_shape_of(p_matrix_t src);
 
-extern int imtx_can_do_add(p_int_matrix_t lhs, p_int_matrix_t rhs);
-extern int imtx_can_do_multiply(p_int_matrix_t lhs, p_int_matrix_t rhs);
+extern p_matrix_t mtx_create(mtx_count_t row_cnt, mtx_count_t col_cnt);
+extern p_matrix_t mtx_create_an_identity(mtx_count_t n);
+extern p_matrix_t mtx_duplicate(p_matrix_t src);
 
-inline static int imtx_can_do_sub(p_int_matrix_t lhs, p_int_matrix_t rhs)
+extern void mtx_destroy(p_matrix_t mtx);
+
+extern int mtx_can_do_add(p_matrix_t lhs, p_matrix_t rhs);
+extern int mtx_can_do_multiply(p_matrix_t lhs, p_matrix_t rhs);
+
+inline static int mtx_can_do_sub(p_matrix_t lhs, p_matrix_t rhs)
 {
-    return imtx_can_do_add(lhs, rhs);
-} /* imtx_can_do_sub */
+    return mtx_can_do_add(lhs, rhs);
+} /* mtx_can_do_sub */
 
-extern int imtx_get_at(p_int_matrix_t mtx, unsigned int row, unsigned int col);
-extern void imtx_get_slice_at(p_int_matrix_t mtx, unsigned int row, unsigned int col, int ** vals, unsigned int * max_cnt);
+extern int mtx_get_at(p_matrix_t mtx, mtx_count_t row, mtx_count_t col);
+extern void mtx_get_slice_at(p_matrix_t mtx, mtx_count_t row, mtx_count_t col, int ** vals, mtx_count_t * max_cnt);
 
-extern void imtx_set_at(p_int_matrix_t mtx, unsigned int row, unsigned int col, int src_val);
-extern void imtx_set_each_to(p_int_matrix_t mtx, int src_val);
-extern void imtx_set_slice_to(p_int_matrix_t mtx, unsigned int row, unsigned int col, int src_vals[], unsigned int val_cnt);
-extern void imtx_set_from_array(p_int_matrix_t mtx, int * src_vals[]);
+extern void mtx_set_at(p_matrix_t mtx, mtx_count_t row, mtx_count_t col, int src_val);
+extern void mtx_set_each_to(p_matrix_t mtx, int src_val);
+extern void mtx_set_slice_to(p_matrix_t mtx, mtx_count_t row, mtx_count_t col, int src_vals[], mtx_count_t val_cnt);
+extern void mtx_set_from_array(p_matrix_t mtx, int * src_vals[]);
 
-extern p_int_matrix_t imtx_add_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs, mtx_option_t opt);
+extern p_matrix_t mtx_add_and_store(p_matrix_t mtx, p_matrix_t lhs, p_matrix_t rhs, mtx_option_t opt);
 
-inline static p_int_matrix_t imtx_add(p_int_matrix_t lhs, p_int_matrix_t rhs, mtx_option_t opt)
+inline static p_matrix_t mtx_add(p_matrix_t lhs, p_matrix_t rhs, mtx_option_t opt)
 {
-    p_int_matrix_t mtx = imtx_allocate_in_shape_of(lhs);
+    p_matrix_t mtx = mtx_allocate_in_shape_of(lhs);
     if (! mtx) {
         return NULL;
     } /* if */
-    return imtx_add_and_store(mtx, lhs, rhs, opt);
-} /* imtx_add */
+    return mtx_add_and_store(mtx, lhs, rhs, opt);
+} /* mtx_add */
 
-extern p_int_matrix_t imtx_sub_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs, mtx_option_t opt);
+extern p_matrix_t mtx_sub_and_store(p_matrix_t mtx, p_matrix_t lhs, p_matrix_t rhs, mtx_option_t opt);
 
-inline static p_int_matrix_t imtx_sub(p_int_matrix_t lhs, p_int_matrix_t rhs, mtx_option_t opt)
+inline static p_matrix_t mtx_sub(p_matrix_t lhs, p_matrix_t rhs, mtx_option_t opt)
 {
-    p_int_matrix_t mtx = imtx_allocate_in_shape_of(lhs);
+    p_matrix_t mtx = mtx_allocate_in_shape_of(lhs);
     if (! mtx) {
         return NULL;
     } /* if */
-    return imtx_sub_and_store(mtx, lhs, rhs, opt);
-} /* imtx_sub */
+    return mtx_sub_and_store(mtx, lhs, rhs, opt);
+} /* mtx_sub */
 
-extern p_int_matrix_t imtx_multiply_and_store(p_int_matrix_t mtx, p_int_matrix_t lhs, p_int_matrix_t rhs, mtx_option_t opt);
+extern p_matrix_t mtx_multiply_and_store(p_matrix_t mtx, p_matrix_t lhs, p_matrix_t rhs, mtx_option_t opt);
 
-inline static p_int_matrix_t imtx_multiply(p_int_matrix_t lhs, p_int_matrix_t rhs, mtx_option_t opt)
+inline static p_matrix_t mtx_multiply(p_matrix_t lhs, p_matrix_t rhs, mtx_option_t opt)
 {
-    p_int_matrix_t mtx = imtx_allocate_before_mulplicate(lhs, rhs);
+    p_matrix_t mtx = mtx_allocate_before_mulplicate(lhs, rhs);
     if (! mtx) {
         return NULL;
     } /* if */
-    return imtx_multiply_and_store(mtx, lhs, rhs, opt);
-} /* imtx_multiply */
+    return mtx_multiply_and_store(mtx, lhs, rhs, opt);
+} /* mtx_multiply */
 
-extern p_int_matrix_t imtx_scalar_multiply_and_store(p_int_matrix_t mtx, int lhs, p_int_matrix_t rhs, mtx_option_t opt);
+extern p_matrix_t mtx_scalar_multiply_and_store(p_matrix_t mtx, int lhs, p_matrix_t rhs, mtx_option_t opt);
 
-inline static p_int_matrix_t imtx_multiply_by_scalar(int lhs, p_int_matrix_t rhs, mtx_option_t opt)
+inline static p_matrix_t mtx_multiply_by_scalar(int lhs, p_matrix_t rhs, mtx_option_t opt)
 {
-    p_int_matrix_t mtx = imtx_allocate_in_shape_of(rhs);
+    p_matrix_t mtx = mtx_allocate_in_shape_of(rhs);
     if (! mtx) {
         return NULL;
     } /* if */
-    return imtx_scalar_multiply_and_store(mtx, lhs, rhs, opt);
-} /* imtx_multiply_by_scalar */
+    return mtx_scalar_multiply_and_store(mtx, lhs, rhs, opt);
+} /* mtx_multiply_by_scalar */
 
-inline static p_int_matrix_t imtx_zeros(unsigned int row_cnt, unsigned int col_cnt)
+inline static p_matrix_t mtx_zeros(mtx_count_t row_cnt, mtx_count_t col_cnt)
 {
-    return imtx_create(row_cnt, col_cnt);
-} /* imtx_zeros */
+    return mtx_create(row_cnt, col_cnt);
+} /* mtx_zeros */
 
-inline static p_int_matrix_t imtx_ones(unsigned int row_cnt, unsigned int col_cnt)
+inline static p_matrix_t mtx_ones(mtx_count_t row_cnt, mtx_count_t col_cnt)
 {
-    p_int_matrix_t mtx = imtx_create(row_cnt, col_cnt);
+    p_matrix_t mtx = mtx_create(row_cnt, col_cnt);
     if (mtx) {
-        imtx_set_each_to(mtx, 1);
+        mtx_set_each_to(mtx, 1);
     } /* if */
     return mtx;
-} /* imtx_ones */
+} /* mtx_ones */
 
-extern p_int_matrix_t imtx_transpose_and_store(p_int_matrix_t mtx, p_int_matrix_t src);
+extern p_matrix_t mtx_transpose_and_store(p_matrix_t mtx, p_matrix_t src);
 
-inline static p_int_matrix_t imtx_transpose(p_int_matrix_t src)
+inline static p_matrix_t mtx_transpose(p_matrix_t src)
 {
-    p_int_matrix_t mtx = imtx_allocate_before_transpose(src);
-    return imtx_transpose_and_store(mtx, src);
-} /* imtx_transpose */
+    p_matrix_t mtx = mtx_allocate_before_transpose(src);
+    return mtx_transpose_and_store(mtx, src);
+} /* mtx_transpose */
 
-#endif /* INT_MATRIX_H */
+#endif /* MATRIX_H */
 

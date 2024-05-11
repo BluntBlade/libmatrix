@@ -14,14 +14,24 @@ typedef float mtx_float32_t;
 typedef double mtx_double64_t;
 
 typedef struct SUBMATRIX_T {
-    mtx_count_t row_cnt;
-    mtx_count_t col_cnt;
+    /*
+        For referencing one element at (x,y) in the sub-matrix,
+        use the following expression, where `ref` is the pointer
+        to this struct.
+
+        ref->i32_vals[ ref->row_off + x ][ ref->col_off + y ]
+    */
+    mtx_count_t row_off; /* Offset of the sub-matrix at row dimension. */
+    mtx_count_t col_off; /* Offset of the sub-matrix at column dimension. */
+    mtx_count_t row_cnt; /* Total count of rows of the sub-matrix. */
+    mtx_count_t col_cnt; /* Total count of columns of the sub-matrix. */
 
     union {
         mtx_int32_t **    i32_vals;
         mtx_uint32_t **   u32_vals;
         mtx_float32_t **  f32_vals;
         mtx_double64_t ** d64_vals;
+        void **           data;
     };
 } submatrix_t, *ptr_submatrix_t;
 
@@ -50,6 +60,8 @@ extern void mtx_sub_and_store(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t r
 extern void mtx_multiply_and_store(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs, mtx_option_t opt);
 
 extern void mtx_transpose_and_store(ptr_matrix_t mtx, ptr_matrix_t src);
+
+extern void mtx_get_submatrix(ptr_matrix_t mtx, mtx_count_t row_off, mtx_count_t col_off, mtx_count_t row_cnt, mtx_count_t col_cnt, ptr_submatrix_t ref);
 
 /* ==== Type-Related functions. ==== */
 

@@ -195,6 +195,11 @@ void mtx_get_submatrix(ptr_matrix_t mtx, mtx_count_t row, mtx_count_t col, mtx_c
 
 /* ==== Type-Related functions. ==== */
 
+mtx_int32_t mtx_i32_get_at(ptr_matrix_t mtx, mtx_count_t row, mtx_count_t col)
+{
+    return mtx->i32_vals[row][col];
+} /* mtx_i32_get_at */
+
 void mtx_i32_set_at(ptr_matrix_t mtx, mtx_count_t row, mtx_count_t col, mtx_int32_t src_val)
 {
     mtx->i32_vals[row][col] = src_val;

@@ -70,6 +70,8 @@ extern ptr_matrix_t mtx_u32_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt); 
 extern ptr_matrix_t mtx_f32_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt); /* TODO */
 extern ptr_matrix_t mtx_d64_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt); /* TODO */
 
+extern mtx_int32_t mtx_i32_get_at(ptr_matrix_t mtx, mtx_count_t row, mtx_count_t col);
+
 extern void mtx_i32_set_at(ptr_matrix_t mtx, mtx_count_t row, mtx_count_t col, mtx_int32_t src_val);
 extern void mtx_i32_set_all_to(ptr_matrix_t mtx, mtx_int32_t src_val);
 extern void mtx_i32_set_slice_to(ptr_matrix_t mtx, mtx_count_t row, mtx_count_t col, mtx_int32_t src_vals[], mtx_count_t val_cnt);

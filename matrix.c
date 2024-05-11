@@ -202,9 +202,9 @@ static p_matrix_t mtx_add_and_store_plain_impl(p_matrix_t mtx, p_matrix_t lhs, p
     return mtx;
 } /* mtx_add_and_store_plain_impl */
 
-p_matrix_t mtx_add_and_store(p_matrix_t mtx, p_matrix_t lhs, p_matrix_t rhs, mtx_option_t opt)
+void mtx_add_and_store(p_matrix_t mtx, p_matrix_t lhs, p_matrix_t rhs, mtx_option_t opt)
 {
-    return (*mtx->ops->matrix_addition[opt & 0x3])(mtx, lhs, rhs);
+    (*mtx->ops->matrix_addition[opt & 0x3])(mtx, lhs, rhs);
 } /* mtx_add_and_store */
 
 static p_matrix_t mtx_sub_and_store_plain_impl(p_matrix_t mtx, p_matrix_t lhs, p_matrix_t rhs)
@@ -219,9 +219,9 @@ static p_matrix_t mtx_sub_and_store_plain_impl(p_matrix_t mtx, p_matrix_t lhs, p
     return mtx;
 } /* mtx_sub_and_store_plain_impl */
 
-p_matrix_t mtx_sub_and_store(p_matrix_t mtx, p_matrix_t lhs, p_matrix_t rhs, mtx_option_t opt)
+void mtx_sub_and_store(p_matrix_t mtx, p_matrix_t lhs, p_matrix_t rhs, mtx_option_t opt)
 {
-    return (*mtx->ops->matrix_subtraction[opt & 0x3])(mtx, lhs, rhs);
+    (*mtx->ops->matrix_subtraction[opt & 0x3])(mtx, lhs, rhs);
 } /* mtx_sub_and_store */
 
 static p_matrix_t mtx_multiply_and_store_plain_impl(p_matrix_t mtx, p_matrix_t lhs, p_matrix_t rhs)
@@ -275,9 +275,9 @@ static p_matrix_t mtx_multiply_and_store_simd_impl(p_matrix_t mtx, p_matrix_t lh
     return mtx;
 } /* mtx_multiply_and_store_simd_impl */
 
-p_matrix_t mtx_multiply_and_store(p_matrix_t mtx, p_matrix_t lhs, p_matrix_t rhs, mtx_option_t opt)
+void mtx_multiply_and_store(p_matrix_t mtx, p_matrix_t lhs, p_matrix_t rhs, mtx_option_t opt)
 {
-    return (*mtx->ops->matrix_multiplication[opt & 0x3])(mtx, lhs, rhs);
+    (*mtx->ops->matrix_multiplication[opt & 0x3])(mtx, lhs, rhs);
 } /* mtx_multiply_and_store */
 
 static p_matrix_t mtx_i32_scalar_multiply_and_store_plain_impl(p_matrix_t mtx, mtx_int32_t lhs, p_matrix_t rhs)
@@ -337,12 +337,12 @@ p_matrix_t mtx_i32_scalar_multiply_and_store_simd_impl(p_matrix_t mtx, mtx_int32
 #undef IMTX_CALL_INTRINSIC_AND_STORE
 } /* mtx_i32_scalar_multiply_and_store_simd_impl */
 
-p_matrix_t mtx_i32_scalar_multiply_and_store(p_matrix_t mtx, mtx_int32_t lhs, p_matrix_t rhs, mtx_option_t opt)
+void mtx_i32_scalar_multiply_and_store(p_matrix_t mtx, mtx_int32_t lhs, p_matrix_t rhs, mtx_option_t opt)
 {
-    return (*mtx->ops->i32_scalar_multiplication[opt & 0x3])(mtx, lhs, rhs);
+    (*mtx->ops->i32_scalar_multiplication[opt & 0x3])(mtx, lhs, rhs);
 } /* mtx_i32_scalar_multiply_and_store */
 
-p_matrix_t mtx_transpose_and_store(p_matrix_t mtx, p_matrix_t src)
+void mtx_transpose_and_store(p_matrix_t mtx, p_matrix_t src)
 {
     mtx_count_t i = 0;
     mtx_count_t j = 0;
@@ -352,7 +352,6 @@ p_matrix_t mtx_transpose_and_store(p_matrix_t mtx, p_matrix_t src)
             mtx->i32_values[j][i] = src->i32_values[i][j];
         } /* for j */
     } /* for i */
-    return mtx;
 } /* mtx_transpose_and_store */
 
 static void mtx_i32_init_identity_plain_impl(p_matrix_t mtx)

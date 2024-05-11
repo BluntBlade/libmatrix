@@ -55,6 +55,10 @@ extern void mtx_initialize_ones(ptr_matrix_t mtx, mtx_option_t opt);
 extern int mtx_can_do_add(ptr_matrix_t lhs, ptr_matrix_t rhs);
 extern int mtx_can_do_multiply(ptr_matrix_t lhs, ptr_matrix_t rhs);
 
+extern mtx_count_t mtx_count_rows(ptr_matrix_t mtx);
+extern mtx_count_t mtx_count_columns(ptr_matrix_t mtx);
+extern mtx_count_t mtx_count_values(ptr_matrix_t mtx);
+
 extern void mtx_add_and_store(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs, mtx_option_t opt);
 extern void mtx_sub_and_store(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs, mtx_option_t opt);
 extern void mtx_multiply_and_store(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs, mtx_option_t opt);

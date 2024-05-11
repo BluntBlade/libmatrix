@@ -155,6 +155,21 @@ int mtx_can_do_multiply(ptr_matrix_t lhs, ptr_matrix_t rhs)
     return (lhs->col_cnt == rhs->row_cnt);
 } /* mtx_can_do_multiply */
 
+mtx_count_t mtx_count_rows(ptr_matrix_t mtx)
+{
+    return mtx->row_cnt;
+} /* mtx_count_rows */
+
+mtx_count_t mtx_count_columns(ptr_matrix_t mtx)
+{
+    return mtx->col_cnt;
+} /* mtx_count_columns */
+
+mtx_count_t mtx_count_values(ptr_matrix_t mtx)
+{
+    return (mtx->row_cnt * mtx->col_cnt);
+} /* mtx_count_values */
+
 void mtx_add_and_store(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs, mtx_option_t opt)
 {
     (*mtx->ops->mat_add[opt & 0x3])(mtx, lhs, rhs);

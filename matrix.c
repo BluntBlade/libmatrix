@@ -97,15 +97,15 @@ static p_matrix_t mtx_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt, size_t 
     return mtx;
 } /* mtx_allocate */
 
-p_matrix_t mtx_allocate_before_multiply(p_matrix_t lhs, p_matrix_t rhs)
+p_matrix_t mtx_allocate_for_multiplying(p_matrix_t lhs, p_matrix_t rhs)
 {
     return mtx_allocate(lhs->row_cnt, rhs->col_cnt, lhs->value_size, lhs->pack_len, lhs->ops);
-} /* mtx_allocate_before_multiply */
+} /* mtx_allocate_for_multiplying */
 
-p_matrix_t mtx_allocate_before_transpose(p_matrix_t src)
+p_matrix_t mtx_allocate_for_transposing(p_matrix_t src)
 {
     return mtx_allocate(src->col_cnt, src->row_cnt, src->value_size, src->pack_len, src->ops);
-} /* mtx_allocate_before_transpose */
+} /* mtx_allocate_for_transposing */
 
 p_matrix_t mtx_allocate_in_shape_of(p_matrix_t src)
 {

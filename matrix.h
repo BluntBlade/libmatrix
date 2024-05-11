@@ -23,10 +23,7 @@ typedef struct INT_SUBMATRIX_T {
 struct MATRIX_T;
 typedef struct MATRIX_T * p_matrix_t;
 
-extern p_matrix_t mtx_i32_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt);
-extern p_matrix_t mtx_u32_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt); /* TODO */
-extern p_matrix_t mtx_f32_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt); /* TODO */
-extern p_matrix_t mtx_d64_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt); /* TODO */
+/* ==== Common functions. ==== */
 
 extern p_matrix_t mtx_allocate_for_multiplying(p_matrix_t lhs, p_matrix_t rhs);
 extern p_matrix_t mtx_allocate_for_transposing(p_matrix_t src);
@@ -49,11 +46,20 @@ extern void mtx_multiply_and_store(p_matrix_t mtx, p_matrix_t lhs, p_matrix_t rh
 
 extern void mtx_transpose_and_store(p_matrix_t mtx, p_matrix_t src);
 
+/* ==== Type-Related functions. ==== */
+
+extern p_matrix_t mtx_i32_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt);
+extern p_matrix_t mtx_u32_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt); /* TODO */
+extern p_matrix_t mtx_f32_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt); /* TODO */
+extern p_matrix_t mtx_d64_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt); /* TODO */
+
 extern void mtx_i32_set_at(p_matrix_t mtx, mtx_count_t row, mtx_count_t col, mtx_int32_t src_val);
 extern void mtx_i32_set_all_to(p_matrix_t mtx, mtx_int32_t src_val);
 extern void mtx_i32_set_slice_to(p_matrix_t mtx, mtx_count_t row, mtx_count_t col, mtx_int32_t src_vals[], mtx_count_t val_cnt);
 extern void mtx_i32_set_from_array(p_matrix_t mtx, mtx_int32_t * src_vals[]);
 extern void mtx_i32_scalar_multiply_and_store(p_matrix_t mtx, int lhs, p_matrix_t rhs, mtx_option_t opt);
+
+/* ==== Wrapper functions. ==== */
 
 inline static p_matrix_t mtx_i32_create_zeros(mtx_count_t row_cnt, mtx_count_t col_cnt, mtx_option_t opt)
 {

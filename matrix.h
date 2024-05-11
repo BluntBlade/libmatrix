@@ -61,7 +61,7 @@ extern void mtx_multiply_and_store(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matri
 
 extern void mtx_transpose_and_store(ptr_matrix_t mtx, ptr_matrix_t src);
 
-extern void mtx_get_submatrix(ptr_matrix_t mtx, mtx_count_t row_off, mtx_count_t col_off, mtx_count_t row_cnt, mtx_count_t col_cnt, ptr_submatrix_t ref);
+extern void mtx_get_submatrix(ptr_matrix_t mtx, mtx_count_t row, mtx_count_t col, mtx_count_t row_cnt, mtx_count_t col_cnt, ptr_submatrix_t ref);
 
 /* ==== Type-Related functions. ==== */
 
@@ -74,6 +74,7 @@ extern void mtx_i32_set_at(ptr_matrix_t mtx, mtx_count_t row, mtx_count_t col, m
 extern void mtx_i32_set_all_to(ptr_matrix_t mtx, mtx_int32_t src_val);
 extern void mtx_i32_set_slice_to(ptr_matrix_t mtx, mtx_count_t row, mtx_count_t col, mtx_int32_t src_vals[], mtx_count_t val_cnt);
 extern void mtx_i32_set_from_array(ptr_matrix_t mtx, mtx_int32_t * src_vals[]);
+
 extern void mtx_i32_scalar_multiply_and_store(ptr_matrix_t mtx, int lhs, ptr_matrix_t rhs, mtx_option_t opt);
 
 /* ==== Wrapper functions. ==== */

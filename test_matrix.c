@@ -208,6 +208,9 @@ CESTER_TEST(
     cester_assert_uint_eq(m->pack_cnt_per_row, 2);
     cester_assert_not_null(m->data);
 
+    cester_assert_ptr_not_equal(m, lhs);
+    cester_assert_ptr_not_equal(m, rhs);
+
     mtx_destroy(m);
     mtx_destroy(rhs);
     mtx_destroy(lhs);
@@ -232,6 +235,9 @@ CESTER_TEST(
     cester_assert_uint_eq(m->padded_byte_cnt, m->value_size * m->padded_row_cnt * m->padded_col_cnt);
     cester_assert_uint_eq(m->pack_cnt_per_row, 1);
     cester_assert_not_null(m->data);
+
+    cester_assert_ptr_not_equal(m, lhs);
+    cester_assert_ptr_not_equal(m, rhs);
 
     mtx_destroy(m);
     mtx_destroy(rhs);
@@ -258,6 +264,9 @@ CESTER_TEST(
     cester_assert_uint_eq(m->pack_cnt_per_row, 2);
     cester_assert_not_null(m->data);
 
+    cester_assert_ptr_not_equal(m, lhs);
+    cester_assert_ptr_not_equal(m, rhs);
+
     mtx_destroy(m);
     mtx_destroy(rhs);
     mtx_destroy(lhs);
@@ -282,6 +291,8 @@ CESTER_TEST(
     cester_assert_uint_eq(m->pack_cnt_per_row, 2);
     cester_assert_not_null(m->data);
 
+    cester_assert_ptr_not_equal(m, src);
+
     mtx_destroy(m);
     mtx_destroy(src);
 )
@@ -305,6 +316,8 @@ CESTER_TEST(
     cester_assert_uint_eq(m->pack_cnt_per_row, 1);
     cester_assert_not_null(m->data);
 
+    cester_assert_ptr_not_equal(m, src);
+
     mtx_destroy(m);
     mtx_destroy(src);
 )
@@ -327,6 +340,8 @@ CESTER_TEST(
     cester_assert_uint_eq(m->padded_byte_cnt, m->value_size * m->padded_row_cnt * m->padded_col_cnt);
     cester_assert_uint_eq(m->pack_cnt_per_row, 4);
     cester_assert_not_null(m->data);
+
+    cester_assert_ptr_not_equal(m, src);
 
     mtx_destroy(m);
     mtx_destroy(src);

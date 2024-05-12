@@ -64,7 +64,7 @@ typedef struct MATRIX_T {
 
 inline static mtx_count_t mtx_round_to_multiples_of(mtx_count_t cnt, mtx_count_t n)
 {
-    return (cnt & ~(n - 1)) + (cnt & (n - 1)) ? n : 0;
+    return (cnt & ~(n - 1)) + ((cnt & (n - 1)) ? n : 0);
 } /* mtx_round_to_multiples_of */
 
 static ptr_matrix_t mtx_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt, size_t val_size, mtx_count_t pack_len, mtx_operation_ptr_t ops)

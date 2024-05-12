@@ -1,11 +1,15 @@
-CFLAGS = -fPIC -I.
+CC = gcc
+
+CFLAGS = -fPIC -I. -g
 LDFLAGS = --shared
 #TEST_LDFLAGS = -Wl,--wrap=malloc
+TEST_LDFLAGS = -g
 
 SRC = matrix.c
 OBJ = $(SRC:.c=.o)
 TARGET = libmatrix.so
-TEST_SRC = matrix.c test_matrix.c
+
+TEST_SRC = test_matrix.c
 TEST_OBJ = $(TEST_SRC:.c=.o)
 TEST_TARGET = test_matrix
 

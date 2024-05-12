@@ -346,3 +346,78 @@ CESTER_TEST(
     mtx_destroy(m);
     mtx_destroy(src);
 )
+
+CESTER_TEST(
+    test_mtx_allocate_in_shape_of_3x1_matrix,
+    _,
+
+    ptr_matrix_t src = mtx_i32_allocate(3, 1);
+    ptr_matrix_t m = mtx_allocate_in_shape_of(src);
+
+    cester_assert_not_null(m);
+    cester_assert_uint_eq(m->value_size, sizeof(mtx_int32_t));
+    cester_assert_uint_eq(m->pack_len, I32_PACK_LEN);
+
+    cester_assert_uint_eq(m->row_cnt, 3);
+    cester_assert_uint_eq(m->col_cnt, 1);
+    cester_assert_uint_eq(m->padded_row_cnt, I32_PACK_LEN * 1);
+    cester_assert_uint_eq(m->padded_col_cnt, I32_PACK_LEN * 1);
+    cester_assert_uint_eq(m->padded_byte_cnt, m->value_size * m->padded_row_cnt * m->padded_col_cnt);
+    cester_assert_uint_eq(m->pack_cnt_per_row, 1);
+    cester_assert_not_null(m->data);
+
+    cester_assert_ptr_not_equal(m, src);
+
+    mtx_destroy(m);
+    mtx_destroy(src);
+)
+
+CESTER_TEST(
+    test_mtx_allocate_in_shape_of_1x3_matrix,
+    _,
+
+    ptr_matrix_t src = mtx_i32_allocate(1, 3);
+    ptr_matrix_t m = mtx_allocate_in_shape_of(src);
+
+    cester_assert_not_null(m);
+    cester_assert_uint_eq(m->value_size, sizeof(mtx_int32_t));
+    cester_assert_uint_eq(m->pack_len, I32_PACK_LEN);
+
+    cester_assert_uint_eq(m->row_cnt, 1);
+    cester_assert_uint_eq(m->col_cnt, 3);
+    cester_assert_uint_eq(m->padded_row_cnt, I32_PACK_LEN * 1);
+    cester_assert_uint_eq(m->padded_col_cnt, I32_PACK_LEN * 1);
+    cester_assert_uint_eq(m->padded_byte_cnt, m->value_size * m->padded_row_cnt * m->padded_col_cnt);
+    cester_assert_uint_eq(m->pack_cnt_per_row, 1);
+    cester_assert_not_null(m->data);
+
+    cester_assert_ptr_not_equal(m, src);
+
+    mtx_destroy(m);
+    mtx_destroy(src);
+)
+
+CESTER_TEST(
+    test_mtx_allocate_in_shape_of_3x3_matrix,
+    _,
+
+    ptr_matrix_t src = mtx_i32_allocate(3, 3);
+    ptr_matrix_t m = mtx_allocate_in_shape_of(src);
+
+    cester_assert_not_null(m);
+    cester_assert_uint_eq(m->value_size, sizeof(mtx_int32_t));
+    cester_assert_uint_eq(m->pack_len, I32_PACK_LEN);
+
+    cester_assert_uint_eq(m->row_cnt, 3);
+    cester_assert_uint_eq(m->col_cnt, 3);
+    cester_assert_uint_eq(m->padded_row_cnt, I32_PACK_LEN * 1);
+    cester_assert_uint_eq(m->padded_col_cnt, I32_PACK_LEN * 1);
+    cester_assert_uint_eq(m->padded_byte_cnt, m->value_size * m->padded_row_cnt * m->padded_col_cnt);
+    cester_assert_uint_eq(m->pack_cnt_per_row, 1);
+    cester_assert_not_null(m->data);
+
+    cester_assert_ptr_not_equal(m, src);
+
+    mtx_destroy(m);
+    mtx_destroy(src);
+)

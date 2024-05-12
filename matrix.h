@@ -1,6 +1,8 @@
 #ifndef MATRIX_H
 #define MATRIX_H 1
 
+#include <stdint.h>
+
 typedef enum MATRIX_OPTION_T {
     MTX_PLAIN_CODE = 0x0000,
     MTX_SIMD_CODE = 0x0001,

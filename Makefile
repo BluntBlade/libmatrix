@@ -5,7 +5,7 @@ LDFLAGS = --shared
 SRC = matrix.c
 OBJ = $(SRC:.c=.o)
 TARGET = libmatrix.so
-TEST_SRC = test_matrix.c
+TEST_SRC = matrix.c test_matrix.c
 TEST_OBJ = $(TEST_SRC:.c=.o)
 TEST_TARGET = test_matrix
 

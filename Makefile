@@ -22,5 +22,7 @@ test : $(TEST_TARGET)
 $(TARGET) : $(OBJ)
 	gcc -o $@ $(LDFLAGS) $^
 
+$(TEST_OBJ) : $(SRC)
+
 $(TEST_TARGET) : $(TEST_OBJ)
 	gcc -o $@ $(TEST_LDFLAGS) $^

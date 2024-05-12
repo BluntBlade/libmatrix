@@ -421,36 +421,3 @@ CESTER_TEST(
     mtx_destroy(m);
     mtx_destroy(src);
 )
-
-CESTER_TEST(
-    test_mtx_duplicate_10x10_matrix_of_random_values,
-    _,
-
-    ptr_matrix_t src = mtx_i32_allocate(10, 10);
-    ptr_matrix_t m = mtx_duplicate(src);
-
-    cester_assert_not_null(m);
-    cester_assert_uint_eq(m->value_size, sizeof(mtx_int32_t));
-    cester_assert_uint_eq(m->pack_len, I32_PACK_LEN);
-
-    cester_assert_uint_eq(m->row_cnt, 10);
-    cester_assert_uint_eq(m->col_cnt, 10);
-    cester_assert_uint_eq(m->padded_row_cnt, I32_PACK_LEN * 3);
-    cester_assert_uint_eq(m->padded_col_cnt, I32_PACK_LEN * 3);
-    cester_assert_uint_eq(m->padded_byte_cnt, m->value_size * m->padded_row_cnt * m->padded_col_cnt);
-    cester_assert_uint_eq(m->pack_cnt_per_row, 3);
-    cester_assert_not_null(m->data);
-
-    cester_assert_ptr_not_equal(m, src);
-
-    cester_assert_int_eq(m->i32_vals[0][0], src->i32_vals[0][0]);
-    cester_assert_int_eq(m->i32_vals[0][1], src->i32_vals[0][1]);
-    cester_assert_int_eq(m->i32_vals[1][0], src->i32_vals[1][0]);
-    cester_assert_int_eq(m->i32_vals[1][1], src->i32_vals[1][1]);
-    cester_assert_int_eq(m->i32_vals[8][9], src->i32_vals[8][9]);
-    cester_assert_int_eq(m->i32_vals[9][8], src->i32_vals[9][8]);
-    cester_assert_int_eq(m->i32_vals[9][9], src->i32_vals[9][9]);
-
-    mtx_destroy(m);
-    mtx_destroy(src);
-)

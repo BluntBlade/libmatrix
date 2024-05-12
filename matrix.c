@@ -55,10 +55,11 @@ typedef struct MATRIX_T {
     };
     
     union {
-        mtx_int32_t *    i32_vals[1];
-        mtx_uint32_t *   u32_vals[1];
-        mtx_float32_t *  f32_vals[1];
-        mtx_double64_t * d64_vals[1];
+        mtx_int32_t *    i32_vals[0];
+        mtx_uint32_t *   u32_vals[0];
+        mtx_float32_t *  f32_vals[0];
+        mtx_double64_t * d64_vals[0];
+        void *           val_ptrs[0];
     };
 } matrix_t; 
 
@@ -69,6 +70,7 @@ inline static mtx_count_t mtx_round_to_multiples_of(mtx_count_t cnt, mtx_count_t
 
 static ptr_matrix_t mtx_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt, size_t val_size, mtx_count_t pack_len, mtx_operation_ptr_t ops)
 {
+    mtx_count_t i = 0;
     ptr_matrix_t mtx = NULL;
     mtx_count_t padded_row_cnt = mtx_round_to_multiples_of(row_cnt, pack_len);
 
@@ -93,6 +95,10 @@ static ptr_matrix_t mtx_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt, size_
         free(mtx);
         return NULL;
     } /* if */
+
+    for (i = 0; i < mtx->padded_row_cnt; i += 1) {
+        mtx->val_ptrs[i] = mtx->data + i * mtx->value_size * mtx->padded_col_cnt;
+    } /* for */
 
     return mtx;
 } /* mtx_allocate */

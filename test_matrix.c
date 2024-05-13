@@ -940,3 +940,57 @@ CESTER_TEST(
     mtx_destroy(m);
     mtx_destroy(src);
 )
+
+CESTER_TEST(
+    MATRIX_add_and_store_3x3_matrices,
+    _,
+    ptr_matrix_t lhs = mtx_i32_allocate(3, 3);
+    ptr_matrix_t rhs = mtx_i32_allocate(3, 3);
+    ptr_matrix_t m = mtx_allocate_in_shape_of(lhs);
+
+    mtx_initialize_ones(lhs, MTX_PLAIN_CODE);
+    mtx_i32_set_each(rhs, 5);
+
+    mtx_add_and_store(m, lhs, rhs, MTX_PLAIN_CODE);
+
+    cester_assert_int_eq(m->i32_vals[0][0], 6);
+    cester_assert_int_eq(m->i32_vals[0][1], 6);
+    cester_assert_int_eq(m->i32_vals[0][2], 6);
+    cester_assert_int_eq(m->i32_vals[1][0], 6);
+    cester_assert_int_eq(m->i32_vals[1][1], 6);
+    cester_assert_int_eq(m->i32_vals[1][2], 6);
+    cester_assert_int_eq(m->i32_vals[2][0], 6);
+    cester_assert_int_eq(m->i32_vals[2][1], 6);
+    cester_assert_int_eq(m->i32_vals[2][2], 6);
+
+    mtx_destroy(m);
+    mtx_destroy(rhs);
+    mtx_destroy(lhs);
+)
+
+CESTER_TEST(
+    MATRIX_sub_and_store_3x3_matrices,
+    _,
+    ptr_matrix_t lhs = mtx_i32_allocate(3, 3);
+    ptr_matrix_t rhs = mtx_i32_allocate(3, 3);
+    ptr_matrix_t m = mtx_allocate_in_shape_of(lhs);
+
+    mtx_i32_set_each(lhs, 5);
+    mtx_initialize_ones(rhs, MTX_PLAIN_CODE);
+
+    mtx_sub_and_store(m, lhs, rhs, MTX_PLAIN_CODE);
+
+    cester_assert_int_eq(m->i32_vals[0][0], 4);
+    cester_assert_int_eq(m->i32_vals[0][1], 4);
+    cester_assert_int_eq(m->i32_vals[0][2], 4);
+    cester_assert_int_eq(m->i32_vals[1][0], 4);
+    cester_assert_int_eq(m->i32_vals[1][1], 4);
+    cester_assert_int_eq(m->i32_vals[1][2], 4);
+    cester_assert_int_eq(m->i32_vals[2][0], 4);
+    cester_assert_int_eq(m->i32_vals[2][1], 4);
+    cester_assert_int_eq(m->i32_vals[2][2], 4);
+
+    mtx_destroy(m);
+    mtx_destroy(rhs);
+    mtx_destroy(lhs);
+)

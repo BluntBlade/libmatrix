@@ -642,3 +642,15 @@ CESTER_TEST(
     mtx_destroy(rhs);
     mtx_destroy(lhs);
 )
+
+CESTER_TEST(
+    count_rows_columns_and_values_for_3x7_matrix,
+    _,
+    ptr_matrix_t m = mtx_i32_allocate(3, 7);
+
+    cester_assert_int_eq(mtx_count_rows(m), 3);
+    cester_assert_int_eq(mtx_count_columns(m), 7);
+    cester_assert_int_eq(mtx_count_values(m), 21);
+
+    mtx_destroy(m);
+)

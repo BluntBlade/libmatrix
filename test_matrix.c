@@ -654,3 +654,176 @@ CESTER_TEST(
 
     mtx_destroy(m);
 )
+
+CESTER_TEST(
+    get_submatrix_on_left_top_corner_of_16x16_matrix,
+    _,
+    ptr_matrix_t m = mtx_i32_allocate(16, 16);
+    submatrix_t ref = {0};
+
+    mtx_get_submatrix(m, 0, 0, 5, 5, &ref);
+
+    cester_assert_int_eq(ref.row_off, 0);
+    cester_assert_int_eq(ref.col_off, 0);
+    cester_assert_int_eq(ref.row_cnt, 5);
+    cester_assert_int_eq(ref.col_cnt, 5);
+    cester_assert_ptr_equal(ref.val_ptrs[0], m->val_ptrs[0]);
+    cester_assert_ptr_equal(ref.val_ptrs[1], m->val_ptrs[1]);
+    cester_assert_ptr_equal(ref.val_ptrs[2], m->val_ptrs[2]);
+    cester_assert_ptr_equal(ref.val_ptrs[3], m->val_ptrs[3]);
+    cester_assert_ptr_equal(ref.val_ptrs[4], m->val_ptrs[4]);
+
+    mtx_destroy(m);
+)
+
+CESTER_TEST(
+    get_submatrix_on_right_top_corner_of_16x16_matrix,
+    _,
+    ptr_matrix_t m = mtx_i32_allocate(16, 16);
+    submatrix_t ref = {0};
+
+    mtx_get_submatrix(m, 11, 0, 5, 5, &ref);
+
+    cester_assert_int_eq(ref.row_off, 11);
+    cester_assert_int_eq(ref.col_off, 0);
+    cester_assert_int_eq(ref.row_cnt, 5);
+    cester_assert_int_eq(ref.col_cnt, 5);
+    cester_assert_ptr_equal(ref.val_ptrs[0], m->val_ptrs[0]);
+    cester_assert_ptr_equal(ref.val_ptrs[1], m->val_ptrs[1]);
+    cester_assert_ptr_equal(ref.val_ptrs[2], m->val_ptrs[2]);
+    cester_assert_ptr_equal(ref.val_ptrs[3], m->val_ptrs[3]);
+    cester_assert_ptr_equal(ref.val_ptrs[4], m->val_ptrs[4]);
+
+    mtx_destroy(m);
+)
+
+CESTER_TEST(
+    get_submatrix_on_left_bottom_corner_of_16x16_matrix,
+    _,
+    ptr_matrix_t m = mtx_i32_allocate(16, 16);
+    submatrix_t ref = {0};
+
+    mtx_get_submatrix(m, 0, 11, 5, 5, &ref);
+
+    cester_assert_int_eq(ref.row_off, 0);
+    cester_assert_int_eq(ref.col_off, 11);
+    cester_assert_int_eq(ref.row_cnt, 5);
+    cester_assert_int_eq(ref.col_cnt, 5);
+    cester_assert_ptr_equal(ref.val_ptrs[0], m->val_ptrs[0]);
+    cester_assert_ptr_equal(ref.val_ptrs[1], m->val_ptrs[1]);
+    cester_assert_ptr_equal(ref.val_ptrs[2], m->val_ptrs[2]);
+    cester_assert_ptr_equal(ref.val_ptrs[3], m->val_ptrs[3]);
+    cester_assert_ptr_equal(ref.val_ptrs[4], m->val_ptrs[4]);
+
+    mtx_destroy(m);
+)
+
+CESTER_TEST(
+    get_submatrix_on_right_bottom_corner_of_16x16_matrix,
+    _,
+    ptr_matrix_t m = mtx_i32_allocate(16, 16);
+    submatrix_t ref = {0};
+
+    mtx_get_submatrix(m, 11, 11, 5, 5, &ref);
+
+    cester_assert_int_eq(ref.row_off, 11);
+    cester_assert_int_eq(ref.col_off, 11);
+    cester_assert_int_eq(ref.row_cnt, 5);
+    cester_assert_int_eq(ref.col_cnt, 5);
+    cester_assert_ptr_equal(ref.val_ptrs[0], m->val_ptrs[0]);
+    cester_assert_ptr_equal(ref.val_ptrs[1], m->val_ptrs[1]);
+    cester_assert_ptr_equal(ref.val_ptrs[2], m->val_ptrs[2]);
+    cester_assert_ptr_equal(ref.val_ptrs[3], m->val_ptrs[3]);
+    cester_assert_ptr_equal(ref.val_ptrs[4], m->val_ptrs[4]);
+
+    mtx_destroy(m);
+)
+
+CESTER_TEST(
+    get_submatrix_on_center_of_16x16_matrix,
+    _,
+    ptr_matrix_t m = mtx_i32_allocate(16, 16);
+    submatrix_t ref = {0};
+
+    mtx_get_submatrix(m, 6, 6, 4, 4, &ref);
+
+    cester_assert_int_eq(ref.row_off, 6);
+    cester_assert_int_eq(ref.col_off, 6);
+    cester_assert_int_eq(ref.row_cnt, 4);
+    cester_assert_int_eq(ref.col_cnt, 4);
+    cester_assert_ptr_equal(ref.val_ptrs[0], m->val_ptrs[0]);
+    cester_assert_ptr_equal(ref.val_ptrs[1], m->val_ptrs[1]);
+    cester_assert_ptr_equal(ref.val_ptrs[2], m->val_ptrs[2]);
+    cester_assert_ptr_equal(ref.val_ptrs[3], m->val_ptrs[3]);
+
+    mtx_destroy(m);
+)
+
+CESTER_TEST(
+    get_submatrix_cross_right_boundary_of_16x16_matrix,
+    _,
+    ptr_matrix_t m = mtx_i32_allocate(16, 16);
+    submatrix_t ref = {0};
+
+    mtx_get_submatrix(m, 0, 12, 10, 10, &ref);
+
+    cester_assert_int_eq(ref.row_off, 0);
+    cester_assert_int_eq(ref.col_off, 12);
+    cester_assert_int_eq(ref.row_cnt, 10);
+    cester_assert_int_eq(ref.col_cnt, 4);
+    cester_assert_ptr_equal(ref.val_ptrs[0], m->val_ptrs[0]);
+    cester_assert_ptr_equal(ref.val_ptrs[1], m->val_ptrs[1]);
+    cester_assert_ptr_equal(ref.val_ptrs[2], m->val_ptrs[2]);
+    cester_assert_ptr_equal(ref.val_ptrs[3], m->val_ptrs[3]);
+
+    mtx_destroy(m);
+)
+
+CESTER_TEST(
+    get_submatrix_cross_bottom_boundary_of_16x16_matrix,
+    _,
+    ptr_matrix_t m = mtx_i32_allocate(16, 16);
+    submatrix_t ref = {0};
+
+    mtx_get_submatrix(m, 15, 0, 10, 10, &ref);
+
+    cester_assert_int_eq(ref.row_off, 15);
+    cester_assert_int_eq(ref.col_off, 0);
+    cester_assert_int_eq(ref.row_cnt, 1);
+    cester_assert_int_eq(ref.col_cnt, 10);
+    cester_assert_ptr_equal(ref.val_ptrs[0], m->val_ptrs[0]);
+
+    mtx_destroy(m);
+)
+
+CESTER_TEST(
+    get_submatrix_beyond_right_boundary_of_16x16_matrix,
+    _,
+    ptr_matrix_t m = mtx_i32_allocate(16, 16);
+    submatrix_t ref = {0};
+
+    mtx_get_submatrix(m, 0, 16, 10, 10, &ref);
+
+    cester_assert_int_eq(ref.row_off, 0);
+    cester_assert_int_eq(ref.col_off, 16);
+    cester_assert_int_eq(ref.row_cnt, 0);
+    cester_assert_int_eq(ref.col_cnt, 0);
+
+    mtx_destroy(m);
+)
+
+CESTER_TEST(
+    get_submatrix_beyond_bottom_boundary_of_16x16_matrix,
+    _,
+    ptr_matrix_t m = mtx_i32_allocate(16, 16);
+    submatrix_t ref = {0};
+
+    mtx_get_submatrix(m, 16, 0, 10, 10, &ref);
+
+    cester_assert_int_eq(ref.row_off, 16);
+    cester_assert_int_eq(ref.col_off, 0);
+    cester_assert_int_eq(ref.row_cnt, 0);
+    cester_assert_int_eq(ref.col_cnt, 0);
+
+    mtx_destroy(m);
+)

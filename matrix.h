@@ -61,25 +61,22 @@ extern mtx_count_t mtx_count_rows(ptr_matrix_t mtx);
 extern mtx_count_t mtx_count_columns(ptr_matrix_t mtx);
 extern mtx_count_t mtx_count_values(ptr_matrix_t mtx);
 
-extern void mtx_add_and_store(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs, mtx_option_t opt);
-extern void mtx_sub_and_store(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs, mtx_option_t opt);
-extern void mtx_multiply_and_store(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs, mtx_option_t opt);
+extern void mtx_get_submatrix(ptr_matrix_t mtx, mtx_count_t row, mtx_count_t col, mtx_count_t row_cnt, mtx_count_t col_cnt, ptr_submatrix_t ref);
 
 extern void mtx_transpose_and_store(ptr_matrix_t mtx, ptr_matrix_t src);
 
-extern void mtx_get_submatrix(ptr_matrix_t mtx, mtx_count_t row, mtx_count_t col, mtx_count_t row_cnt, mtx_count_t col_cnt, ptr_submatrix_t ref);
+extern void mtx_add_and_store(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs, mtx_option_t opt);
+extern void mtx_sub_and_store(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs, mtx_option_t opt);
+extern void mtx_multiply_and_store(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs, mtx_option_t opt);
 
 /* ==== Type-Related functions. ==== */
 
 extern ptr_matrix_t mtx_i32_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt);
 
-extern void mtx_i32_initialize_from_array(ptr_matrix_t mtx, mtx_int32_t * src_vals[]);
-
 extern mtx_int32_t mtx_i32_get(ptr_matrix_t mtx, mtx_count_t row, mtx_count_t col);
 
 extern void mtx_i32_set(ptr_matrix_t mtx, mtx_count_t row, mtx_count_t col, mtx_int32_t src_val);
 extern void mtx_i32_set_each(ptr_matrix_t mtx, mtx_int32_t src_val);
-extern void mtx_i32_set_row_slice(ptr_matrix_t mtx, mtx_count_t row, mtx_count_t col, mtx_int32_t src_vals[], mtx_count_t val_cnt);
 
 extern void mtx_i32_scalar_multiply_and_store(ptr_matrix_t mtx, mtx_int32_t lhs, ptr_matrix_t rhs, mtx_option_t opt);
 

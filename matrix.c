@@ -176,33 +176,6 @@ mtx_count_t mtx_count_values(ptr_matrix_t mtx)
     return (mtx->row_cnt * mtx->col_cnt);
 } /* mtx_count_values */
 
-void mtx_add_and_store(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs, mtx_option_t opt)
-{
-    (*mtx->ops->mat_add[opt & 0x3])(mtx, lhs, rhs);
-} /* mtx_add_and_store */
-
-void mtx_sub_and_store(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs, mtx_option_t opt)
-{
-    (*mtx->ops->mat_sub[opt & 0x3])(mtx, lhs, rhs);
-} /* mtx_sub_and_store */
-
-void mtx_multiply_and_store(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs, mtx_option_t opt)
-{
-    (*mtx->ops->mat_mul[opt & 0x3])(mtx, lhs, rhs);
-} /* mtx_multiply_and_store */
-
-void mtx_transpose_and_store(ptr_matrix_t mtx, ptr_matrix_t src)
-{
-    mtx_count_t i = 0;
-    mtx_count_t j = 0;
-
-    for (i = 0; i < src->row_cnt; i += 1) {
-        for (j = 0; j < src->col_cnt; j += 1) {
-            mtx->i32_vals[j][i] = src->i32_vals[i][j];
-        } /* for j */
-    } /* for i */
-} /* mtx_transpose_and_store */
-
 void mtx_get_submatrix(ptr_matrix_t mtx, mtx_count_t row, mtx_count_t col, mtx_count_t row_cnt, mtx_count_t col_cnt, ptr_submatrix_t ref)
 {
     if (mtx->row_cnt <= row) {
@@ -230,15 +203,34 @@ void mtx_get_submatrix(ptr_matrix_t mtx, mtx_count_t row, mtx_count_t col, mtx_c
     ref->val_ptrs = mtx->val_ptrs;
 } /* mtx_get_submatrix */
 
-/* ==== Type-Related functions. ==== */
-
-void mtx_i32_initialize_from_array(ptr_matrix_t mtx, mtx_int32_t * src_vals[])
+void mtx_transpose_and_store(ptr_matrix_t mtx, ptr_matrix_t src)
 {
     mtx_count_t i = 0;
-    for (i = 0; i < mtx->row_cnt; i += 1) {
-        memcpy(mtx->i32_vals[i], src_vals[i], sizeof(mtx->i32_padded[0]) * mtx->col_cnt);
-    } /* for */
-} /* mtx_i32_initialize_from_array */
+    mtx_count_t j = 0;
+
+    for (i = 0; i < src->row_cnt; i += 1) {
+        for (j = 0; j < src->col_cnt; j += 1) {
+            mtx->i32_vals[j][i] = src->i32_vals[i][j];
+        } /* for j */
+    } /* for i */
+} /* mtx_transpose_and_store */
+
+void mtx_add_and_store(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs, mtx_option_t opt)
+{
+    (*mtx->ops->mat_add[opt & 0x3])(mtx, lhs, rhs);
+} /* mtx_add_and_store */
+
+void mtx_sub_and_store(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs, mtx_option_t opt)
+{
+    (*mtx->ops->mat_sub[opt & 0x3])(mtx, lhs, rhs);
+} /* mtx_sub_and_store */
+
+void mtx_multiply_and_store(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs, mtx_option_t opt)
+{
+    (*mtx->ops->mat_mul[opt & 0x3])(mtx, lhs, rhs);
+} /* mtx_multiply_and_store */
+
+/* ==== Type-Related functions. ==== */
 
 mtx_int32_t mtx_i32_get(ptr_matrix_t mtx, mtx_count_t row, mtx_count_t col)
 {
@@ -261,16 +253,6 @@ void mtx_i32_set_each(ptr_matrix_t mtx, mtx_int32_t src_val)
     } /* for */
     return;
 } /* mtx_i32_set_each */
-
-void mtx_i32_set_row_slice(ptr_matrix_t mtx, mtx_count_t row, mtx_count_t col, mtx_int32_t src_vals[], mtx_count_t val_cnt)
-{
-    mtx_count_t end = col + val_cnt;
-    if (mtx->col_cnt < end) {
-        /* Copy enough values from the source and don't cross the row boundary. */
-        end = mtx->col_cnt;
-    } /* if */
-    memcpy(&mtx->i32_vals[row][col], src_vals, sizeof(mtx->i32_padded[0]) * (end - col));
-} /* mtx_i32_set_row_slice */
 
 static ptr_matrix_t mat_add_and_store_plain(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs)
 {

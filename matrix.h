@@ -33,7 +33,7 @@ typedef struct SUBMATRIX_T {
         mtx_uint32_t **   u32_vals;
         mtx_float32_t **  f32_vals;
         mtx_double64_t ** d64_vals;
-        void **           data;
+        void **           val_ptrs;
     };
 } submatrix_t, *ptr_submatrix_t;
 

@@ -205,13 +205,29 @@ void mtx_transpose_and_store(ptr_matrix_t mtx, ptr_matrix_t src)
 
 void mtx_get_submatrix(ptr_matrix_t mtx, mtx_count_t row, mtx_count_t col, mtx_count_t row_cnt, mtx_count_t col_cnt, ptr_submatrix_t ref)
 {
-    /* If out of range, then return the whole matrix. */
-    ref->row_off = (mtx->row_cnt < row) ? 0 : row;
-    ref->col_off = (mtx->col_cnt < col) ? 0 : col;
+    if (mtx->row_cnt <= row) {
+        /* Beyond the right boundary. */
+        ref->row_off = mtx->row_cnt;
+    } else {
+        ref->row_off = row;
+    } /* if */
+    if (mtx->col_cnt <= col) {
+        /* Beyond the bottom boundary. */
+        ref->col_off = mtx->col_cnt;
+    } else {
+        ref->col_off = col;
+    } /* if */
+
     ref->row_cnt = (row_cnt <= mtx->row_cnt - ref->row_off) ? row_cnt : (mtx->row_cnt - ref->row_off);
     ref->col_cnt = (col_cnt <= mtx->col_cnt - ref->col_off) ? col_cnt : (mtx->col_cnt - ref->col_off);
 
-    ref->data = mtx->data;
+    if (ref->row_cnt == 0 || ref->col_cnt == 0) {
+        /* If the target sub-matrix is beyond the right or bottom boundary, return an empty one. */
+        ref->row_cnt = 0;
+        ref->col_cnt = 0;
+    } /* if */
+
+    ref->val_ptrs = mtx->val_ptrs;
 } /* mtx_get_submatrix */
 
 /* ==== Type-Related functions. ==== */

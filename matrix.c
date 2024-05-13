@@ -256,7 +256,7 @@ void mtx_i32_set_row_slice(ptr_matrix_t mtx, mtx_count_t row, mtx_count_t col, m
     memcpy(&mtx->i32_vals[row][col], src_vals, sizeof(mtx->i32_padded[0]) * (end - col));
 } /* mtx_i32_set_row_slice */
 
-static ptr_matrix_t mtx_add_and_store_plain(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs)
+static ptr_matrix_t mat_add_and_store_plain(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs)
 {
     mtx_count_t i = 0;
     mtx_count_t j = 0;
@@ -266,9 +266,9 @@ static ptr_matrix_t mtx_add_and_store_plain(ptr_matrix_t mtx, ptr_matrix_t lhs, 
         } /* for */
     } /* for */
     return mtx;
-} /* mtx_add_and_store_plain */
+} /* mat_add_and_store_plain */
 
-static ptr_matrix_t mtx_sub_and_store_plain(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs)
+static ptr_matrix_t mat_sub_and_store_plain(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs)
 {
     mtx_count_t i = 0;
     mtx_count_t j = 0;
@@ -278,9 +278,9 @@ static ptr_matrix_t mtx_sub_and_store_plain(ptr_matrix_t mtx, ptr_matrix_t lhs, 
         } /* for */
     } /* for */
     return mtx;
-} /* mtx_sub_and_store_plain */
+} /* mat_sub_and_store_plain */
 
-static ptr_matrix_t mtx_multiply_and_store_plain(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs)
+static ptr_matrix_t mat_multiply_and_store_plain(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs)
 {
     mtx_count_t i = 0;
     mtx_count_t j = 0;
@@ -297,7 +297,7 @@ static ptr_matrix_t mtx_multiply_and_store_plain(ptr_matrix_t mtx, ptr_matrix_t 
         } /* for j */
     } /* for i */
     return mtx;
-} /* mtx_multiply_and_store_plain */
+} /* mat_multiply_and_store_plain */
 
 inline static mtx_int32_t mtx_sum(mtx_v4si_t * src)
 {
@@ -305,7 +305,7 @@ inline static mtx_int32_t mtx_sum(mtx_v4si_t * src)
     return vals[0] + vals[1] + vals[2] + vals[3];
 } /* mtx_sum */
 
-static ptr_matrix_t mtx_multiply_and_store_simd(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs)
+static ptr_matrix_t mat_multiply_and_store_simd(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs)
 {
     mtx_count_t i = 0;
     mtx_count_t j = 0;
@@ -329,7 +329,7 @@ static ptr_matrix_t mtx_multiply_and_store_simd(ptr_matrix_t mtx, ptr_matrix_t l
         } /* for */
     } /* for */
     return mtx;
-} /* mtx_multiply_and_store_simd */
+} /* mat_multiply_and_store_simd */
 
 static ptr_matrix_t mtx_i32_scalar_multiply_and_store_plain(ptr_matrix_t mtx, mtx_int32_t lhs, ptr_matrix_t rhs)
 {
@@ -393,46 +393,46 @@ void mtx_i32_scalar_multiply_and_store(ptr_matrix_t mtx, mtx_int32_t lhs, ptr_ma
     (*mtx->ops->i32_scr_mul[opt & 0x3])(mtx, lhs, rhs);
 } /* mtx_i32_scalar_multiply_and_store */
 
-static void mtx_i32_init_identity_plain(ptr_matrix_t mtx)
+static void i32_init_identity_plain(ptr_matrix_t mtx)
 {
     mtx_count_t i = 0;
     for (i = 0; i < mtx->row_cnt; i += 1) {
         mtx->i32_vals[i][i] = 1;
     } /* for */
-} /* mtx_i32_init_identity_plain */
+} /* i32_init_identity_plain */
 
-static void mtx_i32_init_zeros_plain(ptr_matrix_t mtx)
+static void i32_init_zeros_plain(ptr_matrix_t mtx)
 {
     memset(mtx->i32_padded, 0, mtx->padded_byte_cnt);
-} /* mtx_i32_init_zeros_plain */
+} /* i32_init_zeros_plain */
 
-static void mtx_i32_init_ones_plain(ptr_matrix_t mtx)
+static void i32_init_ones_plain(ptr_matrix_t mtx)
 {
     mtx_count_t i = 0;
     mtx_count_t j = 0;
     for (i = 0; i < mtx->row_cnt; i += 1) {
-        for (i = 0; i < mtx->col_cnt; i += 1) {
+        for (j = 0; j < mtx->col_cnt; j += 1) {
             mtx->i32_vals[i][j] = 1;
         } /* for */
     } /* for */
-} /* mtx_i32_init_ones_plain */
+} /* i32_init_ones_plain */
 
 static mtx_operation_t i32_ops = {
     {
-        &mtx_i32_init_identity_plain,
-        &mtx_i32_init_identity_plain
+        &i32_init_identity_plain,
+        &i32_init_identity_plain
     },
     {
-        &mtx_i32_init_zeros_plain,
-        &mtx_i32_init_zeros_plain
+        &i32_init_zeros_plain,
+        &i32_init_zeros_plain
     },
     {
-        &mtx_i32_init_ones_plain,
-        &mtx_i32_init_ones_plain
+        &i32_init_ones_plain,
+        &i32_init_ones_plain
     },
-    {&mtx_add_and_store_plain, &mtx_add_and_store_plain},
-    {&mtx_sub_and_store_plain, &mtx_sub_and_store_plain},
-    {&mtx_multiply_and_store_plain, &mtx_multiply_and_store_simd},
+    {&mat_add_and_store_plain, &mat_add_and_store_plain},
+    {&mat_sub_and_store_plain, &mat_sub_and_store_plain},
+    {&mat_multiply_and_store_plain, &mat_multiply_and_store_simd},
     {NULL, NULL},
 };
 

@@ -454,3 +454,61 @@ CESTER_TEST(
     mtx_destroy(m);
     mtx_destroy(src);
 )
+
+CESTER_TEST(
+    test_mtx_initialize_15x15_identity_matrix_using_plain_code,
+    _,
+    mtx_count_t i = 0;
+    mtx_count_t j = 0;
+    ptr_matrix_t m = mtx_i32_allocate(15, 15);
+
+    mtx_initialize_identity(m, MTX_PLAIN_CODE);
+
+    for (i = 0; i < m->row_cnt; i += 1) {
+        for (j = 0; j < m->col_cnt; j += 1) {
+            if (i == j) {
+                cester_assert_int_eq(m->i32_vals[i][j], 1);
+            } else {
+                cester_assert_int_eq(m->i32_vals[i][j], 0);
+            } /* if */
+        } /* for */
+    } /* for */
+
+    mtx_destroy(m);
+)
+
+CESTER_TEST(
+    test_mtx_initialize_9x5_zeros_matrix_using_plain_code,
+    _,
+    mtx_count_t i = 0;
+    mtx_count_t j = 0;
+    ptr_matrix_t m = mtx_i32_allocate(9, 5);
+
+    mtx_initialize_zeros(m, MTX_PLAIN_CODE);
+
+    for (i = 0; i < m->row_cnt; i += 1) {
+        for (j = 0; j < m->col_cnt; j += 1) {
+            cester_assert_int_eq(m->i32_vals[i][j], 0);
+        } /* for */
+    } /* for */
+
+    mtx_destroy(m);
+)
+
+CESTER_TEST(
+    test_mtx_initialize_5x9_ones_matrix_using_plain_code,
+    _,
+    mtx_count_t i = 0;
+    mtx_count_t j = 0;
+    ptr_matrix_t m = mtx_i32_allocate(5, 9);
+
+    mtx_initialize_ones(m, MTX_PLAIN_CODE);
+
+    for (i = 0; i < m->row_cnt; i += 1) {
+        for (j = 0; j < m->col_cnt; j += 1) {
+            cester_assert_int_eq(m->i32_vals[i][j], 1);
+        } /* for */
+    } /* for */
+
+    mtx_destroy(m);
+)

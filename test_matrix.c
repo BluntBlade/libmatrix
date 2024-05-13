@@ -189,8 +189,8 @@ CESTER_TEST(
 CESTER_TEST(
     MATRIX_i32_set_and_get_one_value_in_5x5_matrix,
     _,
-    mtx_int32_t val1= 0;
-    mtx_int32_t val2= 0;
+    mtx_int32_t val1 = 0;
+    mtx_int32_t val2 = 0;
     ptr_matrix_t m = mtx_i32_allocate(5, 5);
 
     mtx_i32_set(m, 0, 0, 1);
@@ -203,6 +203,26 @@ CESTER_TEST(
     cester_assert_uint_eq(m->i32_vals[4][4], 5);
     cester_assert_uint_eq(val1, 1);
     cester_assert_uint_eq(val2, 5);
+
+    mtx_destroy(m);
+)
+
+CESTER_TEST(
+    MATRIX_i32_set_each_value_to_5_in_2x2_matrix,
+    _,
+    mtx_int32_t val = 0;
+    ptr_matrix_t m = mtx_i32_allocate(2, 2);
+
+    mtx_i32_set_each(m, 5);
+
+    val = mtx_i32_get(m, 0, 0);
+    cester_assert_uint_eq(val, 5);
+    val = mtx_i32_get(m, 0, 1);
+    cester_assert_uint_eq(val, 5);
+    val = mtx_i32_get(m, 1, 0);
+    cester_assert_uint_eq(val, 5);
+    val = mtx_i32_get(m, 1, 1);
+    cester_assert_uint_eq(val, 5);
 
     mtx_destroy(m);
 )

@@ -827,3 +827,23 @@ CESTER_TEST(
 
     mtx_destroy(m);
 )
+
+CESTER_TEST(
+    i32_set_one_value_in_submatrix,
+    _,
+    ptr_matrix_t m = mtx_i32_allocate(16, 16);
+    submatrix_t ref = {0};
+
+    mtx_get_submatrix(m, 1, 1, 2, 2, &ref);
+    smtx_i32_set(&ref, 0, 0, 5);
+    smtx_i32_set(&ref, 0, 1, 6);
+    smtx_i32_set(&ref, 1, 0, 7);
+    smtx_i32_set(&ref, 1, 1, 8);
+
+    cester_assert_int_eq(m->i32_vals[1][1], 5);
+    cester_assert_int_eq(m->i32_vals[1][2], 6);
+    cester_assert_int_eq(m->i32_vals[2][1], 7);
+    cester_assert_int_eq(m->i32_vals[2][2], 8);
+
+    mtx_destroy(m);
+)

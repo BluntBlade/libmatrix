@@ -168,5 +168,10 @@ inline static ptr_matrix_t mtx_transpose(ptr_matrix_t src)
     return mtx;
 } /* mtx_transpose */
 
+inline static void smtx_i32_set(ptr_submatrix_t ref, mtx_count_t row, mtx_count_t col, mtx_int32_t val)
+{
+    ref->i32_vals[ref->row_off + row][ref->col_off + col] = val;
+} /* smtx_i32_set */
+
 #endif /* MATRIX_H */
 

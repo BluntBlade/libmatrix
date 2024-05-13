@@ -8,7 +8,7 @@
 /* ==== Tests for mtx_int32_t matrix. ==== */
 
 CESTER_TEST(
-    test_mtx_i32_allocate_for_1x1_matrix,
+    i32_allocate_for_1x1_matrix,
     _,
 
     ptr_matrix_t m = mtx_i32_allocate(1, 1);
@@ -28,7 +28,7 @@ CESTER_TEST(
 )
 
 CESTER_TEST(
-    test_mtx_i32_allocate_for_1x2_matrix,
+    i32_allocate_for_1x2_matrix,
     _,
 
     ptr_matrix_t m = mtx_i32_allocate(1, 2);
@@ -47,7 +47,7 @@ CESTER_TEST(
 )
 
 CESTER_TEST(
-    test_mtx_i32_allocate_for_1x5_matrix,
+    i32_allocate_for_1x5_matrix,
     _,
 
     ptr_matrix_t m = mtx_i32_allocate(1, 5);
@@ -67,7 +67,7 @@ CESTER_TEST(
 )
 
 CESTER_TEST(
-    test_mtx_i32_allocate_for_2x1_matrix,
+    i32_allocate_for_2x1_matrix,
     _,
 
     ptr_matrix_t m = mtx_i32_allocate(2, 1);
@@ -87,7 +87,7 @@ CESTER_TEST(
 )
 
 CESTER_TEST(
-    test_mtx_i32_allocate_for_6x1_matrix,
+    i32_allocate_for_6x1_matrix,
     _,
 
     ptr_matrix_t m = mtx_i32_allocate(6, 1);
@@ -107,7 +107,7 @@ CESTER_TEST(
 )
 
 CESTER_TEST(
-    test_mtx_i32_allocate_for_4x4_matrix,
+    i32_allocate_for_4x4_matrix,
     _,
 
     ptr_matrix_t m = mtx_i32_allocate(4, 4);
@@ -127,7 +127,7 @@ CESTER_TEST(
 )
 
 CESTER_TEST(
-    test_mtx_i32_allocate_for_7x7_matrix,
+    i32_allocate_for_7x7_matrix,
     _,
 
     ptr_matrix_t m = mtx_i32_allocate(7, 7);
@@ -147,7 +147,7 @@ CESTER_TEST(
 )
 
 CESTER_TEST(
-    test_mtx_i32_allocate_for_8x8_matrix,
+    i32_allocate_for_8x8_matrix,
     _,
 
     ptr_matrix_t m = mtx_i32_allocate(8, 8);
@@ -167,7 +167,7 @@ CESTER_TEST(
 )
 
 CESTER_TEST(
-    test_mtx_i32_allocate_for_1024x1024_matrix,
+    i32_allocate_for_1024x1024_matrix,
     _,
 
     ptr_matrix_t m = mtx_i32_allocate(1024, 1024);
@@ -189,7 +189,7 @@ CESTER_TEST(
 /* ==== Common functions. ==== */
 
 CESTER_TEST(
-    test_mtx_allocate_for_multiplying_5x1_and_1x5_matrix,
+    allocate_for_multiplying_5x1_and_1x5_matrix,
     _,
 
     ptr_matrix_t lhs = mtx_i32_allocate(5, 1);
@@ -217,7 +217,7 @@ CESTER_TEST(
 )
 
 CESTER_TEST(
-    test_mtx_allocate_for_multiplying_1x5_and_5x1_matrix,
+    allocate_for_multiplying_1x5_and_5x1_matrix,
     _,
 
     ptr_matrix_t lhs = mtx_i32_allocate(1, 5);
@@ -245,7 +245,7 @@ CESTER_TEST(
 )
 
 CESTER_TEST(
-    test_mtx_allocate_for_multiplying_8x8_and_8x8_matrix,
+    allocate_for_multiplying_8x8_and_8x8_matrix,
     _,
 
     ptr_matrix_t lhs = mtx_i32_allocate(8, 8);
@@ -273,7 +273,7 @@ CESTER_TEST(
 )
 
 CESTER_TEST(
-    test_mtx_allocate_for_transposing_5x1_matrix,
+    allocate_for_transposing_5x1_matrix,
     _,
 
     ptr_matrix_t src = mtx_i32_allocate(5, 1);
@@ -298,7 +298,7 @@ CESTER_TEST(
 )
 
 CESTER_TEST(
-    test_mtx_allocate_for_transposing_1x5_matrix,
+    allocate_for_transposing_1x5_matrix,
     _,
 
     ptr_matrix_t src = mtx_i32_allocate(1, 5);
@@ -323,7 +323,7 @@ CESTER_TEST(
 )
 
 CESTER_TEST(
-    test_mtx_allocate_for_transposing_13x13_matrix,
+    allocate_for_transposing_13x13_matrix,
     _,
 
     ptr_matrix_t src = mtx_i32_allocate(13, 13);
@@ -348,7 +348,7 @@ CESTER_TEST(
 )
 
 CESTER_TEST(
-    test_mtx_allocate_in_shape_of_3x1_matrix,
+    allocate_in_shape_of_3x1_matrix,
     _,
 
     ptr_matrix_t src = mtx_i32_allocate(3, 1);
@@ -373,7 +373,7 @@ CESTER_TEST(
 )
 
 CESTER_TEST(
-    test_mtx_allocate_in_shape_of_1x3_matrix,
+    allocate_in_shape_of_1x3_matrix,
     _,
 
     ptr_matrix_t src = mtx_i32_allocate(1, 3);
@@ -398,7 +398,7 @@ CESTER_TEST(
 )
 
 CESTER_TEST(
-    test_mtx_allocate_in_shape_of_3x3_matrix,
+    allocate_in_shape_of_3x3_matrix,
     _,
 
     ptr_matrix_t src = mtx_i32_allocate(3, 3);
@@ -423,7 +423,7 @@ CESTER_TEST(
 )
 
 CESTER_TEST(
-    test_mtx_duplicate_10x10_matrix_of_random_values,
+    duplicate_10x10_matrix_of_random_values,
     _,
 
     ptr_matrix_t src = mtx_i32_allocate(10, 10);
@@ -456,7 +456,7 @@ CESTER_TEST(
 )
 
 CESTER_TEST(
-    test_mtx_initialize_15x15_identity_matrix_using_plain_code,
+    initialize_15x15_identity_matrix_using_plain_code,
     _,
     mtx_count_t i = 0;
     mtx_count_t j = 0;
@@ -478,7 +478,7 @@ CESTER_TEST(
 )
 
 CESTER_TEST(
-    test_mtx_initialize_9x5_zeros_matrix_using_plain_code,
+    initialize_9x5_zeros_matrix_using_plain_code,
     _,
     mtx_count_t i = 0;
     mtx_count_t j = 0;
@@ -496,7 +496,7 @@ CESTER_TEST(
 )
 
 CESTER_TEST(
-    test_mtx_initialize_5x9_ones_matrix_using_plain_code,
+    initialize_5x9_ones_matrix_using_plain_code,
     _,
     mtx_count_t i = 0;
     mtx_count_t j = 0;

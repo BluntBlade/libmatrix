@@ -847,3 +847,55 @@ CESTER_TEST(
 
     mtx_destroy(m);
 )
+
+CESTER_TEST(
+    transpose_and_store_from_5x1_to_1x5_matrix,
+    _,
+    submatrix_t ref = {0};
+    ptr_matrix_t src = mtx_i32_allocate(5, 1);
+    ptr_matrix_t m = mtx_allocate_for_transposing(src);
+
+    mtx_initialize_zeros(src, MTX_PLAIN_CODE);
+    mtx_get_submatrix(src, 2, 0, 2, 0, &ref);
+    smtx_i32_set(&ref, 0, 0, 5);
+    smtx_i32_set(&ref, 1, 0, 7);
+
+    mtx_transpose_and_store(m, src);
+
+    cester_assert_int_eq(m->row_cnt, 1);
+    cester_assert_int_eq(m->col_cnt, 5);
+    cester_assert_int_eq(m->i32_vals[0][0], 0);
+    cester_assert_int_eq(m->i32_vals[0][1], 0);
+    cester_assert_int_eq(m->i32_vals[0][2], 5);
+    cester_assert_int_eq(m->i32_vals[0][3], 7);
+    cester_assert_int_eq(m->i32_vals[0][4], 0);
+
+    mtx_destroy(m);
+    mtx_destroy(src);
+)
+
+CESTER_TEST(
+    transpose_and_store_from_1x5_to_5x1_matrix,
+    _,
+    submatrix_t ref = {0};
+    ptr_matrix_t src = mtx_i32_allocate(1, 5);
+    ptr_matrix_t m = mtx_allocate_for_transposing(src);
+
+    mtx_initialize_ones(src, MTX_PLAIN_CODE);
+    mtx_get_submatrix(src, 0, 2, 0, 2, &ref);
+    smtx_i32_set(&ref, 0, 0, 9);
+    smtx_i32_set(&ref, 0, 1, 11);
+
+    mtx_transpose_and_store(m, src);
+
+    cester_assert_int_eq(m->row_cnt, 5);
+    cester_assert_int_eq(m->col_cnt, 1);
+    cester_assert_int_eq(m->i32_vals[0][0], 1);
+    cester_assert_int_eq(m->i32_vals[1][0], 1);
+    cester_assert_int_eq(m->i32_vals[2][0], 9);
+    cester_assert_int_eq(m->i32_vals[3][0], 11);
+    cester_assert_int_eq(m->i32_vals[4][0], 1);
+
+    mtx_destroy(m);
+    mtx_destroy(src);
+)

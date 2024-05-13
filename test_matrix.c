@@ -186,7 +186,28 @@ CESTER_TEST(
     mtx_destroy(m);
 )
 
-/* ==== Common functions. ==== */
+CESTER_TEST(
+    MATRIX_i32_set_and_get_one_value_in_5x5_matrix,
+    _,
+    mtx_int32_t val1= 0;
+    mtx_int32_t val2= 0;
+    ptr_matrix_t m = mtx_i32_allocate(5, 5);
+
+    mtx_i32_set(m, 0, 0, 1);
+    mtx_i32_set(m, 4, 4, 5);
+
+    val1 = mtx_i32_get(m, 0, 0);
+    val2 = mtx_i32_get(m, 4, 4);
+
+    cester_assert_uint_eq(m->i32_vals[0][0], 1);
+    cester_assert_uint_eq(m->i32_vals[4][4], 5);
+    cester_assert_uint_eq(val1, 1);
+    cester_assert_uint_eq(val2, 5);
+
+    mtx_destroy(m);
+)
+
+/* ==== Tests for common functions. ==== */
 
 CESTER_TEST(
     MATRIX_allocate_for_multiplying_5x1_and_1x5_matrix,

@@ -512,3 +512,133 @@ CESTER_TEST(
 
     mtx_destroy(m);
 )
+
+CESTER_TEST(
+    can_do_add_btween_2x2_matrices,
+    _,
+    ptr_matrix_t lhs = mtx_i32_allocate(2, 2);
+    ptr_matrix_t rhs = mtx_i32_allocate(2, 2);
+    int ret = mtx_can_do_add(lhs, rhs);
+
+    cester_assert_int_ne(ret, 0);
+
+    mtx_destroy(rhs);
+    mtx_destroy(lhs);
+)
+
+CESTER_TEST(
+    can_do_add_btween_2x5_matrices,
+    _,
+    ptr_matrix_t lhs = mtx_i32_allocate(2, 5);
+    ptr_matrix_t rhs = mtx_i32_allocate(2, 5);
+    int ret = mtx_can_do_add(lhs, rhs);
+
+    cester_assert_int_ne(ret, 0);
+
+    mtx_destroy(rhs);
+    mtx_destroy(lhs);
+)
+
+CESTER_TEST(
+    cannot_do_add_btween_2x2_and_3x3_matrices,
+    _,
+    ptr_matrix_t lhs = mtx_i32_allocate(2, 2);
+    ptr_matrix_t rhs = mtx_i32_allocate(3, 3);
+    int ret = mtx_can_do_add(lhs, rhs);
+
+    cester_assert_int_eq(ret, 0);
+
+    mtx_destroy(rhs);
+    mtx_destroy(lhs);
+)
+
+CESTER_TEST(
+    can_do_sub_btween_3x3_matrices,
+    _,
+    ptr_matrix_t lhs = mtx_i32_allocate(3, 3);
+    ptr_matrix_t rhs = mtx_i32_allocate(3, 3);
+    int ret = mtx_can_do_sub(lhs, rhs);
+
+    cester_assert_int_ne(ret, 0);
+
+    mtx_destroy(rhs);
+    mtx_destroy(lhs);
+)
+
+CESTER_TEST(
+    can_do_sub_btween_5x2_matrices,
+    _,
+    ptr_matrix_t lhs = mtx_i32_allocate(5, 2);
+    ptr_matrix_t rhs = mtx_i32_allocate(5, 2);
+    int ret = mtx_can_do_sub(lhs, rhs);
+
+    cester_assert_int_ne(ret, 0);
+
+    mtx_destroy(rhs);
+    mtx_destroy(lhs);
+)
+
+CESTER_TEST(
+    cannot_do_sub_btween_1x7_and_7x1_matrices,
+    _,
+    ptr_matrix_t lhs = mtx_i32_allocate(1, 7);
+    ptr_matrix_t rhs = mtx_i32_allocate(7, 1);
+    int ret = mtx_can_do_sub(lhs, rhs);
+
+    cester_assert_int_eq(ret, 0);
+
+    mtx_destroy(rhs);
+    mtx_destroy(lhs);
+)
+
+CESTER_TEST(
+    can_do_mul_btween_13x13_matrices,
+    _,
+    ptr_matrix_t lhs = mtx_i32_allocate(13, 13);
+    ptr_matrix_t rhs = mtx_i32_allocate(13, 13);
+    int ret = mtx_can_do_multiply(lhs, rhs);
+
+    cester_assert_int_ne(ret, 0);
+
+    mtx_destroy(rhs);
+    mtx_destroy(lhs);
+)
+
+CESTER_TEST(
+    can_do_mul_btween_2x4_and_4x5_matrices,
+    _,
+    ptr_matrix_t lhs = mtx_i32_allocate(2, 4);
+    ptr_matrix_t rhs = mtx_i32_allocate(4, 5);
+    int ret = mtx_can_do_multiply(lhs, rhs);
+
+    cester_assert_int_ne(ret, 0);
+
+    mtx_destroy(rhs);
+    mtx_destroy(lhs);
+)
+
+CESTER_TEST(
+    can_do_mul_btween_5x3_and_3x2_matrices,
+    _,
+    ptr_matrix_t lhs = mtx_i32_allocate(5, 3);
+    ptr_matrix_t rhs = mtx_i32_allocate(3, 2);
+    int ret = mtx_can_do_multiply(lhs, rhs);
+
+    cester_assert_int_ne(ret, 0);
+
+    mtx_destroy(rhs);
+    mtx_destroy(lhs);
+)
+
+CESTER_TEST(
+    cannot_do_mul_btween_5x7_and_8x2_matrices,
+    _,
+    ptr_matrix_t lhs = mtx_i32_allocate(5, 7);
+    ptr_matrix_t rhs = mtx_i32_allocate(8, 2);
+    int ret = mtx_can_do_multiply(lhs, rhs);
+
+    cester_assert_int_eq(ret, 0);
+
+    mtx_destroy(rhs);
+    mtx_destroy(lhs);
+)

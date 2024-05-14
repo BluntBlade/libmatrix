@@ -321,7 +321,7 @@ static ptr_matrix_t mat_multiply_and_store_simd(ptr_matrix_t mtx, ptr_matrix_t l
 
             for (i = 0; i < lhs->row_cnt; i += 1) {
                 pack_lhs = lhs->i32_packs[i * lhs->pack_cnt_per_row + k / I32_PACK_LEN];
-                ret = __builtin_ia32_pmuldq128(pack_lhs, pack_rhs);
+                ret = __builtin_ia32_pmulld128(pack_lhs, pack_rhs);
                 mtx->i32_vals[i][j] += mtx_sum(&ret);
             } /* for */
         } /* for */
@@ -343,14 +343,11 @@ static void i32_scr_multiply_and_store_plain(ptr_matrix_t mtx, mtx_int32_t lhs, 
 
 static void i32_scr_multiply_and_store_simd(ptr_matrix_t mtx, mtx_int32_t lhs, ptr_matrix_t rhs)
 {
-#undef IMTX_CALL_INTRINSIC_AND_STORE
-#define IMTX_CALL_INTRINSIC_AND_STORE(func, pack, val) (pack) = func((pack), (val))
-
     mtx_v4si_t scalar = {0};
     mtx_count_t i = 0;
     mtx_count_t itr_cnt = 0;
     mtx_count_t rmd_cnt = 0;
-    mtx_count_t valid_pack_cnt = mtx->row_cnt * mtx->pack_cnt_per_row;
+    mtx_count_t valid_pack_cnt = rhs->padded_row_cnt * rhs->pack_cnt_per_row;
     
     scalar = __builtin_ia32_vec_set_v4si(scalar, lhs, 0);
     scalar = __builtin_ia32_vec_set_v4si(scalar, lhs, 1);
@@ -361,27 +358,26 @@ static void i32_scr_multiply_and_store_simd(ptr_matrix_t mtx, mtx_int32_t lhs, p
     rmd_cnt = valid_pack_cnt % 8;
 
     for (i = 0; i < itr_cnt; i += 1) {
-        IMTX_CALL_INTRINSIC_AND_STORE(__builtin_ia32_pmuldq128, rhs->i32_packs[i + 0], scalar);
-        IMTX_CALL_INTRINSIC_AND_STORE(__builtin_ia32_pmuldq128, rhs->i32_packs[i + 1], scalar);
-        IMTX_CALL_INTRINSIC_AND_STORE(__builtin_ia32_pmuldq128, rhs->i32_packs[i + 2], scalar);
-        IMTX_CALL_INTRINSIC_AND_STORE(__builtin_ia32_pmuldq128, rhs->i32_packs[i + 3], scalar);
-        IMTX_CALL_INTRINSIC_AND_STORE(__builtin_ia32_pmuldq128, rhs->i32_packs[i + 4], scalar);
-        IMTX_CALL_INTRINSIC_AND_STORE(__builtin_ia32_pmuldq128, rhs->i32_packs[i + 5], scalar);
-        IMTX_CALL_INTRINSIC_AND_STORE(__builtin_ia32_pmuldq128, rhs->i32_packs[i + 6], scalar);
-        IMTX_CALL_INTRINSIC_AND_STORE(__builtin_ia32_pmuldq128, rhs->i32_packs[i + 7], scalar);
+        mtx->i32_packs[i * 8 + 0] = __builtin_ia32_pmulld128(rhs->i32_packs[i * 8 + 0], scalar);
+        mtx->i32_packs[i * 8 + 1] = __builtin_ia32_pmulld128(rhs->i32_packs[i * 8 + 1], scalar);
+        mtx->i32_packs[i * 8 + 2] = __builtin_ia32_pmulld128(rhs->i32_packs[i * 8 + 2], scalar);
+        mtx->i32_packs[i * 8 + 3] = __builtin_ia32_pmulld128(rhs->i32_packs[i * 8 + 3], scalar);
+        mtx->i32_packs[i * 8 + 4] = __builtin_ia32_pmulld128(rhs->i32_packs[i * 8 + 4], scalar);
+        mtx->i32_packs[i * 8 + 5] = __builtin_ia32_pmulld128(rhs->i32_packs[i * 8 + 5], scalar);
+        mtx->i32_packs[i * 8 + 6] = __builtin_ia32_pmulld128(rhs->i32_packs[i * 8 + 6], scalar);
+        mtx->i32_packs[i * 8 + 7] = __builtin_ia32_pmulld128(rhs->i32_packs[i * 8 + 7], scalar);
     } /* for i */
 
     switch (rmd_cnt) {
-        case 7: IMTX_CALL_INTRINSIC_AND_STORE(__builtin_ia32_pmuldq128, rhs->i32_packs[i + 6], scalar);
-        case 6: IMTX_CALL_INTRINSIC_AND_STORE(__builtin_ia32_pmuldq128, rhs->i32_packs[i + 5], scalar);
-        case 5: IMTX_CALL_INTRINSIC_AND_STORE(__builtin_ia32_pmuldq128, rhs->i32_packs[i + 4], scalar);
-        case 4: IMTX_CALL_INTRINSIC_AND_STORE(__builtin_ia32_pmuldq128, rhs->i32_packs[i + 3], scalar);
-        case 3: IMTX_CALL_INTRINSIC_AND_STORE(__builtin_ia32_pmuldq128, rhs->i32_packs[i + 2], scalar);
-        case 2: IMTX_CALL_INTRINSIC_AND_STORE(__builtin_ia32_pmuldq128, rhs->i32_packs[i + 1], scalar);
-        case 1: IMTX_CALL_INTRINSIC_AND_STORE(__builtin_ia32_pmuldq128, rhs->i32_packs[i + 0], scalar);
+        case 7: mtx->i32_packs[i * 8 + 6] = __builtin_ia32_pmulld128(rhs->i32_packs[i * 8 + 6], scalar);
+        case 6: mtx->i32_packs[i * 8 + 5] = __builtin_ia32_pmulld128(rhs->i32_packs[i * 8 + 5], scalar);
+        case 5: mtx->i32_packs[i * 8 + 4] = __builtin_ia32_pmulld128(rhs->i32_packs[i * 8 + 4], scalar);
+        case 4: mtx->i32_packs[i * 8 + 3] = __builtin_ia32_pmulld128(rhs->i32_packs[i * 8 + 3], scalar);
+        case 3: mtx->i32_packs[i * 8 + 2] = __builtin_ia32_pmulld128(rhs->i32_packs[i * 8 + 2], scalar);
+        case 2: mtx->i32_packs[i * 8 + 1] = __builtin_ia32_pmulld128(rhs->i32_packs[i * 8 + 1], scalar);
+        case 1: mtx->i32_packs[i * 8 + 0] = __builtin_ia32_pmulld128(rhs->i32_packs[i * 8 + 0], scalar);
         default: break;
     } /* switch */
-#undef IMTX_CALL_INTRINSIC_AND_STORE
 } /* i32_scr_multiply_and_store_simd */
 
 void mtx_i32_scalar_multiply_and_store(ptr_matrix_t mtx, mtx_int32_t lhs, ptr_matrix_t rhs, mtx_option_t opt)

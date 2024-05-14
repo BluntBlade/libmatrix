@@ -14,10 +14,10 @@ typedef mtx_int32_t mtx_v4si_t __attribute__ ((vector_size (16)));
 
 typedef void (*mat_init_fn)(ptr_matrix_t);
 typedef ptr_matrix_t (*mat_oper_fn)(ptr_matrix_t, ptr_matrix_t, ptr_matrix_t);
-typedef ptr_matrix_t (*i32_scr_oper_fn)(ptr_matrix_t, mtx_int32_t, ptr_matrix_t);
-typedef ptr_matrix_t (*u32_scr_oper_fn)(ptr_matrix_t, mtx_uint32_t, ptr_matrix_t);
-typedef ptr_matrix_t (*f32_scr_oper_fn)(ptr_matrix_t, mtx_float32_t, ptr_matrix_t);
-typedef ptr_matrix_t (*d64_scr_oper_fn)(ptr_matrix_t, mtx_double64_t, ptr_matrix_t);
+typedef void (*i32_scr_oper_fn)(ptr_matrix_t, mtx_int32_t, ptr_matrix_t);
+typedef void (*u32_scr_oper_fn)(ptr_matrix_t, mtx_uint32_t, ptr_matrix_t);
+typedef void (*f32_scr_oper_fn)(ptr_matrix_t, mtx_float32_t, ptr_matrix_t);
+typedef void (*d64_scr_oper_fn)(ptr_matrix_t, mtx_double64_t, ptr_matrix_t);
 
 typedef struct MATRIX_OPERATION_T {
     mat_init_fn init_identity[2];   /* Initialization of identity matrix. */
@@ -329,20 +329,19 @@ static ptr_matrix_t mat_multiply_and_store_simd(ptr_matrix_t mtx, ptr_matrix_t l
     return mtx;
 } /* mat_multiply_and_store_simd */
 
-static ptr_matrix_t mtx_i32_scalar_multiply_and_store_plain(ptr_matrix_t mtx, mtx_int32_t lhs, ptr_matrix_t rhs)
+static void i32_scr_multiply_and_store_plain(ptr_matrix_t mtx, mtx_int32_t lhs, ptr_matrix_t rhs)
 {
     mtx_count_t i = 0;
     mtx_count_t j = 0;
 
-    for (i = 0; i < mtx->row_cnt; i += 1) {
-        for (j = 0; j < mtx->col_cnt; j += 1) {
+    for (i = 0; i < rhs->row_cnt; i += 1) {
+        for (j = 0; j < rhs->col_cnt; j += 1) {
             mtx->i32_vals[i][j] = lhs * rhs->i32_vals[i][j];
         } /* for j */
     } /* for i */
-    return mtx;
-} /* mtx_i32_scalar_multiply_and_store_plain */
+} /* i32_scr_multiply_and_store_plain */
 
-ptr_matrix_t mtx_i32_scalar_multiply_and_store_simd(ptr_matrix_t mtx, mtx_int32_t lhs, ptr_matrix_t rhs)
+static void i32_scr_multiply_and_store_simd(ptr_matrix_t mtx, mtx_int32_t lhs, ptr_matrix_t rhs)
 {
 #undef IMTX_CALL_INTRINSIC_AND_STORE
 #define IMTX_CALL_INTRINSIC_AND_STORE(func, pack, val) (pack) = func((pack), (val))
@@ -382,9 +381,8 @@ ptr_matrix_t mtx_i32_scalar_multiply_and_store_simd(ptr_matrix_t mtx, mtx_int32_
         case 1: IMTX_CALL_INTRINSIC_AND_STORE(__builtin_ia32_pmuldq128, rhs->i32_packs[i + 0], scalar);
         default: break;
     } /* switch */
-    return mtx;
 #undef IMTX_CALL_INTRINSIC_AND_STORE
-} /* mtx_i32_scalar_multiply_and_store_simd */
+} /* i32_scr_multiply_and_store_simd */
 
 void mtx_i32_scalar_multiply_and_store(ptr_matrix_t mtx, mtx_int32_t lhs, ptr_matrix_t rhs, mtx_option_t opt)
 {
@@ -431,7 +429,7 @@ static mtx_operation_t i32_ops = {
     {&mat_add_and_store_plain, &mat_add_and_store_plain},
     {&mat_sub_and_store_plain, &mat_sub_and_store_plain},
     {&mat_multiply_and_store_plain, &mat_multiply_and_store_simd},
-    {NULL, NULL},
+    {&i32_scr_multiply_and_store_plain, &i32_scr_multiply_and_store_simd},
 };
 
 ptr_matrix_t mtx_i32_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt)

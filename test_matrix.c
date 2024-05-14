@@ -1067,3 +1067,28 @@ CESTER_TEST(
     mtx_destroy(rhs);
     mtx_destroy(lhs);
 )
+
+CESTER_TEST(
+    MATRIX_scalar_mul_and_store_3x3_matrix_using_plain_code,
+    _,
+    mtx_int32_t lhs = 5;
+    ptr_matrix_t rhs = mtx_i32_allocate(3, 3);
+    ptr_matrix_t m = mtx_allocate_in_shape_of(rhs);
+
+    mtx_i32_set_each(rhs, 5);
+
+    mtx_i32_scalar_multiply_and_store(m, lhs, rhs, MTX_PLAIN_CODE);
+
+    cester_assert_int_eq(m->i32_vals[0][0], 25);
+    cester_assert_int_eq(m->i32_vals[0][1], 25);
+    cester_assert_int_eq(m->i32_vals[0][2], 25);
+    cester_assert_int_eq(m->i32_vals[1][0], 25);
+    cester_assert_int_eq(m->i32_vals[1][1], 25);
+    cester_assert_int_eq(m->i32_vals[1][2], 25);
+    cester_assert_int_eq(m->i32_vals[2][0], 25);
+    cester_assert_int_eq(m->i32_vals[2][1], 25);
+    cester_assert_int_eq(m->i32_vals[2][2], 25);
+
+    mtx_destroy(m);
+    mtx_destroy(rhs);
+)

@@ -1,6 +1,6 @@
 CC = gcc
 
-CFLAGS = -fPIC -I. -g
+CFLAGS = -g -fPIC -I. -I/usr/local/include -msse4.1
 LDFLAGS = --shared
 #TEST_LDFLAGS = -Wl,--wrap=malloc
 TEST_LDFLAGS = -g

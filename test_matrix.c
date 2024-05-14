@@ -1150,17 +1150,18 @@ CESTER_TEST(
 
     mtx_i32_set_each(lhs, 10);
     mtx_initialize_ones(rhs, MTX_PLAIN_CODE);
+    rhs->i32_vals[0][0] = 2;
     rhs->i32_vals[1022][1022] = 2;
 
     mtx_multiply_and_store(m, lhs, rhs, MTX_SIMD_CODE);
 
-    cester_assert_int_eq(m->i32_vals[0][0], 10230);
+    cester_assert_int_eq(m->i32_vals[0][0], 10240);
     cester_assert_int_eq(m->i32_vals[0][1], 10230);
     cester_assert_int_eq(m->i32_vals[0][2], 10230);
     cester_assert_int_eq(m->i32_vals[0][1020], 10230);
     cester_assert_int_eq(m->i32_vals[0][1021], 10230);
     cester_assert_int_eq(m->i32_vals[0][1022], 10240);
-    cester_assert_int_eq(m->i32_vals[1][0], 10230);
+    cester_assert_int_eq(m->i32_vals[1][0], 10240);
     cester_assert_int_eq(m->i32_vals[1][1], 10230);
     cester_assert_int_eq(m->i32_vals[1][2], 10230);
     cester_assert_int_eq(m->i32_vals[1][1020], 10230);
@@ -1169,6 +1170,63 @@ CESTER_TEST(
     cester_assert_int_eq(m->i32_vals[1022][1020], 10230);
     cester_assert_int_eq(m->i32_vals[1022][1021], 10230);
     cester_assert_int_eq(m->i32_vals[1022][1022], 10240);
+
+    mtx_destroy(m);
+    mtx_destroy(rhs);
+    mtx_destroy(lhs);
+)
+
+CESTER_TEST(
+    MATRIX_mul_and_store_3x3_matrices_of_different_numbers_using_simd_code,
+    _,
+    ptr_matrix_t lhs = mtx_i32_allocate(3, 3);
+    ptr_matrix_t rhs = mtx_i32_allocate(3, 3);
+    ptr_matrix_t m = mtx_allocate_for_multiplying(lhs, rhs);
+
+    /* lhs = [  1 2 3
+                4 5 6
+                7 8 9   ]
+    */
+
+    lhs->i32_vals[0][0] = 1;
+    lhs->i32_vals[0][1] = 2;
+    lhs->i32_vals[0][2] = 3;
+    lhs->i32_vals[1][0] = 4;
+    lhs->i32_vals[1][1] = 5;
+    lhs->i32_vals[1][2] = 6;
+    lhs->i32_vals[2][0] = 7;
+    lhs->i32_vals[2][1] = 8;
+    lhs->i32_vals[2][2] = 9;
+
+    /* rhs = [  9 8 7
+                6 5 4
+                3 2 1   ]
+    */
+    rhs->i32_vals[0][0] = 9;
+    rhs->i32_vals[0][1] = 8;
+    rhs->i32_vals[0][2] = 7;
+    rhs->i32_vals[1][0] = 6;
+    rhs->i32_vals[1][1] = 5;
+    rhs->i32_vals[1][2] = 4;
+    rhs->i32_vals[2][0] = 3;
+    rhs->i32_vals[2][1] = 2;
+    rhs->i32_vals[2][2] = 1;
+
+    /* ret = [   30  24  18
+                 84  69  54
+                138 114  90   ]
+    */
+    mtx_multiply_and_store(m, lhs, rhs, MTX_SIMD_CODE);
+
+    cester_assert_int_eq(m->i32_vals[0][0], 30);
+    cester_assert_int_eq(m->i32_vals[0][1], 24);
+    cester_assert_int_eq(m->i32_vals[0][2], 18);
+    cester_assert_int_eq(m->i32_vals[1][0], 84);
+    cester_assert_int_eq(m->i32_vals[1][1], 69);
+    cester_assert_int_eq(m->i32_vals[1][2], 54);
+    cester_assert_int_eq(m->i32_vals[2][0], 138);
+    cester_assert_int_eq(m->i32_vals[2][1], 114);
+    cester_assert_int_eq(m->i32_vals[2][2], 90);
 
     mtx_destroy(m);
     mtx_destroy(rhs);

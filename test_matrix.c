@@ -1069,6 +1069,113 @@ CESTER_TEST(
 )
 
 CESTER_TEST(
+    MATRIX_mul_and_store_3x3_matrices_using_simd_code,
+    _,
+    ptr_matrix_t lhs = mtx_i32_allocate(3, 3);
+    ptr_matrix_t rhs = mtx_i32_allocate(3, 3);
+    ptr_matrix_t m = mtx_allocate_for_multiplying(lhs, rhs);
+
+    mtx_i32_set_each(lhs, 5);
+    mtx_initialize_ones(rhs, MTX_PLAIN_CODE);
+
+    mtx_multiply_and_store(m, lhs, rhs, MTX_SIMD_CODE);
+
+    cester_assert_int_eq(m->i32_vals[0][0], 15);
+    cester_assert_int_eq(m->i32_vals[0][1], 15);
+    cester_assert_int_eq(m->i32_vals[0][2], 15);
+    cester_assert_int_eq(m->i32_vals[1][0], 15);
+    cester_assert_int_eq(m->i32_vals[1][1], 15);
+    cester_assert_int_eq(m->i32_vals[1][2], 15);
+    cester_assert_int_eq(m->i32_vals[2][0], 15);
+    cester_assert_int_eq(m->i32_vals[2][1], 15);
+    cester_assert_int_eq(m->i32_vals[2][2], 15);
+
+    mtx_destroy(m);
+    mtx_destroy(rhs);
+    mtx_destroy(lhs);
+)
+
+CESTER_TEST(
+    MATRIX_mul_and_store_3x1_and_1x3_matrices_using_simd_code,
+    _,
+    ptr_matrix_t lhs = mtx_i32_allocate(3, 1);
+    ptr_matrix_t rhs = mtx_i32_allocate(1, 3);
+    ptr_matrix_t m = mtx_allocate_for_multiplying(lhs, rhs);
+
+    mtx_i32_set_each(lhs, 5);
+    mtx_initialize_ones(rhs, MTX_PLAIN_CODE);
+
+    mtx_multiply_and_store(m, lhs, rhs, MTX_SIMD_CODE);
+
+    cester_assert_int_eq(m->i32_vals[0][0], 5);
+    cester_assert_int_eq(m->i32_vals[0][1], 5);
+    cester_assert_int_eq(m->i32_vals[0][2], 5);
+    cester_assert_int_eq(m->i32_vals[1][0], 5);
+    cester_assert_int_eq(m->i32_vals[1][1], 5);
+    cester_assert_int_eq(m->i32_vals[1][2], 5);
+    cester_assert_int_eq(m->i32_vals[2][0], 5);
+    cester_assert_int_eq(m->i32_vals[2][1], 5);
+    cester_assert_int_eq(m->i32_vals[2][2], 5);
+
+    mtx_destroy(m);
+    mtx_destroy(rhs);
+    mtx_destroy(lhs);
+)
+
+CESTER_TEST(
+    MATRIX_mul_and_store_1x3_and_3x1_matrices_using_simd_code,
+    _,
+    ptr_matrix_t lhs = mtx_i32_allocate(1, 3);
+    ptr_matrix_t rhs = mtx_i32_allocate(3, 1);
+    ptr_matrix_t m = mtx_allocate_for_multiplying(lhs, rhs);
+
+    mtx_i32_set_each(lhs, 5);
+    mtx_initialize_ones(rhs, MTX_PLAIN_CODE);
+
+    mtx_multiply_and_store(m, lhs, rhs, MTX_SIMD_CODE);
+
+    cester_assert_int_eq(m->i32_vals[0][0], 15);
+
+    mtx_destroy(m);
+    mtx_destroy(rhs);
+    mtx_destroy(lhs);
+)
+
+CESTER_TEST(
+    MATRIX_mul_and_store_1023x1023_matrices_using_simd_code,
+    _,
+    ptr_matrix_t lhs = mtx_i32_allocate(1023, 1023);
+    ptr_matrix_t rhs = mtx_i32_allocate(1023, 1023);
+    ptr_matrix_t m = mtx_allocate_for_multiplying(lhs, rhs);
+
+    mtx_i32_set_each(lhs, 10);
+    mtx_initialize_ones(rhs, MTX_PLAIN_CODE);
+    rhs->i32_vals[1022][1022] = 2;
+
+    mtx_multiply_and_store(m, lhs, rhs, MTX_SIMD_CODE);
+
+    cester_assert_int_eq(m->i32_vals[0][0], 10230);
+    cester_assert_int_eq(m->i32_vals[0][1], 10230);
+    cester_assert_int_eq(m->i32_vals[0][2], 10230);
+    cester_assert_int_eq(m->i32_vals[0][1020], 10230);
+    cester_assert_int_eq(m->i32_vals[0][1021], 10230);
+    cester_assert_int_eq(m->i32_vals[0][1022], 10240);
+    cester_assert_int_eq(m->i32_vals[1][0], 10230);
+    cester_assert_int_eq(m->i32_vals[1][1], 10230);
+    cester_assert_int_eq(m->i32_vals[1][2], 10230);
+    cester_assert_int_eq(m->i32_vals[1][1020], 10230);
+    cester_assert_int_eq(m->i32_vals[1][1021], 10230);
+    cester_assert_int_eq(m->i32_vals[1][1022], 10240);
+    cester_assert_int_eq(m->i32_vals[1022][1020], 10230);
+    cester_assert_int_eq(m->i32_vals[1022][1021], 10230);
+    cester_assert_int_eq(m->i32_vals[1022][1022], 10240);
+
+    mtx_destroy(m);
+    mtx_destroy(rhs);
+    mtx_destroy(lhs);
+)
+
+CESTER_TEST(
     MATRIX_scalar_mul_and_store_3x3_matrix_using_plain_code,
     _,
     mtx_int32_t lhs = 5;

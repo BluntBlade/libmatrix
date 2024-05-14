@@ -1092,3 +1092,75 @@ CESTER_TEST(
     mtx_destroy(m);
     mtx_destroy(rhs);
 )
+
+CESTER_TEST(
+    MATRIX_scalar_mul_and_store_3x3_matrix_using_simd_code,
+    _,
+    mtx_int32_t lhs = 2;
+    ptr_matrix_t rhs = mtx_i32_allocate(3, 3);
+    ptr_matrix_t m = mtx_allocate_in_shape_of(rhs);
+
+    mtx_initialize_zeros(rhs, MTX_PLAIN_CODE);
+    rhs->i32_vals[0][0] = 1;
+    rhs->i32_vals[0][1] = 2;
+    rhs->i32_vals[0][2] = 3;
+    rhs->i32_vals[1][0] = 4;
+    rhs->i32_vals[1][1] = 5;
+    rhs->i32_vals[1][2] = 6;
+    rhs->i32_vals[2][0] = 7;
+    rhs->i32_vals[2][1] = 8;
+    rhs->i32_vals[2][2] = 9;
+
+    mtx_i32_scalar_multiply_and_store(m, lhs, rhs, MTX_SIMD_CODE);
+
+    cester_assert_int_eq(m->i32_vals[0][0], 2);
+    cester_assert_int_eq(m->i32_vals[0][1], 4);
+    cester_assert_int_eq(m->i32_vals[0][2], 6);
+    cester_assert_int_eq(m->i32_vals[1][0], 8);
+    cester_assert_int_eq(m->i32_vals[1][1], 10);
+    cester_assert_int_eq(m->i32_vals[1][2], 12);
+    cester_assert_int_eq(m->i32_vals[2][0], 14);
+    cester_assert_int_eq(m->i32_vals[2][1], 16);
+    cester_assert_int_eq(m->i32_vals[2][2], 18);
+
+    mtx_destroy(m);
+    mtx_destroy(rhs);
+)
+
+CESTER_TEST(
+    MATRIX_scalar_mul_and_store_11x7_matrix_using_simd_code,
+    _,
+    mtx_int32_t lhs = 2;
+    ptr_matrix_t rhs = mtx_i32_allocate(11, 7);
+    ptr_matrix_t m = mtx_allocate_in_shape_of(rhs);
+
+    mtx_initialize_ones(rhs, MTX_PLAIN_CODE);
+    rhs->i32_vals[0][0] = 1;
+    rhs->i32_vals[0][1] = 2;
+    rhs->i32_vals[0][2] = 3;
+    rhs->i32_vals[1][0] = 4;
+    rhs->i32_vals[1][1] = 5;
+    rhs->i32_vals[1][2] = 6;
+    rhs->i32_vals[2][0] = 7;
+    rhs->i32_vals[2][1] = 8;
+    rhs->i32_vals[2][2] = 9;
+    rhs->i32_vals[10][6] = 10;
+
+    mtx_i32_scalar_multiply_and_store(m, lhs, rhs, MTX_SIMD_CODE);
+
+    cester_assert_int_eq(m->i32_vals[0][0], 2);
+    cester_assert_int_eq(m->i32_vals[0][1], 4);
+    cester_assert_int_eq(m->i32_vals[0][2], 6);
+    cester_assert_int_eq(m->i32_vals[1][0], 8);
+    cester_assert_int_eq(m->i32_vals[1][1], 10);
+    cester_assert_int_eq(m->i32_vals[1][2], 12);
+    cester_assert_int_eq(m->i32_vals[2][0], 14);
+    cester_assert_int_eq(m->i32_vals[2][1], 16);
+    cester_assert_int_eq(m->i32_vals[2][2], 18);
+    cester_assert_int_eq(m->i32_vals[5][10], 2);
+    cester_assert_int_eq(m->i32_vals[10][5], 2);
+    cester_assert_int_eq(m->i32_vals[10][6], 20);
+
+    mtx_destroy(m);
+    mtx_destroy(rhs);
+)

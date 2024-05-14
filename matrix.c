@@ -96,10 +96,9 @@ static ptr_matrix_t mtx_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt, size_
         return NULL;
     } /* if */
 
-    for (i = 0; i < mtx->row_cnt; i += 1) {
+    for (i = 0; i < mtx->padded_row_cnt; i += 1) {
         mtx->val_ptrs[i] = mtx->data + i * mtx->value_size * mtx->padded_col_cnt;
     } /* for */
-
     return mtx;
 } /* mtx_allocate */
 
@@ -437,11 +436,6 @@ ptr_matrix_t mtx_i32_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt)
     if (! mtx) {
         return NULL;
     } /* if */
-
-    for (i = 0; i < mtx->row_cnt; i += 1) {
-        mtx->i32_vals[i] = &mtx->i32_padded[i * mtx->padded_col_cnt];
-    } /* for */
     return mtx;
 } /* mtx_i32_allocate */
-
 

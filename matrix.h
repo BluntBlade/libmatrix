@@ -3,10 +3,38 @@
 
 #include <stdint.h>
 
-typedef enum MATRIX_OPTION_T {
-    MTX_PLAIN_CODE = 0x0000,
-    MTX_SIMD_CODE = 0x0001,
-} mtx_option_t;
+/* ==== Declarations of the mtx_block_t type ==== */
+
+typedef struct MTX_BLOCK_T {
+    /*
+        The struct MTX_BLOCK_T defines a way to reference part of a matrix,
+        or a `sub-matrix`.
+
+        To access one element at (x,y) in the block, use the following
+        expression, where `ptr` is the pointer to this struct.
+
+        ptr->i32_vals[ x ][ y ]
+
+        NOTE: 
+        1. x and y MUST be less than the row_cnt and col_cnt members,
+           respectively;
+        2. DON'T change the value of row_max, col_max, row_cnt and col_cnt.
+    */
+    unsigned int    row_max;    /* Max number of rows of the block. */
+    unsigned int    col_max;    /* Max number of columns of the block. */
+    unsigned int    row_cnt;    /* Total number of rows of the block. */
+    unsigned int    col_cnt;    /* Total number of columns of the block. */
+
+    union {
+        int32_t **  i32_vals;   /* Pointers to each row of the int32 values. */
+        uint32_t ** u32_vals;   /* Pointers to each row of the uint32 values. */
+        float **    f32_vals;   /* Pointers to each row of the float values. */
+        double **   d64_vals;   /* Pointers to each row of the double values. */
+    };
+} mtx_block_t, *ptr_mtx_block_t;
+
+extern ptr_mtx_block_t mtx_blk_create(unsigned int row_max, unsigned int col_max);
+extern void mtx_blk_destroy(ptr_mtx_block_t blk);
 
 typedef struct SUBMATRIX_T {
     /*
@@ -29,6 +57,13 @@ typedef struct SUBMATRIX_T {
         void **     val_ptrs;
     };
 } submatrix_t, *ptr_submatrix_t;
+
+/* ==== Declarations of the matrix_t type ==== */
+
+typedef enum MATRIX_OPTION_T {
+    MTX_PLAIN_CODE = 0x0000,
+    MTX_SIMD_CODE = 0x0001,
+} mtx_option_t;
 
 struct MATRIX_T;
 typedef struct MATRIX_T * ptr_matrix_t;

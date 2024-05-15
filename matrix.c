@@ -3,6 +3,44 @@
 
 #include "matrix.h"
 
+/* ==== Definitions of the mtx_block_t type ==== */
+
+typedef struct BLOCK_T {
+    mtx_block_t     block;          /* The block struct use by client code. */
+    void *          row_ptrs[0];    /* Pointers to each row of the block. */
+} block_t, *ptr_block_t;
+
+inline static ptr_mtx_block_t iblk_to_eblk(ptr_block_t iblk)
+{
+    return &iblk->block;
+} /* iblk_to_eblk */
+
+inline static ptr_block_t eblk_to_iblk(ptr_mtx_block_t eblk)
+{
+    return (ptr_block_t)(eblk - (&(((ptr_block_t)(0))->block) - 0));
+} /* eblk_to_iblk */
+
+ptr_mtx_block_t mtx_blk_create(unsigned int row_max, unsigned int col_max)
+{
+    ptr_block_t iblk = calloc(sizeof(block_t) + sizeof(void *) * row_max, 1);
+    if (! iblk) {
+        return NULL;
+    } /* if */
+    iblk->block.row_max = row_max;
+    iblk->block.col_max = col_max;
+    iblk->block.row_cnt = 0;
+    iblk->block.col_cnt = 0;
+    iblk->block.i32_vals = (int32_t **)&iblk->row_ptrs[0];
+    return iblk_to_eblk(iblk);
+} /* mtx_blk_create */
+
+void mtx_blk_destroy(ptr_mtx_block_t eblk)
+{
+    free(eblk_to_iblk(eblk));
+} /* mtx_blk_destroy */
+
+/* ==== Definitions of the matrix_t type ==== */
+
 enum {
     I32_PACK_LEN = 4,
     U32_PACK_LEN = 4,

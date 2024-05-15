@@ -8,13 +8,6 @@ typedef enum MATRIX_OPTION_T {
     MTX_SIMD_CODE = 0x0001,
 } mtx_option_t;
 
-typedef size_t mtx_count_t;
-
-typedef int32_t mtx_int32_t;
-typedef uint32_t mtx_uint32_t;
-typedef float mtx_float32_t;
-typedef double mtx_double64_t;
-
 typedef struct SUBMATRIX_T {
     /*
         For referencing one element at (x,y) in the sub-matrix,
@@ -23,17 +16,17 @@ typedef struct SUBMATRIX_T {
 
         ref->i32_vals[ ref->row_off + x ][ ref->col_off + y ]
     */
-    mtx_count_t row_off; /* Offset of the sub-matrix at row dimension. */
-    mtx_count_t col_off; /* Offset of the sub-matrix at column dimension. */
-    mtx_count_t row_cnt; /* Total count of rows of the sub-matrix. */
-    mtx_count_t col_cnt; /* Total count of columns of the sub-matrix. */
+    unsigned int row_off; /* Offset of the sub-matrix at row dimension. */
+    unsigned int col_off; /* Offset of the sub-matrix at column dimension. */
+    unsigned int row_cnt; /* Total count of rows of the sub-matrix. */
+    unsigned int col_cnt; /* Total count of columns of the sub-matrix. */
 
     union {
-        mtx_int32_t **    i32_vals;
-        mtx_uint32_t **   u32_vals;
-        mtx_float32_t **  f32_vals;
-        mtx_double64_t ** d64_vals;
-        void **           val_ptrs;
+        int32_t **  i32_vals;
+        uint32_t ** u32_vals;
+        float **    f32_vals;
+        double **   d64_vals;
+        void **     val_ptrs;
     };
 } submatrix_t, *ptr_submatrix_t;
 
@@ -57,11 +50,11 @@ extern void mtx_initialize_ones(ptr_matrix_t mtx, mtx_option_t opt);
 extern int mtx_can_do_add(ptr_matrix_t lhs, ptr_matrix_t rhs);
 extern int mtx_can_do_multiply(ptr_matrix_t lhs, ptr_matrix_t rhs);
 
-extern mtx_count_t mtx_count_rows(ptr_matrix_t mtx);
-extern mtx_count_t mtx_count_columns(ptr_matrix_t mtx);
-extern mtx_count_t mtx_count_values(ptr_matrix_t mtx);
+extern unsigned int mtx_count_rows(ptr_matrix_t mtx);
+extern unsigned int mtx_count_columns(ptr_matrix_t mtx);
+extern unsigned int mtx_count_values(ptr_matrix_t mtx);
 
-extern void mtx_get_submatrix(ptr_matrix_t mtx, mtx_count_t row, mtx_count_t col, mtx_count_t row_cnt, mtx_count_t col_cnt, ptr_submatrix_t ref);
+extern void mtx_get_submatrix(ptr_matrix_t mtx, unsigned int row, unsigned int col, unsigned int row_cnt, unsigned int col_cnt, ptr_submatrix_t ref);
 
 extern void mtx_transpose_and_store(ptr_matrix_t mtx, ptr_matrix_t src);
 
@@ -71,22 +64,22 @@ extern void mtx_multiply_and_store(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matri
 
 /* ==== Type-Related functions. ==== */
 
-extern ptr_matrix_t mtx_i32_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt);
+extern ptr_matrix_t mtx_i32_allocate(unsigned int row_cnt, unsigned int col_cnt);
 
-extern mtx_int32_t mtx_i32_get(ptr_matrix_t mtx, mtx_count_t row, mtx_count_t col);
+extern int32_t mtx_i32_get(ptr_matrix_t mtx, unsigned int row, unsigned int col);
 
-extern void mtx_i32_set(ptr_matrix_t mtx, mtx_count_t row, mtx_count_t col, mtx_int32_t src_val);
-extern void mtx_i32_set_each(ptr_matrix_t mtx, mtx_int32_t src_val);
+extern void mtx_i32_set(ptr_matrix_t mtx, unsigned int row, unsigned int col, int32_t src_val);
+extern void mtx_i32_set_each(ptr_matrix_t mtx, int32_t src_val);
 
-extern void mtx_i32_scalar_multiply_and_store(ptr_matrix_t mtx, mtx_int32_t lhs, ptr_matrix_t rhs, mtx_option_t opt);
+extern void mtx_i32_scalar_multiply_and_store(ptr_matrix_t mtx, int32_t lhs, ptr_matrix_t rhs, mtx_option_t opt);
 
-extern ptr_matrix_t mtx_u32_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt); /* TODO */
-extern ptr_matrix_t mtx_f32_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt); /* TODO */
-extern ptr_matrix_t mtx_d64_allocate(mtx_count_t row_cnt, mtx_count_t col_cnt); /* TODO */
+extern ptr_matrix_t mtx_u32_allocate(unsigned int row_cnt, unsigned int col_cnt); /* TODO */
+extern ptr_matrix_t mtx_f32_allocate(unsigned int row_cnt, unsigned int col_cnt); /* TODO */
+extern ptr_matrix_t mtx_d64_allocate(unsigned int row_cnt, unsigned int col_cnt); /* TODO */
 
 /* ==== Wrapper functions. ==== */
 
-inline static ptr_matrix_t mtx_i32_create_zeros(mtx_count_t row_cnt, mtx_count_t col_cnt, mtx_option_t opt)
+inline static ptr_matrix_t mtx_i32_create_zeros(unsigned int row_cnt, unsigned int col_cnt, mtx_option_t opt)
 {
     ptr_matrix_t mtx = mtx_i32_allocate(row_cnt, col_cnt);
     if (! mtx) {
@@ -96,7 +89,7 @@ inline static ptr_matrix_t mtx_i32_create_zeros(mtx_count_t row_cnt, mtx_count_t
     return mtx;
 } /* mtx_i32_create_zeros */
 
-inline static ptr_matrix_t mtx_i32_create_ones(mtx_count_t row_cnt, mtx_count_t col_cnt, mtx_option_t opt)
+inline static ptr_matrix_t mtx_i32_create_ones(unsigned int row_cnt, unsigned int col_cnt, mtx_option_t opt)
 {
     ptr_matrix_t mtx = mtx_i32_allocate(row_cnt, col_cnt);
     if (! mtx) {
@@ -106,7 +99,7 @@ inline static ptr_matrix_t mtx_i32_create_ones(mtx_count_t row_cnt, mtx_count_t 
     return mtx;
 } /* mtx_i32_create_ones */
 
-inline static ptr_matrix_t mtx_i32_create_identity(mtx_count_t row_cnt, mtx_count_t col_cnt, mtx_option_t opt)
+inline static ptr_matrix_t mtx_i32_create_identity(unsigned int row_cnt, unsigned int col_cnt, mtx_option_t opt)
 {
     ptr_matrix_t mtx = mtx_i32_allocate(row_cnt, col_cnt);
     if (! mtx) {
@@ -151,7 +144,7 @@ inline static ptr_matrix_t mtx_multiply(ptr_matrix_t lhs, ptr_matrix_t rhs, mtx_
     return mtx;
 } /* mtx_multiply */
 
-inline static ptr_matrix_t mtx_i32_scalar_multiply(mtx_int32_t lhs, ptr_matrix_t rhs, mtx_option_t opt)
+inline static ptr_matrix_t mtx_i32_scalar_multiply(int32_t lhs, ptr_matrix_t rhs, mtx_option_t opt)
 {
     ptr_matrix_t mtx = mtx_allocate_in_shape_of(rhs);
     if (! mtx) {
@@ -168,7 +161,7 @@ inline static ptr_matrix_t mtx_transpose(ptr_matrix_t src)
     return mtx;
 } /* mtx_transpose */
 
-inline static void smtx_i32_set(ptr_submatrix_t ref, mtx_count_t row, mtx_count_t col, mtx_int32_t val)
+inline static void smtx_i32_set(ptr_submatrix_t ref, unsigned int row, unsigned int col, int32_t val)
 {
     ref->i32_vals[ref->row_off + row][ref->col_off + col] = val;
 } /* smtx_i32_set */

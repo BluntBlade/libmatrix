@@ -63,16 +63,16 @@ typedef struct MATRIX_T {
     };
 } matrix_t; 
 
-inline static unsigned int mtx_round_to_multiples_of(unsigned int cnt, unsigned int n)
+inline static unsigned int round_count_to_multiples_of(unsigned int cnt, unsigned int n)
 {
     return (cnt & ~(n - 1)) + ((cnt & (n - 1)) ? n : 0);
-} /* mtx_round_to_multiples_of */
+} /* round_count_to_multiples_of */
 
 static ptr_matrix_t mtx_allocate(unsigned int row_cnt, unsigned int col_cnt, size_t val_size, size_t pack_len, ptr_operation_t ops)
 {
     unsigned int i = 0;
     ptr_matrix_t mtx = NULL;
-    unsigned int padded_row_cnt = mtx_round_to_multiples_of(row_cnt, pack_len);
+    unsigned int padded_row_cnt = round_count_to_multiples_of(row_cnt, pack_len);
 
     mtx = calloc(sizeof(matrix_t) + sizeof(void *) * padded_row_cnt, 1);
     if (! mtx) {
@@ -82,7 +82,7 @@ static ptr_matrix_t mtx_allocate(unsigned int row_cnt, unsigned int col_cnt, siz
     mtx->row_cnt = row_cnt;
     mtx->col_cnt = col_cnt;
     mtx->padded_row_cnt = padded_row_cnt;
-    mtx->padded_col_cnt = mtx_round_to_multiples_of(col_cnt, pack_len);
+    mtx->padded_col_cnt = round_count_to_multiples_of(col_cnt, pack_len);
     mtx->padded_byte_cnt = val_size * mtx->padded_row_cnt * mtx->padded_col_cnt;
     mtx->pack_cnt_per_row = mtx->padded_col_cnt / pack_len;
     mtx->pack_len = pack_len;
@@ -296,11 +296,11 @@ static ptr_matrix_t mat_multiply_and_store_plain(ptr_matrix_t mtx, ptr_matrix_t 
     return mtx;
 } /* mat_multiply_and_store_plain */
 
-inline static int32_t mtx_sum(v4si_t * src)
+inline static int32_t v4si_sum_up(v4si_t * src)
 {
     int32_t * vals = (int32_t *) src;
     return vals[0] + vals[1] + vals[2] + vals[3];
-} /* mtx_sum */
+} /* v4si_sum_up */
 
 static ptr_matrix_t mat_multiply_and_store_simd(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs)
 {
@@ -321,7 +321,7 @@ static ptr_matrix_t mat_multiply_and_store_simd(ptr_matrix_t mtx, ptr_matrix_t l
             for (i = 0; i < lhs->row_cnt; i += 1) {
                 pack_lhs = lhs->i32_packs[i * lhs->pack_cnt_per_row + k / I32_PACK_LEN];
                 ret = __builtin_ia32_pmulld128(pack_lhs, pack_rhs);
-                mtx->i32_vals[i][j] += mtx_sum(&ret);
+                mtx->i32_vals[i][j] += v4si_sum_up(&ret);
             } /* for */
         } /* for */
     } /* for */

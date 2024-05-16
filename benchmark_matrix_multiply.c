@@ -59,7 +59,7 @@ int main(int argc, const char * argv[])
         } /* for */
         gettimeofday(&end, NULL);
         diff = (end.tv_sec * 1000000 + end.tv_usec) - (begin.tv_sec * 1000000 + begin.tv_usec);
-        printf("Time for mtx_multiply_and_store() using PLAIN code = %7.2fs\n", (float)diff / 1000000);
+        printf("Time for mtx_multiply_and_store() using PLAIN code = %7.6fs\n", (float)diff / 1000000);
     } /* if */
 
     if (code & SIMD) {
@@ -70,7 +70,7 @@ int main(int argc, const char * argv[])
         } /* for */
         gettimeofday(&end, NULL);
         diff = (end.tv_sec * 1000000 + end.tv_usec) - (begin.tv_sec * 1000000 + begin.tv_usec);
-        printf("Time for mtx_multiply_and_store() using SIMD code = %7.2fs\n", (float)diff / 1000000);
+        printf("Time for mtx_multiply_and_store() using SIMD code = %7.6fs\n", (float)diff / 1000000);
     } /* if */
 
     mtx_destroy(m);

@@ -399,24 +399,22 @@ inline static void prepare_rhs_pack(v4si_t * rhs_pack, ptr_matrix_t rhs, unsigne
 
 inline static void multiply_lhs_and_rhs_packs(ptr_matrix_t mtx, ptr_matrix_t lhs, unsigned int row, unsigned int itn_of_pack, unsigned int col, v4si_t * rhs_pack)
 {
-    v4si_t lhs_pack = {0};
-    v4si_t ret = {0};
+    v4si_t lhs_pack[4] = {0};
 
-    lhs_pack = lhs->i32_packs[row * lhs->pack_cnt_per_row + itn_of_pack + 0];
-    ret = __builtin_ia32_pmulld128(lhs_pack, rhs_pack[0]);
-    mtx->i32_vals[row][col] += v4si_sum_up(&ret);
+    lhs_pack[0] = lhs->i32_packs[row * lhs->pack_cnt_per_row + itn_of_pack + 0];
+    lhs_pack[1] = lhs->i32_packs[row * lhs->pack_cnt_per_row + itn_of_pack + 1];
+    lhs_pack[2] = lhs->i32_packs[row * lhs->pack_cnt_per_row + itn_of_pack + 2];
+    lhs_pack[3] = lhs->i32_packs[row * lhs->pack_cnt_per_row + itn_of_pack + 3];
 
-    lhs_pack = lhs->i32_packs[row * lhs->pack_cnt_per_row + itn_of_pack + 1];
-    ret = __builtin_ia32_pmulld128(lhs_pack, rhs_pack[1]);
-    mtx->i32_vals[row][col] += v4si_sum_up(&ret);
+    lhs_pack[0] = __builtin_ia32_pmulld128(lhs_pack[0], rhs_pack[0]);
+    lhs_pack[1] = __builtin_ia32_pmulld128(lhs_pack[1], rhs_pack[1]);
+    lhs_pack[2] = __builtin_ia32_pmulld128(lhs_pack[2], rhs_pack[2]);
+    lhs_pack[3] = __builtin_ia32_pmulld128(lhs_pack[3], rhs_pack[3]);
 
-    lhs_pack = lhs->i32_packs[row * lhs->pack_cnt_per_row + itn_of_pack + 2];
-    ret = __builtin_ia32_pmulld128(lhs_pack, rhs_pack[2]);
-    mtx->i32_vals[row][col] += v4si_sum_up(&ret);
-
-    lhs_pack = lhs->i32_packs[row * lhs->pack_cnt_per_row + itn_of_pack + 3];
-    ret = __builtin_ia32_pmulld128(lhs_pack, rhs_pack[3]);
-    mtx->i32_vals[row][col] += v4si_sum_up(&ret);
+    mtx->i32_vals[row][col] += v4si_sum_up(&lhs_pack[0]);
+    mtx->i32_vals[row][col] += v4si_sum_up(&lhs_pack[1]);
+    mtx->i32_vals[row][col] += v4si_sum_up(&lhs_pack[2]);
+    mtx->i32_vals[row][col] += v4si_sum_up(&lhs_pack[3]);
 } /* multiply_lhs_and_rhs_packs */
 
 static ptr_matrix_t mat_multiply_and_store_simd_v2(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs)

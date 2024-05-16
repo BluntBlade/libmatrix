@@ -422,6 +422,7 @@ static ptr_matrix_t mat_multiply_and_store_simd_v2(ptr_matrix_t mtx, ptr_matrix_
     unsigned int itn_base = 0;
     unsigned int col_base = 0;
     unsigned int row = 0;
+    unsigned int pck_off = 0;
     unsigned int pcks_per_blk = (CPU_CACHE_LINE_BYTES / lhs->value_size) / lhs->pack_len;
     unsigned int pcks_per_row = lhs->pack_cnt_per_row;
     unsigned int pcks_per_itn = lhs->padded_col_cnt / lhs->pack_len;
@@ -460,8 +461,29 @@ static ptr_matrix_t mat_multiply_and_store_simd_v2(ptr_matrix_t mtx, ptr_matrix_
             for (i = 0; i < blks_per_row; i += 1) {
                 row_base = i * pcks_per_blk * vals_per_pck; 
 
-                row = row_base + 0;
-                lhs_pack = &lhs->i32_packs[row * lhs->pack_cnt_per_row + k * pcks_per_blk];
+                row = row_base; /* 0 */
+                pck_off = row * lhs->pack_cnt_per_row + k * pcks_per_blk;
+                lhs_pack = &lhs->i32_packs[pck_off];
+                multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 0], row, col_base +  0);
+                multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 1], row, col_base +  1);
+                multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 2], row, col_base +  2);
+                multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 3], row, col_base +  3);
+                multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 4], row, col_base +  4);
+                multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 5], row, col_base +  5);
+                multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 6], row, col_base +  6);
+                multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 7], row, col_base +  7);
+                multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 8], row, col_base +  8);
+                multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 9], row, col_base +  9);
+                multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[10], row, col_base + 10);
+                multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[11], row, col_base + 11);
+                multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[12], row, col_base + 12);
+                multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[13], row, col_base + 13);
+                multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[14], row, col_base + 14);
+                multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[15], row, col_base + 15);
+
+                row += 1; /* 1 */
+                pck_off += lhs->pack_cnt_per_row;
+                lhs_pack = &lhs->i32_packs[pck_off];
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 0], row, col_base +  0);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 1], row, col_base +  1);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 2], row, col_base +  2);
@@ -479,8 +501,9 @@ static ptr_matrix_t mat_multiply_and_store_simd_v2(ptr_matrix_t mtx, ptr_matrix_
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[14], row, col_base + 14);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[15], row, col_base + 15);
                                                                                             
-                row = row_base + 1;                                                         
-                lhs_pack = &lhs->i32_packs[row * lhs->pack_cnt_per_row + k * pcks_per_blk];
+                row += 1; /* 2 */
+                pck_off += lhs->pack_cnt_per_row;
+                lhs_pack = &lhs->i32_packs[pck_off];
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 0], row, col_base +  0);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 1], row, col_base +  1);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 2], row, col_base +  2);
@@ -498,8 +521,9 @@ static ptr_matrix_t mat_multiply_and_store_simd_v2(ptr_matrix_t mtx, ptr_matrix_
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[14], row, col_base + 14);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[15], row, col_base + 15);
                                                                                             
-                row = row_base + 2;                                                         
-                lhs_pack = &lhs->i32_packs[row * lhs->pack_cnt_per_row + k * pcks_per_blk];
+                row += 1; /* 3 */
+                pck_off += lhs->pack_cnt_per_row;
+                lhs_pack = &lhs->i32_packs[pck_off];
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 0], row, col_base +  0);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 1], row, col_base +  1);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 2], row, col_base +  2);
@@ -517,8 +541,9 @@ static ptr_matrix_t mat_multiply_and_store_simd_v2(ptr_matrix_t mtx, ptr_matrix_
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[14], row, col_base + 14);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[15], row, col_base + 15);
                                                                                             
-                row = row_base + 3;                                                         
-                lhs_pack = &lhs->i32_packs[row * lhs->pack_cnt_per_row + k * pcks_per_blk];
+                row += 1; /* 4 */
+                pck_off += lhs->pack_cnt_per_row;
+                lhs_pack = &lhs->i32_packs[pck_off];
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 0], row, col_base +  0);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 1], row, col_base +  1);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 2], row, col_base +  2);
@@ -536,8 +561,9 @@ static ptr_matrix_t mat_multiply_and_store_simd_v2(ptr_matrix_t mtx, ptr_matrix_
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[14], row, col_base + 14);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[15], row, col_base + 15);
                                                                                             
-                row = row_base + 4;                                                         
-                lhs_pack = &lhs->i32_packs[row * lhs->pack_cnt_per_row + k * pcks_per_blk];
+                row += 1; /* 5 */
+                pck_off += lhs->pack_cnt_per_row;
+                lhs_pack = &lhs->i32_packs[pck_off];
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 0], row, col_base +  0);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 1], row, col_base +  1);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 2], row, col_base +  2);
@@ -555,8 +581,9 @@ static ptr_matrix_t mat_multiply_and_store_simd_v2(ptr_matrix_t mtx, ptr_matrix_
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[14], row, col_base + 14);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[15], row, col_base + 15);
                                                                                             
-                row = row_base + 5;                                                         
-                lhs_pack = &lhs->i32_packs[row * lhs->pack_cnt_per_row + k * pcks_per_blk];
+                row += 1; /* 6 */
+                pck_off += lhs->pack_cnt_per_row;
+                lhs_pack = &lhs->i32_packs[pck_off];
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 0], row, col_base +  0);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 1], row, col_base +  1);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 2], row, col_base +  2);
@@ -574,8 +601,9 @@ static ptr_matrix_t mat_multiply_and_store_simd_v2(ptr_matrix_t mtx, ptr_matrix_
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[14], row, col_base + 14);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[15], row, col_base + 15);
                                                                                             
-                row = row_base + 6;                                                         
-                lhs_pack = &lhs->i32_packs[row * lhs->pack_cnt_per_row + k * pcks_per_blk];
+                row += 1; /* 7 */
+                pck_off += lhs->pack_cnt_per_row;
+                lhs_pack = &lhs->i32_packs[pck_off];
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 0], row, col_base +  0);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 1], row, col_base +  1);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 2], row, col_base +  2);
@@ -593,8 +621,9 @@ static ptr_matrix_t mat_multiply_and_store_simd_v2(ptr_matrix_t mtx, ptr_matrix_
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[14], row, col_base + 14);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[15], row, col_base + 15);
                                                                                             
-                row = row_base + 7;                                                         
-                lhs_pack = &lhs->i32_packs[row * lhs->pack_cnt_per_row + k * pcks_per_blk];
+                row += 1; /* 8 */
+                pck_off += lhs->pack_cnt_per_row;
+                lhs_pack = &lhs->i32_packs[pck_off];
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 0], row, col_base +  0);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 1], row, col_base +  1);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 2], row, col_base +  2);
@@ -612,8 +641,9 @@ static ptr_matrix_t mat_multiply_and_store_simd_v2(ptr_matrix_t mtx, ptr_matrix_
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[14], row, col_base + 14);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[15], row, col_base + 15);
                                                                                             
-                row = row_base + 8;                                                         
-                lhs_pack = &lhs->i32_packs[row * lhs->pack_cnt_per_row + k * pcks_per_blk];
+                row += 1; /* 9 */
+                pck_off += lhs->pack_cnt_per_row;
+                lhs_pack = &lhs->i32_packs[pck_off];
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 0], row, col_base +  0);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 1], row, col_base +  1);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 2], row, col_base +  2);
@@ -631,8 +661,9 @@ static ptr_matrix_t mat_multiply_and_store_simd_v2(ptr_matrix_t mtx, ptr_matrix_
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[14], row, col_base + 14);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[15], row, col_base + 15);
                                                                                             
-                row = row_base + 9;                                                         
-                lhs_pack = &lhs->i32_packs[row * lhs->pack_cnt_per_row + k * pcks_per_blk];
+                row += 1; /* 10 */
+                pck_off += lhs->pack_cnt_per_row;
+                lhs_pack = &lhs->i32_packs[pck_off];
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 0], row, col_base +  0);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 1], row, col_base +  1);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 2], row, col_base +  2);
@@ -650,8 +681,9 @@ static ptr_matrix_t mat_multiply_and_store_simd_v2(ptr_matrix_t mtx, ptr_matrix_
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[14], row, col_base + 14);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[15], row, col_base + 15);
                                                                                             
-                row = row_base + 10;                                                        
-                lhs_pack = &lhs->i32_packs[row * lhs->pack_cnt_per_row + k * pcks_per_blk];
+                row += 1; /* 11 */
+                pck_off += lhs->pack_cnt_per_row;
+                lhs_pack = &lhs->i32_packs[pck_off];
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 0], row, col_base +  0);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 1], row, col_base +  1);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 2], row, col_base +  2);
@@ -669,8 +701,9 @@ static ptr_matrix_t mat_multiply_and_store_simd_v2(ptr_matrix_t mtx, ptr_matrix_
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[14], row, col_base + 14);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[15], row, col_base + 15);
                                                                                             
-                row = row_base + 11;                                                        
-                lhs_pack = &lhs->i32_packs[row * lhs->pack_cnt_per_row + k * pcks_per_blk];
+                row += 1; /* 12 */
+                pck_off += lhs->pack_cnt_per_row;
+                lhs_pack = &lhs->i32_packs[pck_off];
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 0], row, col_base +  0);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 1], row, col_base +  1);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 2], row, col_base +  2);
@@ -688,8 +721,9 @@ static ptr_matrix_t mat_multiply_and_store_simd_v2(ptr_matrix_t mtx, ptr_matrix_
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[14], row, col_base + 14);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[15], row, col_base + 15);
                                                                                             
-                row = row_base + 12;                                                        
-                lhs_pack = &lhs->i32_packs[row * lhs->pack_cnt_per_row + k * pcks_per_blk];
+                row += 1; /* 13 */
+                pck_off += lhs->pack_cnt_per_row;
+                lhs_pack = &lhs->i32_packs[pck_off];
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 0], row, col_base +  0);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 1], row, col_base +  1);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 2], row, col_base +  2);
@@ -707,8 +741,9 @@ static ptr_matrix_t mat_multiply_and_store_simd_v2(ptr_matrix_t mtx, ptr_matrix_
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[14], row, col_base + 14);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[15], row, col_base + 15);
                                                                                             
-                row = row_base + 13;                                                        
-                lhs_pack = &lhs->i32_packs[row * lhs->pack_cnt_per_row + k * pcks_per_blk];
+                row += 1; /* 14 */
+                pck_off += lhs->pack_cnt_per_row;
+                lhs_pack = &lhs->i32_packs[pck_off];
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 0], row, col_base +  0);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 1], row, col_base +  1);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 2], row, col_base +  2);
@@ -726,27 +761,9 @@ static ptr_matrix_t mat_multiply_and_store_simd_v2(ptr_matrix_t mtx, ptr_matrix_
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[14], row, col_base + 14);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[15], row, col_base + 15);
                                                                                             
-                row = row_base + 14;                                                        
-                lhs_pack = &lhs->i32_packs[row * lhs->pack_cnt_per_row + k * pcks_per_blk];
-                multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 0], row, col_base +  0);
-                multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 1], row, col_base +  1);
-                multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 2], row, col_base +  2);
-                multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 3], row, col_base +  3);
-                multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 4], row, col_base +  4);
-                multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 5], row, col_base +  5);
-                multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 6], row, col_base +  6);
-                multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 7], row, col_base +  7);
-                multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 8], row, col_base +  8);
-                multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 9], row, col_base +  9);
-                multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[10], row, col_base + 10);
-                multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[11], row, col_base + 11);
-                multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[12], row, col_base + 12);
-                multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[13], row, col_base + 13);
-                multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[14], row, col_base + 14);
-                multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[15], row, col_base + 15);
-                                                                                            
-                row = row_base + 15;                                                        
-                lhs_pack = &lhs->i32_packs[row * lhs->pack_cnt_per_row + k * pcks_per_blk];
+                row += 1; /* 15 */
+                pck_off += lhs->pack_cnt_per_row;
+                lhs_pack = &lhs->i32_packs[pck_off];
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 0], row, col_base +  0);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 1], row, col_base +  1);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 2], row, col_base +  2);

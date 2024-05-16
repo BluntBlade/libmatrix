@@ -5,7 +5,7 @@
 #define MATRIX_C
 #endif
 
-/* ==== Tests for mtx_int32_t matrix. ==== */
+/* ==== Tests for int32_t matrix. ==== */
 
 CESTER_TEST(
     MATRIX_i32_allocate_for_1x1_matrix,
@@ -14,7 +14,7 @@ CESTER_TEST(
     ptr_matrix_t m = mtx_i32_allocate(1, 1);
 
     cester_assert_not_null(m);
-    cester_assert_uint_eq(m->value_size, sizeof(mtx_int32_t));
+    cester_assert_uint_eq(m->value_size, sizeof(int32_t));
     cester_assert_uint_eq(m->pack_len, I32_PACK_LEN);
 
     cester_assert_uint_eq(m->row_cnt, 1);
@@ -33,7 +33,7 @@ CESTER_TEST(
 
     ptr_matrix_t m = mtx_i32_allocate(1, 2);
     cester_assert_not_null(m);
-    cester_assert_uint_eq(m->value_size, sizeof(mtx_int32_t));
+    cester_assert_uint_eq(m->value_size, sizeof(int32_t));
     cester_assert_uint_eq(m->pack_len, I32_PACK_LEN);
 
     cester_assert_uint_eq(m->row_cnt, 1);
@@ -53,7 +53,7 @@ CESTER_TEST(
     ptr_matrix_t m = mtx_i32_allocate(1, 5);
 
     cester_assert_not_null(m);
-    cester_assert_uint_eq(m->value_size, sizeof(mtx_int32_t));
+    cester_assert_uint_eq(m->value_size, sizeof(int32_t));
     cester_assert_uint_eq(m->pack_len, I32_PACK_LEN);
 
     cester_assert_uint_eq(m->row_cnt, 1);
@@ -73,7 +73,7 @@ CESTER_TEST(
     ptr_matrix_t m = mtx_i32_allocate(2, 1);
 
     cester_assert_not_null(m);
-    cester_assert_uint_eq(m->value_size, sizeof(mtx_int32_t));
+    cester_assert_uint_eq(m->value_size, sizeof(int32_t));
     cester_assert_uint_eq(m->pack_len, I32_PACK_LEN);
 
     cester_assert_uint_eq(m->row_cnt, 2);
@@ -93,7 +93,7 @@ CESTER_TEST(
     ptr_matrix_t m = mtx_i32_allocate(6, 1);
 
     cester_assert_not_null(m);
-    cester_assert_uint_eq(m->value_size, sizeof(mtx_int32_t));
+    cester_assert_uint_eq(m->value_size, sizeof(int32_t));
     cester_assert_uint_eq(m->pack_len, I32_PACK_LEN);
 
     cester_assert_uint_eq(m->row_cnt, 6);
@@ -113,7 +113,7 @@ CESTER_TEST(
     ptr_matrix_t m = mtx_i32_allocate(4, 4);
 
     cester_assert_not_null(m);
-    cester_assert_uint_eq(m->value_size, sizeof(mtx_int32_t));
+    cester_assert_uint_eq(m->value_size, sizeof(int32_t));
     cester_assert_uint_eq(m->pack_len, I32_PACK_LEN);
 
     cester_assert_uint_eq(m->row_cnt, 4);
@@ -133,7 +133,7 @@ CESTER_TEST(
     ptr_matrix_t m = mtx_i32_allocate(7, 7);
 
     cester_assert_not_null(m);
-    cester_assert_uint_eq(m->value_size, sizeof(mtx_int32_t));
+    cester_assert_uint_eq(m->value_size, sizeof(int32_t));
     cester_assert_uint_eq(m->pack_len, I32_PACK_LEN);
 
     cester_assert_uint_eq(m->row_cnt, 7);
@@ -153,7 +153,7 @@ CESTER_TEST(
     ptr_matrix_t m = mtx_i32_allocate(8, 8);
 
     cester_assert_not_null(m);
-    cester_assert_uint_eq(m->value_size, sizeof(mtx_int32_t));
+    cester_assert_uint_eq(m->value_size, sizeof(int32_t));
     cester_assert_uint_eq(m->pack_len, I32_PACK_LEN);
 
     cester_assert_uint_eq(m->row_cnt, 8);
@@ -173,7 +173,7 @@ CESTER_TEST(
     ptr_matrix_t m = mtx_i32_allocate(1024, 1024);
 
     cester_assert_not_null(m);
-    cester_assert_uint_eq(m->value_size, sizeof(mtx_int32_t));
+    cester_assert_uint_eq(m->value_size, sizeof(int32_t));
     cester_assert_uint_eq(m->pack_len, I32_PACK_LEN);
 
     cester_assert_uint_eq(m->row_cnt, 1024);
@@ -189,8 +189,8 @@ CESTER_TEST(
 CESTER_TEST(
     MATRIX_i32_set_and_get_one_value_in_5x5_matrix,
     _,
-    mtx_int32_t val1 = 0;
-    mtx_int32_t val2 = 0;
+    int32_t val1 = 0;
+    int32_t val2 = 0;
     ptr_matrix_t m = mtx_i32_allocate(5, 5);
 
     mtx_i32_set(m, 0, 0, 1);
@@ -210,7 +210,7 @@ CESTER_TEST(
 CESTER_TEST(
     MATRIX_i32_set_each_value_to_5_in_2x2_matrix,
     _,
-    mtx_int32_t val = 0;
+    int32_t val = 0;
     ptr_matrix_t m = mtx_i32_allocate(2, 2);
 
     mtx_i32_set_each(m, 5);
@@ -238,7 +238,7 @@ CESTER_TEST(
     ptr_matrix_t m = mtx_allocate_for_multiplying(lhs, rhs);
 
     cester_assert_not_null(m);
-    cester_assert_uint_eq(m->value_size, sizeof(mtx_int32_t));
+    cester_assert_uint_eq(m->value_size, sizeof(int32_t));
     cester_assert_uint_eq(m->pack_len, I32_PACK_LEN);
 
     cester_assert_uint_eq(m->row_cnt, 5);
@@ -266,7 +266,7 @@ CESTER_TEST(
     ptr_matrix_t m = mtx_allocate_for_multiplying(lhs, rhs);
 
     cester_assert_not_null(m);
-    cester_assert_uint_eq(m->value_size, sizeof(mtx_int32_t));
+    cester_assert_uint_eq(m->value_size, sizeof(int32_t));
     cester_assert_uint_eq(m->pack_len, I32_PACK_LEN);
 
     cester_assert_uint_eq(m->row_cnt, 1);
@@ -294,7 +294,7 @@ CESTER_TEST(
     ptr_matrix_t m = mtx_allocate_for_multiplying(lhs, rhs);
 
     cester_assert_not_null(m);
-    cester_assert_uint_eq(m->value_size, sizeof(mtx_int32_t));
+    cester_assert_uint_eq(m->value_size, sizeof(int32_t));
     cester_assert_uint_eq(m->pack_len, I32_PACK_LEN);
 
     cester_assert_uint_eq(m->row_cnt, 8);
@@ -321,7 +321,7 @@ CESTER_TEST(
     ptr_matrix_t m = mtx_allocate_for_transposing(src);
 
     cester_assert_not_null(m);
-    cester_assert_uint_eq(m->value_size, sizeof(mtx_int32_t));
+    cester_assert_uint_eq(m->value_size, sizeof(int32_t));
     cester_assert_uint_eq(m->pack_len, I32_PACK_LEN);
 
     cester_assert_uint_eq(m->row_cnt, 1);
@@ -346,7 +346,7 @@ CESTER_TEST(
     ptr_matrix_t m = mtx_allocate_for_transposing(src);
 
     cester_assert_not_null(m);
-    cester_assert_uint_eq(m->value_size, sizeof(mtx_int32_t));
+    cester_assert_uint_eq(m->value_size, sizeof(int32_t));
     cester_assert_uint_eq(m->pack_len, I32_PACK_LEN);
 
     cester_assert_uint_eq(m->row_cnt, 5);
@@ -371,7 +371,7 @@ CESTER_TEST(
     ptr_matrix_t m = mtx_allocate_for_transposing(src);
 
     cester_assert_not_null(m);
-    cester_assert_uint_eq(m->value_size, sizeof(mtx_int32_t));
+    cester_assert_uint_eq(m->value_size, sizeof(int32_t));
     cester_assert_uint_eq(m->pack_len, I32_PACK_LEN);
 
     cester_assert_uint_eq(m->row_cnt, 13);
@@ -396,7 +396,7 @@ CESTER_TEST(
     ptr_matrix_t m = mtx_allocate_in_shape_of(src);
 
     cester_assert_not_null(m);
-    cester_assert_uint_eq(m->value_size, sizeof(mtx_int32_t));
+    cester_assert_uint_eq(m->value_size, sizeof(int32_t));
     cester_assert_uint_eq(m->pack_len, I32_PACK_LEN);
 
     cester_assert_uint_eq(m->row_cnt, 3);
@@ -421,7 +421,7 @@ CESTER_TEST(
     ptr_matrix_t m = mtx_allocate_in_shape_of(src);
 
     cester_assert_not_null(m);
-    cester_assert_uint_eq(m->value_size, sizeof(mtx_int32_t));
+    cester_assert_uint_eq(m->value_size, sizeof(int32_t));
     cester_assert_uint_eq(m->pack_len, I32_PACK_LEN);
 
     cester_assert_uint_eq(m->row_cnt, 1);
@@ -446,7 +446,7 @@ CESTER_TEST(
     ptr_matrix_t m = mtx_allocate_in_shape_of(src);
 
     cester_assert_not_null(m);
-    cester_assert_uint_eq(m->value_size, sizeof(mtx_int32_t));
+    cester_assert_uint_eq(m->value_size, sizeof(int32_t));
     cester_assert_uint_eq(m->pack_len, I32_PACK_LEN);
 
     cester_assert_uint_eq(m->row_cnt, 3);
@@ -471,7 +471,7 @@ CESTER_TEST(
     ptr_matrix_t m = mtx_duplicate(src);
 
     cester_assert_not_null(m);
-    cester_assert_uint_eq(m->value_size, sizeof(mtx_int32_t));
+    cester_assert_uint_eq(m->value_size, sizeof(int32_t));
     cester_assert_uint_eq(m->pack_len, I32_PACK_LEN);
 
     cester_assert_uint_eq(m->row_cnt, 10);
@@ -499,8 +499,8 @@ CESTER_TEST(
 CESTER_TEST(
     MATRIX_initialize_15x15_identity_matrix_using_plain_code,
     _,
-    mtx_count_t i = 0;
-    mtx_count_t j = 0;
+    size_t i = 0;
+    size_t j = 0;
     ptr_matrix_t m = mtx_i32_allocate(15, 15);
 
     mtx_initialize_identity(m, MTX_PLAIN_CODE);
@@ -521,8 +521,8 @@ CESTER_TEST(
 CESTER_TEST(
     MATRIX_initialize_9x5_zeros_matrix_using_plain_code,
     _,
-    mtx_count_t i = 0;
-    mtx_count_t j = 0;
+    size_t i = 0;
+    size_t j = 0;
     ptr_matrix_t m = mtx_i32_allocate(9, 5);
 
     mtx_initialize_zeros(m, MTX_PLAIN_CODE);
@@ -539,8 +539,8 @@ CESTER_TEST(
 CESTER_TEST(
     MATRIX_initialize_5x9_ones_matrix_using_plain_code,
     _,
-    mtx_count_t i = 0;
-    mtx_count_t j = 0;
+    size_t i = 0;
+    size_t j = 0;
     ptr_matrix_t m = mtx_i32_allocate(5, 9);
 
     mtx_initialize_ones(m, MTX_PLAIN_CODE);
@@ -1236,7 +1236,7 @@ CESTER_TEST(
 CESTER_TEST(
     MATRIX_scalar_mul_and_store_3x3_matrix_using_plain_code,
     _,
-    mtx_int32_t lhs = 5;
+    int32_t lhs = 5;
     ptr_matrix_t rhs = mtx_i32_allocate(3, 3);
     ptr_matrix_t m = mtx_allocate_in_shape_of(rhs);
 
@@ -1261,7 +1261,7 @@ CESTER_TEST(
 CESTER_TEST(
     MATRIX_scalar_mul_and_store_11x7_matrix_using_plain_code,
     _,
-    mtx_int32_t lhs = 2;
+    int32_t lhs = 2;
     ptr_matrix_t rhs = mtx_i32_allocate(11, 7);
     ptr_matrix_t m = mtx_allocate_in_shape_of(rhs);
 
@@ -1299,7 +1299,7 @@ CESTER_TEST(
 CESTER_TEST(
     MATRIX_scalar_mul_and_store_3x3_matrix_using_simd_code,
     _,
-    mtx_int32_t lhs = 2;
+    int32_t lhs = 2;
     ptr_matrix_t rhs = mtx_i32_allocate(3, 3);
     ptr_matrix_t m = mtx_allocate_in_shape_of(rhs);
 
@@ -1333,7 +1333,7 @@ CESTER_TEST(
 CESTER_TEST(
     MATRIX_scalar_mul_and_store_11x7_matrix_using_simd_code,
     _,
-    mtx_int32_t lhs = 2;
+    int32_t lhs = 2;
     ptr_matrix_t rhs = mtx_i32_allocate(11, 7);
     ptr_matrix_t m = mtx_allocate_in_shape_of(rhs);
 

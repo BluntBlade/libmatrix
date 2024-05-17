@@ -1,3 +1,4 @@
+#include <omp.h>
 #include <memory.h>
 #include <smmintrin.h>
 
@@ -415,14 +416,6 @@ inline static void multiply_lhs_and_rhs_packs(ptr_matrix_t mtx, v4si_t * lhs_pac
 
 static ptr_matrix_t mat_multiply_and_store_simd_v2(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs)
 {
-    unsigned int i = 0;
-    unsigned int j = 0;
-    unsigned int k = 0;
-    unsigned int row_base = 0;
-    unsigned int itn_base = 0;
-    unsigned int col_base = 0;
-    unsigned int row = 0;
-    unsigned int pck_off = 0;
     unsigned int pcks_per_blk = (CPU_CACHE_LINE_BYTES / lhs->value_size) / lhs->pack_len;
     unsigned int pcks_per_row = lhs->pack_cnt_per_row;
     unsigned int pcks_per_itn = lhs->padded_col_cnt / lhs->pack_len;
@@ -432,14 +425,14 @@ static ptr_matrix_t mat_multiply_and_store_simd_v2(ptr_matrix_t mtx, ptr_matrix_
     unsigned int blks_per_col = round_count_to_multiples_of(pcks_per_col, pcks_per_blk) / pcks_per_blk;
     unsigned int vals_per_pck = lhs->pack_len;
     unsigned int vals_per_blk = vals_per_pck * pcks_per_blk;
-    v4si_t * lhs_pack;
-    v4si_t rhs_pack[vals_per_blk][pcks_per_blk];
 
-    for (j = 0; j < blks_per_col; j += 1) {
-        col_base = j * pcks_per_blk * vals_per_pck;
+#pragma omp parallel for schedule(static)
+    for (unsigned int j = 0; j < blks_per_col; j += 1) {
+        unsigned int col_base = j * pcks_per_blk * vals_per_pck;
 
-        for (k = 0; k < blks_per_itn; k += 1) {
-            itn_base = k * pcks_per_blk * vals_per_pck;
+        for (unsigned int k = 0; k < blks_per_itn; k += 1) {
+            unsigned int itn_base = k * pcks_per_blk * vals_per_pck;
+            v4si_t rhs_pack[vals_per_blk][pcks_per_blk];
 
             prepare_rhs_pack((v4si_t *)rhs_pack[ 0], rhs, itn_base, col_base +  0);
             prepare_rhs_pack((v4si_t *)rhs_pack[ 1], rhs, itn_base, col_base +  1);
@@ -458,12 +451,12 @@ static ptr_matrix_t mat_multiply_and_store_simd_v2(ptr_matrix_t mtx, ptr_matrix_
             prepare_rhs_pack((v4si_t *)rhs_pack[14], rhs, itn_base, col_base + 14);
             prepare_rhs_pack((v4si_t *)rhs_pack[15], rhs, itn_base, col_base + 15);
 
-            for (i = 0; i < blks_per_row; i += 1) {
-                row_base = i * pcks_per_blk * vals_per_pck; 
+            for (unsigned int i = 0; i < blks_per_row; i += 1) {
+                unsigned row_base = i * pcks_per_blk * vals_per_pck; 
 
-                row = row_base; /* 0 */
-                pck_off = row * lhs->pack_cnt_per_row + k * pcks_per_blk;
-                lhs_pack = &lhs->i32_packs[pck_off];
+                unsigned row = row_base; /* 0 */
+                unsigned pck_off = row * lhs->pack_cnt_per_row + k * pcks_per_blk;
+                v4si_t * lhs_pack = &lhs->i32_packs[pck_off];
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 0], row, col_base +  0);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 1], row, col_base +  1);
                 multiply_lhs_and_rhs_packs(mtx, lhs_pack, (v4si_t *)rhs_pack[ 2], row, col_base +  2);

@@ -1,6 +1,13 @@
 CC = gcc
 
-CFLAGS = -g -O3 -fPIC -I. -I/usr/local/include -msse4.1
+CFLAGS = -g -O3 -fPIC -I. -I/usr/local/include -msse4.1 -Wno-int-conversion
+
+ifdef OPENMP
+    CFLAGS := $(CFLAGS) -Xpreprocessor -fopenmp
+    LDFLAGS := $(LDFLAGS) -L/usr/local/lib
+    LIBS := $(LIBS) -lomp
+endif
+
 #TEST_LDFLAGS = -Wl,--wrap=malloc
 TEST_LDFLAGS = -g
 
@@ -23,12 +30,12 @@ test : $(TEST_TARGET)
 benchmark : $(BENCHMARK_MATRIX_MULTIPLY)
 
 $(TARGET) : $(OBJ)
-	gcc -o $@ --shared $^
+	gcc -o $@ --shared $^ $(LDFLAGS) $(LIBS)
 
 $(TEST_OBJ) : $(SRC)
 
 $(TEST_TARGET) : $(TEST_OBJ)
-	gcc -o $@ $(TEST_LDFLAGS) $^
+	gcc -o $@ $(TEST_LDFLAGS) $^ $(LDFLAGS) $(LIBS)
 
 $(BENCHMARK_MATRIX_MULTIPLY) : $(BENCHMARK_MATRIX_MULTIPLY_OBJ)
-	gcc -o $@ $^
+	gcc -o $@ $^ $(LDFLAGS) $(LIBS)

@@ -23,11 +23,13 @@ BENCHMARK_MATRIX_MULTIPLY_SRC = benchmark_matrix_multiply.c
 BENCHMARK_MATRIX_MULTIPLY_OBJ = $(BENCHMARK_MATRIX_MULTIPLY_SRC:.c=.o)  $(OBJ)
 BENCHMARK_MATRIX_MULTIPLY = benchmark_matrix_multiply
 
-.PHONY : all test
+.PHONY : all test clean
 
 all : $(TARGET)
 test : $(TEST_TARGET)
 benchmark : $(BENCHMARK_MATRIX_MULTIPLY)
+clean :
+	rm *.o $(TARGET) $(TEST_TARGET) $(BENCHMARK_MATRIX_MULTIPLY)
 
 $(TARGET) : $(OBJ)
 	gcc -o $@ --shared $^ $(LDFLAGS) $(LIBS)

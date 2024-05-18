@@ -108,7 +108,7 @@ typedef struct MATRIX_T {
 
 inline static unsigned int round_count_to_multiples_of(unsigned int cnt, unsigned int n)
 {
-    return (cnt & ~(n - 1)) + ((cnt & (n - 1)) ? n : 0);
+    return (cnt + (n - 1)) & (~(n - 1));
 } /* round_count_to_multiples_of */
 
 static ptr_matrix_t mtx_allocate(unsigned int row_cnt, unsigned int col_cnt, size_t val_size, size_t pack_len, ptr_operation_t ops)

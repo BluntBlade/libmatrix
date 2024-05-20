@@ -349,6 +349,18 @@ inline static int32_t v4si_sum_up(v4si_t * src)
     return vals[0] + vals[1] + vals[2] + vals[3];
 } /* v4si_sum_up */
 
+inline static int32_t v4si_sum_up_v2(v4si_t * src)
+{
+    v4si_t ret = {0};
+    int32_t * vals = (int32_t *) &ret;
+
+    ret = __builtin_ia32_paddd128(src[0], src[1]);
+    ret = __builtin_ia32_paddd128(ret, src[2]);
+    ret = __builtin_ia32_paddd128(ret, src[3]);
+
+    return vals[0] + vals[1] + vals[2] + vals[3];
+} /* v4si_sum_up_v2 */
+
 static ptr_matrix_t mat_multiply_and_store_simd(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs)
 {
     unsigned int i = 0;
@@ -408,10 +420,7 @@ inline static void multiply_lhs_and_rhs_packs(ptr_matrix_t mtx, v4si_t * lhs_pac
     ret[2] = __builtin_ia32_pmulld128(lhs_pack[2], rhs_pack[2]);
     ret[3] = __builtin_ia32_pmulld128(lhs_pack[3], rhs_pack[3]);
 
-    mtx->i32_vals[row][col] += v4si_sum_up(&ret[0]);
-    mtx->i32_vals[row][col] += v4si_sum_up(&ret[1]);
-    mtx->i32_vals[row][col] += v4si_sum_up(&ret[2]);
-    mtx->i32_vals[row][col] += v4si_sum_up(&ret[3]);
+    mtx->i32_vals[row][col] += v4si_sum_up_v2(ret);
 } /* multiply_lhs_and_rhs_packs */
 
 static ptr_matrix_t mat_multiply_and_store_simd_v2(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs)

@@ -410,280 +410,45 @@ inline static void prepare_rpck(v4si_t * rpck, ptr_matrix_t rhs, unsigned int it
     rpck[3] = __builtin_ia32_vec_set_v4si(rpck[3], rhs->i32_vals[itn_base + 15][col], 3);
 } /* prepare_rpck */
 
-inline static void prepare_rpck_fully(v4si_t * rpck0, v4si_t * rpck1, v4si_t * rpck2, v4si_t * rpck3, ptr_matrix_t rhs, unsigned int itn_base, unsigned col_base)
+inline static void fill_rpcks_fully_on_row(v4si_t * rpck, ptr_matrix_t rhs, unsigned int itn, unsigned int col_base, unsigned int byte_idx)
 {
-    rpck0[ 0] = __builtin_ia32_vec_set_v4si(rpck0[ 0], rhs->i32_vals[itn_base +  0][col_base +  0], 0);
-    rpck0[ 1] = __builtin_ia32_vec_set_v4si(rpck0[ 1], rhs->i32_vals[itn_base +  0][col_base +  1], 0);
-    rpck0[ 2] = __builtin_ia32_vec_set_v4si(rpck0[ 2], rhs->i32_vals[itn_base +  0][col_base +  2], 0);
-    rpck0[ 3] = __builtin_ia32_vec_set_v4si(rpck0[ 3], rhs->i32_vals[itn_base +  0][col_base +  3], 0);
-    rpck0[ 4] = __builtin_ia32_vec_set_v4si(rpck0[ 4], rhs->i32_vals[itn_base +  0][col_base +  4], 0);
-    rpck0[ 5] = __builtin_ia32_vec_set_v4si(rpck0[ 5], rhs->i32_vals[itn_base +  0][col_base +  5], 0);
-    rpck0[ 6] = __builtin_ia32_vec_set_v4si(rpck0[ 6], rhs->i32_vals[itn_base +  0][col_base +  6], 0);
-    rpck0[ 7] = __builtin_ia32_vec_set_v4si(rpck0[ 7], rhs->i32_vals[itn_base +  0][col_base +  7], 0);
-    rpck0[ 8] = __builtin_ia32_vec_set_v4si(rpck0[ 8], rhs->i32_vals[itn_base +  0][col_base +  8], 0);
-    rpck0[ 9] = __builtin_ia32_vec_set_v4si(rpck0[ 9], rhs->i32_vals[itn_base +  0][col_base +  9], 0);
-    rpck0[10] = __builtin_ia32_vec_set_v4si(rpck0[10], rhs->i32_vals[itn_base +  0][col_base + 10], 0);
-    rpck0[11] = __builtin_ia32_vec_set_v4si(rpck0[11], rhs->i32_vals[itn_base +  0][col_base + 11], 0);
-    rpck0[12] = __builtin_ia32_vec_set_v4si(rpck0[12], rhs->i32_vals[itn_base +  0][col_base + 12], 0);
-    rpck0[13] = __builtin_ia32_vec_set_v4si(rpck0[13], rhs->i32_vals[itn_base +  0][col_base + 13], 0);
-    rpck0[14] = __builtin_ia32_vec_set_v4si(rpck0[14], rhs->i32_vals[itn_base +  0][col_base + 14], 0);
-    rpck0[15] = __builtin_ia32_vec_set_v4si(rpck0[15], rhs->i32_vals[itn_base +  0][col_base + 15], 0);
-                                                                 
-    rpck0[ 0] = __builtin_ia32_vec_set_v4si(rpck0[ 0], rhs->i32_vals[itn_base +  1][col_base +  0], 1);
-    rpck0[ 1] = __builtin_ia32_vec_set_v4si(rpck0[ 1], rhs->i32_vals[itn_base +  1][col_base +  1], 1);
-    rpck0[ 2] = __builtin_ia32_vec_set_v4si(rpck0[ 2], rhs->i32_vals[itn_base +  1][col_base +  2], 1);
-    rpck0[ 3] = __builtin_ia32_vec_set_v4si(rpck0[ 3], rhs->i32_vals[itn_base +  1][col_base +  3], 1);
-    rpck0[ 4] = __builtin_ia32_vec_set_v4si(rpck0[ 4], rhs->i32_vals[itn_base +  1][col_base +  4], 1);
-    rpck0[ 5] = __builtin_ia32_vec_set_v4si(rpck0[ 5], rhs->i32_vals[itn_base +  1][col_base +  5], 1);
-    rpck0[ 6] = __builtin_ia32_vec_set_v4si(rpck0[ 6], rhs->i32_vals[itn_base +  1][col_base +  6], 1);
-    rpck0[ 7] = __builtin_ia32_vec_set_v4si(rpck0[ 7], rhs->i32_vals[itn_base +  1][col_base +  7], 1);
-    rpck0[ 8] = __builtin_ia32_vec_set_v4si(rpck0[ 8], rhs->i32_vals[itn_base +  1][col_base +  8], 1);
-    rpck0[ 9] = __builtin_ia32_vec_set_v4si(rpck0[ 9], rhs->i32_vals[itn_base +  1][col_base +  9], 1);
-    rpck0[10] = __builtin_ia32_vec_set_v4si(rpck0[10], rhs->i32_vals[itn_base +  1][col_base + 10], 1);
-    rpck0[11] = __builtin_ia32_vec_set_v4si(rpck0[11], rhs->i32_vals[itn_base +  1][col_base + 11], 1);
-    rpck0[12] = __builtin_ia32_vec_set_v4si(rpck0[12], rhs->i32_vals[itn_base +  1][col_base + 12], 1);
-    rpck0[13] = __builtin_ia32_vec_set_v4si(rpck0[13], rhs->i32_vals[itn_base +  1][col_base + 13], 1);
-    rpck0[14] = __builtin_ia32_vec_set_v4si(rpck0[14], rhs->i32_vals[itn_base +  1][col_base + 14], 1);
-    rpck0[15] = __builtin_ia32_vec_set_v4si(rpck0[15], rhs->i32_vals[itn_base +  1][col_base + 15], 1);
+    rpck[ 0] = __builtin_ia32_vec_set_v4si(rpck[ 0], rhs->i32_vals[itn][col_base +  0], byte_idx);
+    rpck[ 1] = __builtin_ia32_vec_set_v4si(rpck[ 1], rhs->i32_vals[itn][col_base +  1], byte_idx);
+    rpck[ 2] = __builtin_ia32_vec_set_v4si(rpck[ 2], rhs->i32_vals[itn][col_base +  2], byte_idx);
+    rpck[ 3] = __builtin_ia32_vec_set_v4si(rpck[ 3], rhs->i32_vals[itn][col_base +  3], byte_idx);
+    rpck[ 4] = __builtin_ia32_vec_set_v4si(rpck[ 4], rhs->i32_vals[itn][col_base +  4], byte_idx);
+    rpck[ 5] = __builtin_ia32_vec_set_v4si(rpck[ 5], rhs->i32_vals[itn][col_base +  5], byte_idx);
+    rpck[ 6] = __builtin_ia32_vec_set_v4si(rpck[ 6], rhs->i32_vals[itn][col_base +  6], byte_idx);
+    rpck[ 7] = __builtin_ia32_vec_set_v4si(rpck[ 7], rhs->i32_vals[itn][col_base +  7], byte_idx);
+    rpck[ 8] = __builtin_ia32_vec_set_v4si(rpck[ 8], rhs->i32_vals[itn][col_base +  8], byte_idx);
+    rpck[ 9] = __builtin_ia32_vec_set_v4si(rpck[ 9], rhs->i32_vals[itn][col_base +  9], byte_idx);
+    rpck[10] = __builtin_ia32_vec_set_v4si(rpck[10], rhs->i32_vals[itn][col_base + 10], byte_idx);
+    rpck[11] = __builtin_ia32_vec_set_v4si(rpck[11], rhs->i32_vals[itn][col_base + 11], byte_idx);
+    rpck[12] = __builtin_ia32_vec_set_v4si(rpck[12], rhs->i32_vals[itn][col_base + 12], byte_idx);
+    rpck[13] = __builtin_ia32_vec_set_v4si(rpck[13], rhs->i32_vals[itn][col_base + 13], byte_idx);
+    rpck[14] = __builtin_ia32_vec_set_v4si(rpck[14], rhs->i32_vals[itn][col_base + 14], byte_idx);
+    rpck[15] = __builtin_ia32_vec_set_v4si(rpck[15], rhs->i32_vals[itn][col_base + 15], byte_idx);
+} /* fill_rpcks_fully_on_row */
 
-    rpck0[ 0] = __builtin_ia32_vec_set_v4si(rpck0[ 0], rhs->i32_vals[itn_base +  2][col_base +  0], 2);
-    rpck0[ 1] = __builtin_ia32_vec_set_v4si(rpck0[ 1], rhs->i32_vals[itn_base +  2][col_base +  1], 2);
-    rpck0[ 2] = __builtin_ia32_vec_set_v4si(rpck0[ 2], rhs->i32_vals[itn_base +  2][col_base +  2], 2);
-    rpck0[ 3] = __builtin_ia32_vec_set_v4si(rpck0[ 3], rhs->i32_vals[itn_base +  2][col_base +  3], 2);
-    rpck0[ 4] = __builtin_ia32_vec_set_v4si(rpck0[ 4], rhs->i32_vals[itn_base +  2][col_base +  4], 2);
-    rpck0[ 5] = __builtin_ia32_vec_set_v4si(rpck0[ 5], rhs->i32_vals[itn_base +  2][col_base +  5], 2);
-    rpck0[ 6] = __builtin_ia32_vec_set_v4si(rpck0[ 6], rhs->i32_vals[itn_base +  2][col_base +  6], 2);
-    rpck0[ 7] = __builtin_ia32_vec_set_v4si(rpck0[ 7], rhs->i32_vals[itn_base +  2][col_base +  7], 2);
-    rpck0[ 8] = __builtin_ia32_vec_set_v4si(rpck0[ 8], rhs->i32_vals[itn_base +  2][col_base +  8], 2);
-    rpck0[ 9] = __builtin_ia32_vec_set_v4si(rpck0[ 9], rhs->i32_vals[itn_base +  2][col_base +  9], 2);
-    rpck0[10] = __builtin_ia32_vec_set_v4si(rpck0[10], rhs->i32_vals[itn_base +  2][col_base + 10], 2);
-    rpck0[11] = __builtin_ia32_vec_set_v4si(rpck0[11], rhs->i32_vals[itn_base +  2][col_base + 11], 2);
-    rpck0[12] = __builtin_ia32_vec_set_v4si(rpck0[12], rhs->i32_vals[itn_base +  2][col_base + 12], 2);
-    rpck0[13] = __builtin_ia32_vec_set_v4si(rpck0[13], rhs->i32_vals[itn_base +  2][col_base + 13], 2);
-    rpck0[14] = __builtin_ia32_vec_set_v4si(rpck0[14], rhs->i32_vals[itn_base +  2][col_base + 14], 2);
-    rpck0[15] = __builtin_ia32_vec_set_v4si(rpck0[15], rhs->i32_vals[itn_base +  2][col_base + 15], 2);
-
-    rpck0[ 0] = __builtin_ia32_vec_set_v4si(rpck0[ 0], rhs->i32_vals[itn_base +  3][col_base +  0], 3);
-    rpck0[ 1] = __builtin_ia32_vec_set_v4si(rpck0[ 1], rhs->i32_vals[itn_base +  3][col_base +  1], 3);
-    rpck0[ 2] = __builtin_ia32_vec_set_v4si(rpck0[ 2], rhs->i32_vals[itn_base +  3][col_base +  2], 3);
-    rpck0[ 3] = __builtin_ia32_vec_set_v4si(rpck0[ 3], rhs->i32_vals[itn_base +  3][col_base +  3], 3);
-    rpck0[ 4] = __builtin_ia32_vec_set_v4si(rpck0[ 4], rhs->i32_vals[itn_base +  3][col_base +  4], 3);
-    rpck0[ 5] = __builtin_ia32_vec_set_v4si(rpck0[ 5], rhs->i32_vals[itn_base +  3][col_base +  5], 3);
-    rpck0[ 6] = __builtin_ia32_vec_set_v4si(rpck0[ 6], rhs->i32_vals[itn_base +  3][col_base +  6], 3);
-    rpck0[ 7] = __builtin_ia32_vec_set_v4si(rpck0[ 7], rhs->i32_vals[itn_base +  3][col_base +  7], 3);
-    rpck0[ 8] = __builtin_ia32_vec_set_v4si(rpck0[ 8], rhs->i32_vals[itn_base +  3][col_base +  8], 3);
-    rpck0[ 9] = __builtin_ia32_vec_set_v4si(rpck0[ 9], rhs->i32_vals[itn_base +  3][col_base +  9], 3);
-    rpck0[10] = __builtin_ia32_vec_set_v4si(rpck0[10], rhs->i32_vals[itn_base +  3][col_base + 10], 3);
-    rpck0[11] = __builtin_ia32_vec_set_v4si(rpck0[11], rhs->i32_vals[itn_base +  3][col_base + 11], 3);
-    rpck0[12] = __builtin_ia32_vec_set_v4si(rpck0[12], rhs->i32_vals[itn_base +  3][col_base + 12], 3);
-    rpck0[13] = __builtin_ia32_vec_set_v4si(rpck0[13], rhs->i32_vals[itn_base +  3][col_base + 13], 3);
-    rpck0[14] = __builtin_ia32_vec_set_v4si(rpck0[14], rhs->i32_vals[itn_base +  3][col_base + 14], 3);
-    rpck0[15] = __builtin_ia32_vec_set_v4si(rpck0[15], rhs->i32_vals[itn_base +  3][col_base + 15], 3);
-
-    rpck1[ 0] = __builtin_ia32_vec_set_v4si(rpck1[ 0], rhs->i32_vals[itn_base +  4][col_base +  0], 0);
-    rpck1[ 1] = __builtin_ia32_vec_set_v4si(rpck1[ 1], rhs->i32_vals[itn_base +  4][col_base +  1], 0);
-    rpck1[ 2] = __builtin_ia32_vec_set_v4si(rpck1[ 2], rhs->i32_vals[itn_base +  4][col_base +  2], 0);
-    rpck1[ 3] = __builtin_ia32_vec_set_v4si(rpck1[ 3], rhs->i32_vals[itn_base +  4][col_base +  3], 0);
-    rpck1[ 4] = __builtin_ia32_vec_set_v4si(rpck1[ 4], rhs->i32_vals[itn_base +  4][col_base +  4], 0);
-    rpck1[ 5] = __builtin_ia32_vec_set_v4si(rpck1[ 5], rhs->i32_vals[itn_base +  4][col_base +  5], 0);
-    rpck1[ 6] = __builtin_ia32_vec_set_v4si(rpck1[ 6], rhs->i32_vals[itn_base +  4][col_base +  6], 0);
-    rpck1[ 7] = __builtin_ia32_vec_set_v4si(rpck1[ 7], rhs->i32_vals[itn_base +  4][col_base +  7], 0);
-    rpck1[ 8] = __builtin_ia32_vec_set_v4si(rpck1[ 8], rhs->i32_vals[itn_base +  4][col_base +  8], 0);
-    rpck1[ 9] = __builtin_ia32_vec_set_v4si(rpck1[ 9], rhs->i32_vals[itn_base +  4][col_base +  9], 0);
-    rpck1[10] = __builtin_ia32_vec_set_v4si(rpck1[10], rhs->i32_vals[itn_base +  4][col_base + 10], 0);
-    rpck1[11] = __builtin_ia32_vec_set_v4si(rpck1[11], rhs->i32_vals[itn_base +  4][col_base + 11], 0);
-    rpck1[12] = __builtin_ia32_vec_set_v4si(rpck1[12], rhs->i32_vals[itn_base +  4][col_base + 12], 0);
-    rpck1[13] = __builtin_ia32_vec_set_v4si(rpck1[13], rhs->i32_vals[itn_base +  4][col_base + 13], 0);
-    rpck1[14] = __builtin_ia32_vec_set_v4si(rpck1[14], rhs->i32_vals[itn_base +  4][col_base + 14], 0);
-    rpck1[15] = __builtin_ia32_vec_set_v4si(rpck1[15], rhs->i32_vals[itn_base +  4][col_base + 15], 0);
-
-    rpck1[ 0] = __builtin_ia32_vec_set_v4si(rpck1[ 0], rhs->i32_vals[itn_base +  5][col_base +  0], 1);
-    rpck1[ 1] = __builtin_ia32_vec_set_v4si(rpck1[ 1], rhs->i32_vals[itn_base +  5][col_base +  1], 1);
-    rpck1[ 2] = __builtin_ia32_vec_set_v4si(rpck1[ 2], rhs->i32_vals[itn_base +  5][col_base +  2], 1);
-    rpck1[ 3] = __builtin_ia32_vec_set_v4si(rpck1[ 3], rhs->i32_vals[itn_base +  5][col_base +  3], 1);
-    rpck1[ 4] = __builtin_ia32_vec_set_v4si(rpck1[ 4], rhs->i32_vals[itn_base +  5][col_base +  4], 1);
-    rpck1[ 5] = __builtin_ia32_vec_set_v4si(rpck1[ 5], rhs->i32_vals[itn_base +  5][col_base +  5], 1);
-    rpck1[ 6] = __builtin_ia32_vec_set_v4si(rpck1[ 6], rhs->i32_vals[itn_base +  5][col_base +  6], 1);
-    rpck1[ 7] = __builtin_ia32_vec_set_v4si(rpck1[ 7], rhs->i32_vals[itn_base +  5][col_base +  7], 1);
-    rpck1[ 8] = __builtin_ia32_vec_set_v4si(rpck1[ 8], rhs->i32_vals[itn_base +  5][col_base +  8], 1);
-    rpck1[ 9] = __builtin_ia32_vec_set_v4si(rpck1[ 9], rhs->i32_vals[itn_base +  5][col_base +  9], 1);
-    rpck1[10] = __builtin_ia32_vec_set_v4si(rpck1[10], rhs->i32_vals[itn_base +  5][col_base + 10], 1);
-    rpck1[11] = __builtin_ia32_vec_set_v4si(rpck1[11], rhs->i32_vals[itn_base +  5][col_base + 11], 1);
-    rpck1[12] = __builtin_ia32_vec_set_v4si(rpck1[12], rhs->i32_vals[itn_base +  5][col_base + 12], 1);
-    rpck1[13] = __builtin_ia32_vec_set_v4si(rpck1[13], rhs->i32_vals[itn_base +  5][col_base + 13], 1);
-    rpck1[14] = __builtin_ia32_vec_set_v4si(rpck1[14], rhs->i32_vals[itn_base +  5][col_base + 14], 1);
-    rpck1[15] = __builtin_ia32_vec_set_v4si(rpck1[15], rhs->i32_vals[itn_base +  5][col_base + 15], 1);
-
-    rpck1[ 0] = __builtin_ia32_vec_set_v4si(rpck1[ 0], rhs->i32_vals[itn_base +  6][col_base +  0], 2);
-    rpck1[ 1] = __builtin_ia32_vec_set_v4si(rpck1[ 1], rhs->i32_vals[itn_base +  6][col_base +  1], 2);
-    rpck1[ 2] = __builtin_ia32_vec_set_v4si(rpck1[ 2], rhs->i32_vals[itn_base +  6][col_base +  2], 2);
-    rpck1[ 3] = __builtin_ia32_vec_set_v4si(rpck1[ 3], rhs->i32_vals[itn_base +  6][col_base +  3], 2);
-    rpck1[ 4] = __builtin_ia32_vec_set_v4si(rpck1[ 4], rhs->i32_vals[itn_base +  6][col_base +  4], 2);
-    rpck1[ 5] = __builtin_ia32_vec_set_v4si(rpck1[ 5], rhs->i32_vals[itn_base +  6][col_base +  5], 2);
-    rpck1[ 6] = __builtin_ia32_vec_set_v4si(rpck1[ 6], rhs->i32_vals[itn_base +  6][col_base +  6], 2);
-    rpck1[ 7] = __builtin_ia32_vec_set_v4si(rpck1[ 7], rhs->i32_vals[itn_base +  6][col_base +  7], 2);
-    rpck1[ 8] = __builtin_ia32_vec_set_v4si(rpck1[ 8], rhs->i32_vals[itn_base +  6][col_base +  8], 2);
-    rpck1[ 9] = __builtin_ia32_vec_set_v4si(rpck1[ 9], rhs->i32_vals[itn_base +  6][col_base +  9], 2);
-    rpck1[10] = __builtin_ia32_vec_set_v4si(rpck1[10], rhs->i32_vals[itn_base +  6][col_base + 10], 2);
-    rpck1[11] = __builtin_ia32_vec_set_v4si(rpck1[11], rhs->i32_vals[itn_base +  6][col_base + 11], 2);
-    rpck1[12] = __builtin_ia32_vec_set_v4si(rpck1[12], rhs->i32_vals[itn_base +  6][col_base + 12], 2);
-    rpck1[13] = __builtin_ia32_vec_set_v4si(rpck1[13], rhs->i32_vals[itn_base +  6][col_base + 13], 2);
-    rpck1[14] = __builtin_ia32_vec_set_v4si(rpck1[14], rhs->i32_vals[itn_base +  6][col_base + 14], 2);
-    rpck1[15] = __builtin_ia32_vec_set_v4si(rpck1[15], rhs->i32_vals[itn_base +  6][col_base + 15], 2);
-
-    rpck1[ 0] = __builtin_ia32_vec_set_v4si(rpck1[ 0], rhs->i32_vals[itn_base +  7][col_base +  0], 3);
-    rpck1[ 1] = __builtin_ia32_vec_set_v4si(rpck1[ 1], rhs->i32_vals[itn_base +  7][col_base +  1], 3);
-    rpck1[ 2] = __builtin_ia32_vec_set_v4si(rpck1[ 2], rhs->i32_vals[itn_base +  7][col_base +  2], 3);
-    rpck1[ 3] = __builtin_ia32_vec_set_v4si(rpck1[ 3], rhs->i32_vals[itn_base +  7][col_base +  3], 3);
-    rpck1[ 4] = __builtin_ia32_vec_set_v4si(rpck1[ 4], rhs->i32_vals[itn_base +  7][col_base +  4], 3);
-    rpck1[ 5] = __builtin_ia32_vec_set_v4si(rpck1[ 5], rhs->i32_vals[itn_base +  7][col_base +  5], 3);
-    rpck1[ 6] = __builtin_ia32_vec_set_v4si(rpck1[ 6], rhs->i32_vals[itn_base +  7][col_base +  6], 3);
-    rpck1[ 7] = __builtin_ia32_vec_set_v4si(rpck1[ 7], rhs->i32_vals[itn_base +  7][col_base +  7], 3);
-    rpck1[ 8] = __builtin_ia32_vec_set_v4si(rpck1[ 8], rhs->i32_vals[itn_base +  7][col_base +  8], 3);
-    rpck1[ 9] = __builtin_ia32_vec_set_v4si(rpck1[ 9], rhs->i32_vals[itn_base +  7][col_base +  9], 3);
-    rpck1[10] = __builtin_ia32_vec_set_v4si(rpck1[10], rhs->i32_vals[itn_base +  7][col_base + 10], 3);
-    rpck1[11] = __builtin_ia32_vec_set_v4si(rpck1[11], rhs->i32_vals[itn_base +  7][col_base + 11], 3);
-    rpck1[12] = __builtin_ia32_vec_set_v4si(rpck1[12], rhs->i32_vals[itn_base +  7][col_base + 12], 3);
-    rpck1[13] = __builtin_ia32_vec_set_v4si(rpck1[13], rhs->i32_vals[itn_base +  7][col_base + 13], 3);
-    rpck1[14] = __builtin_ia32_vec_set_v4si(rpck1[14], rhs->i32_vals[itn_base +  7][col_base + 14], 3);
-    rpck1[15] = __builtin_ia32_vec_set_v4si(rpck1[15], rhs->i32_vals[itn_base +  7][col_base + 15], 3);
-
-    rpck2[ 0] = __builtin_ia32_vec_set_v4si(rpck2[ 0], rhs->i32_vals[itn_base +  8][col_base +  0], 0);
-    rpck2[ 1] = __builtin_ia32_vec_set_v4si(rpck2[ 1], rhs->i32_vals[itn_base +  8][col_base +  1], 0);
-    rpck2[ 2] = __builtin_ia32_vec_set_v4si(rpck2[ 2], rhs->i32_vals[itn_base +  8][col_base +  2], 0);
-    rpck2[ 3] = __builtin_ia32_vec_set_v4si(rpck2[ 3], rhs->i32_vals[itn_base +  8][col_base +  3], 0);
-    rpck2[ 4] = __builtin_ia32_vec_set_v4si(rpck2[ 4], rhs->i32_vals[itn_base +  8][col_base +  4], 0);
-    rpck2[ 5] = __builtin_ia32_vec_set_v4si(rpck2[ 5], rhs->i32_vals[itn_base +  8][col_base +  5], 0);
-    rpck2[ 6] = __builtin_ia32_vec_set_v4si(rpck2[ 6], rhs->i32_vals[itn_base +  8][col_base +  6], 0);
-    rpck2[ 7] = __builtin_ia32_vec_set_v4si(rpck2[ 7], rhs->i32_vals[itn_base +  8][col_base +  7], 0);
-    rpck2[ 8] = __builtin_ia32_vec_set_v4si(rpck2[ 8], rhs->i32_vals[itn_base +  8][col_base +  8], 0);
-    rpck2[ 9] = __builtin_ia32_vec_set_v4si(rpck2[ 9], rhs->i32_vals[itn_base +  8][col_base +  9], 0);
-    rpck2[10] = __builtin_ia32_vec_set_v4si(rpck2[10], rhs->i32_vals[itn_base +  8][col_base + 10], 0);
-    rpck2[11] = __builtin_ia32_vec_set_v4si(rpck2[11], rhs->i32_vals[itn_base +  8][col_base + 11], 0);
-    rpck2[12] = __builtin_ia32_vec_set_v4si(rpck2[12], rhs->i32_vals[itn_base +  8][col_base + 12], 0);
-    rpck2[13] = __builtin_ia32_vec_set_v4si(rpck2[13], rhs->i32_vals[itn_base +  8][col_base + 13], 0);
-    rpck2[14] = __builtin_ia32_vec_set_v4si(rpck2[14], rhs->i32_vals[itn_base +  8][col_base + 14], 0);
-    rpck2[15] = __builtin_ia32_vec_set_v4si(rpck2[15], rhs->i32_vals[itn_base +  8][col_base + 15], 0);
-                                                                 
-    rpck2[ 0] = __builtin_ia32_vec_set_v4si(rpck2[ 0], rhs->i32_vals[itn_base +  9][col_base +  0], 1);
-    rpck2[ 1] = __builtin_ia32_vec_set_v4si(rpck2[ 1], rhs->i32_vals[itn_base +  9][col_base +  1], 1);
-    rpck2[ 2] = __builtin_ia32_vec_set_v4si(rpck2[ 2], rhs->i32_vals[itn_base +  9][col_base +  2], 1);
-    rpck2[ 3] = __builtin_ia32_vec_set_v4si(rpck2[ 3], rhs->i32_vals[itn_base +  9][col_base +  3], 1);
-    rpck2[ 4] = __builtin_ia32_vec_set_v4si(rpck2[ 4], rhs->i32_vals[itn_base +  9][col_base +  4], 1);
-    rpck2[ 5] = __builtin_ia32_vec_set_v4si(rpck2[ 5], rhs->i32_vals[itn_base +  9][col_base +  5], 1);
-    rpck2[ 6] = __builtin_ia32_vec_set_v4si(rpck2[ 6], rhs->i32_vals[itn_base +  9][col_base +  6], 1);
-    rpck2[ 7] = __builtin_ia32_vec_set_v4si(rpck2[ 7], rhs->i32_vals[itn_base +  9][col_base +  7], 1);
-    rpck2[ 8] = __builtin_ia32_vec_set_v4si(rpck2[ 8], rhs->i32_vals[itn_base +  9][col_base +  8], 1);
-    rpck2[ 9] = __builtin_ia32_vec_set_v4si(rpck2[ 9], rhs->i32_vals[itn_base +  9][col_base +  9], 1);
-    rpck2[10] = __builtin_ia32_vec_set_v4si(rpck2[10], rhs->i32_vals[itn_base +  9][col_base + 10], 1);
-    rpck2[11] = __builtin_ia32_vec_set_v4si(rpck2[11], rhs->i32_vals[itn_base +  9][col_base + 11], 1);
-    rpck2[12] = __builtin_ia32_vec_set_v4si(rpck2[12], rhs->i32_vals[itn_base +  9][col_base + 12], 1);
-    rpck2[13] = __builtin_ia32_vec_set_v4si(rpck2[13], rhs->i32_vals[itn_base +  9][col_base + 13], 1);
-    rpck2[14] = __builtin_ia32_vec_set_v4si(rpck2[14], rhs->i32_vals[itn_base +  9][col_base + 14], 1);
-    rpck2[15] = __builtin_ia32_vec_set_v4si(rpck2[15], rhs->i32_vals[itn_base +  9][col_base + 15], 1);
-
-    rpck2[ 0] = __builtin_ia32_vec_set_v4si(rpck2[ 0], rhs->i32_vals[itn_base + 10][col_base +  0], 2);
-    rpck2[ 1] = __builtin_ia32_vec_set_v4si(rpck2[ 1], rhs->i32_vals[itn_base + 10][col_base +  1], 2);
-    rpck2[ 2] = __builtin_ia32_vec_set_v4si(rpck2[ 2], rhs->i32_vals[itn_base + 10][col_base +  2], 2);
-    rpck2[ 3] = __builtin_ia32_vec_set_v4si(rpck2[ 3], rhs->i32_vals[itn_base + 10][col_base +  3], 2);
-    rpck2[ 4] = __builtin_ia32_vec_set_v4si(rpck2[ 4], rhs->i32_vals[itn_base + 10][col_base +  4], 2);
-    rpck2[ 5] = __builtin_ia32_vec_set_v4si(rpck2[ 5], rhs->i32_vals[itn_base + 10][col_base +  5], 2);
-    rpck2[ 6] = __builtin_ia32_vec_set_v4si(rpck2[ 6], rhs->i32_vals[itn_base + 10][col_base +  6], 2);
-    rpck2[ 7] = __builtin_ia32_vec_set_v4si(rpck2[ 7], rhs->i32_vals[itn_base + 10][col_base +  7], 2);
-    rpck2[ 8] = __builtin_ia32_vec_set_v4si(rpck2[ 8], rhs->i32_vals[itn_base + 10][col_base +  8], 2);
-    rpck2[ 9] = __builtin_ia32_vec_set_v4si(rpck2[ 9], rhs->i32_vals[itn_base + 10][col_base +  9], 2);
-    rpck2[10] = __builtin_ia32_vec_set_v4si(rpck2[10], rhs->i32_vals[itn_base + 10][col_base + 10], 2);
-    rpck2[11] = __builtin_ia32_vec_set_v4si(rpck2[11], rhs->i32_vals[itn_base + 10][col_base + 11], 2);
-    rpck2[12] = __builtin_ia32_vec_set_v4si(rpck2[12], rhs->i32_vals[itn_base + 10][col_base + 12], 2);
-    rpck2[13] = __builtin_ia32_vec_set_v4si(rpck2[13], rhs->i32_vals[itn_base + 10][col_base + 13], 2);
-    rpck2[14] = __builtin_ia32_vec_set_v4si(rpck2[14], rhs->i32_vals[itn_base + 10][col_base + 14], 2);
-    rpck2[15] = __builtin_ia32_vec_set_v4si(rpck2[15], rhs->i32_vals[itn_base + 10][col_base + 15], 2);
-
-    rpck2[ 0] = __builtin_ia32_vec_set_v4si(rpck2[ 0], rhs->i32_vals[itn_base + 11][col_base +  0], 3);
-    rpck2[ 1] = __builtin_ia32_vec_set_v4si(rpck2[ 1], rhs->i32_vals[itn_base + 11][col_base +  1], 3);
-    rpck2[ 2] = __builtin_ia32_vec_set_v4si(rpck2[ 2], rhs->i32_vals[itn_base + 11][col_base +  2], 3);
-    rpck2[ 3] = __builtin_ia32_vec_set_v4si(rpck2[ 3], rhs->i32_vals[itn_base + 11][col_base +  3], 3);
-    rpck2[ 4] = __builtin_ia32_vec_set_v4si(rpck2[ 4], rhs->i32_vals[itn_base + 11][col_base +  4], 3);
-    rpck2[ 5] = __builtin_ia32_vec_set_v4si(rpck2[ 5], rhs->i32_vals[itn_base + 11][col_base +  5], 3);
-    rpck2[ 6] = __builtin_ia32_vec_set_v4si(rpck2[ 6], rhs->i32_vals[itn_base + 11][col_base +  6], 3);
-    rpck2[ 7] = __builtin_ia32_vec_set_v4si(rpck2[ 7], rhs->i32_vals[itn_base + 11][col_base +  7], 3);
-    rpck2[ 8] = __builtin_ia32_vec_set_v4si(rpck2[ 8], rhs->i32_vals[itn_base + 11][col_base +  8], 3);
-    rpck2[ 9] = __builtin_ia32_vec_set_v4si(rpck2[ 9], rhs->i32_vals[itn_base + 11][col_base +  9], 3);
-    rpck2[10] = __builtin_ia32_vec_set_v4si(rpck2[10], rhs->i32_vals[itn_base + 11][col_base + 10], 3);
-    rpck2[11] = __builtin_ia32_vec_set_v4si(rpck2[11], rhs->i32_vals[itn_base + 11][col_base + 11], 3);
-    rpck2[12] = __builtin_ia32_vec_set_v4si(rpck2[12], rhs->i32_vals[itn_base + 11][col_base + 12], 3);
-    rpck2[13] = __builtin_ia32_vec_set_v4si(rpck2[13], rhs->i32_vals[itn_base + 11][col_base + 13], 3);
-    rpck2[14] = __builtin_ia32_vec_set_v4si(rpck2[14], rhs->i32_vals[itn_base + 11][col_base + 14], 3);
-    rpck2[15] = __builtin_ia32_vec_set_v4si(rpck2[15], rhs->i32_vals[itn_base + 11][col_base + 15], 3);
-
-    rpck3[ 0] = __builtin_ia32_vec_set_v4si(rpck3[ 0], rhs->i32_vals[itn_base + 12][col_base +  0], 0);
-    rpck3[ 1] = __builtin_ia32_vec_set_v4si(rpck3[ 1], rhs->i32_vals[itn_base + 12][col_base +  1], 0);
-    rpck3[ 2] = __builtin_ia32_vec_set_v4si(rpck3[ 2], rhs->i32_vals[itn_base + 12][col_base +  2], 0);
-    rpck3[ 3] = __builtin_ia32_vec_set_v4si(rpck3[ 3], rhs->i32_vals[itn_base + 12][col_base +  3], 0);
-    rpck3[ 4] = __builtin_ia32_vec_set_v4si(rpck3[ 4], rhs->i32_vals[itn_base + 12][col_base +  4], 0);
-    rpck3[ 5] = __builtin_ia32_vec_set_v4si(rpck3[ 5], rhs->i32_vals[itn_base + 12][col_base +  5], 0);
-    rpck3[ 6] = __builtin_ia32_vec_set_v4si(rpck3[ 6], rhs->i32_vals[itn_base + 12][col_base +  6], 0);
-    rpck3[ 7] = __builtin_ia32_vec_set_v4si(rpck3[ 7], rhs->i32_vals[itn_base + 12][col_base +  7], 0);
-    rpck3[ 8] = __builtin_ia32_vec_set_v4si(rpck3[ 8], rhs->i32_vals[itn_base + 12][col_base +  8], 0);
-    rpck3[ 9] = __builtin_ia32_vec_set_v4si(rpck3[ 9], rhs->i32_vals[itn_base + 12][col_base +  9], 0);
-    rpck3[10] = __builtin_ia32_vec_set_v4si(rpck3[10], rhs->i32_vals[itn_base + 12][col_base + 10], 0);
-    rpck3[11] = __builtin_ia32_vec_set_v4si(rpck3[11], rhs->i32_vals[itn_base + 12][col_base + 11], 0);
-    rpck3[12] = __builtin_ia32_vec_set_v4si(rpck3[12], rhs->i32_vals[itn_base + 12][col_base + 12], 0);
-    rpck3[13] = __builtin_ia32_vec_set_v4si(rpck3[13], rhs->i32_vals[itn_base + 12][col_base + 13], 0);
-    rpck3[14] = __builtin_ia32_vec_set_v4si(rpck3[14], rhs->i32_vals[itn_base + 12][col_base + 14], 0);
-    rpck3[15] = __builtin_ia32_vec_set_v4si(rpck3[15], rhs->i32_vals[itn_base + 12][col_base + 15], 0);
-
-    rpck3[ 0] = __builtin_ia32_vec_set_v4si(rpck3[ 0], rhs->i32_vals[itn_base + 13][col_base +  0], 1);
-    rpck3[ 1] = __builtin_ia32_vec_set_v4si(rpck3[ 1], rhs->i32_vals[itn_base + 13][col_base +  1], 1);
-    rpck3[ 2] = __builtin_ia32_vec_set_v4si(rpck3[ 2], rhs->i32_vals[itn_base + 13][col_base +  2], 1);
-    rpck3[ 3] = __builtin_ia32_vec_set_v4si(rpck3[ 3], rhs->i32_vals[itn_base + 13][col_base +  3], 1);
-    rpck3[ 4] = __builtin_ia32_vec_set_v4si(rpck3[ 4], rhs->i32_vals[itn_base + 13][col_base +  4], 1);
-    rpck3[ 5] = __builtin_ia32_vec_set_v4si(rpck3[ 5], rhs->i32_vals[itn_base + 13][col_base +  5], 1);
-    rpck3[ 6] = __builtin_ia32_vec_set_v4si(rpck3[ 6], rhs->i32_vals[itn_base + 13][col_base +  6], 1);
-    rpck3[ 7] = __builtin_ia32_vec_set_v4si(rpck3[ 7], rhs->i32_vals[itn_base + 13][col_base +  7], 1);
-    rpck3[ 8] = __builtin_ia32_vec_set_v4si(rpck3[ 8], rhs->i32_vals[itn_base + 13][col_base +  8], 1);
-    rpck3[ 9] = __builtin_ia32_vec_set_v4si(rpck3[ 9], rhs->i32_vals[itn_base + 13][col_base +  9], 1);
-    rpck3[10] = __builtin_ia32_vec_set_v4si(rpck3[10], rhs->i32_vals[itn_base + 13][col_base + 10], 1);
-    rpck3[11] = __builtin_ia32_vec_set_v4si(rpck3[11], rhs->i32_vals[itn_base + 13][col_base + 11], 1);
-    rpck3[12] = __builtin_ia32_vec_set_v4si(rpck3[12], rhs->i32_vals[itn_base + 13][col_base + 12], 1);
-    rpck3[13] = __builtin_ia32_vec_set_v4si(rpck3[13], rhs->i32_vals[itn_base + 13][col_base + 13], 1);
-    rpck3[14] = __builtin_ia32_vec_set_v4si(rpck3[14], rhs->i32_vals[itn_base + 13][col_base + 14], 1);
-    rpck3[15] = __builtin_ia32_vec_set_v4si(rpck3[15], rhs->i32_vals[itn_base + 13][col_base + 15], 1);
-
-    rpck3[ 0] = __builtin_ia32_vec_set_v4si(rpck3[ 0], rhs->i32_vals[itn_base + 14][col_base +  0], 2);
-    rpck3[ 1] = __builtin_ia32_vec_set_v4si(rpck3[ 1], rhs->i32_vals[itn_base + 14][col_base +  1], 2);
-    rpck3[ 2] = __builtin_ia32_vec_set_v4si(rpck3[ 2], rhs->i32_vals[itn_base + 14][col_base +  2], 2);
-    rpck3[ 3] = __builtin_ia32_vec_set_v4si(rpck3[ 3], rhs->i32_vals[itn_base + 14][col_base +  3], 2);
-    rpck3[ 4] = __builtin_ia32_vec_set_v4si(rpck3[ 4], rhs->i32_vals[itn_base + 14][col_base +  4], 2);
-    rpck3[ 5] = __builtin_ia32_vec_set_v4si(rpck3[ 5], rhs->i32_vals[itn_base + 14][col_base +  5], 2);
-    rpck3[ 6] = __builtin_ia32_vec_set_v4si(rpck3[ 6], rhs->i32_vals[itn_base + 14][col_base +  6], 2);
-    rpck3[ 7] = __builtin_ia32_vec_set_v4si(rpck3[ 7], rhs->i32_vals[itn_base + 14][col_base +  7], 2);
-    rpck3[ 8] = __builtin_ia32_vec_set_v4si(rpck3[ 8], rhs->i32_vals[itn_base + 14][col_base +  8], 2);
-    rpck3[ 9] = __builtin_ia32_vec_set_v4si(rpck3[ 9], rhs->i32_vals[itn_base + 14][col_base +  9], 2);
-    rpck3[10] = __builtin_ia32_vec_set_v4si(rpck3[10], rhs->i32_vals[itn_base + 14][col_base + 10], 2);
-    rpck3[11] = __builtin_ia32_vec_set_v4si(rpck3[11], rhs->i32_vals[itn_base + 14][col_base + 11], 2);
-    rpck3[12] = __builtin_ia32_vec_set_v4si(rpck3[12], rhs->i32_vals[itn_base + 14][col_base + 12], 2);
-    rpck3[13] = __builtin_ia32_vec_set_v4si(rpck3[13], rhs->i32_vals[itn_base + 14][col_base + 13], 2);
-    rpck3[14] = __builtin_ia32_vec_set_v4si(rpck3[14], rhs->i32_vals[itn_base + 14][col_base + 14], 2);
-    rpck3[15] = __builtin_ia32_vec_set_v4si(rpck3[15], rhs->i32_vals[itn_base + 14][col_base + 15], 2);
-
-    rpck3[ 0] = __builtin_ia32_vec_set_v4si(rpck3[ 0], rhs->i32_vals[itn_base + 15][col_base +  0], 3);
-    rpck3[ 1] = __builtin_ia32_vec_set_v4si(rpck3[ 1], rhs->i32_vals[itn_base + 15][col_base +  1], 3);
-    rpck3[ 2] = __builtin_ia32_vec_set_v4si(rpck3[ 2], rhs->i32_vals[itn_base + 15][col_base +  2], 3);
-    rpck3[ 3] = __builtin_ia32_vec_set_v4si(rpck3[ 3], rhs->i32_vals[itn_base + 15][col_base +  3], 3);
-    rpck3[ 4] = __builtin_ia32_vec_set_v4si(rpck3[ 4], rhs->i32_vals[itn_base + 15][col_base +  4], 3);
-    rpck3[ 5] = __builtin_ia32_vec_set_v4si(rpck3[ 5], rhs->i32_vals[itn_base + 15][col_base +  5], 3);
-    rpck3[ 6] = __builtin_ia32_vec_set_v4si(rpck3[ 6], rhs->i32_vals[itn_base + 15][col_base +  6], 3);
-    rpck3[ 7] = __builtin_ia32_vec_set_v4si(rpck3[ 7], rhs->i32_vals[itn_base + 15][col_base +  7], 3);
-    rpck3[ 8] = __builtin_ia32_vec_set_v4si(rpck3[ 8], rhs->i32_vals[itn_base + 15][col_base +  8], 3);
-    rpck3[ 9] = __builtin_ia32_vec_set_v4si(rpck3[ 9], rhs->i32_vals[itn_base + 15][col_base +  9], 3);
-    rpck3[10] = __builtin_ia32_vec_set_v4si(rpck3[10], rhs->i32_vals[itn_base + 15][col_base + 10], 3);
-    rpck3[11] = __builtin_ia32_vec_set_v4si(rpck3[11], rhs->i32_vals[itn_base + 15][col_base + 11], 3);
-    rpck3[12] = __builtin_ia32_vec_set_v4si(rpck3[12], rhs->i32_vals[itn_base + 15][col_base + 12], 3);
-    rpck3[13] = __builtin_ia32_vec_set_v4si(rpck3[13], rhs->i32_vals[itn_base + 15][col_base + 13], 3);
-    rpck3[14] = __builtin_ia32_vec_set_v4si(rpck3[14], rhs->i32_vals[itn_base + 15][col_base + 14], 3);
-    rpck3[15] = __builtin_ia32_vec_set_v4si(rpck3[15], rhs->i32_vals[itn_base + 15][col_base + 15], 3);
-} /* prepare_rpck_fully */
+inline static void fill_rpcks_fully(v4si_t * rpck0, v4si_t * rpck1, v4si_t * rpck2, v4si_t * rpck3, ptr_matrix_t rhs, unsigned int itn_base, unsigned col_base)
+{
+    fill_rpcks_fully_on_row(rpck0, rhs, itn_base +  0, col_base, 0);
+    fill_rpcks_fully_on_row(rpck0, rhs, itn_base +  1, col_base, 1);
+    fill_rpcks_fully_on_row(rpck0, rhs, itn_base +  2, col_base, 2);
+    fill_rpcks_fully_on_row(rpck0, rhs, itn_base +  3, col_base, 3);
+    fill_rpcks_fully_on_row(rpck1, rhs, itn_base +  4, col_base, 0);
+    fill_rpcks_fully_on_row(rpck1, rhs, itn_base +  5, col_base, 1);
+    fill_rpcks_fully_on_row(rpck1, rhs, itn_base +  6, col_base, 2);
+    fill_rpcks_fully_on_row(rpck1, rhs, itn_base +  7, col_base, 3);
+    fill_rpcks_fully_on_row(rpck2, rhs, itn_base +  8, col_base, 0);
+    fill_rpcks_fully_on_row(rpck2, rhs, itn_base +  9, col_base, 1);
+    fill_rpcks_fully_on_row(rpck2, rhs, itn_base + 10, col_base, 2);
+    fill_rpcks_fully_on_row(rpck2, rhs, itn_base + 11, col_base, 3);
+    fill_rpcks_fully_on_row(rpck3, rhs, itn_base + 12, col_base, 0);
+    fill_rpcks_fully_on_row(rpck3, rhs, itn_base + 13, col_base, 1);
+    fill_rpcks_fully_on_row(rpck3, rhs, itn_base + 14, col_base, 2);
+    fill_rpcks_fully_on_row(rpck3, rhs, itn_base + 15, col_base, 3);
+} /* fill_rpcks_fully */
 
 inline static int32_t mul_pcks(v4si_t * lpck, v4si_t * rpck0, v4si_t * rpck1, v4si_t * rpck2,  v4si_t * rpck3, unsigned k)
 {
@@ -738,7 +503,7 @@ static ptr_matrix_t mat_multiply_and_store_simd_v2(ptr_matrix_t mtx, ptr_matrix_
             unsigned int itn_base = k * pcks_per_blk * vals_per_pck;
             v4si_t rpck[pcks_per_blk][vals_per_blk];
 
-            prepare_rpck_fully(rpck[0], rpck[1], rpck[2], rpck[3], rhs, itn_base, col_base);
+            fill_rpcks_fully(rpck[0], rpck[1], rpck[2], rpck[3], rhs, itn_base, col_base);
 
             for (unsigned int i = 0; i < blks_per_row; i += 1) {
                 unsigned row_base = i * pcks_per_blk * vals_per_pck; 

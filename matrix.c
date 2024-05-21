@@ -633,34 +633,43 @@ static ptr_matrix_t mat_multiply_and_store_simd_v2(ptr_matrix_t mtx, ptr_matrix_
     const unsigned int bytes = lhs->value_size * pcks_per_blk * vals_per_blk;
 
 #pragma omp parallel for schedule(static)
-    for (unsigned int j = 0; j < jblks; j += 1) {
+    for (unsigned int j = 0, col_base = 0; j < jblks; j += 1, col_base += vals_per_blk) {
         v4si_t rpck[pcks_per_blk][vals_per_blk];
+        unsigned int itn_base = 0;
+        unsigned int pck_off = 0;
 
         for (unsigned int k = 0; k < kblks; k += 1) {
-            fill_rpcks_ifcf(rpck[0], rpck[1], rpck[2], rpck[3], rhs, k * vals_per_blk, 0, j * vals_per_blk, 0);
-            mat_do_multiply(mtx, v4si_mul_pcks_fully, iblks, irmd, lhs, k * pcks_per_blk, rpck[0], rpck[1], rpck[2], rpck[3], j * vals_per_blk, 0);
+            fill_rpcks_ifcf(rpck[0], rpck[1], rpck[2], rpck[3], rhs, itn_base, 0, col_base, 0);
+            mat_do_multiply(mtx, v4si_mul_pcks_fully, iblks, irmd, lhs, pck_off, rpck[0], rpck[1], rpck[2], rpck[3], col_base, 0);
+            itn_base += vals_per_blk;
+            pck_off += pcks_per_blk;
         } /* for */
 
         if (krmd > 0) {
             memset(rpck, 0, bytes);
-            fill_rpcks_ipcf(rpck[0], rpck[1], rpck[2], rpck[3], rhs, kblks * vals_per_blk, krmd, j * vals_per_blk, 0);
-            mat_do_multiply(mtx, v4si_mul_pcks_fully, iblks, irmd, lhs, kblks * pcks_per_blk, rpck[0], rpck[1], rpck[2], rpck[3], j * vals_per_blk, 0);
+            fill_rpcks_ipcf(rpck[0], rpck[1], rpck[2], rpck[3], rhs, itn_base, krmd, col_base, 0);
+            mat_do_multiply(mtx, v4si_mul_pcks_fully, iblks, irmd, lhs, pck_off, rpck[0], rpck[1], rpck[2], rpck[3], col_base, 0);
         } /* if */
     } /* for */
 
     {
         v4si_t rpck[pcks_per_blk][vals_per_blk];
+        unsigned int itn_base = 0;
+        unsigned int col_base = jblks * vals_per_blk;
+        unsigned int pck_off = 0;
 
         for (unsigned int k = 0; k < kblks; k += 1) {
             memset(rpck, 0, bytes);
-            fill_rpcks_ifcp(rpck[0], rpck[1], rpck[2], rpck[3], rhs, k * vals_per_blk, 0, jblks * vals_per_blk, jrmd);
-            mat_do_multiply(mtx, v4si_mul_pcks_partly, iblks, irmd, lhs, k * pcks_per_blk, rpck[0], rpck[1], rpck[2], rpck[3], jblks * vals_per_blk, jrmd);
+            fill_rpcks_ifcp(rpck[0], rpck[1], rpck[2], rpck[3], rhs, itn_base, 0, col_base, jrmd);
+            mat_do_multiply(mtx, v4si_mul_pcks_partly, iblks, irmd, lhs, pck_off, rpck[0], rpck[1], rpck[2], rpck[3], col_base, jrmd);
+            itn_base += vals_per_blk;
+            pck_off += pcks_per_blk;
         } /* for */
 
         if (krmd > 0) {
             memset(rpck, 0, bytes);
-            fill_rpcks_ipcp(rpck[0], rpck[1], rpck[2], rpck[3], rhs, kblks * vals_per_blk, krmd, jblks * vals_per_blk, jrmd);
-            mat_do_multiply(mtx, v4si_mul_pcks_partly, iblks, irmd, lhs, kblks * pcks_per_blk, rpck[0], rpck[1], rpck[2], rpck[3], jblks * vals_per_blk, jrmd);
+            fill_rpcks_ipcp(rpck[0], rpck[1], rpck[2], rpck[3], rhs, itn_base, krmd, col_base, jrmd);
+            mat_do_multiply(mtx, v4si_mul_pcks_partly, iblks, irmd, lhs, pck_off, rpck[0], rpck[1], rpck[2], rpck[3], col_base, jrmd);
         } /* if */
     }
     return mtx;

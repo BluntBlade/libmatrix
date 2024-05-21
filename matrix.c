@@ -427,7 +427,7 @@ static ptr_matrix_t mat_multiply_and_store_simd(ptr_matrix_t mtx, ptr_matrix_t l
         default: break; \
     }
 
-static void fill_rpcks_ifcf(v4si_t * rpck0, v4si_t * rpck1, v4si_t * rpck2, v4si_t * rpck3, ptr_matrix_t rhs, unsigned int itn_base, unsigned int col_base, unsigned int col_rmd)
+static void fill_rpcks_ifcf(v4si_t * rpck0, v4si_t * rpck1, v4si_t * rpck2, v4si_t * rpck3, ptr_matrix_t rhs, unsigned int itn_base, unsigned int itn_rmd, unsigned int col_base, unsigned int col_rmd)
 {
     fill_rpcks_from_col_to_byte_fully(rpck0, rhs, itn_base +  0, col_base, 0);
     fill_rpcks_from_col_to_byte_fully(rpck0, rhs, itn_base +  1, col_base, 1);
@@ -447,7 +447,7 @@ static void fill_rpcks_ifcf(v4si_t * rpck0, v4si_t * rpck1, v4si_t * rpck2, v4si
     fill_rpcks_from_col_to_byte_fully(rpck3, rhs, itn_base + 15, col_base, 3);
 } /* fill_rpcks_ifcf */
 
-static void fill_rpcks_ifcp(v4si_t * rpck0, v4si_t * rpck1, v4si_t * rpck2, v4si_t * rpck3, ptr_matrix_t rhs, unsigned int itn_base, unsigned int col_base, unsigned int col_rmd)
+static void fill_rpcks_ifcp(v4si_t * rpck0, v4si_t * rpck1, v4si_t * rpck2, v4si_t * rpck3, ptr_matrix_t rhs, unsigned int itn_base, unsigned int itn_rmd, unsigned int col_base, unsigned int col_rmd)
 {
     memset(rpck0, 0, sizeof(int32_t) * 16);
     memset(rpck1, 0, sizeof(int32_t) * 16);
@@ -471,55 +471,62 @@ static void fill_rpcks_ifcp(v4si_t * rpck0, v4si_t * rpck1, v4si_t * rpck2, v4si
     fill_rpcks_from_col_to_byte_partly(rpck3, rhs, itn_base + 15, col_base, col_rmd, 3);
 } /* fill_rpcks_ifcp */
 
-static void fill_rpcks_ipcf(v4si_t * rpck0, v4si_t * rpck1, v4si_t * rpck2, v4si_t * rpck3, ptr_matrix_t rhs, unsigned int itn_base, unsigned int itn_cnt, unsigned int col_base, unsigned int col_rmd)
+static void fill_rpcks_ipcf(v4si_t * rpck0, v4si_t * rpck1, v4si_t * rpck2, v4si_t * rpck3, ptr_matrix_t rhs, unsigned int itn_base, unsigned int itn_rmd, unsigned int col_base, unsigned int col_rmd)
 {
     memset(rpck0, 0, sizeof(int32_t) * 16);
     memset(rpck1, 0, sizeof(int32_t) * 16);
     memset(rpck2, 0, sizeof(int32_t) * 16);
     memset(rpck3, 0, sizeof(int32_t) * 16);
-    switch (itn_cnt) {
-        case 15: itn_cnt -= 1; fill_rpcks_from_col_to_byte_fully(rpck3, rhs, itn_base + itn_cnt, col_base, 2);
-        case 14: itn_cnt -= 1; fill_rpcks_from_col_to_byte_fully(rpck3, rhs, itn_base + itn_cnt, col_base, 1);
-        case 13: itn_cnt -= 1; fill_rpcks_from_col_to_byte_fully(rpck3, rhs, itn_base + itn_cnt, col_base, 0);
-        case 12: itn_cnt -= 1; fill_rpcks_from_col_to_byte_fully(rpck2, rhs, itn_base + itn_cnt, col_base, 3);
-        case 11: itn_cnt -= 1; fill_rpcks_from_col_to_byte_fully(rpck2, rhs, itn_base + itn_cnt, col_base, 2);
-        case 10: itn_cnt -= 1; fill_rpcks_from_col_to_byte_fully(rpck2, rhs, itn_base + itn_cnt, col_base, 1);
-        case  9: itn_cnt -= 1; fill_rpcks_from_col_to_byte_fully(rpck2, rhs, itn_base + itn_cnt, col_base, 0);
-        case  8: itn_cnt -= 1; fill_rpcks_from_col_to_byte_fully(rpck1, rhs, itn_base + itn_cnt, col_base, 3);
-        case  7: itn_cnt -= 1; fill_rpcks_from_col_to_byte_fully(rpck1, rhs, itn_base + itn_cnt, col_base, 2);
-        case  6: itn_cnt -= 1; fill_rpcks_from_col_to_byte_fully(rpck1, rhs, itn_base + itn_cnt, col_base, 1);
-        case  5: itn_cnt -= 1; fill_rpcks_from_col_to_byte_fully(rpck1, rhs, itn_base + itn_cnt, col_base, 0);
-        case  4: itn_cnt -= 1; fill_rpcks_from_col_to_byte_fully(rpck0, rhs, itn_base + itn_cnt, col_base, 3);
-        case  3: itn_cnt -= 1; fill_rpcks_from_col_to_byte_fully(rpck0, rhs, itn_base + itn_cnt, col_base, 2);
-        case  2: itn_cnt -= 1; fill_rpcks_from_col_to_byte_fully(rpck0, rhs, itn_base + itn_cnt, col_base, 1);
-        case  1: itn_cnt -= 1; fill_rpcks_from_col_to_byte_fully(rpck0, rhs, itn_base + itn_cnt, col_base, 0);
+    switch (itn_rmd) {
+        case 15: itn_rmd -= 1; fill_rpcks_from_col_to_byte_fully(rpck3, rhs, itn_base + itn_rmd, col_base, 2);
+        case 14: itn_rmd -= 1; fill_rpcks_from_col_to_byte_fully(rpck3, rhs, itn_base + itn_rmd, col_base, 1);
+        case 13: itn_rmd -= 1; fill_rpcks_from_col_to_byte_fully(rpck3, rhs, itn_base + itn_rmd, col_base, 0);
+        case 12: itn_rmd -= 1; fill_rpcks_from_col_to_byte_fully(rpck2, rhs, itn_base + itn_rmd, col_base, 3);
+        case 11: itn_rmd -= 1; fill_rpcks_from_col_to_byte_fully(rpck2, rhs, itn_base + itn_rmd, col_base, 2);
+        case 10: itn_rmd -= 1; fill_rpcks_from_col_to_byte_fully(rpck2, rhs, itn_base + itn_rmd, col_base, 1);
+        case  9: itn_rmd -= 1; fill_rpcks_from_col_to_byte_fully(rpck2, rhs, itn_base + itn_rmd, col_base, 0);
+        case  8: itn_rmd -= 1; fill_rpcks_from_col_to_byte_fully(rpck1, rhs, itn_base + itn_rmd, col_base, 3);
+        case  7: itn_rmd -= 1; fill_rpcks_from_col_to_byte_fully(rpck1, rhs, itn_base + itn_rmd, col_base, 2);
+        case  6: itn_rmd -= 1; fill_rpcks_from_col_to_byte_fully(rpck1, rhs, itn_base + itn_rmd, col_base, 1);
+        case  5: itn_rmd -= 1; fill_rpcks_from_col_to_byte_fully(rpck1, rhs, itn_base + itn_rmd, col_base, 0);
+        case  4: itn_rmd -= 1; fill_rpcks_from_col_to_byte_fully(rpck0, rhs, itn_base + itn_rmd, col_base, 3);
+        case  3: itn_rmd -= 1; fill_rpcks_from_col_to_byte_fully(rpck0, rhs, itn_base + itn_rmd, col_base, 2);
+        case  2: itn_rmd -= 1; fill_rpcks_from_col_to_byte_fully(rpck0, rhs, itn_base + itn_rmd, col_base, 1);
+        case  1: itn_rmd -= 1; fill_rpcks_from_col_to_byte_fully(rpck0, rhs, itn_base + itn_rmd, col_base, 0);
     } /* switch */
 } /* fill_rpcks_ipcf */
 
-static void fill_rpcks_ipcp(v4si_t * rpck0, v4si_t * rpck1, v4si_t * rpck2, v4si_t * rpck3, ptr_matrix_t rhs, unsigned int itn_base, unsigned int itn_cnt, unsigned int col_base, unsigned int col_rmd)
+static void fill_rpcks_ipcp(v4si_t * rpck0, v4si_t * rpck1, v4si_t * rpck2, v4si_t * rpck3, ptr_matrix_t rhs, unsigned int itn_base, unsigned int itn_rmd, unsigned int col_base, unsigned int col_rmd)
 {
     memset(rpck0, 0, sizeof(int32_t) * 16);
     memset(rpck1, 0, sizeof(int32_t) * 16);
     memset(rpck2, 0, sizeof(int32_t) * 16);
     memset(rpck3, 0, sizeof(int32_t) * 16);
-    switch (itn_cnt) {
-        case 15: itn_cnt -= 1; fill_rpcks_from_col_to_byte_partly(rpck3, rhs, itn_base + itn_cnt, col_base, col_rmd, 2);
-        case 14: itn_cnt -= 1; fill_rpcks_from_col_to_byte_partly(rpck3, rhs, itn_base + itn_cnt, col_base, col_rmd, 1);
-        case 13: itn_cnt -= 1; fill_rpcks_from_col_to_byte_partly(rpck3, rhs, itn_base + itn_cnt, col_base, col_rmd, 0);
-        case 12: itn_cnt -= 1; fill_rpcks_from_col_to_byte_partly(rpck2, rhs, itn_base + itn_cnt, col_base, col_rmd, 3);
-        case 11: itn_cnt -= 1; fill_rpcks_from_col_to_byte_partly(rpck2, rhs, itn_base + itn_cnt, col_base, col_rmd, 2);
-        case 10: itn_cnt -= 1; fill_rpcks_from_col_to_byte_partly(rpck2, rhs, itn_base + itn_cnt, col_base, col_rmd, 1);
-        case  9: itn_cnt -= 1; fill_rpcks_from_col_to_byte_partly(rpck2, rhs, itn_base + itn_cnt, col_base, col_rmd, 0);
-        case  8: itn_cnt -= 1; fill_rpcks_from_col_to_byte_partly(rpck1, rhs, itn_base + itn_cnt, col_base, col_rmd, 3);
-        case  7: itn_cnt -= 1; fill_rpcks_from_col_to_byte_partly(rpck1, rhs, itn_base + itn_cnt, col_base, col_rmd, 2);
-        case  6: itn_cnt -= 1; fill_rpcks_from_col_to_byte_partly(rpck1, rhs, itn_base + itn_cnt, col_base, col_rmd, 1);
-        case  5: itn_cnt -= 1; fill_rpcks_from_col_to_byte_partly(rpck1, rhs, itn_base + itn_cnt, col_base, col_rmd, 0);
-        case  4: itn_cnt -= 1; fill_rpcks_from_col_to_byte_partly(rpck0, rhs, itn_base + itn_cnt, col_base, col_rmd, 3);
-        case  3: itn_cnt -= 1; fill_rpcks_from_col_to_byte_partly(rpck0, rhs, itn_base + itn_cnt, col_base, col_rmd, 2);
-        case  2: itn_cnt -= 1; fill_rpcks_from_col_to_byte_partly(rpck0, rhs, itn_base + itn_cnt, col_base, col_rmd, 1);
-        case  1: itn_cnt -= 1; fill_rpcks_from_col_to_byte_partly(rpck0, rhs, itn_base + itn_cnt, col_base, col_rmd, 0);
+    switch (itn_rmd) {
+        case 15: itn_rmd -= 1; fill_rpcks_from_col_to_byte_partly(rpck3, rhs, itn_base + itn_rmd, col_base, col_rmd, 2);
+        case 14: itn_rmd -= 1; fill_rpcks_from_col_to_byte_partly(rpck3, rhs, itn_base + itn_rmd, col_base, col_rmd, 1);
+        case 13: itn_rmd -= 1; fill_rpcks_from_col_to_byte_partly(rpck3, rhs, itn_base + itn_rmd, col_base, col_rmd, 0);
+        case 12: itn_rmd -= 1; fill_rpcks_from_col_to_byte_partly(rpck2, rhs, itn_base + itn_rmd, col_base, col_rmd, 3);
+        case 11: itn_rmd -= 1; fill_rpcks_from_col_to_byte_partly(rpck2, rhs, itn_base + itn_rmd, col_base, col_rmd, 2);
+        case 10: itn_rmd -= 1; fill_rpcks_from_col_to_byte_partly(rpck2, rhs, itn_base + itn_rmd, col_base, col_rmd, 1);
+        case  9: itn_rmd -= 1; fill_rpcks_from_col_to_byte_partly(rpck2, rhs, itn_base + itn_rmd, col_base, col_rmd, 0);
+        case  8: itn_rmd -= 1; fill_rpcks_from_col_to_byte_partly(rpck1, rhs, itn_base + itn_rmd, col_base, col_rmd, 3);
+        case  7: itn_rmd -= 1; fill_rpcks_from_col_to_byte_partly(rpck1, rhs, itn_base + itn_rmd, col_base, col_rmd, 2);
+        case  6: itn_rmd -= 1; fill_rpcks_from_col_to_byte_partly(rpck1, rhs, itn_base + itn_rmd, col_base, col_rmd, 1);
+        case  5: itn_rmd -= 1; fill_rpcks_from_col_to_byte_partly(rpck1, rhs, itn_base + itn_rmd, col_base, col_rmd, 0);
+        case  4: itn_rmd -= 1; fill_rpcks_from_col_to_byte_partly(rpck0, rhs, itn_base + itn_rmd, col_base, col_rmd, 3);
+        case  3: itn_rmd -= 1; fill_rpcks_from_col_to_byte_partly(rpck0, rhs, itn_base + itn_rmd, col_base, col_rmd, 2);
+        case  2: itn_rmd -= 1; fill_rpcks_from_col_to_byte_partly(rpck0, rhs, itn_base + itn_rmd, col_base, col_rmd, 1);
+        case  1: itn_rmd -= 1; fill_rpcks_from_col_to_byte_partly(rpck0, rhs, itn_base + itn_rmd, col_base, col_rmd, 0);
     } /* switch */
 } /* fill_rpcks_ipcp */
+
+typedef void (*fill_rpcks_fn)(v4si_t *, v4si_t *, v4si_t *, v4si_t *, ptr_matrix_t, unsigned int, unsigned int, unsigned int, unsigned int);
+
+static fill_rpcks_fn fill_rpcks_ops[2][2] = {
+    {&fill_rpcks_ifcf, &fill_rpcks_ifcp},
+    {&fill_rpcks_ipcf, &fill_rpcks_ipcp}
+};
 
 inline static int32_t mul_pcks(v4si_t * lpck, v4si_t * rpck0, v4si_t * rpck1, v4si_t * rpck2, v4si_t * rpck3, unsigned int k)
 {
@@ -583,6 +590,82 @@ static mul_pcks_fn mul_pcks_ops[2] = {
     &mul_pcks_partly
 };
 
+static void mat_do_multiply_on_lhs(ptr_matrix_t mtx, mul_pcks_fn mul_pcks_op, ptr_matrix_t lhs, unsigned pck_off, v4si_t * rpck0, v4si_t * rpck1, v4si_t * rpck2, v4si_t * rpck3, unsigned int col_base, unsigned int col_rmd)
+{
+    unsigned int iblks = (lhs->row_cnt + (16 - 1)) / 16;
+    unsigned int irmd = lhs->row_cnt & (16 - 1);
+    unsigned int row = 0;
+    switch (irmd) {
+        case  0:
+            do {
+                (*mul_pcks_op)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd);
+                row += 1;
+                pck_off += lhs->pack_cnt_per_row;
+        case 15:
+                (*mul_pcks_op)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd);
+                row += 1;
+                pck_off += lhs->pack_cnt_per_row;
+        case 14:
+                (*mul_pcks_op)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd);
+                row += 1;
+                pck_off += lhs->pack_cnt_per_row;
+        case 13:
+                (*mul_pcks_op)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd);
+                row += 1;
+                pck_off += lhs->pack_cnt_per_row;
+        case 12:
+                (*mul_pcks_op)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd);
+                row += 1;
+                pck_off += lhs->pack_cnt_per_row;
+        case 11:
+                (*mul_pcks_op)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd);
+                row += 1;
+                pck_off += lhs->pack_cnt_per_row;
+        case 10:
+                (*mul_pcks_op)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd);
+                row += 1;
+                pck_off += lhs->pack_cnt_per_row;
+        case  9:
+                (*mul_pcks_op)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd);
+                row += 1;
+                pck_off += lhs->pack_cnt_per_row;
+        case  8:
+                (*mul_pcks_op)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd);
+                row += 1;
+                pck_off += lhs->pack_cnt_per_row;
+        case  7:
+                (*mul_pcks_op)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd);
+                row += 1;
+                pck_off += lhs->pack_cnt_per_row;
+        case  6:
+                (*mul_pcks_op)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd);
+                row += 1;
+                pck_off += lhs->pack_cnt_per_row;
+        case  5:
+                (*mul_pcks_op)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd);
+                row += 1;
+                pck_off += lhs->pack_cnt_per_row;
+        case  4:
+                (*mul_pcks_op)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd);
+                row += 1;
+                pck_off += lhs->pack_cnt_per_row;
+        case  3:
+                (*mul_pcks_op)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd);
+                row += 1;
+                pck_off += lhs->pack_cnt_per_row;
+        case  2:
+                (*mul_pcks_op)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd);
+                row += 1;
+                pck_off += lhs->pack_cnt_per_row;
+        case  1:
+                (*mul_pcks_op)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd);
+                row += 1;
+                pck_off += lhs->pack_cnt_per_row;
+            } while (--iblks > 0);
+        default: break;
+    } /* switch */
+} /* mat_do_multiply_on_lhs */
+
 static ptr_matrix_t mat_multiply_and_store_simd_v2(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs)
 {
     unsigned int pcks_per_blk = (CPU_CACHE_LINE_BYTES / lhs->value_size) / lhs->pack_len;
@@ -594,96 +677,44 @@ static ptr_matrix_t mat_multiply_and_store_simd_v2(ptr_matrix_t mtx, ptr_matrix_
     unsigned int blks_per_col = round_count_to_multiples_of(pcks_per_col, pcks_per_blk) / pcks_per_blk;
     unsigned int vals_per_pck = lhs->pack_len;
     unsigned int vals_per_blk = vals_per_pck * pcks_per_blk;
-    mul_pcks_fn mul_pcks_op = NULL;
 
 #pragma omp parallel for schedule(static)
-    for (unsigned int j = 0; j < blks_per_col; j += 1) {
-        unsigned int col_base = j * vals_per_blk;
-        unsigned int col_rmd = 0;
+    unsigned int jblks = rhs->col_cnt / 16;
+    unsigned int jrmd = rhs->col_cnt % 16;
+    unsigned int j = 0;
+    for (j = 0; j < jblks; j += 1) {
+        unsigned int kblks = rhs->row_cnt / 16;
+        unsigned int krmd = rhs->row_cnt % 16;
+        unsigned int k = 0;
+        v4si_t rpck[pcks_per_blk][vals_per_blk];
 
-        mul_pcks_op = mul_pcks_ops[0];
-
-        for (unsigned int k = 0; k < blks_per_itn; k += 1) {
-            unsigned int itn_base = k * pcks_per_blk * vals_per_pck;
-            v4si_t rpck[pcks_per_blk][vals_per_blk];
-
-            fill_rpcks_ifcf(rpck[0], rpck[1], rpck[2], rpck[3], rhs, itn_base, col_base, 0);
-
-            unsigned int iblks = (lhs->row_cnt + (16 - 1)) / 16;
-            unsigned int irmd = lhs->row_cnt & (16 - 1);
-            unsigned int pck_off = k * pcks_per_blk;
-            unsigned int row = 0;
-            switch (irmd) {
-                case  0:
-                    do {
-                        (*mul_pcks_op)(mtx, &lhs->i32_packs[pck_off], rpck[0], rpck[1], rpck[2], rpck[3], row, col_base, col_rmd);
-                        row += 1;
-                        pck_off += lhs->pack_cnt_per_row;
-                case 15:
-                        (*mul_pcks_op)(mtx, &lhs->i32_packs[pck_off], rpck[0], rpck[1], rpck[2], rpck[3], row, col_base, col_rmd);
-                        row += 1;
-                        pck_off += lhs->pack_cnt_per_row;
-                case 14:
-                        (*mul_pcks_op)(mtx, &lhs->i32_packs[pck_off], rpck[0], rpck[1], rpck[2], rpck[3], row, col_base, col_rmd);
-                        row += 1;
-                        pck_off += lhs->pack_cnt_per_row;
-                case 13:
-                        (*mul_pcks_op)(mtx, &lhs->i32_packs[pck_off], rpck[0], rpck[1], rpck[2], rpck[3], row, col_base, col_rmd);
-                        row += 1;
-                        pck_off += lhs->pack_cnt_per_row;
-                case 12:
-                        (*mul_pcks_op)(mtx, &lhs->i32_packs[pck_off], rpck[0], rpck[1], rpck[2], rpck[3], row, col_base, col_rmd);
-                        row += 1;
-                        pck_off += lhs->pack_cnt_per_row;
-                case 11:
-                        (*mul_pcks_op)(mtx, &lhs->i32_packs[pck_off], rpck[0], rpck[1], rpck[2], rpck[3], row, col_base, col_rmd);
-                        row += 1;
-                        pck_off += lhs->pack_cnt_per_row;
-                case 10:
-                        (*mul_pcks_op)(mtx, &lhs->i32_packs[pck_off], rpck[0], rpck[1], rpck[2], rpck[3], row, col_base, col_rmd);
-                        row += 1;
-                        pck_off += lhs->pack_cnt_per_row;
-                case  9:
-                        (*mul_pcks_op)(mtx, &lhs->i32_packs[pck_off], rpck[0], rpck[1], rpck[2], rpck[3], row, col_base, col_rmd);
-                        row += 1;
-                        pck_off += lhs->pack_cnt_per_row;
-                case  8:
-                        (*mul_pcks_op)(mtx, &lhs->i32_packs[pck_off], rpck[0], rpck[1], rpck[2], rpck[3], row, col_base, col_rmd);
-                        row += 1;
-                        pck_off += lhs->pack_cnt_per_row;
-                case  7:
-                        (*mul_pcks_op)(mtx, &lhs->i32_packs[pck_off], rpck[0], rpck[1], rpck[2], rpck[3], row, col_base, col_rmd);
-                        row += 1;
-                        pck_off += lhs->pack_cnt_per_row;
-                case  6:
-                        (*mul_pcks_op)(mtx, &lhs->i32_packs[pck_off], rpck[0], rpck[1], rpck[2], rpck[3], row, col_base, col_rmd);
-                        row += 1;
-                        pck_off += lhs->pack_cnt_per_row;
-                case  5:
-                        (*mul_pcks_op)(mtx, &lhs->i32_packs[pck_off], rpck[0], rpck[1], rpck[2], rpck[3], row, col_base, col_rmd);
-                        row += 1;
-                        pck_off += lhs->pack_cnt_per_row;
-                case  4:
-                        (*mul_pcks_op)(mtx, &lhs->i32_packs[pck_off], rpck[0], rpck[1], rpck[2], rpck[3], row, col_base, col_rmd);
-                        row += 1;
-                        pck_off += lhs->pack_cnt_per_row;
-                case  3:
-                        (*mul_pcks_op)(mtx, &lhs->i32_packs[pck_off], rpck[0], rpck[1], rpck[2], rpck[3], row, col_base, col_rmd);
-                        row += 1;
-                        pck_off += lhs->pack_cnt_per_row;
-                case  2:
-                        (*mul_pcks_op)(mtx, &lhs->i32_packs[pck_off], rpck[0], rpck[1], rpck[2], rpck[3], row, col_base, col_rmd);
-                        row += 1;
-                        pck_off += lhs->pack_cnt_per_row;
-                case  1:
-                        (*mul_pcks_op)(mtx, &lhs->i32_packs[pck_off], rpck[0], rpck[1], rpck[2], rpck[3], row, col_base, col_rmd);
-                        row += 1;
-                        pck_off += lhs->pack_cnt_per_row;
-                    } while (--iblks > 0);
-                default: break;
-            } /* switch */
+        for (k = 0; k < kblks; k += 1) {
+            fill_rpcks_ifcf(rpck[0], rpck[1], rpck[2], rpck[3], rhs, k * vals_per_blk, 0, j * vals_per_blk, 0);
+            mat_do_multiply_on_lhs(mtx, mul_pcks_fully, lhs, k * pcks_per_blk, rpck[0], rpck[1], rpck[2], rpck[3], j * vals_per_blk, 0);
         } /* for */
+
+        if (krmd > 0) {
+            fill_rpcks_ipcf(rpck[0], rpck[1], rpck[2], rpck[3], rhs, k * vals_per_blk, krmd, j * vals_per_blk, 0);
+            mat_do_multiply_on_lhs(mtx, mul_pcks_fully, lhs, k * pcks_per_blk, rpck[0], rpck[1], rpck[2], rpck[3], j * vals_per_blk, 0);
+        } /* if */
     } /* for */
+
+    {
+        unsigned int kblks = rhs->row_cnt / 16;
+        unsigned int krmd = rhs->row_cnt % 16;
+        unsigned int k = 0;
+        v4si_t rpck[pcks_per_blk][vals_per_blk];
+
+        for (k = 0; k < kblks; k += 1) {
+            fill_rpcks_ifcp(rpck[0], rpck[1], rpck[2], rpck[3], rhs, k * vals_per_blk, 0, j * vals_per_blk, jrmd);
+            mat_do_multiply_on_lhs(mtx, mul_pcks_partly, lhs, k * pcks_per_blk, rpck[0], rpck[1], rpck[2], rpck[3], j * vals_per_blk, jrmd);
+        } /* for */
+
+        if (krmd > 0) {
+            fill_rpcks_ipcp(rpck[0], rpck[1], rpck[2], rpck[3], rhs, k * vals_per_blk, krmd, j * vals_per_blk, jrmd);
+            mat_do_multiply_on_lhs(mtx, mul_pcks_partly, lhs, k * pcks_per_blk, rpck[0], rpck[1], rpck[2], rpck[3], j * vals_per_blk, jrmd);
+        } /* if */
+    }
     return mtx;
 } /* mat_multiply_and_store_simd_v2 */
 

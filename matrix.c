@@ -633,9 +633,10 @@ static ptr_matrix_t mat_multiply_and_store_simd_v2(ptr_matrix_t mtx, ptr_matrix_
     const unsigned int bytes = lhs->value_size * pcks_per_blk * vals_per_blk;
 
 #pragma omp parallel for schedule(static)
-    for (unsigned int j = 0, col_base = 0; j < jblks; j += 1, col_base += vals_per_blk) {
+    for (unsigned int j = 0; j < jblks; j += 1) {
         v4si_t rpck[pcks_per_blk][vals_per_blk];
         unsigned int itn_base = 0;
+        unsigned int col_base = j * vals_per_blk;
         unsigned int pck_off = 0;
 
         for (unsigned int k = 0; k < kblks; k += 1) {

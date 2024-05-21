@@ -669,50 +669,38 @@ static void mat_do_multiply_on_lhs(ptr_matrix_t mtx, mul_pcks_fn mul_pcks_op, pt
 static ptr_matrix_t mat_multiply_and_store_simd_v2(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs)
 {
     unsigned int pcks_per_blk = (CPU_CACHE_LINE_BYTES / lhs->value_size) / lhs->pack_len;
-    unsigned int pcks_per_row = lhs->pack_cnt_per_row;
-    unsigned int pcks_per_itn = lhs->padded_col_cnt / lhs->pack_len;
-    unsigned int pcks_per_col = rhs->padded_col_cnt / rhs->pack_len;
-    unsigned int blks_per_row = round_count_to_multiples_of(pcks_per_row, pcks_per_blk) / pcks_per_blk;
-    unsigned int blks_per_itn = round_count_to_multiples_of(pcks_per_itn, pcks_per_blk) / pcks_per_blk;
-    unsigned int blks_per_col = round_count_to_multiples_of(pcks_per_col, pcks_per_blk) / pcks_per_blk;
-    unsigned int vals_per_pck = lhs->pack_len;
-    unsigned int vals_per_blk = vals_per_pck * pcks_per_blk;
+    unsigned int vals_per_blk = lhs->pack_len * pcks_per_blk;
+    unsigned int jblks = rhs->col_cnt / vals_per_blk;
+    unsigned int jrmd = rhs->col_cnt % vals_per_blk;
+    unsigned int kblks = rhs->row_cnt / vals_per_blk;
+    unsigned int krmd = rhs->row_cnt % vals_per_blk;
 
 #pragma omp parallel for schedule(static)
-    unsigned int jblks = rhs->col_cnt / 16;
-    unsigned int jrmd = rhs->col_cnt % 16;
-    unsigned int j = 0;
-    for (j = 0; j < jblks; j += 1) {
-        unsigned int kblks = rhs->row_cnt / 16;
-        unsigned int krmd = rhs->row_cnt % 16;
-        unsigned int k = 0;
+    for (unsigned int j = 0; j < jblks; j += 1) {
         v4si_t rpck[pcks_per_blk][vals_per_blk];
 
-        for (k = 0; k < kblks; k += 1) {
+        for (unsigned int k = 0; k < kblks; k += 1) {
             fill_rpcks_ifcf(rpck[0], rpck[1], rpck[2], rpck[3], rhs, k * vals_per_blk, 0, j * vals_per_blk, 0);
             mat_do_multiply_on_lhs(mtx, mul_pcks_fully, lhs, k * pcks_per_blk, rpck[0], rpck[1], rpck[2], rpck[3], j * vals_per_blk, 0);
         } /* for */
 
         if (krmd > 0) {
-            fill_rpcks_ipcf(rpck[0], rpck[1], rpck[2], rpck[3], rhs, k * vals_per_blk, krmd, j * vals_per_blk, 0);
-            mat_do_multiply_on_lhs(mtx, mul_pcks_fully, lhs, k * pcks_per_blk, rpck[0], rpck[1], rpck[2], rpck[3], j * vals_per_blk, 0);
+            fill_rpcks_ipcf(rpck[0], rpck[1], rpck[2], rpck[3], rhs, kblks * vals_per_blk, krmd, j * vals_per_blk, 0);
+            mat_do_multiply_on_lhs(mtx, mul_pcks_fully, lhs, kblks * pcks_per_blk, rpck[0], rpck[1], rpck[2], rpck[3], j * vals_per_blk, 0);
         } /* if */
     } /* for */
 
     {
-        unsigned int kblks = rhs->row_cnt / 16;
-        unsigned int krmd = rhs->row_cnt % 16;
-        unsigned int k = 0;
         v4si_t rpck[pcks_per_blk][vals_per_blk];
 
-        for (k = 0; k < kblks; k += 1) {
-            fill_rpcks_ifcp(rpck[0], rpck[1], rpck[2], rpck[3], rhs, k * vals_per_blk, 0, j * vals_per_blk, jrmd);
-            mat_do_multiply_on_lhs(mtx, mul_pcks_partly, lhs, k * pcks_per_blk, rpck[0], rpck[1], rpck[2], rpck[3], j * vals_per_blk, jrmd);
+        for (unsigned int k = 0; k < kblks; k += 1) {
+            fill_rpcks_ifcp(rpck[0], rpck[1], rpck[2], rpck[3], rhs, k * vals_per_blk, 0, jblks * vals_per_blk, jrmd);
+            mat_do_multiply_on_lhs(mtx, mul_pcks_partly, lhs, k * pcks_per_blk, rpck[0], rpck[1], rpck[2], rpck[3], jblks * vals_per_blk, jrmd);
         } /* for */
 
         if (krmd > 0) {
-            fill_rpcks_ipcp(rpck[0], rpck[1], rpck[2], rpck[3], rhs, k * vals_per_blk, krmd, j * vals_per_blk, jrmd);
-            mat_do_multiply_on_lhs(mtx, mul_pcks_partly, lhs, k * pcks_per_blk, rpck[0], rpck[1], rpck[2], rpck[3], j * vals_per_blk, jrmd);
+            fill_rpcks_ipcp(rpck[0], rpck[1], rpck[2], rpck[3], rhs, kblks * vals_per_blk, krmd, jblks * vals_per_blk, jrmd);
+            mat_do_multiply_on_lhs(mtx, mul_pcks_partly, lhs, kblks * pcks_per_blk, rpck[0], rpck[1], rpck[2], rpck[3], jblks * vals_per_blk, jrmd);
         } /* if */
     }
     return mtx;

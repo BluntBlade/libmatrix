@@ -585,11 +585,6 @@ static void mul_pcks_partly(ptr_matrix_t mtx, v4si_t * lpck, v4si_t * rpck0, v4s
 
 typedef void (*mul_pcks_fn)(ptr_matrix_t, v4si_t *, v4si_t *, v4si_t *, v4si_t *, v4si_t *, unsigned int, unsigned int, unsigned int);
 
-static mul_pcks_fn mul_pcks_ops[2] = {
-    &mul_pcks_fully,
-    &mul_pcks_partly
-};
-
 static void mat_do_multiply_on_lhs(ptr_matrix_t mtx, mul_pcks_fn mul_pcks_op, ptr_matrix_t lhs, unsigned pck_off, v4si_t * rpck0, v4si_t * rpck1, v4si_t * rpck2, v4si_t * rpck3, unsigned int col_base, unsigned int col_rmd)
 {
     unsigned int iblks = (lhs->row_cnt + (16 - 1)) / 16;
@@ -674,6 +669,7 @@ static ptr_matrix_t mat_multiply_and_store_simd_v2(ptr_matrix_t mtx, ptr_matrix_
     unsigned int jrmd = rhs->col_cnt % vals_per_blk;
     unsigned int kblks = rhs->row_cnt / vals_per_blk;
     unsigned int krmd = rhs->row_cnt % vals_per_blk;
+    unsigned int bytes = lhs->value_size * pcks_per_blk * vals_per_blk;
 
 #pragma omp parallel for schedule(static)
     for (unsigned int j = 0; j < jblks; j += 1) {
@@ -685,6 +681,7 @@ static ptr_matrix_t mat_multiply_and_store_simd_v2(ptr_matrix_t mtx, ptr_matrix_
         } /* for */
 
         if (krmd > 0) {
+            memset(rpck, 0, bytes);
             fill_rpcks_ipcf(rpck[0], rpck[1], rpck[2], rpck[3], rhs, kblks * vals_per_blk, krmd, j * vals_per_blk, 0);
             mat_do_multiply_on_lhs(mtx, mul_pcks_fully, lhs, kblks * pcks_per_blk, rpck[0], rpck[1], rpck[2], rpck[3], j * vals_per_blk, 0);
         } /* if */
@@ -694,11 +691,13 @@ static ptr_matrix_t mat_multiply_and_store_simd_v2(ptr_matrix_t mtx, ptr_matrix_
         v4si_t rpck[pcks_per_blk][vals_per_blk];
 
         for (unsigned int k = 0; k < kblks; k += 1) {
+            memset(rpck, 0, bytes);
             fill_rpcks_ifcp(rpck[0], rpck[1], rpck[2], rpck[3], rhs, k * vals_per_blk, 0, jblks * vals_per_blk, jrmd);
             mat_do_multiply_on_lhs(mtx, mul_pcks_partly, lhs, k * pcks_per_blk, rpck[0], rpck[1], rpck[2], rpck[3], jblks * vals_per_blk, jrmd);
         } /* for */
 
         if (krmd > 0) {
+            memset(rpck, 0, bytes);
             fill_rpcks_ipcp(rpck[0], rpck[1], rpck[2], rpck[3], rhs, kblks * vals_per_blk, krmd, jblks * vals_per_blk, jrmd);
             mat_do_multiply_on_lhs(mtx, mul_pcks_partly, lhs, kblks * pcks_per_blk, rpck[0], rpck[1], rpck[2], rpck[3], jblks * vals_per_blk, jrmd);
         } /* if */

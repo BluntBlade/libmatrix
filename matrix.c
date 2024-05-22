@@ -92,8 +92,7 @@ typedef struct MATRIX_T {
     size_t          value_size;
 
     union {
-        int32_t *   i32_padded;
-        v4si_t *    i32_packs;
+        v4si_t *    i32_pcks;
         void *      data;
     };
     
@@ -378,7 +377,7 @@ static ptr_matrix_t mat_multiply_and_store_simd(ptr_matrix_t mtx, ptr_matrix_t l
             pack_rhs = __builtin_ia32_vec_set_v4si(pack_rhs, rhs->i32_vals[k + 3][j], 3);
 
             for (i = 0; i < lhs->row_cnt; i += 1) {
-                pack_lhs = lhs->i32_packs[i * lhs->pack_cnt_per_row + k / I32_PACK_LEN];
+                pack_lhs = lhs->i32_pcks[i * lhs->pack_cnt_per_row + k / I32_PACK_LEN];
                 ret = __builtin_ia32_pmulld128(pack_lhs, pack_rhs);
                 mtx->i32_vals[i][j] += v4si_sum_up(&ret);
             } /* for */
@@ -580,22 +579,22 @@ static void mat_do_multiply(ptr_matrix_t mtx, mul_pcks_and_store mul_and_store, 
     unsigned int row = 0;
     switch (irmd) {
             do {
-        case  0: (*mul_and_store)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
-        case 15: (*mul_and_store)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
-        case 14: (*mul_and_store)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
-        case 13: (*mul_and_store)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
-        case 12: (*mul_and_store)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
-        case 11: (*mul_and_store)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
-        case 10: (*mul_and_store)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
-        case  9: (*mul_and_store)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
-        case  8: (*mul_and_store)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
-        case  7: (*mul_and_store)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
-        case  6: (*mul_and_store)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
-        case  5: (*mul_and_store)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
-        case  4: (*mul_and_store)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
-        case  3: (*mul_and_store)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
-        case  2: (*mul_and_store)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
-        case  1: (*mul_and_store)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
+        case  0: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
+        case 15: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
+        case 14: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
+        case 13: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
+        case 12: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
+        case 11: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
+        case 10: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
+        case  9: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
+        case  8: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
+        case  7: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
+        case  6: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
+        case  5: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
+        case  4: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
+        case  3: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
+        case  2: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
+        case  1: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
             } while (--ibths > 0);
         default: break;
     } /* switch */
@@ -671,39 +670,54 @@ static void i32_scr_multiply_and_store_plain(ptr_matrix_t mtx, int32_t lhs, ptr_
 
 static void i32_scr_multiply_and_store_simd(ptr_matrix_t mtx, int32_t lhs, ptr_matrix_t rhs)
 {
-    v4si_t scalar = {0};
-    unsigned int i = 0;
-    unsigned int itr_cnt = 0;
-    unsigned int rmd_cnt = 0;
+    v4si_t scr = {0};
+    unsigned int itrs = 0;
+    unsigned int rmd = 0;
     unsigned int valid_pack_cnt = rhs->padded_row_cnt * rhs->pack_cnt_per_row;
     
-    scalar = __builtin_ia32_vec_set_v4si(scalar, lhs, 0);
-    scalar = __builtin_ia32_vec_set_v4si(scalar, lhs, 1);
-    scalar = __builtin_ia32_vec_set_v4si(scalar, lhs, 2);
-    scalar = __builtin_ia32_vec_set_v4si(scalar, lhs, 3);
+    scr = __builtin_ia32_vec_set_v4si(scr, lhs, 0);
+    scr = __builtin_ia32_vec_set_v4si(scr, lhs, 1);
+    scr = __builtin_ia32_vec_set_v4si(scr, lhs, 2);
+    scr = __builtin_ia32_vec_set_v4si(scr, lhs, 3);
 
-    itr_cnt = valid_pack_cnt / 8;
-    rmd_cnt = valid_pack_cnt % 8;
+    itrs = valid_pack_cnt / 16;
+    rmd = valid_pack_cnt % 16;
 
-    for (i = 0; i < itr_cnt; i += 1) {
-        mtx->i32_packs[i * 8 + 0] = __builtin_ia32_pmulld128(rhs->i32_packs[i * 8 + 0], scalar);
-        mtx->i32_packs[i * 8 + 1] = __builtin_ia32_pmulld128(rhs->i32_packs[i * 8 + 1], scalar);
-        mtx->i32_packs[i * 8 + 2] = __builtin_ia32_pmulld128(rhs->i32_packs[i * 8 + 2], scalar);
-        mtx->i32_packs[i * 8 + 3] = __builtin_ia32_pmulld128(rhs->i32_packs[i * 8 + 3], scalar);
-        mtx->i32_packs[i * 8 + 4] = __builtin_ia32_pmulld128(rhs->i32_packs[i * 8 + 4], scalar);
-        mtx->i32_packs[i * 8 + 5] = __builtin_ia32_pmulld128(rhs->i32_packs[i * 8 + 5], scalar);
-        mtx->i32_packs[i * 8 + 6] = __builtin_ia32_pmulld128(rhs->i32_packs[i * 8 + 6], scalar);
-        mtx->i32_packs[i * 8 + 7] = __builtin_ia32_pmulld128(rhs->i32_packs[i * 8 + 7], scalar);
+    for (unsigned int i = 0; i < itrs; i += 1) {
+        mtx->i32_pcks[i * 16 +  0] = __builtin_ia32_pmulld128(rhs->i32_pcks[i * 16 +  0], scr);
+        mtx->i32_pcks[i * 16 +  1] = __builtin_ia32_pmulld128(rhs->i32_pcks[i * 16 +  1], scr);
+        mtx->i32_pcks[i * 16 +  2] = __builtin_ia32_pmulld128(rhs->i32_pcks[i * 16 +  2], scr);
+        mtx->i32_pcks[i * 16 +  3] = __builtin_ia32_pmulld128(rhs->i32_pcks[i * 16 +  3], scr);
+        mtx->i32_pcks[i * 16 +  4] = __builtin_ia32_pmulld128(rhs->i32_pcks[i * 16 +  4], scr);
+        mtx->i32_pcks[i * 16 +  5] = __builtin_ia32_pmulld128(rhs->i32_pcks[i * 16 +  5], scr);
+        mtx->i32_pcks[i * 16 +  6] = __builtin_ia32_pmulld128(rhs->i32_pcks[i * 16 +  6], scr);
+        mtx->i32_pcks[i * 16 +  7] = __builtin_ia32_pmulld128(rhs->i32_pcks[i * 16 +  7], scr);
+        mtx->i32_pcks[i * 16 +  8] = __builtin_ia32_pmulld128(rhs->i32_pcks[i * 16 +  8], scr);
+        mtx->i32_pcks[i * 16 +  9] = __builtin_ia32_pmulld128(rhs->i32_pcks[i * 16 +  9], scr);
+        mtx->i32_pcks[i * 16 + 10] = __builtin_ia32_pmulld128(rhs->i32_pcks[i * 16 + 10], scr);
+        mtx->i32_pcks[i * 16 + 11] = __builtin_ia32_pmulld128(rhs->i32_pcks[i * 16 + 11], scr);
+        mtx->i32_pcks[i * 16 + 12] = __builtin_ia32_pmulld128(rhs->i32_pcks[i * 16 + 12], scr);
+        mtx->i32_pcks[i * 16 + 13] = __builtin_ia32_pmulld128(rhs->i32_pcks[i * 16 + 13], scr);
+        mtx->i32_pcks[i * 16 + 14] = __builtin_ia32_pmulld128(rhs->i32_pcks[i * 16 + 14], scr);
+        mtx->i32_pcks[i * 16 + 15] = __builtin_ia32_pmulld128(rhs->i32_pcks[i * 16 + 15], scr);
     } /* for i */
 
-    switch (rmd_cnt) {
-        case 7: mtx->i32_packs[i * 8 + 6] = __builtin_ia32_pmulld128(rhs->i32_packs[i * 8 + 6], scalar);
-        case 6: mtx->i32_packs[i * 8 + 5] = __builtin_ia32_pmulld128(rhs->i32_packs[i * 8 + 5], scalar);
-        case 5: mtx->i32_packs[i * 8 + 4] = __builtin_ia32_pmulld128(rhs->i32_packs[i * 8 + 4], scalar);
-        case 4: mtx->i32_packs[i * 8 + 3] = __builtin_ia32_pmulld128(rhs->i32_packs[i * 8 + 3], scalar);
-        case 3: mtx->i32_packs[i * 8 + 2] = __builtin_ia32_pmulld128(rhs->i32_packs[i * 8 + 2], scalar);
-        case 2: mtx->i32_packs[i * 8 + 1] = __builtin_ia32_pmulld128(rhs->i32_packs[i * 8 + 1], scalar);
-        case 1: mtx->i32_packs[i * 8 + 0] = __builtin_ia32_pmulld128(rhs->i32_packs[i * 8 + 0], scalar);
+    switch (rmd) {
+        case 15: mtx->i32_pcks[itrs * 16 + 14] = __builtin_ia32_pmulld128(rhs->i32_pcks[itrs * 16 + 14], scr);
+        case 14: mtx->i32_pcks[itrs * 16 + 13] = __builtin_ia32_pmulld128(rhs->i32_pcks[itrs * 16 + 13], scr);
+        case 13: mtx->i32_pcks[itrs * 16 + 12] = __builtin_ia32_pmulld128(rhs->i32_pcks[itrs * 16 + 12], scr);
+        case 12: mtx->i32_pcks[itrs * 16 + 11] = __builtin_ia32_pmulld128(rhs->i32_pcks[itrs * 16 + 11], scr);
+        case 11: mtx->i32_pcks[itrs * 16 + 10] = __builtin_ia32_pmulld128(rhs->i32_pcks[itrs * 16 + 10], scr);
+        case 10: mtx->i32_pcks[itrs * 16 +  9] = __builtin_ia32_pmulld128(rhs->i32_pcks[itrs * 16 +  9], scr);
+        case  9: mtx->i32_pcks[itrs * 16 +  8] = __builtin_ia32_pmulld128(rhs->i32_pcks[itrs * 16 +  8], scr);
+        case  8: mtx->i32_pcks[itrs * 16 +  7] = __builtin_ia32_pmulld128(rhs->i32_pcks[itrs * 16 +  7], scr);
+        case  7: mtx->i32_pcks[itrs * 16 +  6] = __builtin_ia32_pmulld128(rhs->i32_pcks[itrs * 16 +  6], scr);
+        case  6: mtx->i32_pcks[itrs * 16 +  5] = __builtin_ia32_pmulld128(rhs->i32_pcks[itrs * 16 +  5], scr);
+        case  5: mtx->i32_pcks[itrs * 16 +  4] = __builtin_ia32_pmulld128(rhs->i32_pcks[itrs * 16 +  4], scr);
+        case  4: mtx->i32_pcks[itrs * 16 +  3] = __builtin_ia32_pmulld128(rhs->i32_pcks[itrs * 16 +  3], scr);
+        case  3: mtx->i32_pcks[itrs * 16 +  2] = __builtin_ia32_pmulld128(rhs->i32_pcks[itrs * 16 +  2], scr);
+        case  2: mtx->i32_pcks[itrs * 16 +  1] = __builtin_ia32_pmulld128(rhs->i32_pcks[itrs * 16 +  1], scr);
+        case  1: mtx->i32_pcks[itrs * 16 +  0] = __builtin_ia32_pmulld128(rhs->i32_pcks[itrs * 16 +  0], scr);
         default: break;
     } /* switch */
 } /* i32_scr_multiply_and_store_simd */
@@ -723,7 +737,7 @@ static void i32_init_identity_plain(ptr_matrix_t mtx)
 
 static void i32_init_zeros_plain(ptr_matrix_t mtx)
 {
-    memset(mtx->i32_padded, 0, mtx->padded_byte_cnt);
+    memset(mtx->data, 0, mtx->padded_byte_cnt);
 } /* i32_init_zeros_plain */
 
 static void i32_init_ones_plain(ptr_matrix_t mtx)

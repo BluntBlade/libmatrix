@@ -594,7 +594,7 @@ static void v4si_mul_pcks_partly(ptr_matrix_t mtx, v4si_t * lpck, v4si_t * rpck0
 
 typedef void (*mul_pcks_and_store)(ptr_matrix_t, v4si_t *, v4si_t *, v4si_t *, v4si_t *, v4si_t *, unsigned int, unsigned int, unsigned int);
 
-static void mat_do_multiply(ptr_matrix_t mtx, mul_pcks_and_store mul_and_store, unsigned int iblks, unsigned int irmd, ptr_matrix_t lhs, unsigned pck_off, v4si_t * rpck0, v4si_t * rpck1, v4si_t * rpck2, v4si_t * rpck3, unsigned int col_base, unsigned int col_rmd)
+static void mat_do_multiply(ptr_matrix_t mtx, mul_pcks_and_store mul_and_store, unsigned int ibths, unsigned int irmd, ptr_matrix_t lhs, unsigned pck_off, v4si_t * rpck0, v4si_t * rpck1, v4si_t * rpck2, v4si_t * rpck3, unsigned int col_base, unsigned int col_rmd)
 {
     unsigned int row = 0;
     switch (irmd) {
@@ -615,62 +615,62 @@ static void mat_do_multiply(ptr_matrix_t mtx, mul_pcks_and_store mul_and_store, 
         case  3: (*mul_and_store)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
         case  2: (*mul_and_store)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
         case  1: (*mul_and_store)(mtx, &lhs->i32_packs[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
-            } while (--iblks > 0);
+            } while (--ibths > 0);
         default: break;
     } /* switch */
 } /* mat_do_multiply */
 
 static ptr_matrix_t mat_multiply_and_store_simd_v2(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs)
 {
-    const unsigned int vals_per_blk = (CPU_CACHE_LINE_BYTES / lhs->value_size);
-    const unsigned int pcks_per_blk = vals_per_blk / lhs->pack_len;
-    const unsigned int jblks = rhs->col_cnt / vals_per_blk;
-    const unsigned int jrmd = rhs->col_cnt % vals_per_blk;
-    const unsigned int kblks = rhs->row_cnt / vals_per_blk;
-    const unsigned int krmd = rhs->row_cnt % vals_per_blk;
-    const unsigned int iblks = (lhs->row_cnt + (vals_per_blk - 1)) / vals_per_blk;
-    const unsigned int irmd = lhs->row_cnt & (vals_per_blk - 1);
-    const unsigned int bytes = lhs->value_size * pcks_per_blk * vals_per_blk;
+    const unsigned int vals_per_bth = (CPU_CACHE_LINE_BYTES / lhs->value_size);
+    const unsigned int pcks_per_bth = vals_per_bth / lhs->pack_len;
+    const unsigned int jbths = rhs->col_cnt / vals_per_bth;
+    const unsigned int jrmd = rhs->col_cnt % vals_per_bth;
+    const unsigned int kbths = rhs->row_cnt / vals_per_bth;
+    const unsigned int krmd = rhs->row_cnt % vals_per_bth;
+    const unsigned int ibths = (lhs->row_cnt + (vals_per_bth - 1)) / vals_per_bth;
+    const unsigned int irmd = lhs->row_cnt & (vals_per_bth - 1);
+    const unsigned int bytes = lhs->value_size * pcks_per_bth * vals_per_bth;
 
 #pragma omp parallel for schedule(static)
-    for (unsigned int j = 0; j < jblks; j += 1) {
-        v4si_t rpck[pcks_per_blk][vals_per_blk];
+    for (unsigned int j = 0; j < jbths; j += 1) {
+        v4si_t rpck[pcks_per_bth][vals_per_bth];
         unsigned int itn_base = 0;
-        unsigned int col_base = j * vals_per_blk;
+        unsigned int col_base = j * vals_per_bth;
         unsigned int pck_off = 0;
 
-        for (unsigned int k = 0; k < kblks; k += 1) {
+        for (unsigned int k = 0; k < kbths; k += 1) {
             fill_rpcks_ifcf(rpck[0], rpck[1], rpck[2], rpck[3], rhs, itn_base, 0, col_base, 0);
-            mat_do_multiply(mtx, v4si_mul_pcks_fully, iblks, irmd, lhs, pck_off, rpck[0], rpck[1], rpck[2], rpck[3], col_base, 0);
-            itn_base += vals_per_blk;
-            pck_off += pcks_per_blk;
+            mat_do_multiply(mtx, v4si_mul_pcks_fully, ibths, irmd, lhs, pck_off, rpck[0], rpck[1], rpck[2], rpck[3], col_base, 0);
+            itn_base += vals_per_bth;
+            pck_off += pcks_per_bth;
         } /* for */
 
         if (krmd > 0) {
             memset(rpck, 0, bytes);
             fill_rpcks_ipcf(rpck[0], rpck[1], rpck[2], rpck[3], rhs, itn_base, krmd, col_base, 0);
-            mat_do_multiply(mtx, v4si_mul_pcks_fully, iblks, irmd, lhs, pck_off, rpck[0], rpck[1], rpck[2], rpck[3], col_base, 0);
+            mat_do_multiply(mtx, v4si_mul_pcks_fully, ibths, irmd, lhs, pck_off, rpck[0], rpck[1], rpck[2], rpck[3], col_base, 0);
         } /* if */
     } /* for */
 
     {
-        v4si_t rpck[pcks_per_blk][vals_per_blk];
+        v4si_t rpck[pcks_per_bth][vals_per_bth];
         unsigned int itn_base = 0;
-        unsigned int col_base = jblks * vals_per_blk;
+        unsigned int col_base = jbths * vals_per_bth;
         unsigned int pck_off = 0;
 
-        for (unsigned int k = 0; k < kblks; k += 1) {
+        for (unsigned int k = 0; k < kbths; k += 1) {
             memset(rpck, 0, bytes);
             fill_rpcks_ifcp(rpck[0], rpck[1], rpck[2], rpck[3], rhs, itn_base, 0, col_base, jrmd);
-            mat_do_multiply(mtx, v4si_mul_pcks_partly, iblks, irmd, lhs, pck_off, rpck[0], rpck[1], rpck[2], rpck[3], col_base, jrmd);
-            itn_base += vals_per_blk;
-            pck_off += pcks_per_blk;
+            mat_do_multiply(mtx, v4si_mul_pcks_partly, ibths, irmd, lhs, pck_off, rpck[0], rpck[1], rpck[2], rpck[3], col_base, jrmd);
+            itn_base += vals_per_bth;
+            pck_off += pcks_per_bth;
         } /* for */
 
         if (krmd > 0) {
             memset(rpck, 0, bytes);
             fill_rpcks_ipcp(rpck[0], rpck[1], rpck[2], rpck[3], rhs, itn_base, krmd, col_base, jrmd);
-            mat_do_multiply(mtx, v4si_mul_pcks_partly, iblks, irmd, lhs, pck_off, rpck[0], rpck[1], rpck[2], rpck[3], col_base, jrmd);
+            mat_do_multiply(mtx, v4si_mul_pcks_partly, ibths, irmd, lhs, pck_off, rpck[0], rpck[1], rpck[2], rpck[3], col_base, jrmd);
         } /* if */
     }
     return mtx;

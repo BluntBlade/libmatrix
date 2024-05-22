@@ -84,7 +84,6 @@ typedef struct MATRIX_T {
 
     unsigned int    row_cnt;            /* The actual number of rows. */ 
     unsigned int    col_cnt;            /* The actual number of columns. */
-    unsigned int    padded_col_cnt;     /* Round to the power of <value type>_PACK_LEN. */
     unsigned int    pcks_in_row;        /* The number of packs in one row. */
     size_t          vals_in_pck;
     size_t          byte_cnt;           /* Allocated bytes, including pads. */
@@ -111,19 +110,21 @@ inline static unsigned int round_count_to_multiples_of(unsigned int cnt, unsigne
 
 static ptr_matrix_t mtx_allocate(unsigned int row_cnt, unsigned int col_cnt, size_t val_size, size_t vals_in_pck, ptr_operation_t ops)
 {
-    unsigned int i = 0;
     ptr_matrix_t mtx = NULL;
+    unsigned int padded_col_cnt = 0;
+    unsigned int i = 0;
 
     mtx = calloc(sizeof(matrix_t) + sizeof(void *) * row_cnt, 1);
     if (! mtx) {
         return NULL;
     } /* if */
 
+    padded_col_cnt = round_count_to_multiples_of(col_cnt, vals_in_pck);
+
     mtx->row_cnt = row_cnt;
     mtx->col_cnt = col_cnt;
-    mtx->padded_col_cnt = round_count_to_multiples_of(col_cnt, vals_in_pck);
-    mtx->byte_cnt = val_size * mtx->row_cnt * mtx->padded_col_cnt;
-    mtx->pcks_in_row = mtx->padded_col_cnt / vals_in_pck;
+    mtx->byte_cnt = val_size * row_cnt * padded_col_cnt;
+    mtx->pcks_in_row = padded_col_cnt / vals_in_pck;
     mtx->vals_in_pck = vals_in_pck;
     mtx->val_size = val_size;
 
@@ -136,7 +137,7 @@ static ptr_matrix_t mtx_allocate(unsigned int row_cnt, unsigned int col_cnt, siz
     } /* if */
 
     for (i = 0; i < mtx->row_cnt; i += 1) {
-        mtx->val_ptrs[i] = mtx->data + i * mtx->val_size * mtx->padded_col_cnt;
+        mtx->val_ptrs[i] = mtx->data + i * mtx->val_size * padded_col_cnt;
     } /* for */
     return mtx;
 } /* mtx_allocate */

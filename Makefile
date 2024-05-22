@@ -1,6 +1,10 @@
 CC = gcc
 
-CFLAGS = -g -O3 -fPIC -I. -I/usr/local/include -msse4.1 -Wno-int-conversion
+CFLAGS = -g -fPIC -I. -I/usr/local/include -msse4.1 -Wno-int-conversion
+
+ifndef DEBUG
+    CFLAGS := $(CFLAGS) -O3
+endif
 
 ifdef OPENMP
     CFLAGS := $(CFLAGS) -Xpreprocessor -fopenmp
@@ -29,7 +33,7 @@ all : $(TARGET)
 test : $(TEST_TARGET)
 benchmark : $(BENCHMARK_MATRIX_MULTIPLY)
 clean :
-	rm *.o $(TARGET) $(TEST_TARGET) $(BENCHMARK_MATRIX_MULTIPLY)
+	rm -rf *.o $(TARGET) $(TEST_TARGET) $(BENCHMARK_MATRIX_MULTIPLY)
 
 $(TARGET) : $(OBJ)
 	gcc -o $@ --shared $^ $(LDFLAGS) $(LIBS)

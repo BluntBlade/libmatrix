@@ -84,12 +84,11 @@ typedef struct MATRIX_T {
 
     unsigned int    row_cnt;            /* The actual number of rows. */ 
     unsigned int    col_cnt;            /* The actual number of columns. */
-    unsigned int    padded_row_cnt;     /* Round to the power of <value type>_PACK_LEN. */
     unsigned int    padded_col_cnt;     /* Round to the power of <value type>_PACK_LEN. */
-    unsigned int    pack_cnt_per_row;
-    size_t          pack_len;
-    size_t          padded_byte_cnt;    /* Allocated bytes, including pads. */
-    size_t          value_size;
+    unsigned int    pcks_in_row;        /* The number of packs in one row. */
+    size_t          vals_in_pck;
+    size_t          byte_cnt;           /* Allocated bytes, including pads. */
+    size_t          val_size;
 
     union {
         v4si_t *    i32_pcks;
@@ -110,66 +109,60 @@ inline static unsigned int round_count_to_multiples_of(unsigned int cnt, unsigne
     return (cnt + (n - 1)) & (~(n - 1));
 } /* round_count_to_multiples_of */
 
-static ptr_matrix_t mtx_allocate(unsigned int row_cnt, unsigned int col_cnt, size_t val_size, size_t pack_len, ptr_operation_t ops)
+static ptr_matrix_t mtx_allocate(unsigned int row_cnt, unsigned int col_cnt, size_t val_size, size_t vals_in_pck, ptr_operation_t ops)
 {
     unsigned int i = 0;
     ptr_matrix_t mtx = NULL;
-    unsigned int count_boundary = 0;
-    unsigned int padded_row_cnt = 0;
 
-    count_boundary = ((CPU_CACHE_LINE_BYTES / val_size) < pack_len) ? pack_len : (CPU_CACHE_LINE_BYTES / val_size);
-    padded_row_cnt = round_count_to_multiples_of(row_cnt, count_boundary);
-
-    mtx = calloc(sizeof(matrix_t) + sizeof(void *) * padded_row_cnt, 1);
+    mtx = calloc(sizeof(matrix_t) + sizeof(void *) * row_cnt, 1);
     if (! mtx) {
         return NULL;
     } /* if */
 
     mtx->row_cnt = row_cnt;
     mtx->col_cnt = col_cnt;
-    mtx->padded_row_cnt = padded_row_cnt;
-    mtx->padded_col_cnt = round_count_to_multiples_of(col_cnt, count_boundary);
-    mtx->padded_byte_cnt = val_size * mtx->padded_row_cnt * mtx->padded_col_cnt;
-    mtx->pack_cnt_per_row = mtx->padded_col_cnt / pack_len;
-    mtx->pack_len = pack_len;
-    mtx->value_size = val_size;
+    mtx->padded_col_cnt = round_count_to_multiples_of(col_cnt, vals_in_pck);
+    mtx->byte_cnt = val_size * mtx->row_cnt * mtx->padded_col_cnt;
+    mtx->pcks_in_row = mtx->padded_col_cnt / vals_in_pck;
+    mtx->vals_in_pck = vals_in_pck;
+    mtx->val_size = val_size;
 
     mtx->ops = ops;
 
-    mtx->data = malloc(mtx->padded_byte_cnt);
+    mtx->data = malloc(mtx->byte_cnt);
     if (! mtx->data) {
         free(mtx);
         return NULL;
     } /* if */
 
-    for (i = 0; i < mtx->padded_row_cnt; i += 1) {
-        mtx->val_ptrs[i] = mtx->data + i * mtx->value_size * mtx->padded_col_cnt;
+    for (i = 0; i < mtx->row_cnt; i += 1) {
+        mtx->val_ptrs[i] = mtx->data + i * mtx->val_size * mtx->padded_col_cnt;
     } /* for */
     return mtx;
 } /* mtx_allocate */
 
 ptr_matrix_t mtx_allocate_for_multiplying(ptr_matrix_t lhs, ptr_matrix_t rhs)
 {
-    return mtx_allocate(lhs->row_cnt, rhs->col_cnt, lhs->value_size, lhs->pack_len, lhs->ops);
+    return mtx_allocate(lhs->row_cnt, rhs->col_cnt, lhs->val_size, lhs->vals_in_pck, lhs->ops);
 } /* mtx_allocate_for_multiplying */
 
 ptr_matrix_t mtx_allocate_for_transposing(ptr_matrix_t src)
 {
-    return mtx_allocate(src->col_cnt, src->row_cnt, src->value_size, src->pack_len, src->ops);
+    return mtx_allocate(src->col_cnt, src->row_cnt, src->val_size, src->vals_in_pck, src->ops);
 } /* mtx_allocate_for_transposing */
 
 ptr_matrix_t mtx_allocate_in_shape_of(ptr_matrix_t src)
 {
-    return mtx_allocate(src->row_cnt, src->col_cnt, src->value_size, src->pack_len, src->ops);
+    return mtx_allocate(src->row_cnt, src->col_cnt, src->val_size, src->vals_in_pck, src->ops);
 } /* mtx_allocate_in_shape_of */
 
 ptr_matrix_t mtx_duplicate(ptr_matrix_t src)
 {
-    ptr_matrix_t mtx = mtx_allocate(src->row_cnt, src->col_cnt, src->value_size, src->pack_len, src->ops);
+    ptr_matrix_t mtx = mtx_allocate(src->row_cnt, src->col_cnt, src->val_size, src->vals_in_pck, src->ops);
     if (! mtx) {
         return NULL;
     } /* if */
-    memcpy(mtx->data, src->data, src->padded_byte_cnt);
+    memcpy(mtx->data, src->data, src->byte_cnt);
     return mtx;
 } /* mtx_duplicate */
 
@@ -360,32 +353,6 @@ inline static int32_t v4si_sum_up_v2(v4si_t * src)
     return vals[0] + vals[1] + vals[2] + vals[3];
 } /* v4si_sum_up_v2 */
 
-static ptr_matrix_t mat_multiply_and_store_simd(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs)
-{
-    unsigned int i = 0;
-    unsigned int j = 0;
-    unsigned int k = 0;
-    v4si_t pack_lhs = {0};
-    v4si_t pack_rhs = {0};
-    v4si_t ret = {0};
-
-    for (k = 0; k < rhs->padded_row_cnt; k += I32_PACK_LEN) {
-        for (j = 0; j < rhs->col_cnt; j += 1) {
-            pack_rhs = __builtin_ia32_vec_set_v4si(pack_rhs, rhs->i32_vals[k + 0][j], 0);
-            pack_rhs = __builtin_ia32_vec_set_v4si(pack_rhs, rhs->i32_vals[k + 1][j], 1);
-            pack_rhs = __builtin_ia32_vec_set_v4si(pack_rhs, rhs->i32_vals[k + 2][j], 2);
-            pack_rhs = __builtin_ia32_vec_set_v4si(pack_rhs, rhs->i32_vals[k + 3][j], 3);
-
-            for (i = 0; i < lhs->row_cnt; i += 1) {
-                pack_lhs = lhs->i32_pcks[i * lhs->pack_cnt_per_row + k / I32_PACK_LEN];
-                ret = __builtin_ia32_pmulld128(pack_lhs, pack_rhs);
-                mtx->i32_vals[i][j] += v4si_sum_up(&ret);
-            } /* for */
-        } /* for */
-    } /* for */
-    return mtx;
-} /* mat_multiply_and_store_simd */
-
 #define v4si_fill_rpcks_from_col_to_byte_fully(rpck, rhs, itn, col_base, byte_idx) \
     { \
         rpck[ 0] = __builtin_ia32_vec_set_v4si(rpck[ 0], rhs->i32_vals[itn][col_base +  0], byte_idx); \
@@ -547,7 +514,7 @@ static void v4si_mul_pcks_fully(ptr_matrix_t mtx, v4si_t * lpck, v4si_t * rpck0,
 
 static void v4si_mul_pcks_partly(ptr_matrix_t mtx, v4si_t * lpck, v4si_t * rpck0, v4si_t * rpck1, v4si_t * rpck2, v4si_t * rpck3, unsigned int row, unsigned int col_base, unsigned int col_rmd)
 {
-    v4si_t tmp[4] = {0};
+    v4si_t tmp[4] = {0, 0, 0, 0};
     int32_t * vals = (int32_t *) &tmp;
     unsigned int idx = 0;
     unsigned int col = col_base;
@@ -579,22 +546,22 @@ static void mat_do_multiply(ptr_matrix_t mtx, mul_pcks_and_store mul_and_store, 
     unsigned int row = 0;
     switch (irmd) {
             do {
-        case  0: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
-        case 15: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
-        case 14: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
-        case 13: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
-        case 12: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
-        case 11: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
-        case 10: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
-        case  9: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
-        case  8: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
-        case  7: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
-        case  6: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
-        case  5: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
-        case  4: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
-        case  3: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
-        case  2: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
-        case  1: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pack_cnt_per_row;
+        case  0: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pcks_in_row;
+        case 15: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pcks_in_row;
+        case 14: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pcks_in_row;
+        case 13: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pcks_in_row;
+        case 12: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pcks_in_row;
+        case 11: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pcks_in_row;
+        case 10: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pcks_in_row;
+        case  9: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pcks_in_row;
+        case  8: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pcks_in_row;
+        case  7: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pcks_in_row;
+        case  6: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pcks_in_row;
+        case  5: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pcks_in_row;
+        case  4: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pcks_in_row;
+        case  3: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pcks_in_row;
+        case  2: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pcks_in_row;
+        case  1: (*mul_and_store)(mtx, &lhs->i32_pcks[pck_off], rpck0, rpck1, rpck2, rpck3, row, col_base, col_rmd); ++row; pck_off += lhs->pcks_in_row;
             } while (--ibths > 0);
         default: break;
     } /* switch */
@@ -602,15 +569,15 @@ static void mat_do_multiply(ptr_matrix_t mtx, mul_pcks_and_store mul_and_store, 
 
 static ptr_matrix_t mat_multiply_and_store_simd_v2(ptr_matrix_t mtx, ptr_matrix_t lhs, ptr_matrix_t rhs)
 {
-    const unsigned int vals_per_bth = (CPU_CACHE_LINE_BYTES / lhs->value_size);
-    const unsigned int pcks_per_bth = vals_per_bth / lhs->pack_len;
+    const unsigned int vals_per_bth = (CPU_CACHE_LINE_BYTES / lhs->val_size);
+    const unsigned int pcks_per_bth = vals_per_bth / lhs->vals_in_pck;
     const unsigned int jbths = rhs->col_cnt / vals_per_bth;
     const unsigned int jrmd = rhs->col_cnt % vals_per_bth;
     const unsigned int kbths = rhs->row_cnt / vals_per_bth;
     const unsigned int krmd = rhs->row_cnt % vals_per_bth;
     const unsigned int ibths = (lhs->row_cnt + (vals_per_bth - 1)) / vals_per_bth;
     const unsigned int irmd = lhs->row_cnt & (vals_per_bth - 1);
-    const unsigned int bytes = lhs->value_size * pcks_per_bth * vals_per_bth;
+    const unsigned int bytes = lhs->val_size * lhs->vals_in_pck * pcks_per_bth * vals_per_bth;
 
 #pragma omp parallel for schedule(static)
     for (unsigned int j = 0; j < jbths; j += 1) {
@@ -673,15 +640,15 @@ static void i32_scr_multiply_and_store_simd(ptr_matrix_t mtx, int32_t lhs, ptr_m
     v4si_t scr = {0};
     unsigned int itrs = 0;
     unsigned int rmd = 0;
-    unsigned int valid_pack_cnt = rhs->padded_row_cnt * rhs->pack_cnt_per_row;
+    unsigned int pck_cnt = rhs->row_cnt * rhs->pcks_in_row;
     
     scr = __builtin_ia32_vec_set_v4si(scr, lhs, 0);
     scr = __builtin_ia32_vec_set_v4si(scr, lhs, 1);
     scr = __builtin_ia32_vec_set_v4si(scr, lhs, 2);
     scr = __builtin_ia32_vec_set_v4si(scr, lhs, 3);
 
-    itrs = valid_pack_cnt / 16;
-    rmd = valid_pack_cnt % 16;
+    itrs = pck_cnt / 16;
+    rmd = pck_cnt % 16;
 
     for (unsigned int i = 0; i < itrs; i += 1) {
         mtx->i32_pcks[i * 16 +  0] = __builtin_ia32_pmulld128(rhs->i32_pcks[i * 16 +  0], scr);
@@ -730,6 +697,7 @@ void mtx_i32_scalar_multiply_and_store(ptr_matrix_t mtx, int32_t lhs, ptr_matrix
 static void i32_init_identity_plain(ptr_matrix_t mtx)
 {
     unsigned int i = 0;
+    memset(mtx->data, 0, mtx->byte_cnt);
     for (i = 0; i < mtx->row_cnt; i += 1) {
         mtx->i32_vals[i][i] = 1;
     } /* for */
@@ -737,7 +705,7 @@ static void i32_init_identity_plain(ptr_matrix_t mtx)
 
 static void i32_init_zeros_plain(ptr_matrix_t mtx)
 {
-    memset(mtx->data, 0, mtx->padded_byte_cnt);
+    memset(mtx->data, 0, mtx->byte_cnt);
 } /* i32_init_zeros_plain */
 
 static void i32_init_ones_plain(ptr_matrix_t mtx)

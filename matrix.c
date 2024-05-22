@@ -85,9 +85,9 @@ typedef struct MATRIX_T {
     unsigned int    row_cnt;            /* The actual number of rows. */ 
     unsigned int    col_cnt;            /* The actual number of columns. */
     unsigned int    pcks_in_row;        /* The number of packs in one row. */
-    size_t          vals_in_pck;
+    unsigned int    vals_in_pck;        /* The number of values in one pack. */
     size_t          byte_cnt;           /* Allocated bytes, including pads. */
-    size_t          val_size;
+    size_t          val_size;           /* The size of one value. */
 
     union {
         v4si_t *    i32_pcks;

@@ -1,6 +1,6 @@
 CC = gcc
 
-CFLAGS = -g -fPIC -I. -I/usr/local/include -msse4.1 -Wno-int-conversion
+CFLAGS = -g -fPIC -I. -I/usr/local/include -msse4.1 -mavx2 -Wno-int-conversion
 
 ifndef DEBUG
     CFLAGS := $(CFLAGS) -O3

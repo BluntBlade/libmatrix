@@ -119,6 +119,8 @@ static ptr_matrix_t mtx_allocate(unsigned int rows, unsigned int cols, size_t va
         return NULL;
     } /* if */
 
+    // NOTE: Append padding values to each row for memory alignment, 
+    //       and this speeds up loading values.
     padded_col_cnt = round_count_to_multiples_of(cols, vals_in_pck);
 
     m->rows = rows;

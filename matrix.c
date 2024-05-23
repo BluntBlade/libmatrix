@@ -4,42 +4,6 @@
 
 #include "matrix.h"
 
-/* ==== Definitions of the mtx_block_t type ==== */
-
-typedef struct BLOCK_T {
-    mtx_block_t     block;          /* The block struct use by client code. */
-    void *          row_ptrs[0];    /* Pointers to each row of the block. */
-} block_t, *ptr_block_t;
-
-inline static ptr_mtx_block_t iblk_to_eblk(ptr_block_t iblk)
-{
-    return &iblk->block;
-} /* iblk_to_eblk */
-
-inline static ptr_block_t eblk_to_iblk(ptr_mtx_block_t eblk)
-{
-    return (ptr_block_t)(eblk - (&(((ptr_block_t)(0))->block) - 0));
-} /* eblk_to_iblk */
-
-ptr_mtx_block_t mtx_blk_create(unsigned int row_max, unsigned int col_max)
-{
-    ptr_block_t iblk = calloc(sizeof(block_t) + sizeof(void *) * row_max, 1);
-    if (! iblk) {
-        return NULL;
-    } /* if */
-    iblk->block.row_max = row_max;
-    iblk->block.col_max = col_max;
-    iblk->block.row_cnt = 0;
-    iblk->block.col_cnt = 0;
-    iblk->block.i32_vals = (int32_t **)&iblk->row_ptrs[0];
-    return iblk_to_eblk(iblk);
-} /* mtx_blk_create */
-
-void mtx_blk_destroy(ptr_mtx_block_t eblk)
-{
-    free(eblk_to_iblk(eblk));
-} /* mtx_blk_destroy */
-
 /* ==== Definitions of the matrix_t type ==== */
 
 enum {
@@ -216,33 +180,6 @@ unsigned int mtx_count_values(ptr_matrix_t m)
 {
     return (m->rows * m->cols);
 } /* mtx_count_values */
-
-void mtx_get_submatrix(ptr_matrix_t m, unsigned int row, unsigned int col, unsigned int rows, unsigned int cols, ptr_submatrix_t ref)
-{
-    if (m->rows <= row) {
-        /* Beyond the right boundary. */
-        ref->row_off = m->rows;
-    } else {
-        ref->row_off = row;
-    } /* if */
-    if (m->cols <= col) {
-        /* Beyond the bottom boundary. */
-        ref->col_off = m->cols;
-    } else {
-        ref->col_off = col;
-    } /* if */
-
-    ref->row_cnt = (rows <= m->rows - ref->row_off) ? rows : (m->rows - ref->row_off);
-    ref->col_cnt = (cols <= m->cols - ref->col_off) ? cols : (m->cols - ref->col_off);
-
-    if (ref->row_cnt == 0 || ref->col_cnt == 0) {
-        /* If the target sub-matrix is beyond the right or bottom boundary, return an empty one. */
-        ref->row_cnt = 0;
-        ref->col_cnt = 0;
-    } /* if */
-
-    ref->val_ptrs = m->val_ptrs;
-} /* mtx_get_submatrix */
 
 void mtx_transpose_and_store(ptr_matrix_t m, ptr_matrix_t src)
 {

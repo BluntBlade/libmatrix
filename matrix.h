@@ -3,61 +3,6 @@
 
 #include <stdint.h>
 
-/* ==== Declarations of the mtx_block_t type ==== */
-
-typedef struct MTX_BLOCK_T {
-    /*
-        The struct MTX_BLOCK_T defines a way to reference part of a matrix,
-        or a `sub-matrix`.
-
-        To access one element at (x,y) in the block, use the following
-        expression, where `ptr` is the pointer to this struct.
-
-        ptr->i32_vals[ x ][ y ]
-
-        NOTE: 
-        1. x and y MUST be less than the row_cnt and col_cnt members,
-           respectively;
-        2. DON'T change the value of row_max, col_max, row_cnt and col_cnt.
-    */
-    unsigned int    row_max;    /* Max number of rows of the block. */
-    unsigned int    col_max;    /* Max number of columns of the block. */
-    unsigned int    row_cnt;    /* Total number of rows of the block. */
-    unsigned int    col_cnt;    /* Total number of columns of the block. */
-
-    union {
-        int32_t **  i32_vals;   /* Pointers to each row of the int32 values. */
-        uint32_t ** u32_vals;   /* Pointers to each row of the uint32 values. */
-        float **    f32_vals;   /* Pointers to each row of the float values. */
-        double **   d64_vals;   /* Pointers to each row of the double values. */
-    };
-} mtx_block_t, *ptr_mtx_block_t;
-
-extern ptr_mtx_block_t mtx_blk_create(unsigned int row_max, unsigned int col_max);
-extern void mtx_blk_destroy(ptr_mtx_block_t blk);
-
-typedef struct SUBMATRIX_T {
-    /*
-        For referencing one element at (x,y) in the sub-matrix,
-        use the following expression, where `ref` is the pointer
-        to this struct.
-
-        ref->i32_vals[ ref->row_off + x ][ ref->col_off + y ]
-    */
-    unsigned int row_off; /* Offset of the sub-matrix at row dimension. */
-    unsigned int col_off; /* Offset of the sub-matrix at column dimension. */
-    unsigned int row_cnt; /* Total count of rows of the sub-matrix. */
-    unsigned int col_cnt; /* Total count of columns of the sub-matrix. */
-
-    union {
-        int32_t **  i32_vals;
-        uint32_t ** u32_vals;
-        float **    f32_vals;
-        double **   d64_vals;
-        void **     val_ptrs;
-    };
-} submatrix_t, *ptr_submatrix_t;
-
 /* ==== Declarations of the matrix_t type ==== */
 
 typedef enum MATRIX_OPTION_T {
@@ -88,8 +33,6 @@ extern int mtx_can_do_multiply(ptr_matrix_t lhs, ptr_matrix_t rhs);
 extern unsigned int mtx_count_rows(ptr_matrix_t mtx);
 extern unsigned int mtx_count_columns(ptr_matrix_t mtx);
 extern unsigned int mtx_count_values(ptr_matrix_t mtx);
-
-extern void mtx_get_submatrix(ptr_matrix_t mtx, unsigned int row, unsigned int col, unsigned int row_cnt, unsigned int col_cnt, ptr_submatrix_t ref);
 
 extern void mtx_transpose_and_store(ptr_matrix_t mtx, ptr_matrix_t src);
 
@@ -195,11 +138,6 @@ inline static ptr_matrix_t mtx_transpose(ptr_matrix_t src)
     mtx_transpose_and_store(mtx, src);
     return mtx;
 } /* mtx_transpose */
-
-inline static void smtx_i32_set(ptr_submatrix_t ref, unsigned int row, unsigned int col, int32_t val)
-{
-    ref->i32_vals[ref->row_off + row][ref->col_off + col] = val;
-} /* smtx_i32_set */
 
 #endif /* MATRIX_H */
 

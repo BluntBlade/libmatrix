@@ -23,7 +23,7 @@ typedef int32_t v4si_t __attribute__ ((vector_size (16)));
 typedef int32_t v8si_t __attribute__ ((vector_size (32)));
 
 /* Force memory alignment at 32-byte boundary to avoid segmentation fault. */
-typedef struct TEMP_T {
+typedef union TEMP_T {
     v4si_t v4si_pcks[CPU_CACHE_LINE_BYTES / sizeof(v4si_t)][CPU_CACHE_LINE_BYTES / sizeof(int32_t)];
     v8si_t v8si_pcks[CPU_CACHE_LINE_BYTES / sizeof(v8si_t)][CPU_CACHE_LINE_BYTES / sizeof(int32_t)];
 } tmp_t, *ptr_tmp_t;
@@ -613,11 +613,51 @@ static void v4si_mul_and_store(ptr_mat_mul_info_t mi, mat_mul_pcks_and_store_fn 
 static void v8si_load_rpcks_ifcf(ptr_mat_mul_info_t mi, unsigned int itn_base, unsigned int itn_rmd, unsigned int col_base, unsigned int col_rmd)
 {
     ptr_matrix_t rhs = mi->rhs;
-    v4si_t * rpck0 = (v4si_t *)((char *)mi->rpck_data + 0 * mi->rpck_bytes / 2);
-    v4si_t * rpck1 = (v4si_t *)((char *)mi->rpck_data + 1 * mi->rpck_bytes / 2);
-    v4si_t * rpck2 = (v4si_t *)((char *)mi->rpck_data + 2 * mi->rpck_bytes / 2);
-    v4si_t * rpck3 = (v4si_t *)((char *)mi->rpck_data + 3 * mi->rpck_bytes / 2);
+    v8si_t src = {0, 0, 0, 0, 0, 0, 0, 0};
+    v8si_t idx0 = {0, 1, 2, 3, 4, 5, 6, 7};
+    v8si_t idx1 = {8, 9, 10, 11, 12, 13, 14, 15};
+    v8si_t mask = {~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0};
+    v8si_t * rpck0 = (v8si_t *)((char *)mi->rpck_data + 0 * mi->rpck_bytes);
+    v8si_t * rpck1 = (v8si_t *)((char *)mi->rpck_data + 1 * mi->rpck_bytes);
+    unsigned int row_base = itn_base * mi->vals_per_bth;
 
+    idx0 *= mi->vals_per_bth;
+    idx1 *= mi->vals_per_bth;
+
+    rpck0[ 0] = __builtin_ia32_gathersiv8si(src, &rhs->i32_vals[row_base][col_base +  0], idx0, mask, 4);
+    rpck1[ 0] = __builtin_ia32_gathersiv8si(src, &rhs->i32_vals[row_base][col_base +  0], idx1, mask, 4);
+    rpck0[ 1] = __builtin_ia32_gathersiv8si(src, &rhs->i32_vals[row_base][col_base +  1], idx0, mask, 4);
+    rpck1[ 1] = __builtin_ia32_gathersiv8si(src, &rhs->i32_vals[row_base][col_base +  1], idx1, mask, 4);
+    rpck0[ 2] = __builtin_ia32_gathersiv8si(src, &rhs->i32_vals[row_base][col_base +  2], idx0, mask, 4);
+    rpck1[ 2] = __builtin_ia32_gathersiv8si(src, &rhs->i32_vals[row_base][col_base +  2], idx1, mask, 4);
+    rpck0[ 3] = __builtin_ia32_gathersiv8si(src, &rhs->i32_vals[row_base][col_base +  3], idx0, mask, 4);
+    rpck1[ 3] = __builtin_ia32_gathersiv8si(src, &rhs->i32_vals[row_base][col_base +  3], idx1, mask, 4);
+    rpck0[ 4] = __builtin_ia32_gathersiv8si(src, &rhs->i32_vals[row_base][col_base +  4], idx0, mask, 4);
+    rpck1[ 4] = __builtin_ia32_gathersiv8si(src, &rhs->i32_vals[row_base][col_base +  4], idx1, mask, 4);
+    rpck0[ 5] = __builtin_ia32_gathersiv8si(src, &rhs->i32_vals[row_base][col_base +  5], idx0, mask, 4);
+    rpck1[ 5] = __builtin_ia32_gathersiv8si(src, &rhs->i32_vals[row_base][col_base +  5], idx1, mask, 4);
+    rpck0[ 6] = __builtin_ia32_gathersiv8si(src, &rhs->i32_vals[row_base][col_base +  6], idx0, mask, 4);
+    rpck1[ 6] = __builtin_ia32_gathersiv8si(src, &rhs->i32_vals[row_base][col_base +  6], idx1, mask, 4);
+    rpck0[ 7] = __builtin_ia32_gathersiv8si(src, &rhs->i32_vals[row_base][col_base +  7], idx0, mask, 4);
+    rpck1[ 7] = __builtin_ia32_gathersiv8si(src, &rhs->i32_vals[row_base][col_base +  7], idx1, mask, 4);
+    rpck0[ 8] = __builtin_ia32_gathersiv8si(src, &rhs->i32_vals[row_base][col_base +  8], idx0, mask, 4);
+    rpck1[ 8] = __builtin_ia32_gathersiv8si(src, &rhs->i32_vals[row_base][col_base +  8], idx1, mask, 4);
+    rpck0[ 9] = __builtin_ia32_gathersiv8si(src, &rhs->i32_vals[row_base][col_base +  9], idx0, mask, 4);
+    rpck1[ 9] = __builtin_ia32_gathersiv8si(src, &rhs->i32_vals[row_base][col_base +  9], idx1, mask, 4);
+    rpck0[10] = __builtin_ia32_gathersiv8si(src, &rhs->i32_vals[row_base][col_base + 10], idx0, mask, 4);
+    rpck1[10] = __builtin_ia32_gathersiv8si(src, &rhs->i32_vals[row_base][col_base + 10], idx1, mask, 4);
+    rpck0[11] = __builtin_ia32_gathersiv8si(src, &rhs->i32_vals[row_base][col_base + 11], idx0, mask, 4);
+    rpck1[11] = __builtin_ia32_gathersiv8si(src, &rhs->i32_vals[row_base][col_base + 11], idx1, mask, 4);
+    rpck0[12] = __builtin_ia32_gathersiv8si(src, &rhs->i32_vals[row_base][col_base + 12], idx0, mask, 4);
+    rpck1[12] = __builtin_ia32_gathersiv8si(src, &rhs->i32_vals[row_base][col_base + 12], idx1, mask, 4);
+    rpck0[13] = __builtin_ia32_gathersiv8si(src, &rhs->i32_vals[row_base][col_base + 13], idx0, mask, 4);
+    rpck1[13] = __builtin_ia32_gathersiv8si(src, &rhs->i32_vals[row_base][col_base + 13], idx1, mask, 4);
+    rpck0[14] = __builtin_ia32_gathersiv8si(src, &rhs->i32_vals[row_base][col_base + 14], idx0, mask, 4);
+    rpck1[14] = __builtin_ia32_gathersiv8si(src, &rhs->i32_vals[row_base][col_base + 14], idx1, mask, 4);
+    rpck0[15] = __builtin_ia32_gathersiv8si(src, &rhs->i32_vals[row_base][col_base + 15], idx0, mask, 4);
+    rpck1[15] = __builtin_ia32_gathersiv8si(src, &rhs->i32_vals[row_base][col_base + 15], idx1, mask, 4);
+
+/*
     v4si_load_rpcks_from_col_to_byte_fully(rpck0, rhs, itn_base +  0, col_base, 0);
     v4si_load_rpcks_from_col_to_byte_fully(rpck0, rhs, itn_base +  1, col_base, 1);
     v4si_load_rpcks_from_col_to_byte_fully(rpck0, rhs, itn_base +  2, col_base, 2);
@@ -634,6 +674,7 @@ static void v8si_load_rpcks_ifcf(ptr_mat_mul_info_t mi, unsigned int itn_base, u
     v4si_load_rpcks_from_col_to_byte_fully(rpck3, rhs, itn_base + 13, col_base, 1);
     v4si_load_rpcks_from_col_to_byte_fully(rpck3, rhs, itn_base + 14, col_base, 2);
     v4si_load_rpcks_from_col_to_byte_fully(rpck3, rhs, itn_base + 15, col_base, 3);
+*/
 } /* v8si_load_rpcks_ifcf */
 
 static void v8si_load_rpcks_ifcp(ptr_mat_mul_info_t mi, unsigned int itn_base, unsigned int itn_rmd, unsigned int col_base, unsigned int col_rmd)
@@ -849,7 +890,7 @@ static void mat_multiply_and_store_simd_v2(ptr_mat_mul_info_t mi)
         } /* if */
     } /* for */
 
-    {
+    if (mi->jrmd > 0) {
         tmp_t rpck;
         unsigned int itn_base = 0;
         unsigned int col_base = mi->jbths * mi->vals_per_bth;
@@ -870,7 +911,7 @@ static void mat_multiply_and_store_simd_v2(ptr_mat_mul_info_t mi)
             (*mi->load_rpcks_ipcp)(&mi2, itn_base, mi->krmd, col_base, mi->jrmd);
             (*mi->mul_and_store)(&mi2, mi->mul_and_store_partly, pck_off, mi->ibths, mi->irmd, col_base, mi->jrmd);
         } /* if */
-    }
+    } /* if */
 } /* mat_multiply_and_store_simd_v2 */
 
 static ptr_matrix_t i32_multiply_and_store_simd(ptr_matrix_t m, ptr_matrix_t lhs, ptr_matrix_t rhs)

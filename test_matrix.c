@@ -10,12 +10,16 @@
 CESTER_TEST(
     MATRIX_i32_allocate_for_1x1_matrix,
     _,
-
     ptr_matrix_t m = mtx_i32_allocate(1, 1);
 
     cester_assert_not_null(m);
     cester_assert_uint_eq(m->val_size, sizeof(int32_t));
-    cester_assert_uint_eq(m->vals_in_pck, I32_V4SI_IN_PCK);
+
+#if defined(MTX_AVX2)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V8SI);
+#elif defined(MTX_SSE41)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V4SI);
+#endif
 
     cester_assert_uint_eq(m->rows, 1);
     cester_assert_uint_eq(m->cols, 1);
@@ -29,11 +33,15 @@ CESTER_TEST(
 CESTER_TEST(
     MATRIX_i32_allocate_for_1x2_matrix,
     _,
-
     ptr_matrix_t m = mtx_i32_allocate(1, 2);
     cester_assert_not_null(m);
     cester_assert_uint_eq(m->val_size, sizeof(int32_t));
-    cester_assert_uint_eq(m->vals_in_pck, I32_V4SI_IN_PCK);
+
+#if defined(MTX_AVX2)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V8SI);
+#elif defined(MTX_SSE41)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V4SI);
+#endif
 
     cester_assert_uint_eq(m->rows, 1);
     cester_assert_uint_eq(m->cols, 2);
@@ -46,17 +54,23 @@ CESTER_TEST(
 CESTER_TEST(
     MATRIX_i32_allocate_for_1x5_matrix,
     _,
-
     ptr_matrix_t m = mtx_i32_allocate(1, 5);
 
     cester_assert_not_null(m);
     cester_assert_uint_eq(m->val_size, sizeof(int32_t));
-    cester_assert_uint_eq(m->vals_in_pck, I32_V4SI_IN_PCK);
+
+#if defined(MTX_AVX2)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V8SI);
+    cester_assert_uint_eq(m->pcks_in_row, 1);
+#elif defined(MTX_SSE41)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V4SI);
+    cester_assert_uint_eq(m->pcks_in_row, 2);
+#endif
 
     cester_assert_uint_eq(m->rows, 1);
     cester_assert_uint_eq(m->cols, 5);
     cester_assert_uint_eq(m->byte_cnt, m->val_size * m->rows * round_count_to_multiples_of(m->cols, m->vals_in_pck));
-    cester_assert_uint_eq(m->pcks_in_row, 2);
+
     cester_assert_not_null(m->data);
     mtx_destroy(m);
 )
@@ -64,12 +78,16 @@ CESTER_TEST(
 CESTER_TEST(
     MATRIX_i32_allocate_for_2x1_matrix,
     _,
-
     ptr_matrix_t m = mtx_i32_allocate(2, 1);
 
     cester_assert_not_null(m);
     cester_assert_uint_eq(m->val_size, sizeof(int32_t));
-    cester_assert_uint_eq(m->vals_in_pck, I32_V4SI_IN_PCK);
+
+#if defined(MTX_AVX2)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V8SI);
+#elif defined(MTX_SSE41)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V4SI);
+#endif
 
     cester_assert_uint_eq(m->rows, 2);
     cester_assert_uint_eq(m->cols, 1);
@@ -82,12 +100,16 @@ CESTER_TEST(
 CESTER_TEST(
     MATRIX_i32_allocate_for_6x1_matrix,
     _,
-
     ptr_matrix_t m = mtx_i32_allocate(6, 1);
 
     cester_assert_not_null(m);
     cester_assert_uint_eq(m->val_size, sizeof(int32_t));
-    cester_assert_uint_eq(m->vals_in_pck, I32_V4SI_IN_PCK);
+
+#if defined(MTX_AVX2)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V8SI);
+#elif defined(MTX_SSE41)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V4SI);
+#endif
 
     cester_assert_uint_eq(m->rows, 6);
     cester_assert_uint_eq(m->cols, 1);
@@ -100,17 +122,22 @@ CESTER_TEST(
 CESTER_TEST(
     MATRIX_i32_allocate_for_4x4_matrix,
     _,
-
     ptr_matrix_t m = mtx_i32_allocate(4, 4);
 
     cester_assert_not_null(m);
     cester_assert_uint_eq(m->val_size, sizeof(int32_t));
-    cester_assert_uint_eq(m->vals_in_pck, I32_V4SI_IN_PCK);
+
+#if defined(MTX_AVX2)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V8SI);
+    cester_assert_uint_eq(m->pcks_in_row, 1);
+#elif defined(MTX_SSE41)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V4SI);
+    cester_assert_uint_eq(m->pcks_in_row, 1);
+#endif
 
     cester_assert_uint_eq(m->rows, 4);
     cester_assert_uint_eq(m->cols, 4);
     cester_assert_uint_eq(m->byte_cnt, m->val_size * m->rows * round_count_to_multiples_of(m->cols, m->vals_in_pck));
-    cester_assert_uint_eq(m->pcks_in_row, 1);
     cester_assert_not_null(m->data);
     mtx_destroy(m);
 )
@@ -118,17 +145,22 @@ CESTER_TEST(
 CESTER_TEST(
     MATRIX_i32_allocate_for_7x7_matrix,
     _,
-
     ptr_matrix_t m = mtx_i32_allocate(7, 7);
 
     cester_assert_not_null(m);
     cester_assert_uint_eq(m->val_size, sizeof(int32_t));
-    cester_assert_uint_eq(m->vals_in_pck, I32_V4SI_IN_PCK);
+
+#if defined(MTX_AVX2)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V8SI);
+    cester_assert_uint_eq(m->pcks_in_row, 1);
+#elif defined(MTX_SSE41)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V4SI);
+    cester_assert_uint_eq(m->pcks_in_row, 2);
+#endif
 
     cester_assert_uint_eq(m->rows, 7);
     cester_assert_uint_eq(m->cols, 7);
     cester_assert_uint_eq(m->byte_cnt, m->val_size * m->rows * round_count_to_multiples_of(m->cols, m->vals_in_pck));
-    cester_assert_uint_eq(m->pcks_in_row, 2);
     cester_assert_not_null(m->data);
     mtx_destroy(m);
 )
@@ -136,17 +168,22 @@ CESTER_TEST(
 CESTER_TEST(
     MATRIX_i32_allocate_for_8x8_matrix,
     _,
-
     ptr_matrix_t m = mtx_i32_allocate(8, 8);
 
     cester_assert_not_null(m);
     cester_assert_uint_eq(m->val_size, sizeof(int32_t));
-    cester_assert_uint_eq(m->vals_in_pck, I32_V4SI_IN_PCK);
+
+#if defined(MTX_AVX2)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V8SI);
+    cester_assert_uint_eq(m->pcks_in_row, 1);
+#elif defined(MTX_SSE41)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V4SI);
+    cester_assert_uint_eq(m->pcks_in_row, 2);
+#endif
 
     cester_assert_uint_eq(m->rows, 8);
     cester_assert_uint_eq(m->cols, 8);
     cester_assert_uint_eq(m->byte_cnt, m->val_size * m->rows * round_count_to_multiples_of(m->cols, m->vals_in_pck));
-    cester_assert_uint_eq(m->pcks_in_row, 2);
     cester_assert_not_null(m->data);
     mtx_destroy(m);
 )
@@ -154,17 +191,22 @@ CESTER_TEST(
 CESTER_TEST(
     MATRIX_i32_allocate_for_1024x1024_matrix,
     _,
-
     ptr_matrix_t m = mtx_i32_allocate(1024, 1024);
 
     cester_assert_not_null(m);
     cester_assert_uint_eq(m->val_size, sizeof(int32_t));
-    cester_assert_uint_eq(m->vals_in_pck, I32_V4SI_IN_PCK);
+
+#if defined(MTX_AVX2)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V8SI);
+    cester_assert_uint_eq(m->pcks_in_row, 128);
+#elif defined(MTX_SSE41)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V4SI);
+    cester_assert_uint_eq(m->pcks_in_row, 256);
+#endif
 
     cester_assert_uint_eq(m->rows, 1024);
     cester_assert_uint_eq(m->cols, 1024);
     cester_assert_uint_eq(m->byte_cnt, m->val_size * m->rows * round_count_to_multiples_of(m->cols, m->vals_in_pck));
-    cester_assert_uint_eq(m->pcks_in_row, 256);
     cester_assert_not_null(m->data);
     mtx_destroy(m);
 )
@@ -215,19 +257,24 @@ CESTER_TEST(
 CESTER_TEST(
     MATRIX_allocate_for_multiplying_5x1_and_1x5_matrix,
     _,
-
     ptr_matrix_t lhs = mtx_i32_allocate(5, 1);
     ptr_matrix_t rhs = mtx_i32_allocate(1, 5);
     ptr_matrix_t m = mtx_allocate_for_multiplying(lhs, rhs);
 
     cester_assert_not_null(m);
     cester_assert_uint_eq(m->val_size, sizeof(int32_t));
-    cester_assert_uint_eq(m->vals_in_pck, I32_V4SI_IN_PCK);
+
+#if defined(MTX_AVX2)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V8SI);
+    cester_assert_uint_eq(m->pcks_in_row, 1);
+#elif defined(MTX_SSE41)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V4SI);
+    cester_assert_uint_eq(m->pcks_in_row, 2);
+#endif
 
     cester_assert_uint_eq(m->rows, 5);
     cester_assert_uint_eq(m->cols, 5);
     cester_assert_uint_eq(m->byte_cnt, m->val_size * m->rows * round_count_to_multiples_of(m->cols, m->vals_in_pck));
-    cester_assert_uint_eq(m->pcks_in_row, 2);
     cester_assert_not_null(m->data);
 
     cester_assert_ptr_not_equal(m, lhs);
@@ -241,14 +288,18 @@ CESTER_TEST(
 CESTER_TEST(
     MATRIX_allocate_for_multiplying_1x5_and_5x1_matrix,
     _,
-
     ptr_matrix_t lhs = mtx_i32_allocate(1, 5);
     ptr_matrix_t rhs = mtx_i32_allocate(5, 1);
     ptr_matrix_t m = mtx_allocate_for_multiplying(lhs, rhs);
 
     cester_assert_not_null(m);
     cester_assert_uint_eq(m->val_size, sizeof(int32_t));
-    cester_assert_uint_eq(m->vals_in_pck, I32_V4SI_IN_PCK);
+
+#if defined(MTX_AVX2)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V8SI);
+#elif defined(MTX_SSE41)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V4SI);
+#endif
 
     cester_assert_uint_eq(m->rows, 1);
     cester_assert_uint_eq(m->cols, 1);
@@ -274,12 +325,18 @@ CESTER_TEST(
 
     cester_assert_not_null(m);
     cester_assert_uint_eq(m->val_size, sizeof(int32_t));
-    cester_assert_uint_eq(m->vals_in_pck, I32_V4SI_IN_PCK);
+
+#if defined(MTX_AVX2)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V8SI);
+    cester_assert_uint_eq(m->pcks_in_row, 1);
+#elif defined(MTX_SSE41)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V4SI);
+    cester_assert_uint_eq(m->pcks_in_row, 2);
+#endif
 
     cester_assert_uint_eq(m->rows, 8);
     cester_assert_uint_eq(m->cols, 8);
     cester_assert_uint_eq(m->byte_cnt, m->val_size * m->rows * round_count_to_multiples_of(m->cols, m->vals_in_pck));
-    cester_assert_uint_eq(m->pcks_in_row, 2);
     cester_assert_not_null(m->data);
 
     cester_assert_ptr_not_equal(m, lhs);
@@ -299,12 +356,18 @@ CESTER_TEST(
 
     cester_assert_not_null(m);
     cester_assert_uint_eq(m->val_size, sizeof(int32_t));
-    cester_assert_uint_eq(m->vals_in_pck, I32_V4SI_IN_PCK);
+
+#if defined(MTX_AVX2)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V8SI);
+    cester_assert_uint_eq(m->pcks_in_row, 1);
+#elif defined(MTX_SSE41)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V4SI);
+    cester_assert_uint_eq(m->pcks_in_row, 2);
+#endif
 
     cester_assert_uint_eq(m->rows, 1);
     cester_assert_uint_eq(m->cols, 5);
     cester_assert_uint_eq(m->byte_cnt, m->val_size * m->rows * round_count_to_multiples_of(m->cols, m->vals_in_pck));
-    cester_assert_uint_eq(m->pcks_in_row, 2);
     cester_assert_not_null(m->data);
 
     cester_assert_ptr_not_equal(m, src);
@@ -322,7 +385,12 @@ CESTER_TEST(
 
     cester_assert_not_null(m);
     cester_assert_uint_eq(m->val_size, sizeof(int32_t));
-    cester_assert_uint_eq(m->vals_in_pck, I32_V4SI_IN_PCK);
+
+#if defined(MTX_AVX2)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V8SI);
+#elif defined(MTX_SSE41)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V4SI);
+#endif
 
     cester_assert_uint_eq(m->rows, 5);
     cester_assert_uint_eq(m->cols, 1);
@@ -345,12 +413,18 @@ CESTER_TEST(
 
     cester_assert_not_null(m);
     cester_assert_uint_eq(m->val_size, sizeof(int32_t));
-    cester_assert_uint_eq(m->vals_in_pck, I32_V4SI_IN_PCK);
+
+#if defined(MTX_AVX2)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V8SI);
+    cester_assert_uint_eq(m->pcks_in_row, 2);
+#elif defined(MTX_SSE41)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V4SI);
+    cester_assert_uint_eq(m->pcks_in_row, 4);
+#endif
 
     cester_assert_uint_eq(m->rows, 13);
     cester_assert_uint_eq(m->cols, 13);
     cester_assert_uint_eq(m->byte_cnt, m->val_size * m->rows * round_count_to_multiples_of(m->cols, m->vals_in_pck));
-    cester_assert_uint_eq(m->pcks_in_row, 4);
     cester_assert_not_null(m->data);
 
     cester_assert_ptr_not_equal(m, src);
@@ -368,7 +442,12 @@ CESTER_TEST(
 
     cester_assert_not_null(m);
     cester_assert_uint_eq(m->val_size, sizeof(int32_t));
-    cester_assert_uint_eq(m->vals_in_pck, I32_V4SI_IN_PCK);
+
+#if defined(MTX_AVX2)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V8SI);
+#elif defined(MTX_SSE41)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V4SI);
+#endif
 
     cester_assert_uint_eq(m->rows, 3);
     cester_assert_uint_eq(m->cols, 1);
@@ -390,7 +469,12 @@ CESTER_TEST(
 
     cester_assert_not_null(m);
     cester_assert_uint_eq(m->val_size, sizeof(int32_t));
-    cester_assert_uint_eq(m->vals_in_pck, I32_V4SI_IN_PCK);
+
+#if defined(MTX_AVX2)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V8SI);
+#elif defined(MTX_SSE41)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V4SI);
+#endif
 
     cester_assert_uint_eq(m->rows, 1);
     cester_assert_uint_eq(m->cols, 3);
@@ -413,7 +497,12 @@ CESTER_TEST(
 
     cester_assert_not_null(m);
     cester_assert_uint_eq(m->val_size, sizeof(int32_t));
-    cester_assert_uint_eq(m->vals_in_pck, I32_V4SI_IN_PCK);
+
+#if defined(MTX_AVX2)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V8SI);
+#elif defined(MTX_SSE41)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V4SI);
+#endif
 
     cester_assert_uint_eq(m->rows, 3);
     cester_assert_uint_eq(m->cols, 3);
@@ -436,12 +525,18 @@ CESTER_TEST(
 
     cester_assert_not_null(m);
     cester_assert_uint_eq(m->val_size, sizeof(int32_t));
-    cester_assert_uint_eq(m->vals_in_pck, I32_V4SI_IN_PCK);
+
+#if defined(MTX_AVX2)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V8SI);
+    cester_assert_uint_eq(m->pcks_in_row, 2);
+#elif defined(MTX_SSE41)
+    cester_assert_uint_eq(m->vals_in_pck, I32_VALS_IN_V4SI);
+    cester_assert_uint_eq(m->pcks_in_row, 3);
+#endif
 
     cester_assert_uint_eq(m->rows, 10);
     cester_assert_uint_eq(m->cols, 10);
     cester_assert_uint_eq(m->byte_cnt, m->val_size * m->rows * round_count_to_multiples_of(m->cols, m->vals_in_pck));
-    cester_assert_uint_eq(m->pcks_in_row, 3);
     cester_assert_not_null(m->data);
 
     cester_assert_ptr_not_equal(m, src);

@@ -3,32 +3,43 @@
 #include <smmintrin.h>
 #include <stdio.h>
 
+#include "config.h"
 #include "matrix.h"
 
 /* ==== Definitions of the matrix_t type ==== */
 
 enum {
-    I32_V4SI_IN_PCK = 4,
-    I32_V8SI_IN_PCK = 2,
-    U32_V4SI_IN_PCK = 4,
-    U32_V8SI_IN_PCK = 2,
-    F32_V4SF_IN_PCK = 4,
-    F32_V8SF_IN_PCK = 2,
-    D64_V2DF_IN_PCK = 4,
-    D64_V4DF_IN_PCK = 2
+    I32_VALS_IN_V4SI = 4,
+    I32_VALS_IN_V8SI = 8,
+    U32_VALS_IN_V4SI = 4,
+    U32_VALS_IN_V8SI = 8,
+    F32_VALS_IN_V4SF = 4,
+    F32_VALS_IN_V8SF = 8,
+    D64_VALS_IN_V2DF = 2,
+    D64_VALS_IN_V4DF = 4
 };
 
 enum {
     CPU_CACHE_LINE_BYTES = 64
 };
 
+#if defined(MTX_SSE41)
 typedef int32_t v4si_t __attribute__ ((vector_size (16)));
+#endif // MTX_SSE41
+
+#if defined(MTX_AVX2)
 typedef int32_t v8si_t __attribute__ ((vector_size (32)));
+#endif // MTX_AVX2
 
 /* Force memory alignment at 32-byte boundary to avoid segmentation fault. */
 typedef union TEMP_T {
+#if defined(MTX_SSE41)
     v4si_t v4si_pcks[CPU_CACHE_LINE_BYTES / sizeof(v4si_t)][CPU_CACHE_LINE_BYTES / sizeof(int32_t)];
+#endif // MTX_SSE41
+
+#if defined(MTX_AVX2)
     v8si_t v8si_pcks[CPU_CACHE_LINE_BYTES / sizeof(v8si_t)][CPU_CACHE_LINE_BYTES / sizeof(int32_t)];
+#endif // MTX_AVX2
 } tmp_t, *ptr_tmp_t;
 
 typedef void (*mat_init_fn)(ptr_matrix_t);
@@ -67,8 +78,14 @@ typedef struct MATRIX_T {
     size_t          val_size;           /* The size of one value. */
 
     union {
-        v4si_t *    i32_pcks;
+#if defined(MTX_SSE41)
+        v4si_t *    v4si_pcks;
+#endif // MTX_SSE41
+
+#if defined(MTX_AVX2)
         v8si_t *    v8si_pcks;
+#endif // MTX_AVX2
+
         void *      data;
     };
 
@@ -324,6 +341,8 @@ typedef struct MAT_MUL_INFO_T {
     void * rpck_data;
 } mat_mul_info_t;
 
+#if defined(MTX_SSE41)
+
 #define v4si_load_rpcks_from_col_to_byte_fully(rpck, rhs, itn, col_base, byte_idx) \
     { \
         rpck[ 0] = __builtin_ia32_vec_set_v4si(rpck[ 0], rhs->i32_vals[itn][col_base +  0], byte_idx); \
@@ -488,7 +507,7 @@ static void v4si_mul_and_store_fully(ptr_mat_mul_info_t mi, unsigned pck_off, un
     ptr_matrix_t m = mi->m;
     ptr_matrix_t lhs = mi->lhs;
     v4si_t tmp[4] = {0, 0, 0, 0};
-    v4si_t * lpck = &lhs->i32_pcks[pck_off];
+    v4si_t * lpck = &lhs->v4si_pcks[pck_off];
     v4si_t * rpck0 = (v4si_t *)((char *)mi->rpck_data + 0 * mi->rpck_bytes);
     v4si_t * rpck1 = (v4si_t *)((char *)mi->rpck_data + 1 * mi->rpck_bytes);
     v4si_t * rpck2 = (v4si_t *)((char *)mi->rpck_data + 2 * mi->rpck_bytes);
@@ -519,7 +538,7 @@ static void v4si_mul_and_store_partly(ptr_mat_mul_info_t mi, unsigned pck_off, u
     ptr_matrix_t m = mi->m;
     ptr_matrix_t lhs = mi->lhs;
     v4si_t tmp[4] = {0, 0, 0, 0};
-    v4si_t * lpck = &lhs->i32_pcks[pck_off];
+    v4si_t * lpck = &lhs->v4si_pcks[pck_off];
     v4si_t * rpck0 = (v4si_t *)((char *)mi->rpck_data + 0 * mi->rpck_bytes);
     v4si_t * rpck1 = (v4si_t *)((char *)mi->rpck_data + 1 * mi->rpck_bytes);
     v4si_t * rpck2 = (v4si_t *)((char *)mi->rpck_data + 2 * mi->rpck_bytes);
@@ -574,6 +593,10 @@ static void v4si_mul_and_store(ptr_mat_mul_info_t mi, mat_mul_pcks_and_store_fn 
         default: break;
     } /* switch */
 } /* v4si_mul_and_store */
+
+#endif // MTX_SSE41
+
+#if defined(MTX_AVX2)
 
 static void v8si_load_rpcks_ifcf(ptr_mat_mul_info_t mi, unsigned int itn_base, unsigned int itn_rmd, unsigned int col_base, unsigned int col_rmd)
 {
@@ -901,6 +924,8 @@ static void v8si_mul_and_store(ptr_mat_mul_info_t mi, mat_mul_pcks_and_store_fn 
     } /* switch */
 } /* v8si_mul_and_store */
 
+#endif // MTX_AVX2
+
 static void mat_multiply_and_store_simd_v2(ptr_mat_mul_info_t mi)
 {
     mi->vals_per_bth = (CPU_CACHE_LINE_BYTES / mi->val_size);
@@ -922,7 +947,6 @@ static void mat_multiply_and_store_simd_v2(ptr_mat_mul_info_t mi)
         unsigned int pck_off = 0;
         mat_mul_info_t mi2 = *mi;
 
-        //mi2.rpck_data = calloc(sizeof(tmp_t), 1);
         mi2.rpck_data = &rpck;
         for (unsigned int k = 0; k < mi->kbths; k += 1) {
             (*mi->load_rpcks_ifcf)(&mi2, itn_base, 0, col_base, 0);
@@ -936,7 +960,6 @@ static void mat_multiply_and_store_simd_v2(ptr_mat_mul_info_t mi)
             (*mi->load_rpcks_ipcf)(&mi2, itn_base, mi->krmd, col_base, 0);
             (*mi->mul_and_store)(&mi2, mi->mul_and_store_fully, pck_off, mi->ibths, mi->irmd, col_base, 0);
         } /* if */
-        //free(mi2.rpck_data);
     } /* for */
 
     if (mi->jrmd > 0) {
@@ -946,7 +969,6 @@ static void mat_multiply_and_store_simd_v2(ptr_mat_mul_info_t mi)
         unsigned int pck_off = 0;
         mat_mul_info_t mi2 = *mi;
 
-        //mi2.rpck_data = calloc(sizeof(tmp_t), 1);
         mi2.rpck_data = &rpck;
         for (unsigned int k = 0; k < mi->kbths; k += 1) {
             memset(mi2.rpck_data, 0, sizeof(tmp_t));
@@ -961,7 +983,6 @@ static void mat_multiply_and_store_simd_v2(ptr_mat_mul_info_t mi)
             (*mi->load_rpcks_ipcp)(&mi2, itn_base, mi->krmd, col_base, mi->jrmd);
             (*mi->mul_and_store)(&mi2, mi->mul_and_store_partly, pck_off, mi->ibths, mi->irmd, col_base, mi->jrmd);
         } /* if */
-        //free(mi2.rpck_data);
     } /* if */
 } /* mat_multiply_and_store_simd_v2 */
 
@@ -977,17 +998,7 @@ static ptr_matrix_t i32_multiply_and_store_simd(ptr_matrix_t m, ptr_matrix_t lhs
     mi.val_size = lhs->val_size;
     mi.vals_in_pck = lhs->vals_in_pck;
 
-    if (0) {
-    mi.load_rpcks_ifcf = &v4si_load_rpcks_ifcf;
-    mi.load_rpcks_ipcf = &v4si_load_rpcks_ipcf;
-    mi.load_rpcks_ifcp = &v4si_load_rpcks_ifcp;
-    mi.load_rpcks_ipcp = &v4si_load_rpcks_ipcp;
-
-    mi.mul_and_store_fully = &v4si_mul_and_store_fully;
-    mi.mul_and_store_partly = &v4si_mul_and_store_partly;
-
-    mi.mul_and_store = &v4si_mul_and_store;
-    } else {
+#if defined(MTX_AVX2)
     mi.load_rpcks_ifcf = &v8si_load_rpcks_ifcf;
     mi.load_rpcks_ipcf = &v8si_load_rpcks_ipcf;
     mi.load_rpcks_ifcp = &v8si_load_rpcks_ifcp;
@@ -997,7 +1008,17 @@ static ptr_matrix_t i32_multiply_and_store_simd(ptr_matrix_t m, ptr_matrix_t lhs
     mi.mul_and_store_partly = &v8si_mul_and_store_partly;
 
     mi.mul_and_store = &v8si_mul_and_store;
-    }
+#elif defined(MTX_SSE41)
+    mi.load_rpcks_ifcf = &v4si_load_rpcks_ifcf;
+    mi.load_rpcks_ipcf = &v4si_load_rpcks_ipcf;
+    mi.load_rpcks_ifcp = &v4si_load_rpcks_ifcp;
+    mi.load_rpcks_ipcp = &v4si_load_rpcks_ipcp;
+
+    mi.mul_and_store_fully = &v4si_mul_and_store_fully;
+    mi.mul_and_store_partly = &v4si_mul_and_store_partly;
+
+    mi.mul_and_store = &v4si_mul_and_store;
+#endif
 
     mat_multiply_and_store_simd_v2(&mi);
     return m;
@@ -1017,56 +1038,96 @@ static void i32_scr_multiply_and_store_plain(ptr_matrix_t m, int32_t lhs, ptr_ma
 
 static void i32_scr_multiply_and_store_simd(ptr_matrix_t m, int32_t lhs, ptr_matrix_t rhs)
 {
-    v4si_t scr = {0};
     unsigned int itrs = 0;
     unsigned int rmd = 0;
     unsigned int pck_cnt = rhs->rows * rhs->pcks_in_row;
 
-    scr = __builtin_ia32_vec_set_v4si(scr, lhs, 0);
-    scr = __builtin_ia32_vec_set_v4si(scr, lhs, 1);
-    scr = __builtin_ia32_vec_set_v4si(scr, lhs, 2);
-    scr = __builtin_ia32_vec_set_v4si(scr, lhs, 3);
+#if defined(MTX_AVX2)
+    v8si_t scr = {lhs, lhs, lhs, lhs, lhs, lhs, lhs, lhs};
+#elif defined(MTX_SSE41)
+    v4si_t scr = {lhs, lhs, lhs, lhs};
+#endif
 
     itrs = pck_cnt / 16;
     rmd = pck_cnt % 16;
 
+#if defined(MTX_AVX2)
     for (unsigned int i = 0; i < itrs; i += 1) {
-        m->i32_pcks[i * 16 +  0] = __builtin_ia32_pmulld128(rhs->i32_pcks[i * 16 +  0], scr);
-        m->i32_pcks[i * 16 +  1] = __builtin_ia32_pmulld128(rhs->i32_pcks[i * 16 +  1], scr);
-        m->i32_pcks[i * 16 +  2] = __builtin_ia32_pmulld128(rhs->i32_pcks[i * 16 +  2], scr);
-        m->i32_pcks[i * 16 +  3] = __builtin_ia32_pmulld128(rhs->i32_pcks[i * 16 +  3], scr);
-        m->i32_pcks[i * 16 +  4] = __builtin_ia32_pmulld128(rhs->i32_pcks[i * 16 +  4], scr);
-        m->i32_pcks[i * 16 +  5] = __builtin_ia32_pmulld128(rhs->i32_pcks[i * 16 +  5], scr);
-        m->i32_pcks[i * 16 +  6] = __builtin_ia32_pmulld128(rhs->i32_pcks[i * 16 +  6], scr);
-        m->i32_pcks[i * 16 +  7] = __builtin_ia32_pmulld128(rhs->i32_pcks[i * 16 +  7], scr);
-        m->i32_pcks[i * 16 +  8] = __builtin_ia32_pmulld128(rhs->i32_pcks[i * 16 +  8], scr);
-        m->i32_pcks[i * 16 +  9] = __builtin_ia32_pmulld128(rhs->i32_pcks[i * 16 +  9], scr);
-        m->i32_pcks[i * 16 + 10] = __builtin_ia32_pmulld128(rhs->i32_pcks[i * 16 + 10], scr);
-        m->i32_pcks[i * 16 + 11] = __builtin_ia32_pmulld128(rhs->i32_pcks[i * 16 + 11], scr);
-        m->i32_pcks[i * 16 + 12] = __builtin_ia32_pmulld128(rhs->i32_pcks[i * 16 + 12], scr);
-        m->i32_pcks[i * 16 + 13] = __builtin_ia32_pmulld128(rhs->i32_pcks[i * 16 + 13], scr);
-        m->i32_pcks[i * 16 + 14] = __builtin_ia32_pmulld128(rhs->i32_pcks[i * 16 + 14], scr);
-        m->i32_pcks[i * 16 + 15] = __builtin_ia32_pmulld128(rhs->i32_pcks[i * 16 + 15], scr);
+        m->v8si_pcks[i * 16 +  0] = __builtin_ia32_pmulld256(rhs->v8si_pcks[i * 16 +  0], scr);
+        m->v8si_pcks[i * 16 +  1] = __builtin_ia32_pmulld256(rhs->v8si_pcks[i * 16 +  1], scr);
+        m->v8si_pcks[i * 16 +  2] = __builtin_ia32_pmulld256(rhs->v8si_pcks[i * 16 +  2], scr);
+        m->v8si_pcks[i * 16 +  3] = __builtin_ia32_pmulld256(rhs->v8si_pcks[i * 16 +  3], scr);
+        m->v8si_pcks[i * 16 +  4] = __builtin_ia32_pmulld256(rhs->v8si_pcks[i * 16 +  4], scr);
+        m->v8si_pcks[i * 16 +  5] = __builtin_ia32_pmulld256(rhs->v8si_pcks[i * 16 +  5], scr);
+        m->v8si_pcks[i * 16 +  6] = __builtin_ia32_pmulld256(rhs->v8si_pcks[i * 16 +  6], scr);
+        m->v8si_pcks[i * 16 +  7] = __builtin_ia32_pmulld256(rhs->v8si_pcks[i * 16 +  7], scr);
+        m->v8si_pcks[i * 16 +  8] = __builtin_ia32_pmulld256(rhs->v8si_pcks[i * 16 +  8], scr);
+        m->v8si_pcks[i * 16 +  9] = __builtin_ia32_pmulld256(rhs->v8si_pcks[i * 16 +  9], scr);
+        m->v8si_pcks[i * 16 + 10] = __builtin_ia32_pmulld256(rhs->v8si_pcks[i * 16 + 10], scr);
+        m->v8si_pcks[i * 16 + 11] = __builtin_ia32_pmulld256(rhs->v8si_pcks[i * 16 + 11], scr);
+        m->v8si_pcks[i * 16 + 12] = __builtin_ia32_pmulld256(rhs->v8si_pcks[i * 16 + 12], scr);
+        m->v8si_pcks[i * 16 + 13] = __builtin_ia32_pmulld256(rhs->v8si_pcks[i * 16 + 13], scr);
+        m->v8si_pcks[i * 16 + 14] = __builtin_ia32_pmulld256(rhs->v8si_pcks[i * 16 + 14], scr);
+        m->v8si_pcks[i * 16 + 15] = __builtin_ia32_pmulld256(rhs->v8si_pcks[i * 16 + 15], scr);
     } /* for i */
 
     switch (rmd) {
-        case 15: m->i32_pcks[itrs * 16 + 14] = __builtin_ia32_pmulld128(rhs->i32_pcks[itrs * 16 + 14], scr);
-        case 14: m->i32_pcks[itrs * 16 + 13] = __builtin_ia32_pmulld128(rhs->i32_pcks[itrs * 16 + 13], scr);
-        case 13: m->i32_pcks[itrs * 16 + 12] = __builtin_ia32_pmulld128(rhs->i32_pcks[itrs * 16 + 12], scr);
-        case 12: m->i32_pcks[itrs * 16 + 11] = __builtin_ia32_pmulld128(rhs->i32_pcks[itrs * 16 + 11], scr);
-        case 11: m->i32_pcks[itrs * 16 + 10] = __builtin_ia32_pmulld128(rhs->i32_pcks[itrs * 16 + 10], scr);
-        case 10: m->i32_pcks[itrs * 16 +  9] = __builtin_ia32_pmulld128(rhs->i32_pcks[itrs * 16 +  9], scr);
-        case  9: m->i32_pcks[itrs * 16 +  8] = __builtin_ia32_pmulld128(rhs->i32_pcks[itrs * 16 +  8], scr);
-        case  8: m->i32_pcks[itrs * 16 +  7] = __builtin_ia32_pmulld128(rhs->i32_pcks[itrs * 16 +  7], scr);
-        case  7: m->i32_pcks[itrs * 16 +  6] = __builtin_ia32_pmulld128(rhs->i32_pcks[itrs * 16 +  6], scr);
-        case  6: m->i32_pcks[itrs * 16 +  5] = __builtin_ia32_pmulld128(rhs->i32_pcks[itrs * 16 +  5], scr);
-        case  5: m->i32_pcks[itrs * 16 +  4] = __builtin_ia32_pmulld128(rhs->i32_pcks[itrs * 16 +  4], scr);
-        case  4: m->i32_pcks[itrs * 16 +  3] = __builtin_ia32_pmulld128(rhs->i32_pcks[itrs * 16 +  3], scr);
-        case  3: m->i32_pcks[itrs * 16 +  2] = __builtin_ia32_pmulld128(rhs->i32_pcks[itrs * 16 +  2], scr);
-        case  2: m->i32_pcks[itrs * 16 +  1] = __builtin_ia32_pmulld128(rhs->i32_pcks[itrs * 16 +  1], scr);
-        case  1: m->i32_pcks[itrs * 16 +  0] = __builtin_ia32_pmulld128(rhs->i32_pcks[itrs * 16 +  0], scr);
+        case 15: m->v8si_pcks[itrs * 16 + 14] = __builtin_ia32_pmulld256(rhs->v8si_pcks[itrs * 16 + 14], scr);
+        case 14: m->v8si_pcks[itrs * 16 + 13] = __builtin_ia32_pmulld256(rhs->v8si_pcks[itrs * 16 + 13], scr);
+        case 13: m->v8si_pcks[itrs * 16 + 12] = __builtin_ia32_pmulld256(rhs->v8si_pcks[itrs * 16 + 12], scr);
+        case 12: m->v8si_pcks[itrs * 16 + 11] = __builtin_ia32_pmulld256(rhs->v8si_pcks[itrs * 16 + 11], scr);
+        case 11: m->v8si_pcks[itrs * 16 + 10] = __builtin_ia32_pmulld256(rhs->v8si_pcks[itrs * 16 + 10], scr);
+        case 10: m->v8si_pcks[itrs * 16 +  9] = __builtin_ia32_pmulld256(rhs->v8si_pcks[itrs * 16 +  9], scr);
+        case  9: m->v8si_pcks[itrs * 16 +  8] = __builtin_ia32_pmulld256(rhs->v8si_pcks[itrs * 16 +  8], scr);
+        case  8: m->v8si_pcks[itrs * 16 +  7] = __builtin_ia32_pmulld256(rhs->v8si_pcks[itrs * 16 +  7], scr);
+        case  7: m->v8si_pcks[itrs * 16 +  6] = __builtin_ia32_pmulld256(rhs->v8si_pcks[itrs * 16 +  6], scr);
+        case  6: m->v8si_pcks[itrs * 16 +  5] = __builtin_ia32_pmulld256(rhs->v8si_pcks[itrs * 16 +  5], scr);
+        case  5: m->v8si_pcks[itrs * 16 +  4] = __builtin_ia32_pmulld256(rhs->v8si_pcks[itrs * 16 +  4], scr);
+        case  4: m->v8si_pcks[itrs * 16 +  3] = __builtin_ia32_pmulld256(rhs->v8si_pcks[itrs * 16 +  3], scr);
+        case  3: m->v8si_pcks[itrs * 16 +  2] = __builtin_ia32_pmulld256(rhs->v8si_pcks[itrs * 16 +  2], scr);
+        case  2: m->v8si_pcks[itrs * 16 +  1] = __builtin_ia32_pmulld256(rhs->v8si_pcks[itrs * 16 +  1], scr);
+        case  1: m->v8si_pcks[itrs * 16 +  0] = __builtin_ia32_pmulld256(rhs->v8si_pcks[itrs * 16 +  0], scr);
         default: break;
     } /* switch */
+#elif defined(MTX_SSE41)
+    for (unsigned int i = 0; i < itrs; i += 1) {
+        m->v4si_pcks[i * 16 +  0] = __builtin_ia32_pmulld128(rhs->v4si_pcks[i * 16 +  0], scr);
+        m->v4si_pcks[i * 16 +  1] = __builtin_ia32_pmulld128(rhs->v4si_pcks[i * 16 +  1], scr);
+        m->v4si_pcks[i * 16 +  2] = __builtin_ia32_pmulld128(rhs->v4si_pcks[i * 16 +  2], scr);
+        m->v4si_pcks[i * 16 +  3] = __builtin_ia32_pmulld128(rhs->v4si_pcks[i * 16 +  3], scr);
+        m->v4si_pcks[i * 16 +  4] = __builtin_ia32_pmulld128(rhs->v4si_pcks[i * 16 +  4], scr);
+        m->v4si_pcks[i * 16 +  5] = __builtin_ia32_pmulld128(rhs->v4si_pcks[i * 16 +  5], scr);
+        m->v4si_pcks[i * 16 +  6] = __builtin_ia32_pmulld128(rhs->v4si_pcks[i * 16 +  6], scr);
+        m->v4si_pcks[i * 16 +  7] = __builtin_ia32_pmulld128(rhs->v4si_pcks[i * 16 +  7], scr);
+        m->v4si_pcks[i * 16 +  8] = __builtin_ia32_pmulld128(rhs->v4si_pcks[i * 16 +  8], scr);
+        m->v4si_pcks[i * 16 +  9] = __builtin_ia32_pmulld128(rhs->v4si_pcks[i * 16 +  9], scr);
+        m->v4si_pcks[i * 16 + 10] = __builtin_ia32_pmulld128(rhs->v4si_pcks[i * 16 + 10], scr);
+        m->v4si_pcks[i * 16 + 11] = __builtin_ia32_pmulld128(rhs->v4si_pcks[i * 16 + 11], scr);
+        m->v4si_pcks[i * 16 + 12] = __builtin_ia32_pmulld128(rhs->v4si_pcks[i * 16 + 12], scr);
+        m->v4si_pcks[i * 16 + 13] = __builtin_ia32_pmulld128(rhs->v4si_pcks[i * 16 + 13], scr);
+        m->v4si_pcks[i * 16 + 14] = __builtin_ia32_pmulld128(rhs->v4si_pcks[i * 16 + 14], scr);
+        m->v4si_pcks[i * 16 + 15] = __builtin_ia32_pmulld128(rhs->v4si_pcks[i * 16 + 15], scr);
+    } /* for i */
+
+    switch (rmd) {
+        case 15: m->v4si_pcks[itrs * 16 + 14] = __builtin_ia32_pmulld128(rhs->v4si_pcks[itrs * 16 + 14], scr);
+        case 14: m->v4si_pcks[itrs * 16 + 13] = __builtin_ia32_pmulld128(rhs->v4si_pcks[itrs * 16 + 13], scr);
+        case 13: m->v4si_pcks[itrs * 16 + 12] = __builtin_ia32_pmulld128(rhs->v4si_pcks[itrs * 16 + 12], scr);
+        case 12: m->v4si_pcks[itrs * 16 + 11] = __builtin_ia32_pmulld128(rhs->v4si_pcks[itrs * 16 + 11], scr);
+        case 11: m->v4si_pcks[itrs * 16 + 10] = __builtin_ia32_pmulld128(rhs->v4si_pcks[itrs * 16 + 10], scr);
+        case 10: m->v4si_pcks[itrs * 16 +  9] = __builtin_ia32_pmulld128(rhs->v4si_pcks[itrs * 16 +  9], scr);
+        case  9: m->v4si_pcks[itrs * 16 +  8] = __builtin_ia32_pmulld128(rhs->v4si_pcks[itrs * 16 +  8], scr);
+        case  8: m->v4si_pcks[itrs * 16 +  7] = __builtin_ia32_pmulld128(rhs->v4si_pcks[itrs * 16 +  7], scr);
+        case  7: m->v4si_pcks[itrs * 16 +  6] = __builtin_ia32_pmulld128(rhs->v4si_pcks[itrs * 16 +  6], scr);
+        case  6: m->v4si_pcks[itrs * 16 +  5] = __builtin_ia32_pmulld128(rhs->v4si_pcks[itrs * 16 +  5], scr);
+        case  5: m->v4si_pcks[itrs * 16 +  4] = __builtin_ia32_pmulld128(rhs->v4si_pcks[itrs * 16 +  4], scr);
+        case  4: m->v4si_pcks[itrs * 16 +  3] = __builtin_ia32_pmulld128(rhs->v4si_pcks[itrs * 16 +  3], scr);
+        case  3: m->v4si_pcks[itrs * 16 +  2] = __builtin_ia32_pmulld128(rhs->v4si_pcks[itrs * 16 +  2], scr);
+        case  2: m->v4si_pcks[itrs * 16 +  1] = __builtin_ia32_pmulld128(rhs->v4si_pcks[itrs * 16 +  1], scr);
+        case  1: m->v4si_pcks[itrs * 16 +  0] = __builtin_ia32_pmulld128(rhs->v4si_pcks[itrs * 16 +  0], scr);
+        default: break;
+    } /* switch */
+#endif
 } /* i32_scr_multiply_and_store_simd */
 
 void mtx_i32_scalar_multiply_and_store(ptr_matrix_t m, int32_t lhs, ptr_matrix_t rhs, mtx_option_t opt)
@@ -1123,8 +1184,11 @@ ptr_matrix_t mtx_i32_allocate(unsigned int rows, unsigned int cols)
     unsigned int i = 0;
     ptr_matrix_t m = NULL;
 
-    //m = mtx_allocate(rows, cols, sizeof(int32_t), I32_V4SI_IN_PCK, &i32_ops);
-    m = mtx_allocate(rows, cols, sizeof(int32_t), I32_V8SI_IN_PCK, &i32_ops);
+#if defined(MTX_AVX2)
+    m = mtx_allocate(rows, cols, sizeof(int32_t), I32_VALS_IN_V8SI, &i32_ops);
+#elif defined(MTX_SSE41)
+    m = mtx_allocate(rows, cols, sizeof(int32_t), I32_VALS_IN_V4SI, &i32_ops);
+#endif
     if (! m) {
         return NULL;
     } /* if */

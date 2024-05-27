@@ -8,11 +8,14 @@
 /* ==== Definitions of the matrix_t type ==== */
 
 enum {
-    I32_PACK_LEN = 4,
-    U32_PACK_LEN = 4,
-    F32_PACK_LEN = 4,
-    D64_PACK_LEN = 2,
-    V8SI_IN_PCK = 8
+    I32_V4SI_IN_PCK = 4,
+    I32_V8SI_IN_PCK = 2,
+    U32_V4SI_IN_PCK = 4,
+    U32_V8SI_IN_PCK = 2,
+    F32_V4SF_IN_PCK = 4,
+    F32_V8SF_IN_PCK = 2,
+    D64_V2DF_IN_PCK = 4,
+    D64_V4DF_IN_PCK = 2
 };
 
 enum {
@@ -974,7 +977,7 @@ static ptr_matrix_t i32_multiply_and_store_simd(ptr_matrix_t m, ptr_matrix_t lhs
     mi.val_size = lhs->val_size;
     mi.vals_in_pck = lhs->vals_in_pck;
 
-    if (1) {
+    if (0) {
     mi.load_rpcks_ifcf = &v4si_load_rpcks_ifcf;
     mi.load_rpcks_ipcf = &v4si_load_rpcks_ipcf;
     mi.load_rpcks_ifcp = &v4si_load_rpcks_ifcp;
@@ -1120,8 +1123,8 @@ ptr_matrix_t mtx_i32_allocate(unsigned int rows, unsigned int cols)
     unsigned int i = 0;
     ptr_matrix_t m = NULL;
 
-    m = mtx_allocate(rows, cols, sizeof(int32_t), I32_PACK_LEN, &i32_ops);
-    //m = mtx_allocate(rows, cols, sizeof(int32_t), V8SI_IN_PCK, &i32_ops);
+    //m = mtx_allocate(rows, cols, sizeof(int32_t), I32_V4SI_IN_PCK, &i32_ops);
+    m = mtx_allocate(rows, cols, sizeof(int32_t), I32_V8SI_IN_PCK, &i32_ops);
     if (! m) {
         return NULL;
     } /* if */

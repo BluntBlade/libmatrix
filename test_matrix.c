@@ -26,7 +26,7 @@ CESTER_TEST(
     cester_assert_uint_eq(m->byte_cnt, m->val_size * m->rows * round_count_to_multiples_of(m->cols, m->vals_in_pck));
     cester_assert_uint_eq(m->pcks_in_row, 1);
 
-    cester_assert_not_null(m->data);
+    cester_assert_not_null(m->val_buff);
     mtx_destroy(m);
 )
 
@@ -47,7 +47,7 @@ CESTER_TEST(
     cester_assert_uint_eq(m->cols, 2);
     cester_assert_uint_eq(m->byte_cnt, m->val_size * m->rows * round_count_to_multiples_of(m->cols, m->vals_in_pck));
     cester_assert_uint_eq(m->pcks_in_row, 1);
-    cester_assert_not_null(m->data);
+    cester_assert_not_null(m->val_buff);
     mtx_destroy(m);
 )
 
@@ -71,7 +71,7 @@ CESTER_TEST(
     cester_assert_uint_eq(m->cols, 5);
     cester_assert_uint_eq(m->byte_cnt, m->val_size * m->rows * round_count_to_multiples_of(m->cols, m->vals_in_pck));
 
-    cester_assert_not_null(m->data);
+    cester_assert_not_null(m->val_buff);
     mtx_destroy(m);
 )
 
@@ -93,7 +93,7 @@ CESTER_TEST(
     cester_assert_uint_eq(m->cols, 1);
     cester_assert_uint_eq(m->byte_cnt, m->val_size * m->rows * round_count_to_multiples_of(m->cols, m->vals_in_pck));
     cester_assert_uint_eq(m->pcks_in_row, 1);
-    cester_assert_not_null(m->data);
+    cester_assert_not_null(m->val_buff);
     mtx_destroy(m);
 )
 
@@ -115,7 +115,7 @@ CESTER_TEST(
     cester_assert_uint_eq(m->cols, 1);
     cester_assert_uint_eq(m->byte_cnt, m->val_size * m->rows * round_count_to_multiples_of(m->cols, m->vals_in_pck));
     cester_assert_uint_eq(m->pcks_in_row, 1);
-    cester_assert_not_null(m->data);
+    cester_assert_not_null(m->val_buff);
     mtx_destroy(m);
 )
 
@@ -138,7 +138,7 @@ CESTER_TEST(
     cester_assert_uint_eq(m->rows, 4);
     cester_assert_uint_eq(m->cols, 4);
     cester_assert_uint_eq(m->byte_cnt, m->val_size * m->rows * round_count_to_multiples_of(m->cols, m->vals_in_pck));
-    cester_assert_not_null(m->data);
+    cester_assert_not_null(m->val_buff);
     mtx_destroy(m);
 )
 
@@ -161,7 +161,7 @@ CESTER_TEST(
     cester_assert_uint_eq(m->rows, 7);
     cester_assert_uint_eq(m->cols, 7);
     cester_assert_uint_eq(m->byte_cnt, m->val_size * m->rows * round_count_to_multiples_of(m->cols, m->vals_in_pck));
-    cester_assert_not_null(m->data);
+    cester_assert_not_null(m->val_buff);
     mtx_destroy(m);
 )
 
@@ -184,7 +184,7 @@ CESTER_TEST(
     cester_assert_uint_eq(m->rows, 8);
     cester_assert_uint_eq(m->cols, 8);
     cester_assert_uint_eq(m->byte_cnt, m->val_size * m->rows * round_count_to_multiples_of(m->cols, m->vals_in_pck));
-    cester_assert_not_null(m->data);
+    cester_assert_not_null(m->val_buff);
     mtx_destroy(m);
 )
 
@@ -207,7 +207,7 @@ CESTER_TEST(
     cester_assert_uint_eq(m->rows, 1024);
     cester_assert_uint_eq(m->cols, 1024);
     cester_assert_uint_eq(m->byte_cnt, m->val_size * m->rows * round_count_to_multiples_of(m->cols, m->vals_in_pck));
-    cester_assert_not_null(m->data);
+    cester_assert_not_null(m->val_buff);
     mtx_destroy(m);
 )
 
@@ -275,7 +275,7 @@ CESTER_TEST(
     cester_assert_uint_eq(m->rows, 5);
     cester_assert_uint_eq(m->cols, 5);
     cester_assert_uint_eq(m->byte_cnt, m->val_size * m->rows * round_count_to_multiples_of(m->cols, m->vals_in_pck));
-    cester_assert_not_null(m->data);
+    cester_assert_not_null(m->val_buff);
 
     cester_assert_ptr_not_equal(m, lhs);
     cester_assert_ptr_not_equal(m, rhs);
@@ -305,7 +305,7 @@ CESTER_TEST(
     cester_assert_uint_eq(m->cols, 1);
     cester_assert_uint_eq(m->byte_cnt, m->val_size * m->rows * round_count_to_multiples_of(m->cols, m->vals_in_pck));
     cester_assert_uint_eq(m->pcks_in_row, 1);
-    cester_assert_not_null(m->data);
+    cester_assert_not_null(m->val_buff);
 
     cester_assert_ptr_not_equal(m, lhs);
     cester_assert_ptr_not_equal(m, rhs);
@@ -337,7 +337,7 @@ CESTER_TEST(
     cester_assert_uint_eq(m->rows, 8);
     cester_assert_uint_eq(m->cols, 8);
     cester_assert_uint_eq(m->byte_cnt, m->val_size * m->rows * round_count_to_multiples_of(m->cols, m->vals_in_pck));
-    cester_assert_not_null(m->data);
+    cester_assert_not_null(m->val_buff);
 
     cester_assert_ptr_not_equal(m, lhs);
     cester_assert_ptr_not_equal(m, rhs);
@@ -368,7 +368,7 @@ CESTER_TEST(
     cester_assert_uint_eq(m->rows, 1);
     cester_assert_uint_eq(m->cols, 5);
     cester_assert_uint_eq(m->byte_cnt, m->val_size * m->rows * round_count_to_multiples_of(m->cols, m->vals_in_pck));
-    cester_assert_not_null(m->data);
+    cester_assert_not_null(m->val_buff);
 
     cester_assert_ptr_not_equal(m, src);
 
@@ -396,7 +396,7 @@ CESTER_TEST(
     cester_assert_uint_eq(m->cols, 1);
     cester_assert_uint_eq(m->byte_cnt, m->val_size * m->rows * round_count_to_multiples_of(m->cols, m->vals_in_pck));
     cester_assert_uint_eq(m->pcks_in_row, 1);
-    cester_assert_not_null(m->data);
+    cester_assert_not_null(m->val_buff);
 
     cester_assert_ptr_not_equal(m, src);
 
@@ -425,7 +425,7 @@ CESTER_TEST(
     cester_assert_uint_eq(m->rows, 13);
     cester_assert_uint_eq(m->cols, 13);
     cester_assert_uint_eq(m->byte_cnt, m->val_size * m->rows * round_count_to_multiples_of(m->cols, m->vals_in_pck));
-    cester_assert_not_null(m->data);
+    cester_assert_not_null(m->val_buff);
 
     cester_assert_ptr_not_equal(m, src);
 
@@ -453,7 +453,7 @@ CESTER_TEST(
     cester_assert_uint_eq(m->cols, 1);
     cester_assert_uint_eq(m->byte_cnt, m->val_size * m->rows * round_count_to_multiples_of(m->cols, m->vals_in_pck));
     cester_assert_uint_eq(m->pcks_in_row, 1);
-    cester_assert_not_null(m->data);
+    cester_assert_not_null(m->val_buff);
 
     cester_assert_ptr_not_equal(m, src);
 
@@ -480,7 +480,7 @@ CESTER_TEST(
     cester_assert_uint_eq(m->cols, 3);
     cester_assert_uint_eq(m->byte_cnt, m->val_size * m->rows * round_count_to_multiples_of(m->cols, m->vals_in_pck));
     cester_assert_uint_eq(m->pcks_in_row, 1);
-    cester_assert_not_null(m->data);
+    cester_assert_not_null(m->val_buff);
 
     cester_assert_ptr_not_equal(m, src);
 
@@ -508,7 +508,7 @@ CESTER_TEST(
     cester_assert_uint_eq(m->cols, 3);
     cester_assert_uint_eq(m->byte_cnt, m->val_size * m->rows * round_count_to_multiples_of(m->cols, m->vals_in_pck));
     cester_assert_uint_eq(m->pcks_in_row, 1);
-    cester_assert_not_null(m->data);
+    cester_assert_not_null(m->val_buff);
 
     cester_assert_ptr_not_equal(m, src);
 
@@ -537,7 +537,7 @@ CESTER_TEST(
     cester_assert_uint_eq(m->rows, 10);
     cester_assert_uint_eq(m->cols, 10);
     cester_assert_uint_eq(m->byte_cnt, m->val_size * m->rows * round_count_to_multiples_of(m->cols, m->vals_in_pck));
-    cester_assert_not_null(m->data);
+    cester_assert_not_null(m->val_buff);
 
     cester_assert_ptr_not_equal(m, src);
 

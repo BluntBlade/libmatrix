@@ -66,6 +66,8 @@ typedef struct MATRIX_T {
     size_t          byte_cnt;           /* Allocated bytes, including pads. */
     size_t          val_size;           /* The size of one value. */
 
+    void * val_buff;
+
     union {
 #if defined(MTX_SSE41)
         v4si_t *    v4si_pcks;
@@ -75,7 +77,7 @@ typedef struct MATRIX_T {
         v8si_t *    v8si_pcks;
 #endif // MTX_AVX2
 
-        void *      data;
+        void *      val_data;
     };
 
     union {
@@ -97,6 +99,7 @@ static ptr_matrix_t mtx_allocate(unsigned int rows, unsigned int cols, size_t va
     ptr_matrix_t m = NULL;
     unsigned int padded_col_cnt = 0;
     unsigned int i = 0;
+    size_t alignment = 0;
 
     m = calloc(sizeof(matrix_t) + sizeof(void *) * rows, 1);
     if (! m) {
@@ -117,14 +120,17 @@ static ptr_matrix_t mtx_allocate(unsigned int rows, unsigned int cols, size_t va
 
     m->ops = ops;
 
-    m->data = malloc(m->byte_cnt);
-    if (! m->data) {
+    alignment = val_size * vals_in_pck;
+    m->val_buff = malloc(m->byte_cnt + alignment);
+    if (! m->val_buff) {
         free(m);
         return NULL;
     } /* if */
 
+    /* NOTE: Align to the vector type's size, otherwise it will be segmentation fault when access to packs. */
+    m->val_data = (void *)( ((size_t)m->val_buff + (alignment - 1)) & (~(alignment - 1)));
     for (i = 0; i < m->rows; i += 1) {
-        m->val_ptrs[i] = m->data + i * m->val_size * padded_col_cnt;
+        m->val_ptrs[i] = m->val_data  + i * m->val_size * m->cols_padded;
     } /* for */
     return m;
 } /* mtx_allocate */
@@ -150,14 +156,14 @@ ptr_matrix_t mtx_duplicate(ptr_matrix_t src)
     if (! m) {
         return NULL;
     } /* if */
-    memcpy(m->data, src->data, src->byte_cnt);
+    memcpy(m->val_data, src->val_data, src->byte_cnt);
     return m;
 } /* mtx_duplicate */
 
 void mtx_destroy(ptr_matrix_t m)
 {
     if (m) {
-        free(m->data);
+        free(m->val_buff);
     } /* if */
     free(m);
 } /* mtx_destroy */
@@ -1136,7 +1142,7 @@ void mtx_i32_scalar_multiply_and_store(ptr_matrix_t m, int32_t lhs, ptr_matrix_t
 static void i32_init_identity_plain(ptr_matrix_t m)
 {
     unsigned int i = 0;
-    memset(m->data, 0, m->byte_cnt);
+    memset(m->val_data, 0, m->byte_cnt);
     for (i = 0; i < m->rows; i += 1) {
         m->i32_vals[i][i] = 1;
     } /* for */
@@ -1144,7 +1150,7 @@ static void i32_init_identity_plain(ptr_matrix_t m)
 
 static void i32_init_zeros_plain(ptr_matrix_t m)
 {
-    memset(m->data, 0, m->byte_cnt);
+    memset(m->val_data, 0, m->byte_cnt);
 } /* i32_init_zeros_plain */
 
 static void i32_init_ones_plain(ptr_matrix_t m)

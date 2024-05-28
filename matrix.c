@@ -8,6 +8,20 @@
 
 /* ==== Definitions of the matrix_t type ==== */
 
+typedef int32_t v4si_t __attribute__ ((vector_size (16)));
+typedef int64_t v2di_t __attribute__ ((vector_size (16)));
+typedef float v4sf_t __attribute__ ((vector_size (16)));
+typedef double v2df_t __attribute__ ((vector_size (16)));
+
+typedef int32_t v8si_t __attribute__ ((vector_size (32)));
+typedef int64_t v4di_t __attribute__ ((vector_size (32)));
+typedef float v8sf_t __attribute__ ((vector_size (32)));
+typedef double v4df_t __attribute__ ((vector_size (32)));
+
+enum {
+    CPU_CACHE_LINE_BYTES = 64
+};
+
 enum {
     I32_VALS_IN_V4SI = 4,
     I32_VALS_IN_V8SI = 8,
@@ -18,27 +32,6 @@ enum {
     D64_VALS_IN_V2DF = 2,
     D64_VALS_IN_V4DF = 4
 };
-
-enum {
-    CPU_CACHE_LINE_BYTES = 64
-};
-
-#if defined(MTX_SSE41)
-typedef int32_t v4si_t __attribute__ ((vector_size (16)));
-#endif // MTX_SSE41
-
-#if defined(MTX_AVX2)
-typedef int32_t v8si_t __attribute__ ((vector_size (32)));
-#endif // MTX_AVX2
-
-typedef int64_t v2di_t __attribute__ ((vector_size (16)));
-typedef float v4sf_t __attribute__ ((vector_size (16)));
-typedef double v2df_t __attribute__ ((vector_size (16)));
-
-typedef int32_t v8si_t __attribute__ ((vector_size (32)));
-typedef int64_t v4di_t __attribute__ ((vector_size (32)));
-typedef float v8sf_t __attribute__ ((vector_size (32)));
-typedef double v4df_t __attribute__ ((vector_size (32)));
 
 typedef void (*mat_init_fn)(ptr_matrix_t);
 typedef ptr_matrix_t (*mat_oper_fn)(ptr_matrix_t, ptr_matrix_t, ptr_matrix_t);
@@ -318,13 +311,15 @@ typedef void (*mat_mul_and_store_fn)(ptr_mat_mul_info_t, mat_mul_pcks_and_store_
 
 /* Force memory alignment at 32-byte boundary to avoid segmentation fault. */
 typedef union RIGHT_PACK_T {
-#if defined(MTX_SSE41)
     v4si_t v4si_pcks[CPU_CACHE_LINE_BYTES / sizeof(v4si_t)][CPU_CACHE_LINE_BYTES / sizeof(int32_t)];
-#endif // MTX_SSE41
+    v2di_t v2di_pcks[CPU_CACHE_LINE_BYTES / sizeof(v2di_t)][CPU_CACHE_LINE_BYTES / sizeof(int64_t)];
+    v4sf_t v4sf_pcks[CPU_CACHE_LINE_BYTES / sizeof(v4sf_t)][CPU_CACHE_LINE_BYTES / sizeof(float)];
+    v2df_t v2df_pcks[CPU_CACHE_LINE_BYTES / sizeof(v2df_t)][CPU_CACHE_LINE_BYTES / sizeof(double)];
 
-#if defined(MTX_AVX2)
     v8si_t v8si_pcks[CPU_CACHE_LINE_BYTES / sizeof(v8si_t)][CPU_CACHE_LINE_BYTES / sizeof(int32_t)];
-#endif // MTX_AVX2
+    v4di_t v4di_pcks[CPU_CACHE_LINE_BYTES / sizeof(v4di_t)][CPU_CACHE_LINE_BYTES / sizeof(int64_t)];
+    v8sf_t v8sf_pcks[CPU_CACHE_LINE_BYTES / sizeof(v8sf_t)][CPU_CACHE_LINE_BYTES / sizeof(float)];
+    v4df_t v4df_pcks[CPU_CACHE_LINE_BYTES / sizeof(v4df_t)][CPU_CACHE_LINE_BYTES / sizeof(double)];
 } rpck_t, *ptr_rpck_t __attribute__ ((aligned (32)));
 
 typedef struct MAT_MUL_INFO_T {

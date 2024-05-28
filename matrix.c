@@ -31,6 +31,15 @@ typedef int32_t v4si_t __attribute__ ((vector_size (16)));
 typedef int32_t v8si_t __attribute__ ((vector_size (32)));
 #endif // MTX_AVX2
 
+typedef int64_t v2di_t __attribute__ ((vector_size (16)));
+typedef float v4sf_t __attribute__ ((vector_size (16)));
+typedef double v2df_t __attribute__ ((vector_size (16)));
+
+typedef int32_t v8si_t __attribute__ ((vector_size (32)));
+typedef int64_t v4di_t __attribute__ ((vector_size (32)));
+typedef float v8sf_t __attribute__ ((vector_size (32)));
+typedef double v4df_t __attribute__ ((vector_size (32)));
+
 typedef void (*mat_init_fn)(ptr_matrix_t);
 typedef ptr_matrix_t (*mat_oper_fn)(ptr_matrix_t, ptr_matrix_t, ptr_matrix_t);
 typedef void (*i32_scr_oper_fn)(ptr_matrix_t, int32_t, ptr_matrix_t);

@@ -316,7 +316,7 @@ typedef union RIGHT_PACK_T {
 #if defined(MTX_AVX2)
     v8si_t v8si_pcks[CPU_CACHE_LINE_BYTES / sizeof(v8si_t)][CPU_CACHE_LINE_BYTES / sizeof(int32_t)];
 #endif // MTX_AVX2
-} rpck_t, *ptr_rpck_t;
+} rpck_t, *ptr_rpck_t __attribute__ ((aligned (32)));
 
 typedef struct MAT_MUL_INFO_T {
     ptr_matrix_t m;

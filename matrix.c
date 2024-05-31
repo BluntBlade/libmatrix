@@ -19,18 +19,38 @@ typedef float v8sf_t __attribute__ ((vector_size (32)));
 typedef double v4df_t __attribute__ ((vector_size (32)));
 
 enum {
-    CPU_CACHE_LINE_BYTES = 64
+    BYTES_IN_CACHE_LINE = 64
 };
 
 enum {
     I32_VALS_IN_V4SI = 4,
-    I32_VALS_IN_V8SI = 8,
-    U32_VALS_IN_V4SI = 4,
-    U32_VALS_IN_V8SI = 8,
+    I64_VALS_IN_V2DI = 2,
     F32_VALS_IN_V4SF = 4,
-    F32_VALS_IN_V8SF = 8,
     D64_VALS_IN_V2DF = 2,
+
+    I32_VALS_IN_V8SI = 8,
+    I64_VALS_IN_V4DI = 4,
+    F32_VALS_IN_V8SF = 8,
     D64_VALS_IN_V4DF = 4
+};
+
+enum {
+    I32_VALS_IN_CACHE_LINE = BYTES_IN_CACHE_LINE / sizeof(int32_t),
+    I64_VALS_IN_CACHE_LINE = BYTES_IN_CACHE_LINE / sizeof(int64_t),
+    F32_VALS_IN_CACHE_LINE = BYTES_IN_CACHE_LINE / sizeof(float),
+    D64_VALS_IN_CACHE_LINE = BYTES_IN_CACHE_LINE / sizeof(double)
+};
+
+enum {
+    V4SI_IN_CACHE_LINE = BYTES_IN_CACHE_LINE / sizeof(v4si_t), // 4 packs
+    V2DI_IN_CACHE_LINE = BYTES_IN_CACHE_LINE / sizeof(v2di_t), // 2 packs
+    V4SF_IN_CACHE_LINE = BYTES_IN_CACHE_LINE / sizeof(v4sf_t), // 4 packs
+    V2DF_IN_CACHE_LINE = BYTES_IN_CACHE_LINE / sizeof(v2df_t), // 2 packs
+
+    V8SI_IN_CACHE_LINE = BYTES_IN_CACHE_LINE / sizeof(v8si_t), // 8 packs
+    V4DI_IN_CACHE_LINE = BYTES_IN_CACHE_LINE / sizeof(v4di_t), // 4 packs
+    V8SF_IN_CACHE_LINE = BYTES_IN_CACHE_LINE / sizeof(v8sf_t), // 8 packs
+    V4DF_IN_CACHE_LINE = BYTES_IN_CACHE_LINE / sizeof(v4df_t)  // 4 packs
 };
 
 typedef void (*mat_init_fn)(ptr_matrix_t);
@@ -311,15 +331,17 @@ typedef void (*mat_mul_and_store_fn)(ptr_mat_mul_info_t, mat_mul_pcks_and_store_
 
 /* Force memory alignment at 32-byte boundary to avoid segmentation fault. */
 typedef union RIGHT_PACK_T {
-    v4si_t v4si_pcks[CPU_CACHE_LINE_BYTES / sizeof(v4si_t)][CPU_CACHE_LINE_BYTES / sizeof(int32_t)];
-    v2di_t v2di_pcks[CPU_CACHE_LINE_BYTES / sizeof(v2di_t)][CPU_CACHE_LINE_BYTES / sizeof(int64_t)];
-    v4sf_t v4sf_pcks[CPU_CACHE_LINE_BYTES / sizeof(v4sf_t)][CPU_CACHE_LINE_BYTES / sizeof(float)];
-    v2df_t v2df_pcks[CPU_CACHE_LINE_BYTES / sizeof(v2df_t)][CPU_CACHE_LINE_BYTES / sizeof(double)];
+    // 128 bits.
+    v4si_t v4si_pcks[V4SI_IN_CACHE_LINE][I32_VALS_IN_CACHE_LINE];
+    v2di_t v2di_pcks[V2DI_IN_CACHE_LINE][I32_VALS_IN_CACHE_LINE];
+    v4sf_t v4sf_pcks[V4SF_IN_CACHE_LINE][F32_VALS_IN_CACHE_LINE];
+    v2df_t v2df_pcks[V2DF_IN_CACHE_LINE][D64_VALS_IN_CACHE_LINE];
 
-    v8si_t v8si_pcks[CPU_CACHE_LINE_BYTES / sizeof(v8si_t)][CPU_CACHE_LINE_BYTES / sizeof(int32_t)];
-    v4di_t v4di_pcks[CPU_CACHE_LINE_BYTES / sizeof(v4di_t)][CPU_CACHE_LINE_BYTES / sizeof(int64_t)];
-    v8sf_t v8sf_pcks[CPU_CACHE_LINE_BYTES / sizeof(v8sf_t)][CPU_CACHE_LINE_BYTES / sizeof(float)];
-    v4df_t v4df_pcks[CPU_CACHE_LINE_BYTES / sizeof(v4df_t)][CPU_CACHE_LINE_BYTES / sizeof(double)];
+    // 256 bits.
+    v8si_t v8si_pcks[V8SI_IN_CACHE_LINE][I32_VALS_IN_CACHE_LINE];
+    v4di_t v4di_pcks[V4DI_IN_CACHE_LINE][I32_VALS_IN_CACHE_LINE];
+    v8sf_t v8sf_pcks[V8SF_IN_CACHE_LINE][F32_VALS_IN_CACHE_LINE];
+    v4df_t v4df_pcks[V4DF_IN_CACHE_LINE][D64_VALS_IN_CACHE_LINE];
 } rpck_t, *ptr_rpck_t __attribute__ ((aligned (32)));
 
 typedef struct MAT_MUL_INFO_T {
@@ -938,7 +960,7 @@ static void v8si_mul_and_store(ptr_mat_mul_info_t mi, mat_mul_pcks_and_store_fn 
 
 static void mat_multiply_and_store_simd_v2(ptr_mat_mul_info_t mi)
 {
-    mi->vals_per_bth = (CPU_CACHE_LINE_BYTES / mi->val_size);
+    mi->vals_per_bth = (BYTES_IN_CACHE_LINE / mi->val_size);
     mi->pcks_per_bth = mi->vals_per_bth / mi->vals_in_pck;
     mi->jbths = mi->rhs->cols / mi->vals_per_bth;
     mi->jrmd = mi->rhs->cols % mi->vals_per_bth;

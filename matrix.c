@@ -53,12 +53,9 @@ enum {
     V4DF_IN_CACHE_LINE = BYTES_IN_CACHE_LINE / sizeof(v4df_t)  // 4 packs
 };
 
-typedef void (*mat_init_fn)(ptr_matrix_t);
-typedef ptr_matrix_t (*mat_oper_fn)(ptr_matrix_t, ptr_matrix_t, ptr_matrix_t);
-typedef void (*i32_scr_oper_fn)(ptr_matrix_t, int32_t, ptr_matrix_t);
-typedef void (*u32_scr_oper_fn)(ptr_matrix_t, uint32_t, ptr_matrix_t);
-typedef void (*f32_scr_oper_fn)(ptr_matrix_t, float, ptr_matrix_t);
-typedef void (*d64_scr_oper_fn)(ptr_matrix_t, double, ptr_matrix_t);
+typedef void (*mat_init_fn)(p_i32m_t);
+typedef p_i32m_t (*mat_oper_fn)(p_i32m_t, p_i32m_t, p_i32m_t);
+typedef void (*i32_scr_oper_fn)(p_i32m_t, int32_t, p_i32m_t);
 
 typedef struct MATRIX_OPERATION_T {
     mat_init_fn init_identity[2];   /* Initialization of identity matrix. */
@@ -71,13 +68,10 @@ typedef struct MATRIX_OPERATION_T {
 
     union {
         i32_scr_oper_fn i32_scr_mul[2]; /* Scalar multiplication for int32. */
-        u32_scr_oper_fn u32_scr_mul[2]; /* Scalar multiplication for uint32. */
-        f32_scr_oper_fn f32_scr_mul[2]; /* Scalar multiplication for float32. */
-        d64_scr_oper_fn d64_scr_mul[2]; /* Scalar multiplication for double64. */
     };
 } operation_t, *ptr_operation_t;
 
-typedef struct MATRIX_T {
+typedef struct I32_MATRIX_T {
     ptr_operation_t ops;                /* Pointers to operation functions. */
 
     unsigned int    rows;               /* The number of rows. */
@@ -116,9 +110,9 @@ inline static unsigned int round_count_to_multiples_of(unsigned int cnt, unsigne
     return (cnt + (n - 1)) & (~(n - 1));
 } /* round_count_to_multiples_of */
 
-static ptr_matrix_t mtx_allocate(unsigned int rows, unsigned int cols, size_t val_size, size_t vals_in_pck, ptr_operation_t ops)
+static p_i32m_t mtx_allocate(unsigned int rows, unsigned int cols, size_t val_size, size_t vals_in_pck, ptr_operation_t ops)
 {
-    ptr_matrix_t m = NULL;
+    p_i32m_t m = NULL;
     unsigned int padded_col_cnt = 0;
     unsigned int i = 0;
     size_t alignment = 0;
@@ -157,24 +151,24 @@ static ptr_matrix_t mtx_allocate(unsigned int rows, unsigned int cols, size_t va
     return m;
 } /* mtx_allocate */
 
-ptr_matrix_t mtx_allocate_for_multiplying(ptr_matrix_t lhs, ptr_matrix_t rhs)
+p_i32m_t mtx_allocate_for_multiplying(p_i32m_t lhs, p_i32m_t rhs)
 {
     return mtx_allocate(lhs->rows, rhs->cols, lhs->val_size, lhs->vals_in_pck, lhs->ops);
 } /* mtx_allocate_for_multiplying */
 
-ptr_matrix_t mtx_allocate_for_transposing(ptr_matrix_t src)
+p_i32m_t mtx_allocate_for_transposing(p_i32m_t src)
 {
     return mtx_allocate(src->cols, src->rows, src->val_size, src->vals_in_pck, src->ops);
 } /* mtx_allocate_for_transposing */
 
-ptr_matrix_t mtx_allocate_in_shape_of(ptr_matrix_t src)
+p_i32m_t mtx_allocate_in_shape_of(p_i32m_t src)
 {
     return mtx_allocate(src->rows, src->cols, src->val_size, src->vals_in_pck, src->ops);
 } /* mtx_allocate_in_shape_of */
 
-ptr_matrix_t mtx_duplicate(ptr_matrix_t src)
+p_i32m_t mtx_duplicate(p_i32m_t src)
 {
-    ptr_matrix_t m = mtx_allocate(src->rows, src->cols, src->val_size, src->vals_in_pck, src->ops);
+    p_i32m_t m = mtx_allocate(src->rows, src->cols, src->val_size, src->vals_in_pck, src->ops);
     if (! m) {
         return NULL;
     } /* if */
@@ -182,7 +176,7 @@ ptr_matrix_t mtx_duplicate(ptr_matrix_t src)
     return m;
 } /* mtx_duplicate */
 
-void mtx_destroy(ptr_matrix_t m)
+void mtx_destroy(p_i32m_t m)
 {
     if (m) {
         free(m->val_buff);
@@ -190,47 +184,47 @@ void mtx_destroy(ptr_matrix_t m)
     free(m);
 } /* mtx_destroy */
 
-void mtx_initialize_identity(ptr_matrix_t m, mtx_option_t opt)
+void mtx_initialize_identity(p_i32m_t m, mx_opt_t opt)
 {
     (*m->ops->init_identity[opt & 0x3])(m);
 } /* mtx_initialize_identity */
 
-void mtx_initialize_zeros(ptr_matrix_t m, mtx_option_t opt)
+void mtx_initialize_zeros(p_i32m_t m, mx_opt_t opt)
 {
     (*m->ops->init_zeros[opt & 0x3])(m);
 } /* mtx_initialize_zeros */
 
-void mtx_initialize_ones(ptr_matrix_t m, mtx_option_t opt)
+void mtx_initialize_ones(p_i32m_t m, mx_opt_t opt)
 {
     (*m->ops->init_ones[opt & 0x3])(m);
 } /* mtx_initialize_ones */
 
-int mtx_can_do_add(ptr_matrix_t lhs, ptr_matrix_t rhs)
+int mtx_can_do_add(p_i32m_t lhs, p_i32m_t rhs)
 {
     return (lhs->rows == rhs->rows) && (lhs->cols == rhs->cols);
 } /* mtx_can_do_add */
 
-int mtx_can_do_multiply(ptr_matrix_t lhs, ptr_matrix_t rhs)
+int mtx_can_do_multiply(p_i32m_t lhs, p_i32m_t rhs)
 {
     return (lhs->cols == rhs->rows);
 } /* mtx_can_do_multiply */
 
-unsigned int mtx_count_rows(ptr_matrix_t m)
+unsigned int mtx_count_rows(p_i32m_t m)
 {
     return m->rows;
 } /* mtx_count_rows */
 
-unsigned int mtx_count_columns(ptr_matrix_t m)
+unsigned int mtx_count_columns(p_i32m_t m)
 {
     return m->cols;
 } /* mtx_count_columns */
 
-unsigned int mtx_count_values(ptr_matrix_t m)
+unsigned int mtx_count_values(p_i32m_t m)
 {
     return (m->rows * m->cols);
 } /* mtx_count_values */
 
-void mtx_transpose_and_store(ptr_matrix_t m, ptr_matrix_t src)
+void mtx_transpose_and_store(p_i32m_t m, p_i32m_t src)
 {
     unsigned int i = 0;
     unsigned int j = 0;
@@ -242,34 +236,34 @@ void mtx_transpose_and_store(ptr_matrix_t m, ptr_matrix_t src)
     } /* for i */
 } /* mtx_transpose_and_store */
 
-void mtx_add_and_store(ptr_matrix_t m, ptr_matrix_t lhs, ptr_matrix_t rhs, mtx_option_t opt)
+void mtx_add_and_store(p_i32m_t m, p_i32m_t lhs, p_i32m_t rhs, mx_opt_t opt)
 {
     (*m->ops->mat_add[opt & 0x3])(m, lhs, rhs);
 } /* mtx_add_and_store */
 
-void mtx_sub_and_store(ptr_matrix_t m, ptr_matrix_t lhs, ptr_matrix_t rhs, mtx_option_t opt)
+void mtx_sub_and_store(p_i32m_t m, p_i32m_t lhs, p_i32m_t rhs, mx_opt_t opt)
 {
     (*m->ops->mat_sub[opt & 0x3])(m, lhs, rhs);
 } /* mtx_sub_and_store */
 
-void mtx_multiply_and_store(ptr_matrix_t m, ptr_matrix_t lhs, ptr_matrix_t rhs, mtx_option_t opt)
+void mtx_multiply_and_store(p_i32m_t m, p_i32m_t lhs, p_i32m_t rhs, mx_opt_t opt)
 {
     (*m->ops->mat_mul[opt & 0x3])(m, lhs, rhs);
 } /* mtx_multiply_and_store */
 
 /* ==== Type-Related functions. ==== */
 
-int32_t mtx_i32_get(ptr_matrix_t m, unsigned int row, unsigned int col)
+int32_t mtx_i32_get(p_i32m_t m, unsigned int row, unsigned int col)
 {
     return m->i32_vals[row][col];
 } /* mtx_i32_get */
 
-void mtx_i32_set(ptr_matrix_t m, unsigned int row, unsigned int col, int32_t src_val)
+void mtx_i32_set(p_i32m_t m, unsigned int row, unsigned int col, int32_t src_val)
 {
     m->i32_vals[row][col] = src_val;
 } /* mtx_i32_set */
 
-void mtx_i32_set_each(ptr_matrix_t m, int32_t src_val)
+void mtx_i32_set_each(p_i32m_t m, int32_t src_val)
 {
     unsigned int i = 0;
     unsigned int j = 0;
@@ -281,7 +275,7 @@ void mtx_i32_set_each(ptr_matrix_t m, int32_t src_val)
     return;
 } /* mtx_i32_set_each */
 
-static ptr_matrix_t i32_add_and_store_plain(ptr_matrix_t m, ptr_matrix_t lhs, ptr_matrix_t rhs)
+static p_i32m_t i32_add_and_store_plain(p_i32m_t m, p_i32m_t lhs, p_i32m_t rhs)
 {
     unsigned int i = 0;
     unsigned int j = 0;
@@ -293,7 +287,7 @@ static ptr_matrix_t i32_add_and_store_plain(ptr_matrix_t m, ptr_matrix_t lhs, pt
     return m;
 } /* i32_add_and_store_plain */
 
-static ptr_matrix_t i32_sub_and_store_plain(ptr_matrix_t m, ptr_matrix_t lhs, ptr_matrix_t rhs)
+static p_i32m_t i32_sub_and_store_plain(p_i32m_t m, p_i32m_t lhs, p_i32m_t rhs)
 {
     unsigned int i = 0;
     unsigned int j = 0;
@@ -305,7 +299,7 @@ static ptr_matrix_t i32_sub_and_store_plain(ptr_matrix_t m, ptr_matrix_t lhs, pt
     return m;
 } /* i32_sub_and_store_plain */
 
-static ptr_matrix_t i32_multiply_and_store_plain(ptr_matrix_t m, ptr_matrix_t lhs, ptr_matrix_t rhs)
+static p_i32m_t i32_multiply_and_store_plain(p_i32m_t m, p_i32m_t lhs, p_i32m_t rhs)
 {
     unsigned int i = 0;
     unsigned int j = 0;
@@ -345,9 +339,9 @@ typedef union RIGHT_PACK_T {
 } rpck_t, *ptr_rpck_t __attribute__ ((aligned (32)));
 
 typedef struct MAT_MUL_INFO_T {
-    ptr_matrix_t m;
-    ptr_matrix_t lhs;
-    ptr_matrix_t rhs;
+    p_i32m_t m;
+    p_i32m_t lhs;
+    p_i32m_t rhs;
 
     mat_load_rpcks_fn load_rpcks_ifcf;
     mat_load_rpcks_fn load_rpcks_ifcp;
@@ -417,7 +411,7 @@ typedef struct MAT_MUL_INFO_T {
 
 static void v4si_load_rpcks_ifcf(ptr_mat_mul_info_t mi, unsigned int itn_base, unsigned int itn_rmd, unsigned int col_base, unsigned int col_rmd)
 {
-    ptr_matrix_t rhs = mi->rhs;
+    p_i32m_t rhs = mi->rhs;
     v4si_t * rpck0 = mi->rpck->v4si_pcks[0];
     v4si_t * rpck1 = mi->rpck->v4si_pcks[1];
     v4si_t * rpck2 = mi->rpck->v4si_pcks[2];
@@ -443,7 +437,7 @@ static void v4si_load_rpcks_ifcf(ptr_mat_mul_info_t mi, unsigned int itn_base, u
 
 static void v4si_load_rpcks_ifcp(ptr_mat_mul_info_t mi, unsigned int itn_base, unsigned int itn_rmd, unsigned int col_base, unsigned int col_rmd)
 {
-    ptr_matrix_t rhs = mi->rhs;
+    p_i32m_t rhs = mi->rhs;
     v4si_t * rpck0 = mi->rpck->v4si_pcks[0];
     v4si_t * rpck1 = mi->rpck->v4si_pcks[1];
     v4si_t * rpck2 = mi->rpck->v4si_pcks[2];
@@ -469,7 +463,7 @@ static void v4si_load_rpcks_ifcp(ptr_mat_mul_info_t mi, unsigned int itn_base, u
 
 static void v4si_load_rpcks_ipcf(ptr_mat_mul_info_t mi, unsigned int itn_base, unsigned int itn_rmd, unsigned int col_base, unsigned int col_rmd)
 {
-    ptr_matrix_t rhs = mi->rhs;
+    p_i32m_t rhs = mi->rhs;
     v4si_t * rpck0 = mi->rpck->v4si_pcks[0];
     v4si_t * rpck1 = mi->rpck->v4si_pcks[1];
     v4si_t * rpck2 = mi->rpck->v4si_pcks[2];
@@ -496,7 +490,7 @@ static void v4si_load_rpcks_ipcf(ptr_mat_mul_info_t mi, unsigned int itn_base, u
 
 static void v4si_load_rpcks_ipcp(ptr_mat_mul_info_t mi, unsigned int itn_base, unsigned int itn_rmd, unsigned int col_base, unsigned int col_rmd)
 {
-    ptr_matrix_t rhs = mi->rhs;
+    p_i32m_t rhs = mi->rhs;
     v4si_t * rpck0 = mi->rpck->v4si_pcks[0];
     v4si_t * rpck1 = mi->rpck->v4si_pcks[1];
     v4si_t * rpck2 = mi->rpck->v4si_pcks[2];
@@ -536,8 +530,8 @@ static void v4si_load_rpcks_ipcp(ptr_mat_mul_info_t mi, unsigned int itn_base, u
 
 static void v4si_mul_and_store_fully(ptr_mat_mul_info_t mi, unsigned pck_off, unsigned int row, unsigned int col_base, unsigned int col_rmd)
 {
-    ptr_matrix_t m = mi->m;
-    ptr_matrix_t lhs = mi->lhs;
+    p_i32m_t m = mi->m;
+    p_i32m_t lhs = mi->lhs;
     v4si_t tmp[4] = {0, 0, 0, 0};
     v4si_t * lpck = &lhs->v4si_pcks[pck_off];
     v4si_t * rpck0 = mi->rpck->v4si_pcks[0];
@@ -567,8 +561,8 @@ static void v4si_mul_and_store_fully(ptr_mat_mul_info_t mi, unsigned pck_off, un
 
 static void v4si_mul_and_store_partly(ptr_mat_mul_info_t mi, unsigned pck_off, unsigned int row, unsigned int col_base, unsigned int col_rmd)
 {
-    ptr_matrix_t m = mi->m;
-    ptr_matrix_t lhs = mi->lhs;
+    p_i32m_t m = mi->m;
+    p_i32m_t lhs = mi->lhs;
     v4si_t tmp[4] = {0, 0, 0, 0};
     v4si_t * lpck = &lhs->v4si_pcks[pck_off];
     v4si_t * rpck0 = mi->rpck->v4si_pcks[0];
@@ -601,7 +595,7 @@ static void v4si_mul_and_store_partly(ptr_mat_mul_info_t mi, unsigned pck_off, u
 
 static void v4si_mul_and_store(ptr_mat_mul_info_t mi, mat_mul_pcks_and_store_fn op, unsigned int pck_off, unsigned int ibths, unsigned int irmd, unsigned int col_base, unsigned int col_rmd)
 {
-    ptr_matrix_t lhs = mi->lhs;
+    p_i32m_t lhs = mi->lhs;
     unsigned int row = 0;
     switch (irmd) {
             do {
@@ -632,7 +626,7 @@ static void v4si_mul_and_store(ptr_mat_mul_info_t mi, mat_mul_pcks_and_store_fn 
 
 static void v8si_load_rpcks_ifcf(ptr_mat_mul_info_t mi, unsigned int itn_base, unsigned int itn_rmd, unsigned int col_base, unsigned int col_rmd)
 {
-    ptr_matrix_t rhs = mi->rhs;
+    p_i32m_t rhs = mi->rhs;
     v8si_t src = {0, 0, 0, 0, 0, 0, 0, 0};
     v8si_t idx0 = {0, 1, 2, 3, 4, 5, 6, 7};
     v8si_t idx1 = {8, 9, 10, 11, 12, 13, 14, 15};
@@ -679,7 +673,7 @@ static void v8si_load_rpcks_ifcf(ptr_mat_mul_info_t mi, unsigned int itn_base, u
 
 static void v8si_load_rpcks_ifcp(ptr_mat_mul_info_t mi, unsigned int itn_base, unsigned int itn_rmd, unsigned int col_base, unsigned int col_rmd)
 {
-    ptr_matrix_t rhs = mi->rhs;
+    p_i32m_t rhs = mi->rhs;
     v8si_t src = {0, 0, 0, 0, 0, 0, 0, 0};
     v8si_t idx0 = {0, 1, 2, 3, 4, 5, 6, 7};
     v8si_t idx1 = {8, 9, 10, 11, 12, 13, 14, 15};
@@ -727,7 +721,7 @@ static void v8si_load_rpcks_ifcp(ptr_mat_mul_info_t mi, unsigned int itn_base, u
 
 static void v8si_load_rpcks_ipcf(ptr_mat_mul_info_t mi, unsigned int itn_base, unsigned int itn_rmd, unsigned int col_base, unsigned int col_rmd)
 {
-    ptr_matrix_t rhs = mi->rhs;
+    p_i32m_t rhs = mi->rhs;
     v8si_t src = {0, 0, 0, 0, 0, 0, 0, 0};
     v8si_t idx0 = {0, 1, 2, 3, 4, 5, 6, 7};
     v8si_t idx1 = {8, 9, 10, 11, 12, 13, 14, 15};
@@ -794,7 +788,7 @@ static void v8si_load_rpcks_ipcf(ptr_mat_mul_info_t mi, unsigned int itn_base, u
 
 static void v8si_load_rpcks_ipcp(ptr_mat_mul_info_t mi, unsigned int itn_base, unsigned int itn_rmd, unsigned int col_base, unsigned int col_rmd)
 {
-    ptr_matrix_t rhs = mi->rhs;
+    p_i32m_t rhs = mi->rhs;
     v8si_t src = {0, 0, 0, 0, 0, 0, 0, 0};
     v8si_t idx0 = {0, 1, 2, 3, 4, 5, 6, 7};
     v8si_t idx1 = {8, 9, 10, 11, 12, 13, 14, 15};
@@ -870,8 +864,8 @@ static void v8si_load_rpcks_ipcp(ptr_mat_mul_info_t mi, unsigned int itn_base, u
 
 static void v8si_mul_and_store_fully(ptr_mat_mul_info_t mi, unsigned int pck_off, unsigned int row, unsigned int col_base, unsigned int col_rmd)
 {
-    ptr_matrix_t m = mi->m;
-    ptr_matrix_t lhs = mi->lhs;
+    p_i32m_t m = mi->m;
+    p_i32m_t lhs = mi->lhs;
     v8si_t tmp[2] = {0, 0};
     v8si_t * lpck = &lhs->v8si_pcks[pck_off];
     v8si_t * rpck0 = mi->rpck->v8si_pcks[0];
@@ -899,8 +893,8 @@ static void v8si_mul_and_store_fully(ptr_mat_mul_info_t mi, unsigned int pck_off
 
 static void v8si_mul_and_store_partly(ptr_mat_mul_info_t mi, unsigned int pck_off, unsigned int row, unsigned int col_base, unsigned int col_rmd)
 {
-    ptr_matrix_t m = mi->m;
-    ptr_matrix_t lhs = mi->lhs;
+    p_i32m_t m = mi->m;
+    p_i32m_t lhs = mi->lhs;
     v8si_t tmp[2] = {0, 0};
     v8si_t * lpck = &lhs->v8si_pcks[pck_off];
     v8si_t * rpck0 = mi->rpck->v8si_pcks[0];
@@ -931,7 +925,7 @@ static void v8si_mul_and_store_partly(ptr_mat_mul_info_t mi, unsigned int pck_of
 
 static void v8si_mul_and_store(ptr_mat_mul_info_t mi, mat_mul_pcks_and_store_fn op, unsigned int pck_off, unsigned int ibths, unsigned int irmd, unsigned int col_base, unsigned int col_rmd)
 {
-    ptr_matrix_t lhs = mi->lhs;
+    p_i32m_t lhs = mi->lhs;
     unsigned int row = 0;
     switch (irmd) {
             do {
@@ -1016,7 +1010,7 @@ static void mat_multiply_and_store_simd_v2(ptr_mat_mul_info_t mi)
     } /* if */
 } /* mat_multiply_and_store_simd_v2 */
 
-static ptr_matrix_t i32_multiply_and_store_simd(ptr_matrix_t m, ptr_matrix_t lhs, ptr_matrix_t rhs)
+static p_i32m_t i32_multiply_and_store_simd(p_i32m_t m, p_i32m_t lhs, p_i32m_t rhs)
 {
     mat_mul_info_t mi = {0};
 
@@ -1054,7 +1048,7 @@ static ptr_matrix_t i32_multiply_and_store_simd(ptr_matrix_t m, ptr_matrix_t lhs
     return m;
 } /* i32_multiply_and_store_simd */
 
-static void i32_scr_multiply_and_store_plain(ptr_matrix_t m, int32_t lhs, ptr_matrix_t rhs)
+static void i32_scr_multiply_and_store_plain(p_i32m_t m, int32_t lhs, p_i32m_t rhs)
 {
     unsigned int i = 0;
     unsigned int j = 0;
@@ -1066,7 +1060,7 @@ static void i32_scr_multiply_and_store_plain(ptr_matrix_t m, int32_t lhs, ptr_ma
     } /* for i */
 } /* i32_scr_multiply_and_store_plain */
 
-static void i32_scr_multiply_and_store_simd(ptr_matrix_t m, int32_t lhs, ptr_matrix_t rhs)
+static void i32_scr_multiply_and_store_simd(p_i32m_t m, int32_t lhs, p_i32m_t rhs)
 {
     unsigned int itrs = 0;
     unsigned int rmd = 0;
@@ -1160,12 +1154,12 @@ static void i32_scr_multiply_and_store_simd(ptr_matrix_t m, int32_t lhs, ptr_mat
 #endif
 } /* i32_scr_multiply_and_store_simd */
 
-void mtx_i32_scalar_multiply_and_store(ptr_matrix_t m, int32_t lhs, ptr_matrix_t rhs, mtx_option_t opt)
+void mtx_i32_scalar_multiply_and_store(p_i32m_t m, int32_t lhs, p_i32m_t rhs, mx_opt_t opt)
 {
     (*m->ops->i32_scr_mul[opt & 0x3])(m, lhs, rhs);
 } /* mtx_i32_scalar_multiply_and_store */
 
-static void i32_init_identity_plain(ptr_matrix_t m)
+static void i32_init_identity_plain(p_i32m_t m)
 {
     unsigned int i = 0;
     memset(m->val_data, 0, m->byte_cnt);
@@ -1174,12 +1168,12 @@ static void i32_init_identity_plain(ptr_matrix_t m)
     } /* for */
 } /* i32_init_identity_plain */
 
-static void i32_init_zeros_plain(ptr_matrix_t m)
+static void i32_init_zeros_plain(p_i32m_t m)
 {
     memset(m->val_data, 0, m->byte_cnt);
 } /* i32_init_zeros_plain */
 
-static void i32_init_ones_plain(ptr_matrix_t m)
+static void i32_init_ones_plain(p_i32m_t m)
 {
     unsigned int i = 0;
     unsigned int j = 0;
@@ -1209,10 +1203,10 @@ static operation_t i32_ops = {
     {&i32_scr_multiply_and_store_plain, &i32_scr_multiply_and_store_simd},
 };
 
-ptr_matrix_t mtx_i32_allocate(unsigned int rows, unsigned int cols)
+p_i32m_t mtx_i32_allocate(unsigned int rows, unsigned int cols)
 {
     unsigned int i = 0;
-    ptr_matrix_t m = NULL;
+    p_i32m_t m = NULL;
 
 #if defined(MTX_AVX2)
     m = mtx_allocate(rows, cols, sizeof(int32_t), I32_VALS_IN_V8SI, &i32_ops);

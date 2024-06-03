@@ -1,7 +1,7 @@
-#ifndef MTX_CONFIG_H
-#define MTX_CONFIG_H 1
+#ifndef MX_CONFIG_H
+#define MX_CONFIG_H 1
 
-#define MTX_AVX2 1
-#define MTX_SSE41 1
+#define MX_AVX2 1
+#define MX_SSE41 1
 
-#endif // MTX_CONFIG_H
+#endif // MX_CONFIG_H

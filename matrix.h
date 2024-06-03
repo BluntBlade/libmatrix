@@ -6,136 +6,136 @@
 // ==== Declarations of common types ====
 
 typedef enum MATRIX_OPTION_T {
-    MTX_PLAIN_CODE = 0x0000,
-    MTX_SIMD_CODE = 0x0001,
+    MX_PLAIN_CODE = 0x0000,
+    MX_SIMD_CODE = 0x0001,
 } mx_opt_t;
 
 // ==== Declarations of the mi32_t type ====
 
-struct I32_MATRIX_T;
-typedef struct I32_MATRIX_T * p_i32m_t;
+struct MATRIX_I32_T;
+typedef struct MATRIX_I32_T * p_mi32_t;
 
 /* ==== Common functions. ==== */
 
-extern p_i32m_t mtx_allocate_for_multiplying(p_i32m_t lhs, p_i32m_t rhs);
-extern p_i32m_t mtx_allocate_for_transposing(p_i32m_t src);
-extern p_i32m_t mtx_allocate_in_shape_of(p_i32m_t src);
+extern p_mi32_t mi32_allocate_for_multiplying(p_mi32_t lhs, p_mi32_t rhs);
+extern p_mi32_t mi32_allocate_for_transposing(p_mi32_t src);
+extern p_mi32_t mi32_allocate_in_shape_of(p_mi32_t src);
 
-extern p_i32m_t mtx_duplicate(p_i32m_t src);
+extern p_mi32_t mi32_duplicate(p_mi32_t src);
 
-extern void mtx_destroy(p_i32m_t mtx);
+extern void mi32_destroy(p_mi32_t m);
 
-extern void mtx_initialize_identity(p_i32m_t mtx, mx_opt_t opt);
-extern void mtx_initialize_zeros(p_i32m_t mtx, mx_opt_t opt);
-extern void mtx_initialize_ones(p_i32m_t mtx, mx_opt_t opt);
+extern void mi32_initialize_identity(p_mi32_t m, mx_opt_t opt);
+extern void mi32_initialize_zeros(p_mi32_t m, mx_opt_t opt);
+extern void mi32_initialize_ones(p_mi32_t m, mx_opt_t opt);
 
-extern int mtx_can_do_add(p_i32m_t lhs, p_i32m_t rhs);
-extern int mtx_can_do_multiply(p_i32m_t lhs, p_i32m_t rhs);
+extern int mi32_can_do_add(p_mi32_t lhs, p_mi32_t rhs);
+extern int mi32_can_do_multiply(p_mi32_t lhs, p_mi32_t rhs);
 
-extern unsigned int mtx_count_rows(p_i32m_t mtx);
-extern unsigned int mtx_count_columns(p_i32m_t mtx);
-extern unsigned int mtx_count_values(p_i32m_t mtx);
+extern uint32_t mi32_count_rows(p_mi32_t m);
+extern uint32_t mi32_count_columns(p_mi32_t m);
+extern uint32_t mi32_count_values(p_mi32_t m);
 
-extern void mtx_transpose_and_store(p_i32m_t mtx, p_i32m_t src);
+extern void mi32_transpose_and_store(p_mi32_t m, p_mi32_t src);
 
-extern void mtx_add_and_store(p_i32m_t mtx, p_i32m_t lhs, p_i32m_t rhs, mx_opt_t opt);
-extern void mtx_sub_and_store(p_i32m_t mtx, p_i32m_t lhs, p_i32m_t rhs, mx_opt_t opt);
-extern void mtx_multiply_and_store(p_i32m_t mtx, p_i32m_t lhs, p_i32m_t rhs, mx_opt_t opt);
+extern void mi32_add_and_store(p_mi32_t m, p_mi32_t lhs, p_mi32_t rhs, mx_opt_t opt);
+extern void mi32_sub_and_store(p_mi32_t m, p_mi32_t lhs, p_mi32_t rhs, mx_opt_t opt);
+extern void mi32_multiply_and_store(p_mi32_t m, p_mi32_t lhs, p_mi32_t rhs, mx_opt_t opt);
 
-inline static int mtx_can_do_sub(p_i32m_t lhs, p_i32m_t rhs)
+inline static int mi32_can_do_sub(p_mi32_t lhs, p_mi32_t rhs)
 {
-    return mtx_can_do_add(lhs, rhs);
-} /* mtx_can_do_sub */
+    return mi32_can_do_add(lhs, rhs);
+} /* mi32_can_do_sub */
 
-inline static p_i32m_t mtx_add(p_i32m_t lhs, p_i32m_t rhs, mx_opt_t opt)
+inline static p_mi32_t mi32_add(p_mi32_t lhs, p_mi32_t rhs, mx_opt_t opt)
 {
-    p_i32m_t mtx = mtx_allocate_in_shape_of(lhs);
-    if (! mtx) {
+    p_mi32_t m = mi32_allocate_in_shape_of(lhs);
+    if (! m) {
         return NULL;
     } /* if */
-    mtx_add_and_store(mtx, lhs, rhs, opt);
-    return mtx;
-} /* mtx_add */
+    mi32_add_and_store(m, lhs, rhs, opt);
+    return m;
+} /* mi32_add */
 
-inline static p_i32m_t mtx_sub(p_i32m_t lhs, p_i32m_t rhs, mx_opt_t opt)
+inline static p_mi32_t mi32_sub(p_mi32_t lhs, p_mi32_t rhs, mx_opt_t opt)
 {
-    p_i32m_t mtx = mtx_allocate_in_shape_of(lhs);
-    if (! mtx) {
+    p_mi32_t m = mi32_allocate_in_shape_of(lhs);
+    if (! m) {
         return NULL;
     } /* if */
-    mtx_sub_and_store(mtx, lhs, rhs, opt);
-    return mtx;
-} /* mtx_sub */
+    mi32_sub_and_store(m, lhs, rhs, opt);
+    return m;
+} /* mi32_sub */
 
-inline static p_i32m_t mtx_multiply(p_i32m_t lhs, p_i32m_t rhs, mx_opt_t opt)
+inline static p_mi32_t mi32_multiply(p_mi32_t lhs, p_mi32_t rhs, mx_opt_t opt)
 {
-    p_i32m_t mtx = mtx_allocate_for_multiplying(lhs, rhs);
-    if (! mtx) {
+    p_mi32_t m = mi32_allocate_for_multiplying(lhs, rhs);
+    if (! m) {
         return NULL;
     } /* if */
-    mtx_multiply_and_store(mtx, lhs, rhs, opt);
-    return mtx;
-} /* mtx_multiply */
+    mi32_multiply_and_store(m, lhs, rhs, opt);
+    return m;
+} /* mi32_multiply */
 
-inline static p_i32m_t mtx_transpose(p_i32m_t src)
+inline static p_mi32_t mi32_transpose(p_mi32_t src)
 {
-    p_i32m_t mtx = mtx_allocate_for_transposing(src);
-    mtx_transpose_and_store(mtx, src);
-    return mtx;
-} /* mtx_transpose */
+    p_mi32_t m = mi32_allocate_for_transposing(src);
+    mi32_transpose_and_store(m, src);
+    return m;
+} /* mi32_transpose */
 
 /* ==== Type-Related functions. ==== */
 
 // ---- int32_t ----
 
-extern p_i32m_t mtx_i32_allocate(unsigned int row_cnt, unsigned int col_cnt);
+extern p_mi32_t mi32_allocate(uint32_t row_cnt, uint32_t col_cnt);
 
-extern int32_t mtx_i32_get(p_i32m_t mtx, unsigned int row, unsigned int col);
+extern int32_t mi32_get(p_mi32_t m, uint32_t row, uint32_t col);
 
-extern void mtx_i32_set(p_i32m_t mtx, unsigned int row, unsigned int col, int32_t src_val);
-extern void mtx_i32_set_each(p_i32m_t mtx, int32_t src_val);
+extern void mi32_set(p_mi32_t m, uint32_t row, uint32_t col, int32_t src_val);
+extern void mi32_set_each(p_mi32_t m, int32_t src_val);
 
-extern void mtx_i32_scalar_multiply_and_store(p_i32m_t mtx, int32_t lhs, p_i32m_t rhs, mx_opt_t opt);
+extern void mi32_scalar_multiply_and_store(p_mi32_t m, int32_t lhs, p_mi32_t rhs, mx_opt_t opt);
 
-inline static p_i32m_t mtx_i32_create_zeros(unsigned int row_cnt, unsigned int col_cnt, mx_opt_t opt)
+inline static p_mi32_t mi32_create_zeros(uint32_t row_cnt, uint32_t col_cnt, mx_opt_t opt)
 {
-    p_i32m_t mtx = mtx_i32_allocate(row_cnt, col_cnt);
-    if (! mtx) {
+    p_mi32_t m = mi32_allocate(row_cnt, col_cnt);
+    if (! m) {
         return NULL;
     } /* if */
-    mtx_initialize_zeros(mtx, opt);
-    return mtx;
-} /* mtx_i32_create_zeros */
+    mi32_initialize_zeros(m, opt);
+    return m;
+} /* mi32_create_zeros */
 
-inline static p_i32m_t mtx_i32_create_ones(unsigned int row_cnt, unsigned int col_cnt, mx_opt_t opt)
+inline static p_mi32_t mi32_create_ones(uint32_t row_cnt, uint32_t col_cnt, mx_opt_t opt)
 {
-    p_i32m_t mtx = mtx_i32_allocate(row_cnt, col_cnt);
-    if (! mtx) {
+    p_mi32_t m = mi32_allocate(row_cnt, col_cnt);
+    if (! m) {
         return NULL;
     } /* if */
-    mtx_initialize_ones(mtx, opt);
-    return mtx;
-} /* mtx_i32_create_ones */
+    mi32_initialize_ones(m, opt);
+    return m;
+} /* mi32_create_ones */
 
-inline static p_i32m_t mtx_i32_create_identity(unsigned int row_cnt, unsigned int col_cnt, mx_opt_t opt)
+inline static p_mi32_t mi32_create_identity(uint32_t row_cnt, uint32_t col_cnt, mx_opt_t opt)
 {
-    p_i32m_t mtx = mtx_i32_allocate(row_cnt, col_cnt);
-    if (! mtx) {
+    p_mi32_t m = mi32_allocate(row_cnt, col_cnt);
+    if (! m) {
         return NULL;
     } /* if */
-    mtx_initialize_identity(mtx, opt);
-    return mtx;
-} /* mtx_i32_create_identity */
+    mi32_initialize_identity(m, opt);
+    return m;
+} /* mi32_create_identity */
 
-inline static p_i32m_t mtx_i32_scalar_multiply(int32_t lhs, p_i32m_t rhs, mx_opt_t opt)
+inline static p_mi32_t mi32_scalar_multiply(int32_t lhs, p_mi32_t rhs, mx_opt_t opt)
 {
-    p_i32m_t mtx = mtx_allocate_in_shape_of(rhs);
-    if (! mtx) {
+    p_mi32_t m = mi32_allocate_in_shape_of(rhs);
+    if (! m) {
         return NULL;
     } /* if */
-    mtx_i32_scalar_multiply_and_store(mtx, lhs, rhs, opt);
-    return mtx;
-} /* mtx_i32_scalar_multiply */
+    mi32_scalar_multiply_and_store(m, lhs, rhs, opt);
+    return m;
+} /* mi32_scalar_multiply */
 
 #endif /* MATRIX_H */
 

@@ -26,9 +26,9 @@ extern p_mi32_t mi32_duplicate(p_mi32_t src);
 
 extern void mi32_destroy(p_mi32_t m);
 
-extern void mi32_initialize_identity(p_mi32_t m, mx_opt_t opt);
-extern void mi32_initialize_zeros(p_mi32_t m, mx_opt_t opt);
-extern void mi32_initialize_ones(p_mi32_t m, mx_opt_t opt);
+extern void mi32_init_identity(p_mi32_t m, mx_opt_t opt);
+extern void mi32_init_zeros(p_mi32_t m, mx_opt_t opt);
+extern void mi32_init_ones(p_mi32_t m, mx_opt_t opt);
 
 extern uint32_t mi32_rows(p_mi32_t m);
 extern uint32_t mi32_columns(p_mi32_t m);
@@ -45,7 +45,7 @@ extern void mi32_transpose_and_store(p_mi32_t m, p_mi32_t src);
 
 extern void mi32_add_and_store(p_mi32_t m, p_mi32_t lhs, p_mi32_t rhs, mx_opt_t opt);
 extern void mi32_sub_and_store(p_mi32_t m, p_mi32_t lhs, p_mi32_t rhs, mx_opt_t opt);
-extern void mi32_multiply_and_store(p_mi32_t m, p_mi32_t lhs, p_mi32_t rhs, mx_opt_t opt);
+extern void mi32_mul_and_store(p_mi32_t m, p_mi32_t lhs, p_mi32_t rhs, mx_opt_t opt);
 
 extern void mi32_scalar_multiply_and_store(p_mi32_t m, int32_t lhs, p_mi32_t rhs, mx_opt_t opt);
 
@@ -53,7 +53,7 @@ inline static p_mi32_t mi32_create_zeros(uint32_t row_cnt, uint32_t col_cnt, mx_
 {
     p_mi32_t m = mi32_allocate(row_cnt, col_cnt);
     if (m) {
-        mi32_initialize_zeros(m, opt);
+        mi32_init_zeros(m, opt);
     } /* if */
     return m;
 } /* mi32_create_zeros */
@@ -62,7 +62,7 @@ inline static p_mi32_t mi32_create_ones(uint32_t row_cnt, uint32_t col_cnt, mx_o
 {
     p_mi32_t m = mi32_allocate(row_cnt, col_cnt);
     if (m) {
-        mi32_initialize_ones(m, opt);
+        mi32_init_ones(m, opt);
     } /* if */
     return m;
 } /* mi32_create_ones */
@@ -71,7 +71,7 @@ inline static p_mi32_t mi32_create_identity(uint32_t row_cnt, uint32_t col_cnt, 
 {
     p_mi32_t m = mi32_allocate(row_cnt, col_cnt);
     if (m) {
-        mi32_initialize_identity(m, opt);
+        mi32_init_identity(m, opt);
     } /* if */
     return m;
 } /* mi32_create_identity */
@@ -112,7 +112,7 @@ inline static p_mi32_t mi32_multiply(p_mi32_t lhs, p_mi32_t rhs, mx_opt_t opt)
 {
     p_mi32_t m = mi32_allocate_for_multiplying(lhs, rhs);
     if (m) {
-        mi32_multiply_and_store(m, lhs, rhs, opt);
+        mi32_mul_and_store(m, lhs, rhs, opt);
     } /* if */
     return m;
 } /* mi32_multiply */

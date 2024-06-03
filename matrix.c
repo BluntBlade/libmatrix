@@ -146,7 +146,7 @@ typedef struct MAT_MUL_INFO_T {
     ptr_rpck_t rpck;
 } mat_mul_info_t;
 
-static void mat_multiply_and_store_simd_v2(p_mat_mul_info_t mi)
+static void mat_mul_and_store_simd_v2(p_mat_mul_info_t mi)
 {
     mi->vals_per_bth = (BYTES_IN_CACHE_LINE / mi->val_size);
     mi->pcks_per_bth = mi->vals_per_bth / mi->vals_in_pck;
@@ -202,7 +202,7 @@ static void mat_multiply_and_store_simd_v2(p_mat_mul_info_t mi)
             (*mi->mul_and_store)(&mi2, mi->mul_and_store_partly, pck_off, mi->ibths, mi->irmd, col_base, mi->jrmd);
         } /* if */
     } /* if */
-} /* mat_multiply_and_store_simd_v2 */
+} // mat_mul_and_store_simd_v2
 
 /* ==== Definitions of the matrix_i32_t type ==== */
 
@@ -283,21 +283,12 @@ void mi32_destroy(p_mi32_t m)
     free(m);
 } /* mi32_destroy */
 
-void mi32_initialize_identity(p_mi32_t m, mx_opt_t opt)
-{
-    uint32_t i = 0;
-    memset(m->data, 0, m->mt.bytes);
-    for (i = 0; i < m->mt.rows; i += 1) {
-        m->i32_vals[i][i] = 1;
-    } /* for */
-} /* mi32_initialize_identity */
-
-void mi32_initialize_zeros(p_mi32_t m, mx_opt_t opt)
+void mi32_init_zeros(p_mi32_t m, mx_opt_t opt)
 {
     memset(m->data, 0, m->mt.bytes);
-} /* mi32_initialize_zeros */
+} // mi32_init_zeros
 
-void mi32_initialize_ones(p_mi32_t m, mx_opt_t opt)
+void mi32_init_ones(p_mi32_t m, mx_opt_t opt)
 {
     uint32_t i = 0;
     uint32_t j = 0;
@@ -306,7 +297,16 @@ void mi32_initialize_ones(p_mi32_t m, mx_opt_t opt)
             m->i32_vals[i][j] = 1;
         } /* for */
     } /* for */
-} /* mi32_initialize_ones */
+} // mi32_init_ones
+
+void mi32_init_identity(p_mi32_t m, mx_opt_t opt)
+{
+    uint32_t i = 0;
+    memset(m->data, 0, m->mt.bytes);
+    for (i = 0; i < m->mt.rows; i += 1) {
+        m->i32_vals[i][i] = 1;
+    } /* for */
+} // mi32_init_identity
 
 uint32_t mi32_rows(p_mi32_t m)
 {
@@ -389,7 +389,7 @@ void mi32_sub_and_store(p_mi32_t m, p_mi32_t lhs, p_mi32_t rhs, mx_opt_t opt)
     } /* for */
 } // mi32_sub_and_store
 
-static p_mi32_t i32_multiply_and_store_plain(p_mi32_t m, p_mi32_t lhs, p_mi32_t rhs)
+static p_mi32_t i32_mul_and_store_plain(p_mi32_t m, p_mi32_t lhs, p_mi32_t rhs)
 {
     uint32_t i = 0;
     uint32_t j = 0;
@@ -404,7 +404,7 @@ static p_mi32_t i32_multiply_and_store_plain(p_mi32_t m, p_mi32_t lhs, p_mi32_t 
         } /* for j */
     } /* for i */
     return m;
-} // i32_multiply_and_store_plain
+} // i32_mul_and_store_plain
 
 #if defined(MX_SSE41)
 
@@ -991,7 +991,7 @@ static void v8si_mul_and_store(p_mat_mul_info_t mi, mat_mul_pcks_and_store_fn op
 
 #endif // MX_AVX2
 
-static p_mi32_t i32_multiply_and_store_simd(p_mi32_t m, p_mi32_t lhs, p_mi32_t rhs)
+static p_mi32_t i32_mul_and_store_simd(p_mi32_t m, p_mi32_t lhs, p_mi32_t rhs)
 {
     mat_mul_info_t mi = {0};
 
@@ -1027,19 +1027,19 @@ static p_mi32_t i32_multiply_and_store_simd(p_mi32_t m, p_mi32_t lhs, p_mi32_t r
     mi.mul_and_store = &v4si_mul_and_store;
 #endif
 
-    mi32_initialize_zeros(m, MX_SIMD_CODE);
-    mat_multiply_and_store_simd_v2(&mi);
+    mi32_init_zeros(m, MX_SIMD_CODE);
+    mat_mul_and_store_simd_v2(&mi);
     return m;
-} /* i32_multiply_and_store_simd */
+} // i32_mul_and_store_simd
 
-void mi32_multiply_and_store(p_mi32_t m, p_mi32_t lhs, p_mi32_t rhs, mx_opt_t opt)
+void mi32_mul_and_store(p_mi32_t m, p_mi32_t lhs, p_mi32_t rhs, mx_opt_t opt)
 {
     if (opt & MX_SIMD_CODE) {
-        i32_multiply_and_store_simd(m, lhs, rhs);
+        i32_mul_and_store_simd(m, lhs, rhs);
     } else {
-        i32_multiply_and_store_plain(m, lhs, rhs);
+        i32_mul_and_store_plain(m, lhs, rhs);
     } // if
-} /* mi32_multiply_and_store */
+} // mi32_mul_and_store
 
 static void i32_scr_multiply_and_store_plain(p_mi32_t m, int32_t lhs, p_mi32_t rhs)
 {

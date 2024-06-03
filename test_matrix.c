@@ -554,13 +554,13 @@ CESTER_TEST(
 )
 
 CESTER_TEST(
-    MATRIX_initialize_15x15_identity_matrix_using_plain_code,
+    MATRIX_init_15x15_identity_matrix_using_plain_code,
     _,
     size_t i = 0;
     size_t j = 0;
     p_mi32_t m = mi32_allocate(15, 15);
 
-    mi32_initialize_identity(m, MX_PLAIN_CODE);
+    mi32_init_identity(m, MX_PLAIN_CODE);
 
     for (i = 0; i < m->mt.rows; i += 1) {
         for (j = 0; j < m->mt.cols; j += 1) {
@@ -576,13 +576,13 @@ CESTER_TEST(
 )
 
 CESTER_TEST(
-    MATRIX_initialize_9x5_zeros_matrix_using_plain_code,
+    MATRIX_init_9x5_zeros_matrix_using_plain_code,
     _,
     size_t i = 0;
     size_t j = 0;
     p_mi32_t m = mi32_allocate(9, 5);
 
-    mi32_initialize_zeros(m, MX_PLAIN_CODE);
+    mi32_init_zeros(m, MX_PLAIN_CODE);
 
     for (i = 0; i < m->mt.rows; i += 1) {
         for (j = 0; j < m->mt.cols; j += 1) {
@@ -594,13 +594,13 @@ CESTER_TEST(
 )
 
 CESTER_TEST(
-    MATRIX_initialize_5x9_ones_matrix_using_plain_code,
+    MATRIX_init_5x9_ones_matrix_using_plain_code,
     _,
     size_t i = 0;
     size_t j = 0;
     p_mi32_t m = mi32_allocate(5, 9);
 
-    mi32_initialize_ones(m, MX_PLAIN_CODE);
+    mi32_init_ones(m, MX_PLAIN_CODE);
 
     for (i = 0; i < m->mt.rows; i += 1) {
         for (j = 0; j < m->mt.cols; j += 1) {
@@ -760,7 +760,7 @@ CESTER_TEST(
     p_mi32_t rhs = mi32_allocate(3, 3);
     p_mi32_t m = mi32_allocate_in_shape_of(lhs);
 
-    mi32_initialize_ones(lhs, MX_PLAIN_CODE);
+    mi32_init_ones(lhs, MX_PLAIN_CODE);
     mi32_set_each(rhs, 5);
 
     mi32_add_and_store(m, lhs, rhs, MX_PLAIN_CODE);
@@ -788,7 +788,7 @@ CESTER_TEST(
     p_mi32_t m = mi32_allocate_in_shape_of(lhs);
 
     mi32_set_each(lhs, 5);
-    mi32_initialize_ones(rhs, MX_PLAIN_CODE);
+    mi32_init_ones(rhs, MX_PLAIN_CODE);
 
     mi32_sub_and_store(m, lhs, rhs, MX_PLAIN_CODE);
 
@@ -815,9 +815,9 @@ CESTER_TEST(
     p_mi32_t m = mi32_allocate_for_multiplying(lhs, rhs);
 
     mi32_set_each(lhs, 5);
-    mi32_initialize_ones(rhs, MX_PLAIN_CODE);
+    mi32_init_ones(rhs, MX_PLAIN_CODE);
 
-    mi32_multiply_and_store(m, lhs, rhs, MX_PLAIN_CODE);
+    mi32_mul_and_store(m, lhs, rhs, MX_PLAIN_CODE);
 
     cester_assert_int_eq(m->i32_vals[0][0], 15);
     cester_assert_int_eq(m->i32_vals[0][1], 15);
@@ -842,9 +842,9 @@ CESTER_TEST(
     p_mi32_t m = mi32_allocate_for_multiplying(lhs, rhs);
 
     mi32_set_each(lhs, 5);
-    mi32_initialize_ones(rhs, MX_PLAIN_CODE);
+    mi32_init_ones(rhs, MX_PLAIN_CODE);
 
-    mi32_multiply_and_store(m, lhs, rhs, MX_PLAIN_CODE);
+    mi32_mul_and_store(m, lhs, rhs, MX_PLAIN_CODE);
 
     cester_assert_int_eq(m->i32_vals[0][0], 5);
     cester_assert_int_eq(m->i32_vals[0][1], 5);
@@ -869,9 +869,9 @@ CESTER_TEST(
     p_mi32_t m = mi32_allocate_for_multiplying(lhs, rhs);
 
     mi32_set_each(lhs, 5);
-    mi32_initialize_ones(rhs, MX_PLAIN_CODE);
+    mi32_init_ones(rhs, MX_PLAIN_CODE);
 
-    mi32_multiply_and_store(m, lhs, rhs, MX_PLAIN_CODE);
+    mi32_mul_and_store(m, lhs, rhs, MX_PLAIN_CODE);
 
     cester_assert_int_eq(m->i32_vals[0][0], 15);
 
@@ -888,9 +888,9 @@ CESTER_TEST(
     p_mi32_t m = mi32_allocate_for_multiplying(lhs, rhs);
 
     mi32_set_each(lhs, 5);
-    mi32_initialize_ones(rhs, MX_PLAIN_CODE);
+    mi32_init_ones(rhs, MX_PLAIN_CODE);
 
-    mi32_multiply_and_store(m, lhs, rhs, MX_SIMD_CODE);
+    mi32_mul_and_store(m, lhs, rhs, MX_SIMD_CODE);
 
     cester_assert_int_eq(m->i32_vals[0][0], 15);
     cester_assert_int_eq(m->i32_vals[0][1], 15);
@@ -915,9 +915,9 @@ CESTER_TEST(
     p_mi32_t m = mi32_allocate_for_multiplying(lhs, rhs);
 
     mi32_set_each(lhs, 5);
-    mi32_initialize_ones(rhs, MX_PLAIN_CODE);
+    mi32_init_ones(rhs, MX_PLAIN_CODE);
 
-    mi32_multiply_and_store(m, lhs, rhs, MX_SIMD_CODE);
+    mi32_mul_and_store(m, lhs, rhs, MX_SIMD_CODE);
 
     cester_assert_int_eq(m->i32_vals[0][0], 5);
     cester_assert_int_eq(m->i32_vals[0][1], 5);
@@ -942,9 +942,9 @@ CESTER_TEST(
     p_mi32_t m = mi32_allocate_for_multiplying(lhs, rhs);
 
     mi32_set_each(lhs, 5);
-    mi32_initialize_ones(rhs, MX_PLAIN_CODE);
+    mi32_init_ones(rhs, MX_PLAIN_CODE);
 
-    mi32_multiply_and_store(m, lhs, rhs, MX_SIMD_CODE);
+    mi32_mul_and_store(m, lhs, rhs, MX_SIMD_CODE);
 
     cester_assert_int_eq(m->i32_vals[0][0], 15);
 
@@ -961,11 +961,11 @@ CESTER_TEST(
     p_mi32_t m = mi32_allocate_for_multiplying(lhs, rhs);
 
     mi32_set_each(lhs, 10);
-    mi32_initialize_ones(rhs, MX_PLAIN_CODE);
+    mi32_init_ones(rhs, MX_PLAIN_CODE);
     rhs->i32_vals[0][0] = 2;
     rhs->i32_vals[1022][1022] = 2;
 
-    mi32_multiply_and_store(m, lhs, rhs, MX_SIMD_CODE);
+    mi32_mul_and_store(m, lhs, rhs, MX_SIMD_CODE);
 
     cester_assert_int_eq(m->i32_vals[0][0], 10240);
     cester_assert_int_eq(m->i32_vals[0][1], 10230);
@@ -1028,7 +1028,7 @@ CESTER_TEST(
                  84  69  54
                 138 114  90   ]
     */
-    mi32_multiply_and_store(m, lhs, rhs, MX_SIMD_CODE);
+    mi32_mul_and_store(m, lhs, rhs, MX_SIMD_CODE);
 
     cester_assert_int_eq(m->i32_vals[0][0], 30);
     cester_assert_int_eq(m->i32_vals[0][1], 24);
@@ -1077,7 +1077,7 @@ CESTER_TEST(
     p_mi32_t rhs = mi32_allocate(11, 7);
     p_mi32_t m = mi32_allocate_in_shape_of(rhs);
 
-    mi32_initialize_ones(rhs, MX_PLAIN_CODE);
+    mi32_init_ones(rhs, MX_PLAIN_CODE);
     rhs->i32_vals[0][0] = 1;
     rhs->i32_vals[0][1] = 2;
     rhs->i32_vals[0][2] = 3;
@@ -1115,7 +1115,7 @@ CESTER_TEST(
     p_mi32_t rhs = mi32_allocate(3, 3);
     p_mi32_t m = mi32_allocate_in_shape_of(rhs);
 
-    mi32_initialize_zeros(rhs, MX_PLAIN_CODE);
+    mi32_init_zeros(rhs, MX_PLAIN_CODE);
     rhs->i32_vals[0][0] = 1;
     rhs->i32_vals[0][1] = 2;
     rhs->i32_vals[0][2] = 3;
@@ -1149,7 +1149,7 @@ CESTER_TEST(
     p_mi32_t rhs = mi32_allocate(11, 7);
     p_mi32_t m = mi32_allocate_in_shape_of(rhs);
 
-    mi32_initialize_ones(rhs, MX_PLAIN_CODE);
+    mi32_init_ones(rhs, MX_PLAIN_CODE);
     rhs->i32_vals[0][0] = 1;
     rhs->i32_vals[0][1] = 2;
     rhs->i32_vals[0][2] = 3;

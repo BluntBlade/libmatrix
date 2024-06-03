@@ -746,9 +746,9 @@ CESTER_TEST(
     _,
     p_mi32_t m = mi32_allocate(3, 7);
 
-    cester_assert_int_eq(mi32_count_rows(m), 3);
-    cester_assert_int_eq(mi32_count_columns(m), 7);
-    cester_assert_int_eq(mi32_count_values(m), 21);
+    cester_assert_int_eq(mi32_rows(m), 3);
+    cester_assert_int_eq(mi32_columns(m), 7);
+    cester_assert_int_eq(mi32_values(m), 21);
 
     mi32_destroy(m);
 )

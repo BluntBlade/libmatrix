@@ -17,6 +17,7 @@ typedef struct MATRIX_I32_T * p_mi32_t;
 
 /* ==== Common functions. ==== */
 
+extern p_mi32_t mi32_allocate(uint32_t row_cnt, uint32_t col_cnt);
 extern p_mi32_t mi32_allocate_for_multiplying(p_mi32_t lhs, p_mi32_t rhs);
 extern p_mi32_t mi32_allocate_for_transposing(p_mi32_t src);
 extern p_mi32_t mi32_allocate_in_shape_of(p_mi32_t src);
@@ -29,18 +30,60 @@ extern void mi32_initialize_identity(p_mi32_t m, mx_opt_t opt);
 extern void mi32_initialize_zeros(p_mi32_t m, mx_opt_t opt);
 extern void mi32_initialize_ones(p_mi32_t m, mx_opt_t opt);
 
+extern uint32_t mi32_rows(p_mi32_t m);
+extern uint32_t mi32_columns(p_mi32_t m);
+extern uint32_t mi32_values(p_mi32_t m);
+
+extern int32_t mi32_get(p_mi32_t m, uint32_t row, uint32_t col);
+extern void mi32_set(p_mi32_t m, uint32_t row, uint32_t col, int32_t src_val);
+extern void mi32_set_each(p_mi32_t m, int32_t src_val);
+
 extern int mi32_can_do_add(p_mi32_t lhs, p_mi32_t rhs);
 extern int mi32_can_do_multiply(p_mi32_t lhs, p_mi32_t rhs);
-
-extern uint32_t mi32_count_rows(p_mi32_t m);
-extern uint32_t mi32_count_columns(p_mi32_t m);
-extern uint32_t mi32_count_values(p_mi32_t m);
 
 extern void mi32_transpose_and_store(p_mi32_t m, p_mi32_t src);
 
 extern void mi32_add_and_store(p_mi32_t m, p_mi32_t lhs, p_mi32_t rhs, mx_opt_t opt);
 extern void mi32_sub_and_store(p_mi32_t m, p_mi32_t lhs, p_mi32_t rhs, mx_opt_t opt);
 extern void mi32_multiply_and_store(p_mi32_t m, p_mi32_t lhs, p_mi32_t rhs, mx_opt_t opt);
+
+extern void mi32_scalar_multiply_and_store(p_mi32_t m, int32_t lhs, p_mi32_t rhs, mx_opt_t opt);
+
+inline static p_mi32_t mi32_create_zeros(uint32_t row_cnt, uint32_t col_cnt, mx_opt_t opt)
+{
+    p_mi32_t m = mi32_allocate(row_cnt, col_cnt);
+    if (m) {
+        mi32_initialize_zeros(m, opt);
+    } /* if */
+    return m;
+} /* mi32_create_zeros */
+
+inline static p_mi32_t mi32_create_ones(uint32_t row_cnt, uint32_t col_cnt, mx_opt_t opt)
+{
+    p_mi32_t m = mi32_allocate(row_cnt, col_cnt);
+    if (m) {
+        mi32_initialize_ones(m, opt);
+    } /* if */
+    return m;
+} /* mi32_create_ones */
+
+inline static p_mi32_t mi32_create_identity(uint32_t row_cnt, uint32_t col_cnt, mx_opt_t opt)
+{
+    p_mi32_t m = mi32_allocate(row_cnt, col_cnt);
+    if (m) {
+        mi32_initialize_identity(m, opt);
+    } /* if */
+    return m;
+} /* mi32_create_identity */
+
+inline static p_mi32_t mi32_transpose(p_mi32_t src)
+{
+    p_mi32_t m = mi32_allocate_for_transposing(src);
+    if (m) {
+        mi32_transpose_and_store(m, src);
+    } // if
+    return m;
+} /* mi32_transpose */
 
 inline static int mi32_can_do_sub(p_mi32_t lhs, p_mi32_t rhs)
 {
@@ -50,90 +93,36 @@ inline static int mi32_can_do_sub(p_mi32_t lhs, p_mi32_t rhs)
 inline static p_mi32_t mi32_add(p_mi32_t lhs, p_mi32_t rhs, mx_opt_t opt)
 {
     p_mi32_t m = mi32_allocate_in_shape_of(lhs);
-    if (! m) {
-        return NULL;
+    if (m) {
+        mi32_add_and_store(m, lhs, rhs, opt);
     } /* if */
-    mi32_add_and_store(m, lhs, rhs, opt);
     return m;
 } /* mi32_add */
 
 inline static p_mi32_t mi32_sub(p_mi32_t lhs, p_mi32_t rhs, mx_opt_t opt)
 {
     p_mi32_t m = mi32_allocate_in_shape_of(lhs);
-    if (! m) {
-        return NULL;
+    if (m) {
+        mi32_sub_and_store(m, lhs, rhs, opt);
     } /* if */
-    mi32_sub_and_store(m, lhs, rhs, opt);
     return m;
 } /* mi32_sub */
 
 inline static p_mi32_t mi32_multiply(p_mi32_t lhs, p_mi32_t rhs, mx_opt_t opt)
 {
     p_mi32_t m = mi32_allocate_for_multiplying(lhs, rhs);
-    if (! m) {
-        return NULL;
+    if (m) {
+        mi32_multiply_and_store(m, lhs, rhs, opt);
     } /* if */
-    mi32_multiply_and_store(m, lhs, rhs, opt);
     return m;
 } /* mi32_multiply */
-
-inline static p_mi32_t mi32_transpose(p_mi32_t src)
-{
-    p_mi32_t m = mi32_allocate_for_transposing(src);
-    mi32_transpose_and_store(m, src);
-    return m;
-} /* mi32_transpose */
-
-/* ==== Type-Related functions. ==== */
-
-// ---- int32_t ----
-
-extern p_mi32_t mi32_allocate(uint32_t row_cnt, uint32_t col_cnt);
-
-extern int32_t mi32_get(p_mi32_t m, uint32_t row, uint32_t col);
-
-extern void mi32_set(p_mi32_t m, uint32_t row, uint32_t col, int32_t src_val);
-extern void mi32_set_each(p_mi32_t m, int32_t src_val);
-
-extern void mi32_scalar_multiply_and_store(p_mi32_t m, int32_t lhs, p_mi32_t rhs, mx_opt_t opt);
-
-inline static p_mi32_t mi32_create_zeros(uint32_t row_cnt, uint32_t col_cnt, mx_opt_t opt)
-{
-    p_mi32_t m = mi32_allocate(row_cnt, col_cnt);
-    if (! m) {
-        return NULL;
-    } /* if */
-    mi32_initialize_zeros(m, opt);
-    return m;
-} /* mi32_create_zeros */
-
-inline static p_mi32_t mi32_create_ones(uint32_t row_cnt, uint32_t col_cnt, mx_opt_t opt)
-{
-    p_mi32_t m = mi32_allocate(row_cnt, col_cnt);
-    if (! m) {
-        return NULL;
-    } /* if */
-    mi32_initialize_ones(m, opt);
-    return m;
-} /* mi32_create_ones */
-
-inline static p_mi32_t mi32_create_identity(uint32_t row_cnt, uint32_t col_cnt, mx_opt_t opt)
-{
-    p_mi32_t m = mi32_allocate(row_cnt, col_cnt);
-    if (! m) {
-        return NULL;
-    } /* if */
-    mi32_initialize_identity(m, opt);
-    return m;
-} /* mi32_create_identity */
 
 inline static p_mi32_t mi32_scalar_multiply(int32_t lhs, p_mi32_t rhs, mx_opt_t opt)
 {
     p_mi32_t m = mi32_allocate_in_shape_of(rhs);
-    if (! m) {
-        return NULL;
+    if (m) {
+        mi32_scalar_multiply_and_store(m, lhs, rhs, opt);
     } /* if */
-    mi32_scalar_multiply_and_store(m, lhs, rhs, opt);
     return m;
 } /* mi32_scalar_multiply */
 

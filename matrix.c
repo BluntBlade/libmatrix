@@ -224,6 +224,33 @@ typedef struct MATRIX_I32_T {
     int32_t *       i32_vals[0];
 } matrix_i32_t;
 
+p_mi32_t mi32_allocate(uint32_t rows, uint32_t cols)
+{
+    uint32_t i = 0;
+    p_mi32_t m = NULL;
+
+    m = calloc(sizeof(matrix_i32_t) + sizeof(void *) * rows, 1);
+    if (! m) {
+        return NULL;
+    } /* if */
+
+#if defined(MX_AVX2)
+    m->data = init_meta(&m->mt, rows, cols, sizeof(int32_t), I32_VALS_IN_V8SI);
+#elif defined(MX_SSE41)
+    m->data = init_meta(&m->mt, rows, cols, sizeof(int32_t), I32_VALS_IN_V4SI);
+#endif
+    if (! m->data) {
+        free(m);
+        return NULL;
+    } /* if */
+
+    /* NOTE: Align to the vector type's size, otherwise it will be segmentation fault when access to packs. */
+    for (i = 0; i < m->mt.rows; i += 1) {
+        m->i32_vals[i] = m->data + i * m->mt.val_size * m->mt.cols_padded;
+    } /* for */
+    return m;
+} /* mi32_allocate */
+
 p_mi32_t mi32_allocate_for_multiplying(p_mi32_t lhs, p_mi32_t rhs)
 {
     return mi32_allocate(lhs->mt.rows, rhs->mt.cols);
@@ -281,6 +308,43 @@ void mi32_initialize_ones(p_mi32_t m, mx_opt_t opt)
     } /* for */
 } /* mi32_initialize_ones */
 
+uint32_t mi32_rows(p_mi32_t m)
+{
+    return m->mt.rows;
+} // mi32_rows
+
+uint32_t mi32_columns(p_mi32_t m)
+{
+    return m->mt.cols;
+} // mi32_columns
+
+uint32_t mi32_values(p_mi32_t m)
+{
+    return (m->mt.rows * m->mt.cols);
+} // mi32_values
+
+int32_t mi32_get(p_mi32_t m, uint32_t row, uint32_t col)
+{
+    return m->i32_vals[row][col];
+} /* mi32_get */
+
+void mi32_set(p_mi32_t m, uint32_t row, uint32_t col, int32_t src_val)
+{
+    m->i32_vals[row][col] = src_val;
+} /* mi32_set */
+
+void mi32_set_each(p_mi32_t m, int32_t src_val)
+{
+    uint32_t i = 0;
+    uint32_t j = 0;
+    for (i = 0; i < m->mt.rows; i += 1) {
+        for (j = 0; j < m->mt.cols; j += 1) {
+            m->i32_vals[i][j] = src_val;
+        } /* for */
+    } /* for */
+    return;
+} /* mi32_set_each */
+
 int mi32_can_do_add(p_mi32_t lhs, p_mi32_t rhs)
 {
     return (lhs->mt.rows == rhs->mt.rows) && (lhs->mt.cols == rhs->mt.cols);
@@ -290,21 +354,6 @@ int mi32_can_do_multiply(p_mi32_t lhs, p_mi32_t rhs)
 {
     return (lhs->mt.cols == rhs->mt.rows);
 } /* mi32_can_do_multiply */
-
-uint32_t mi32_count_rows(p_mi32_t m)
-{
-    return m->mt.rows;
-} /* mi32_count_rows */
-
-uint32_t mi32_count_columns(p_mi32_t m)
-{
-    return m->mt.cols;
-} /* mi32_count_columns */
-
-uint32_t mi32_count_values(p_mi32_t m)
-{
-    return (m->mt.rows * m->mt.cols);
-} /* mi32_count_values */
 
 void mi32_transpose_and_store(p_mi32_t m, p_mi32_t src)
 {
@@ -992,28 +1041,6 @@ void mi32_multiply_and_store(p_mi32_t m, p_mi32_t lhs, p_mi32_t rhs, mx_opt_t op
     } // if
 } /* mi32_multiply_and_store */
 
-int32_t mi32_get(p_mi32_t m, uint32_t row, uint32_t col)
-{
-    return m->i32_vals[row][col];
-} /* mi32_get */
-
-void mi32_set(p_mi32_t m, uint32_t row, uint32_t col, int32_t src_val)
-{
-    m->i32_vals[row][col] = src_val;
-} /* mi32_set */
-
-void mi32_set_each(p_mi32_t m, int32_t src_val)
-{
-    uint32_t i = 0;
-    uint32_t j = 0;
-    for (i = 0; i < m->mt.rows; i += 1) {
-        for (j = 0; j < m->mt.cols; j += 1) {
-            m->i32_vals[i][j] = src_val;
-        } /* for */
-    } /* for */
-    return;
-} /* mi32_set_each */
-
 static void i32_scr_multiply_and_store_plain(p_mi32_t m, int32_t lhs, p_mi32_t rhs)
 {
     uint32_t i = 0;
@@ -1128,31 +1155,4 @@ void mi32_scalar_multiply_and_store(p_mi32_t m, int32_t lhs, p_mi32_t rhs, mx_op
         i32_scr_multiply_and_store_plain(m, lhs, rhs);
     } // if
 } // mi32_scalar_multiply_and_store
-
-p_mi32_t mi32_allocate(uint32_t rows, uint32_t cols)
-{
-    uint32_t i = 0;
-    p_mi32_t m = NULL;
-
-    m = calloc(sizeof(matrix_i32_t) + sizeof(void *) * rows, 1);
-    if (! m) {
-        return NULL;
-    } /* if */
-
-#if defined(MX_AVX2)
-    m->data = init_meta(&m->mt, rows, cols, sizeof(int32_t), I32_VALS_IN_V8SI);
-#elif defined(MX_SSE41)
-    m->data = init_meta(&m->mt, rows, cols, sizeof(int32_t), I32_VALS_IN_V4SI);
-#endif
-    if (! m->data) {
-        free(m);
-        return NULL;
-    } /* if */
-
-    /* NOTE: Align to the vector type's size, otherwise it will be segmentation fault when access to packs. */
-    for (i = 0; i < m->mt.rows; i += 1) {
-        m->i32_vals[i] = m->data + i * m->mt.val_size * m->mt.cols_padded;
-    } /* for */
-    return m;
-} /* mi32_allocate */
 

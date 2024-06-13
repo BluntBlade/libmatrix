@@ -65,8 +65,6 @@ typedef union MX_CHUNK {
 typedef mx_chunk_t * mx_chunk_ptr;
 
 extern v8si_t v8si_zero;
-extern v8si_t v8si_mask;
-extern v8si_t v8si_idx[2];
 
 #endif // MX_TYPES_H
 

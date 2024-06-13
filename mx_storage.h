@@ -9,9 +9,6 @@
 //      model and features.
 // =============================================================================
 
-#include "config.h"
-#include "mx_types.h"
-
 // ==== Storage Struct ====
 
 struct MX_STORAGE;

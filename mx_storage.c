@@ -1,4 +1,5 @@
 #include "config.h"
+#include "mx_types.h"
 #include "mx_storage.h"
 
 inline static uint32_t round_to_multiples(uint32_t cnt, uint32_t n)
@@ -67,6 +68,38 @@ uint32_t mstr_copy_column_to_vector(mx_stor_ptr ms, uint32_t ridx, uint32_t cidx
 
 // ---- V8SI related definitions ----
 
+static uint8_t v8si_mask_sel[17][2] = {
+    {1, 0},
+    {2, 0},
+    {3, 0},
+    {4, 0},
+    {5, 0},
+    {6, 0},
+    {7, 0},
+    {8, 0},
+    {8, 1},
+    {8, 2},
+    {8, 3},
+    {8, 4},
+    {8, 5},
+    {8, 6},
+    {8, 7},
+    {8, 8}
+};
+static v8si_t v8si_mask[9] = {
+    { 0,  0,  0,  0,  0,  0,  0,  0},
+    {~0,  0,  0,  0,  0,  0,  0,  0},
+    {~0, ~0,  0,  0,  0,  0,  0,  0},
+    {~0, ~0, ~0,  0,  0,  0,  0,  0},
+    {~0, ~0, ~0, ~0,  0,  0,  0,  0},
+    {~0, ~0, ~0, ~0, ~0,  0,  0,  0},
+    {~0, ~0, ~0, ~0, ~0, ~0,  0,  0},
+    {~0, ~0, ~0, ~0, ~0, ~0, ~0,  0},
+    {~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0}
+};
+
+static v8si_t v8si_idx[2] = {{0, 1, 2, 3, 4, 5, 6, 7}, {8, 9, 10, 11, 12, 13, 14, 15}};
+
 //// NAME:
 ////   v8si_assemble_chunk
 ////
@@ -87,109 +120,108 @@ uint32_t mstr_copy_column_to_vector(mx_stor_ptr ms, uint32_t ridx, uint32_t cidx
 static void v8si_assemble_chunk(v8si_t * chk_pck, int32_t * src, uint32_t src_span, uint32_t idx_span, uint32_t itrs, uint32_t msks)
 {
     v8si_t idx[2];
-    v8si_t mask[2];
+    v8si_t * mask[2];
 
     idx[0] = v8si_idx[0] * idx_span;
     idx[1] = v8si_idx[1] * idx_span;
 
-    mask[0] = v8si_mask;
-    mask[1] = v8si_mask;
-    memset((void *)&mask[msks], 0, sizeof(int32_t) * (I32_VALS_IN_CACHE_LINE - msks));
+    mask[0] = &v8si_mask[v8si_mask_sel[msks][0]];
+    mask[1] = &v8si_mask[v8si_mask_sel[msks][1]];
 
     switch (itrs) {
         case 16:
-            chk_pck[0] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[0], mask[0], sizeof(int32_t));
-            chk_pck[1] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[1], mask[1], sizeof(int32_t));
+            chk_pck[0] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[0], *mask[0], sizeof(int32_t));
+            chk_pck[1] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[1], *mask[1], sizeof(int32_t));
             chk_pck += 2;
             src += src_span;
 
         case 15:
-            chk_pck[0] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[0], mask[0], sizeof(int32_t));
-            chk_pck[1] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[1], mask[1], sizeof(int32_t));
+            chk_pck[0] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[0], *mask[0], sizeof(int32_t));
+            chk_pck[1] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[1], *mask[1], sizeof(int32_t));
             chk_pck += 2;
             src += src_span;
 
         case 14:
-            chk_pck[0] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[0], mask[0], sizeof(int32_t));
-            chk_pck[1] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[1], mask[1], sizeof(int32_t));
+            chk_pck[0] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[0], *mask[0], sizeof(int32_t));
+            chk_pck[1] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[1], *mask[1], sizeof(int32_t));
             chk_pck += 2;
             src += src_span;
 
         case 13:
-            chk_pck[0] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[0], mask[0], sizeof(int32_t));
-            chk_pck[1] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[1], mask[1], sizeof(int32_t));
+            chk_pck[0] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[0], *mask[0], sizeof(int32_t));
+            chk_pck[1] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[1], *mask[1], sizeof(int32_t));
             chk_pck += 2;
             src += src_span;
 
         case 12:
-            chk_pck[0] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[0], mask[0], sizeof(int32_t));
-            chk_pck[1] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[1], mask[1], sizeof(int32_t));
+            chk_pck[0] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[0], *mask[0], sizeof(int32_t));
+            chk_pck[1] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[1], *mask[1], sizeof(int32_t));
             chk_pck += 2;
             src += src_span;
 
         case 11:
-            chk_pck[0] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[0], mask[0], sizeof(int32_t));
-            chk_pck[1] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[1], mask[1], sizeof(int32_t));
+            chk_pck[0] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[0], *mask[0], sizeof(int32_t));
+            chk_pck[1] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[1], *mask[1], sizeof(int32_t));
             chk_pck += 2;
             src += src_span;
 
         case 10:
-            chk_pck[0] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[0], mask[0], sizeof(int32_t));
-            chk_pck[1] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[1], mask[1], sizeof(int32_t));
+            chk_pck[0] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[0], *mask[0], sizeof(int32_t));
+            chk_pck[1] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[1], *mask[1], sizeof(int32_t));
             chk_pck += 2;
             src += src_span;
 
         case  9:
-            chk_pck[0] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[0], mask[0], sizeof(int32_t));
-            chk_pck[1] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[1], mask[1], sizeof(int32_t));
+            chk_pck[0] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[0], *mask[0], sizeof(int32_t));
+            chk_pck[1] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[1], *mask[1], sizeof(int32_t));
             chk_pck += 2;
             src += src_span;
 
         case  8:
-            chk_pck[0] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[0], mask[0], sizeof(int32_t));
-            chk_pck[1] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[1], mask[1], sizeof(int32_t));
+            chk_pck[0] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[0], *mask[0], sizeof(int32_t));
+            chk_pck[1] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[1], *mask[1], sizeof(int32_t));
             chk_pck += 2;
             src += src_span;
 
         case  7:
-            chk_pck[0] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[0], mask[0], sizeof(int32_t));
-            chk_pck[1] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[1], mask[1], sizeof(int32_t));
+            chk_pck[0] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[0], *mask[0], sizeof(int32_t));
+            chk_pck[1] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[1], *mask[1], sizeof(int32_t));
             chk_pck += 2;
             src += src_span;
 
         case  6:
-            chk_pck[0] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[0], mask[0], sizeof(int32_t));
-            chk_pck[1] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[1], mask[1], sizeof(int32_t));
+            chk_pck[0] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[0], *mask[0], sizeof(int32_t));
+            chk_pck[1] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[1], *mask[1], sizeof(int32_t));
             chk_pck += 2;
             src += src_span;
 
         case  5:
-            chk_pck[0] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[0], mask[0], sizeof(int32_t));
-            chk_pck[1] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[1], mask[1], sizeof(int32_t));
+            chk_pck[0] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[0], *mask[0], sizeof(int32_t));
+            chk_pck[1] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[1], *mask[1], sizeof(int32_t));
             chk_pck += 2;
             src += src_span;
 
         case  4:
-            chk_pck[0] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[0], mask[0], sizeof(int32_t));
-            chk_pck[1] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[1], mask[1], sizeof(int32_t));
+            chk_pck[0] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[0], *mask[0], sizeof(int32_t));
+            chk_pck[1] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[1], *mask[1], sizeof(int32_t));
             chk_pck += 2;
             src += src_span;
 
         case  3:
-            chk_pck[0] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[0], mask[0], sizeof(int32_t));
-            chk_pck[1] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[1], mask[1], sizeof(int32_t));
+            chk_pck[0] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[0], *mask[0], sizeof(int32_t));
+            chk_pck[1] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[1], *mask[1], sizeof(int32_t));
             chk_pck += 2;
             src += src_span;
 
         case  2:
-            chk_pck[0] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[0], mask[0], sizeof(int32_t));
-            chk_pck[1] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[1], mask[1], sizeof(int32_t));
+            chk_pck[0] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[0], *mask[0], sizeof(int32_t));
+            chk_pck[1] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[1], *mask[1], sizeof(int32_t));
             chk_pck += 2;
             src += src_span;
 
         case  1:
-            chk_pck[0] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[0], mask[0], sizeof(int32_t));
-            chk_pck[1] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[1], mask[1], sizeof(int32_t));
+            chk_pck[0] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[0], *mask[0], sizeof(int32_t));
+            chk_pck[1] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[1], *mask[1], sizeof(int32_t));
 
         default:
             break;

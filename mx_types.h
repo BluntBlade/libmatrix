@@ -58,9 +58,15 @@ typedef union MX_CHUNK {
     v4di_t v4di_pcks[I64_VALS_IN_CACHE_LINE][V4DI_PCKS_IN_CACHE_LINE];
     v8sf_t v8sf_pcks[F32_VALS_IN_CACHE_LINE][V8SF_PCKS_IN_CACHE_LINE];
     v4df_t v4df_pcks[D64_VALS_IN_CACHE_LINE][V4DF_PCKS_IN_CACHE_LINE];
+
+    int32_t i32_vals[I32_VALS_IN_CACHE_LINE][I32_VALS_IN_CACHE_LINE];
 } mx_chunk_t __attribute__ ((aligned (32)));
 
 typedef mx_chunk_t * mx_chunk_ptr;
+
+extern v8si_t v8si_zero;
+extern v8si_t v8si_mask;
+extern v8si_t v8si_idx[2];
 
 #endif // MX_TYPES_H
 

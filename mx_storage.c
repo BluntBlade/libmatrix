@@ -67,10 +67,6 @@ uint32_t mstr_copy_column_to_vector(mx_stor_ptr ms, uint32_t ridx, uint32_t cidx
 
 // ---- V8SI related definitions ----
 
-static v8si_t v8si_zero = {0, 0, 0, 0, 0, 0, 0, 0};
-static v8si_t v8si_mask = {~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0};
-static v8si_t v8si_idx[2] = {{0, 1, 2, 3, 4, 5, 6, 7}, {8, 9, 10, 11, 12, 13, 14, 15}};
-
 //// NAME:
 ////   v8si_assemble_chunk
 ////

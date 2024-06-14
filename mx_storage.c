@@ -1,3 +1,6 @@
+#include <string.h>
+#include <avx2intrin.h>
+
 #include "config.h"
 #include "mx_types.h"
 #include "mx_storage.h"
@@ -18,12 +21,13 @@ typedef struct MX_STORAGE {
 
     void *      buf;            // Non-aligned buffer of values, only for calling free().
     union {
-        v8si_t *    i32_vals[0];    // Pointers to the start address of each row.
         void *      ptrs[0];        // Pointers to the start address of each row.
+        int32_t *   i32_vals[0];
+        v8si_t *    v8si_pcks[0];
     };
 } mx_stor_t;
 
-mx_stor_ptr mstr_create(uint32_t rows, uint32_t cols, uint32_t val_sz, uint32_t vals_in_pck)
+static create(uint32_t rows, uint32_t cols, uint32_t val_sz, uint32_t vals_in_pck)
 {
     uint32_t i = 0;
     mx_stor_ptr ms = NULL;
@@ -50,10 +54,15 @@ mx_stor_ptr mstr_create(uint32_t rows, uint32_t cols, uint32_t val_sz, uint32_t 
     /* NOTE: Align to the vector type's size, otherwise it will be segmentation fault when access to packs. */
     m->ptrs[0] = (void *)( ((size_t)ms->buf + (ms->alignment - 1)) & (~(ms->alignment - 1)));
     for (i = 1; i < ms->rows; i += 1) {
-        m->ptrs[i] = m->ptrs[i - 1] + ms->val_size * ms->cols_padded;
+        m->ptrs[i] = m->ptrs[i - 1] + ms->val_sz * ms->cols_padded;
     } /* for */
     return ms;
-} // mstr_create
+} // create
+
+mx_stor_ptr mstr_v8si_create(uint32_t rows, uint32_t cols)
+{
+    return create(rows, cols, sizeof(int32_t), I32_VALS_IN_V8SI);
+} // mstr_v8si_create
 
 void mstr_destroy(mx_stor_ptr ms)
 {
@@ -63,29 +72,13 @@ void mstr_destroy(mx_stor_ptr ms)
     free(ms);
 } // mstr_destroy
 
-uint32_t mstr_copy_row_to_vector(mx_stor_ptr ms, uint32_t ridx, uint32_t cidx, void * buf, uint32_t pcks, mx_vec_opt_t opt);
-uint32_t mstr_copy_column_to_vector(mx_stor_ptr ms, uint32_t ridx, uint32_t cidx, void * buf, uint32_t pcks, mx_vec_opt_t opt);
-
 // ---- V8SI related definitions ----
 
-static uint8_t v8si_mask_sel[17][2] = {
-    {1, 0},
-    {2, 0},
-    {3, 0},
-    {4, 0},
-    {5, 0},
-    {6, 0},
-    {7, 0},
-    {8, 0},
-    {8, 1},
-    {8, 2},
-    {8, 3},
-    {8, 4},
-    {8, 5},
-    {8, 6},
-    {8, 7},
-    {8, 8}
+static uint8_t v8si_mask_sel[16][2] = {
+    {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}, {8, 0},
+    {8, 1}, {8, 2}, {8, 3}, {8, 4}, {8, 5}, {8, 6}, {8, 7}, {8, 8}
 };
+
 static v8si_t v8si_mask[9] = {
     { 0,  0,  0,  0,  0,  0,  0,  0},
     {~0,  0,  0,  0,  0,  0,  0,  0},
@@ -99,6 +92,36 @@ static v8si_t v8si_mask[9] = {
 };
 
 static v8si_t v8si_idx[2] = {{0, 1, 2, 3, 4, 5, 6, 7}, {8, 9, 10, 11, 12, 13, 14, 15}};
+
+void mstr_v8si_init_zeros(ms_stor_ptr ms)
+{
+    memset(ms->ptrs[0], 0, ms->bytes);
+} // mstr_v8si_init_zeros
+
+void mstr_v8si_init_ident(ms_stor_ptr ms)
+{
+    uint32_t i = 0;
+    uint32_t j = 0;
+
+    mstr_v8si_init_zeros(ms);
+    for (i = 0; i < ms->rows; i += 1) {
+        for (j = 0; j < ms->cols; j += 1) {
+            ms->i32_vals[i][j] = 1;
+        } // for
+    } // for
+} // mstr_v8si_init_ident
+
+void mstr_v8si_fill(ms_stor_ptr ms, int32_t val)
+{
+    v8si_t vals = {val, val, val, val, val, val, val, val};
+    uint32_t i = 0;
+    for (i = 0; i < ms->cols_padded / I32_VALS_IN_V8SI; i += 1) {
+        ms->v8si_pcks[0][i] = vals;
+    } // for
+    for (i = 1; i < ms->rows; i += 1) {
+        memcpy(&ms->v8si_pcks[i][0], &ms->v8si_pcks[0][0], ms->val_sz * ms->cols_padded);
+    } // for
+} // mstr_v8si_fill
 
 //// NAME:
 ////   v8si_assemble_chunk

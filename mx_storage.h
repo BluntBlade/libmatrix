@@ -25,6 +25,9 @@ extern void mstr_v8si_fill(ms_stor_ptr ms, int32_t val);
 extern void mstr_v8si_assemble_chunk_from_rows(mx_stor_ptr ms, uint32_t ridx, uint32_t cidx, mx_chunk_ptr chk);
 extern void mstr_v8si_assemble_chunk_from_columns(mx_stor_ptr ms, uint32_t ridx, uint32_t cidx, mx_chunk_ptr chk);
 
+extern void mstr_v8si_copy_from_chunk(ms_stor_ptr ms, uint32_t ridx, uint32_t cidx, mx_chunk_ptr chk);
+extern void mstr_v8si_accumulate_from_chunk(ms_stor_ptr ms, uint32_t ridx, uint32_t cidx, mx_chunk_ptr chk);
+
 inline static void mstr_v8si_init_ones(ms_stor_ptr ms)
 {
     return mstr_v8si_fill(ms, 1);

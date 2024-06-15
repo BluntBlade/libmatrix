@@ -284,3 +284,87 @@ void mstr_v8si_assemble_chunk_from_columns(mx_stor_ptr ms, uint32_t ridx, uint32
 
     v8si_assemble_chunk(&chk->v8si_pcks[0][0], &ms->i32_vals[ridx][cidx], 1, ms->cols_padded, cdelta, rdelta);
 } // mstr_v8si_assemble_chunk_from_columns
+
+void mstr_v8si_copy_from_chunk(ms_stor_ptr ms, uint32_t ridx, uint32_t cidx, mx_chunk_ptr chk)
+{
+    uint32_t i = ridx;
+    uint32_t rows = I32_VALS_IN_CACHE_LINE;
+
+    if (ms->rows - ridx < rows) {
+        rows = ms->rows - ridx;
+    } // if
+
+    // TODO: When ridx or cidx is not the integer multiples of the number of values in one pack.
+    switch (rows) {
+        case 16:
+            ms->v8si_pcks[i][cidx / I32_VALS_IN_V8SI + 0] = chk->v8si_pcks[i][0];
+            ms->v8si_pcks[i][cidx / I32_VALS_IN_V8SI + 1] = chk->v8si_pcks[i][1];
+            i += 1;
+        case 15:
+            ms->v8si_pcks[i][cidx / I32_VALS_IN_V8SI + 0] = chk->v8si_pcks[i][0];
+            ms->v8si_pcks[i][cidx / I32_VALS_IN_V8SI + 1] = chk->v8si_pcks[i][1];
+            i += 1;
+        case 14:
+            ms->v8si_pcks[i][cidx / I32_VALS_IN_V8SI + 0] = chk->v8si_pcks[i][0];
+            ms->v8si_pcks[i][cidx / I32_VALS_IN_V8SI + 1] = chk->v8si_pcks[i][1];
+            i += 1;
+        case 13:
+            ms->v8si_pcks[i][cidx / I32_VALS_IN_V8SI + 0] = chk->v8si_pcks[i][0];
+            ms->v8si_pcks[i][cidx / I32_VALS_IN_V8SI + 1] = chk->v8si_pcks[i][1];
+            i += 1;
+        case 12:
+            ms->v8si_pcks[i][cidx / I32_VALS_IN_V8SI + 0] = chk->v8si_pcks[i][0];
+            ms->v8si_pcks[i][cidx / I32_VALS_IN_V8SI + 1] = chk->v8si_pcks[i][1];
+            i += 1;
+        case 11:
+            ms->v8si_pcks[i][cidx / I32_VALS_IN_V8SI + 0] = chk->v8si_pcks[i][0];
+            ms->v8si_pcks[i][cidx / I32_VALS_IN_V8SI + 1] = chk->v8si_pcks[i][1];
+            i += 1;
+        case 10:
+            ms->v8si_pcks[i][cidx / I32_VALS_IN_V8SI + 0] = chk->v8si_pcks[i][0];
+            ms->v8si_pcks[i][cidx / I32_VALS_IN_V8SI + 1] = chk->v8si_pcks[i][1];
+            i += 1;
+        case  9:
+            ms->v8si_pcks[i][cidx / I32_VALS_IN_V8SI + 0] = chk->v8si_pcks[i][0];
+            ms->v8si_pcks[i][cidx / I32_VALS_IN_V8SI + 1] = chk->v8si_pcks[i][1];
+            i += 1;
+        case  8:
+            ms->v8si_pcks[i][cidx / I32_VALS_IN_V8SI + 0] = chk->v8si_pcks[i][0];
+            ms->v8si_pcks[i][cidx / I32_VALS_IN_V8SI + 1] = chk->v8si_pcks[i][1];
+            i += 1;
+        case  7:
+            ms->v8si_pcks[i][cidx / I32_VALS_IN_V8SI + 0] = chk->v8si_pcks[i][0];
+            ms->v8si_pcks[i][cidx / I32_VALS_IN_V8SI + 1] = chk->v8si_pcks[i][1];
+            i += 1;
+        case  6:
+            ms->v8si_pcks[i][cidx / I32_VALS_IN_V8SI + 0] = chk->v8si_pcks[i][0];
+            ms->v8si_pcks[i][cidx / I32_VALS_IN_V8SI + 1] = chk->v8si_pcks[i][1];
+            i += 1;
+        case  5:
+            ms->v8si_pcks[i][cidx / I32_VALS_IN_V8SI + 0] = chk->v8si_pcks[i][0];
+            ms->v8si_pcks[i][cidx / I32_VALS_IN_V8SI + 1] = chk->v8si_pcks[i][1];
+            i += 1;
+        case  4:
+            ms->v8si_pcks[i][cidx / I32_VALS_IN_V8SI + 0] = chk->v8si_pcks[i][0];
+            ms->v8si_pcks[i][cidx / I32_VALS_IN_V8SI + 1] = chk->v8si_pcks[i][1];
+            i += 1;
+        case  3:
+            ms->v8si_pcks[i][cidx / I32_VALS_IN_V8SI + 0] = chk->v8si_pcks[i][0];
+            ms->v8si_pcks[i][cidx / I32_VALS_IN_V8SI + 1] = chk->v8si_pcks[i][1];
+            i += 1;
+        case  2:
+            ms->v8si_pcks[i][cidx / I32_VALS_IN_V8SI + 0] = chk->v8si_pcks[i][0];
+            ms->v8si_pcks[i][cidx / I32_VALS_IN_V8SI + 1] = chk->v8si_pcks[i][1];
+            i += 1;
+        case  1:
+            ms->v8si_pcks[i][cidx / I32_VALS_IN_V8SI + 0] = chk->v8si_pcks[i][0];
+            ms->v8si_pcks[i][cidx / I32_VALS_IN_V8SI + 1] = chk->v8si_pcks[i][1];
+            i += 1;
+        default:
+            break;
+    } // switch
+} // mstr_v8si_copy_from_chunk
+
+void mstr_v8si_accumulate_from_chunk(ms_stor_ptr ms, uint32_t ridx, uint32_t cidx, mx_chunk_ptr chk)
+{
+} // mstr_v8si_accumulate_from_chunk

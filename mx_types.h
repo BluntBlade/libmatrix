@@ -2,6 +2,9 @@
 #define MX_TYPES_H 1
 
 #include <stdint.h>
+#include <stdbool.h>
+
+#include "config.h"
 
 // ==== Vector Types ====
 

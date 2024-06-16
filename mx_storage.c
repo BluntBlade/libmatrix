@@ -72,6 +72,16 @@ void mstr_destroy(mx_stor_ptr ms)
     free(ms);
 } // mstr_destroy
 
+uint32_t mstr_chunks_in_row(mx_stor_ptr ms)
+{
+    return round_to_multiples(ms->rows, ms->vals_in_pck) / ms->vals_in_pck;
+} // mstr_chunks_in_row
+
+uint32_t mstr_chunks_in_column(mx_stor_ptr ms)
+{
+    return round_to_multiples(ms->cols, ms->vals_in_pck) / ms->vals_in_pck;
+} // mstr_chunks_in_column
+
 // ---- V8SI related definitions ----
 
 static uint8_t v8si_mask_sel[16][2] = {

@@ -26,7 +26,8 @@ inline static uint32_t ceil_to_or_less_than_16(uint32_t cnt)
 
 typedef struct MX_STORAGE {
     uint32_t    val_sz;         // The size of one value, in bytes.
-    uint32_t    vals_in_pck;    // The number of values in one pack.
+    uint32_t    pck_width;      // The number of values in one pack.
+    uint32_t    chk_width;      // The number of values in one chunk.
     uint32_t    rows;           // The number of rows.
     uint32_t    cols;           // The number of columns.
     uint32_t    cols_padded;    // The actual number of columns, including padding ones.
@@ -41,7 +42,7 @@ typedef struct MX_STORAGE {
     };
 } mx_stor_t;
 
-static mx_stor_ptr create(uint32_t rows, uint32_t cols, uint32_t val_sz, uint32_t vals_in_pck)
+static mx_stor_ptr create(uint32_t rows, uint32_t cols, uint32_t val_sz, uint32_t pck_width, uint32_t chk_width)
 {
     uint32_t i = 0;
     mx_stor_ptr ms = NULL;
@@ -54,11 +55,12 @@ static mx_stor_ptr create(uint32_t rows, uint32_t cols, uint32_t val_sz, uint32_
     ms->val_sz = val_sz;
     ms->rows = rows;
     ms->cols = cols;
-    ms->cols_padded = round_to_multiples(cols, vals_in_pck);
+    ms->cols_padded = round_to_multiples(cols, pck_width);
     ms->bytes = ms->val_sz * ms->rows * ms->cols_padded;
-    ms->vals_in_pck = vals_in_pck;
+    ms->pck_width = pck_width;
+    ms->chk_width = chk_width;
 
-    ms->alignment = ms->val_sz * ms->vals_in_pck;
+    ms->alignment = ms->val_sz * ms->pck_width;
     ms->buf = malloc(ms->bytes + ms->alignment);
     if (! ms->buf) {
         free(ms);
@@ -72,7 +74,7 @@ static mx_stor_ptr create(uint32_t rows, uint32_t cols, uint32_t val_sz, uint32_
 
 mx_stor_ptr mstr_v8si_create(uint32_t rows, uint32_t cols)
 {
-    return create(rows, cols, sizeof(int32_t), I32_VALS_IN_V8SI);
+    return create(rows, cols, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
 } // mstr_v8si_create
 
 void mstr_destroy(mx_stor_ptr ms)
@@ -85,12 +87,12 @@ void mstr_destroy(mx_stor_ptr ms)
 
 uint32_t mstr_chunks_in_row(mx_stor_ptr ms)
 {
-    return round_to_multiples(ms->rows, ms->vals_in_pck) / ms->vals_in_pck;
+    return round_to_multiples(ms->rows, ms->chk_width) / ms->chk_width;
 } // mstr_chunks_in_row
 
 uint32_t mstr_chunks_in_column(mx_stor_ptr ms)
 {
-    return round_to_multiples(ms->cols, ms->vals_in_pck) / ms->vals_in_pck;
+    return round_to_multiples(ms->cols, ms->chk_width) / ms->chk_width;
 } // mstr_chunks_in_column
 
 // ---- V8SI related definitions ----
@@ -122,7 +124,8 @@ void mstr_v8si_init_zeros(mx_stor_ptr ms)
 void mstr_v8si_init_ident(mx_stor_ptr ms)
 {
     uint32_t i = 0;
-    uint32_t cols_in_last_chk = 0;
+    uint32_t rows_in_last_chk = 0;
+    uint32_t cols_width_in_last_chk = 0;
     mx_chunk_ptr chk = NULL;
     int32_t * base = NULL;
 
@@ -148,24 +151,25 @@ void mstr_v8si_init_ident(mx_stor_ptr ms)
         chk->i32_vals[15][15] = 1;
     } // for
 
-    cols_in_last_chk = ms->cols_padded - ms->cols;
-    base = v8si_calc_base(ms, i, i, cols_in_last_chk);
-    switch (cols_in_last_chk) {
-        case 15: base[14 * cols_in_last_chk + 14] = 1;
-        case 14: base[13 * cols_in_last_chk + 13] = 1;
-        case 13: base[12 * cols_in_last_chk + 12] = 1;
-        case 12: base[11 * cols_in_last_chk + 11] = 1;
-        case 11: base[10 * cols_in_last_chk + 10] = 1;
-        case 10: base[ 9 * cols_in_last_chk +  9] = 1;
-        case  9: base[ 7 * cols_in_last_chk +  7] = 1;
-        case  8: base[ 7 * cols_in_last_chk +  7] = 1;
-        case  7: base[ 6 * cols_in_last_chk +  6] = 1;
-        case  6: base[ 5 * cols_in_last_chk +  5] = 1;
-        case  5: base[ 4 * cols_in_last_chk +  4] = 1;
-        case  4: base[ 3 * cols_in_last_chk +  3] = 1;
-        case  3: base[ 2 * cols_in_last_chk +  2] = 1;
-        case  2: base[ 1 * cols_in_last_chk +  1] = 1;
-        case  1: base[ 0 * cols_in_last_chk +  0] = 1;
+    rows_in_last_chk = I32_VALS_IN_CACHE_LINE * i - ms->rows;
+    cols_width_in_last_chk = round_to_multiples_of_8(I32_VALS_IN_CACHE_LINE * i - ms->cols);
+    base = v8si_calc_base(ms, i, i, rows_in_last_chk);
+    switch (rows_in_last_chk) {
+        case 15: base[14 * cols_width_in_last_chk + 14] = 1;
+        case 14: base[13 * cols_width_in_last_chk + 13] = 1;
+        case 13: base[12 * cols_width_in_last_chk + 12] = 1;
+        case 12: base[11 * cols_width_in_last_chk + 11] = 1;
+        case 11: base[10 * cols_width_in_last_chk + 10] = 1;
+        case 10: base[ 9 * cols_width_in_last_chk +  9] = 1;
+        case  9: base[ 7 * cols_width_in_last_chk +  7] = 1;
+        case  8: base[ 7 * cols_width_in_last_chk +  7] = 1;
+        case  7: base[ 6 * cols_width_in_last_chk +  6] = 1;
+        case  6: base[ 5 * cols_width_in_last_chk +  5] = 1;
+        case  5: base[ 4 * cols_width_in_last_chk +  4] = 1;
+        case  4: base[ 3 * cols_width_in_last_chk +  3] = 1;
+        case  3: base[ 2 * cols_width_in_last_chk +  2] = 1;
+        case  2: base[ 1 * cols_width_in_last_chk +  1] = 1;
+        case  1: base[ 0 * cols_width_in_last_chk +  0] = 1;
         default: break;
     } // switch
 } // mstr_v8si_init_ident

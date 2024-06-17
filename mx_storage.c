@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <string.h>
 #include <immintrin.h>
 
@@ -121,58 +122,47 @@ void mstr_v8si_init_zeros(mx_stor_ptr ms)
     memset(ms->data, 0, ms->bytes);
 } // mstr_v8si_init_zeros
 
-void mstr_v8si_init_ident(mx_stor_ptr ms)
+void mstr_v8si_init_identity(mx_stor_ptr ms)
 {
-    uint32_t i = 0;
-    uint32_t rows_in_last_chk = 0;
-    uint32_t cols_width_in_last_chk = 0;
+    uint32_t i = mstr_chunks_in_row(ms);
+    uint32_t last_rows = 0;
+    uint32_t cols_padded = 0;
     mx_chunk_ptr chk = NULL;
     int32_t * base = NULL;
 
     mstr_v8si_init_zeros(ms);
 
-    for (i = 0; i < mstr_chunks_in_row(ms) - 1; i += 1) {
-        chk = v8si_calc_base(ms, i, i, 16);
-        chk->i32_vals[ 0][ 0] = 1;
-        chk->i32_vals[ 1][ 1] = 1;
-        chk->i32_vals[ 2][ 2] = 1;
-        chk->i32_vals[ 3][ 3] = 1;
-        chk->i32_vals[ 4][ 4] = 1;
-        chk->i32_vals[ 5][ 5] = 1;
-        chk->i32_vals[ 6][ 6] = 1;
-        chk->i32_vals[ 7][ 7] = 1;
-        chk->i32_vals[ 8][ 8] = 1;
-        chk->i32_vals[ 9][ 9] = 1;
-        chk->i32_vals[10][10] = 1;
-        chk->i32_vals[11][11] = 1;
-        chk->i32_vals[12][12] = 1;
-        chk->i32_vals[13][13] = 1;
-        chk->i32_vals[14][14] = 1;
-        chk->i32_vals[15][15] = 1;
-    } // for
-
-    rows_in_last_chk = I32_VALS_IN_CACHE_LINE * i - ms->rows;
-    cols_width_in_last_chk = round_to_multiples_of_8(I32_VALS_IN_CACHE_LINE * i - ms->cols);
-    base = v8si_calc_base(ms, i, i, rows_in_last_chk);
-    switch (rows_in_last_chk) {
-        case 15: base[14 * cols_width_in_last_chk + 14] = 1;
-        case 14: base[13 * cols_width_in_last_chk + 13] = 1;
-        case 13: base[12 * cols_width_in_last_chk + 12] = 1;
-        case 12: base[11 * cols_width_in_last_chk + 11] = 1;
-        case 11: base[10 * cols_width_in_last_chk + 10] = 1;
-        case 10: base[ 9 * cols_width_in_last_chk +  9] = 1;
-        case  9: base[ 7 * cols_width_in_last_chk +  7] = 1;
-        case  8: base[ 7 * cols_width_in_last_chk +  7] = 1;
-        case  7: base[ 6 * cols_width_in_last_chk +  6] = 1;
-        case  6: base[ 5 * cols_width_in_last_chk +  5] = 1;
-        case  5: base[ 4 * cols_width_in_last_chk +  4] = 1;
-        case  4: base[ 3 * cols_width_in_last_chk +  3] = 1;
-        case  3: base[ 2 * cols_width_in_last_chk +  2] = 1;
-        case  2: base[ 1 * cols_width_in_last_chk +  1] = 1;
-        case  1: base[ 0 * cols_width_in_last_chk +  0] = 1;
-        default: break;
+    last_rows = ms->rows - I32_VALS_IN_CACHE_LINE * (i - 1);
+    cols_padded = round_to_multiples_of_8(last_rows);
+    base = v8si_calc_base(ms, i - 1, i - 1, last_rows);
+    switch (last_rows) {
+        default: assert(1); break;
+        case 16:
+            do { *base = 1; base += cols_padded + 1;   // 0
+        case 15: *base = 1; base += cols_padded + 1;   // 1
+        case 14: *base = 1; base += cols_padded + 1;   // 2
+        case 13: *base = 1; base += cols_padded + 1;   // 3
+        case 12: *base = 1; base += cols_padded + 1;   // 4
+        case 11: *base = 1; base += cols_padded + 1;   // 5
+        case 10: *base = 1; base += cols_padded + 1;   // 6
+        case  9: *base = 1; base += cols_padded + 1;   // 7
+        case  8: *base = 1; base += cols_padded + 1;   // 8
+        case  7: *base = 1; base += cols_padded + 1;   // 9
+        case  6: *base = 1; base += cols_padded + 1;   // 10
+        case  5: *base = 1; base += cols_padded + 1;   // 11
+        case  4: *base = 1; base += cols_padded + 1;   // 12
+        case  3: *base = 1; base += cols_padded + 1;   // 13
+        case  2: *base = 1; base += cols_padded + 1;   // 14
+        case  1: *base = 1;                            // 15
+                if (--i == 0) {
+                    break;
+                } // if
+                base = v8si_calc_base(ms, i - 1, i - 1, 16);
+                cols_padded = 16;
+            } while (1);
+            break;
     } // switch
-} // mstr_v8si_init_ident
+} // mstr_v8si_init_identity
 
 void mstr_v8si_fill(mx_stor_ptr ms, int32_t val)
 {

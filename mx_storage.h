@@ -25,7 +25,7 @@ extern uint32_t mstr_chunks_in_column(mx_stor_ptr ms);
 extern mx_stor_ptr mstr_v8si_create(uint32_t rows, uint32_t cols);
 
 extern void mstr_v8si_init_zeros(mx_stor_ptr ms);
-extern void mstr_v8si_init_ident(mx_stor_ptr ms);
+extern void mstr_v8si_init_identity(mx_stor_ptr ms);
 
 extern void mstr_v8si_fill(mx_stor_ptr ms, int32_t val);
 

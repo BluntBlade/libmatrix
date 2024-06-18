@@ -127,7 +127,6 @@ void mstr_v8si_init_identity(mx_stor_ptr ms)
     uint32_t i = mstr_chunks_in_row(ms);
     uint32_t last_rows = 0;
     uint32_t cols_padded = 0;
-    mx_chunk_ptr chk = NULL;
     int32_t * base = NULL;
 
     mstr_v8si_init_zeros(ms);
@@ -166,32 +165,20 @@ void mstr_v8si_init_identity(mx_stor_ptr ms)
 
 void mstr_v8si_fill(mx_stor_ptr ms, int32_t val)
 {
-    v8si_t vals = {val, val, val, val, val, val, val, val};
-    v8si_t edge = vals;
+    v8si_t src = {val, val, val, val, val, val, val, val};
     uint32_t i = 0;
-    void * base = NULL;
+    v8si_t * base = NULL;
 
-    switch (ms->cols_padded - ms->cols) {
-        case 7: edge[7] = 0;
-        case 6: edge[6] = 0;
-        case 5: edge[5] = 0;
-        case 4: edge[4] = 0;
-        case 3: edge[3] = 0;
-        case 2: edge[2] = 0;
-        case 1: edge[1] = 0;
-        default: break;
-    } // switch
-
-    for (i = 0; i < ms->cols_padded / I32_VALS_IN_V8SI - 1; i += 1) {
-        ms->v8si_pcks[i] = vals;
+    base = ms->data;
+    for (i = 0; i < ms->cols_padded / I32_VALS_IN_V8SI; i += 1) {
+        base[i] = src;
     } // for
-    ms->v8si_pcks[i] = edge;
-
-    base = &ms->v8si_pcks[i];
     for (i = 1; i < ms->rows; i += 1) {
-        memcpy(base, &ms->v8si_pcks[0], ms->val_sz * ms->cols_padded);
-        base += ms->val_sz * ms->cols_padded;
+        memcpy(base, ms->data, sizeof(int32_t) * ms->cols_padded);
+        base += sizeof(int32_t) * ms->cols_padded;
     } // for
+
+    // NOTE: No need to zero out any padded int32_t values.
 } // mstr_v8si_fill
 
 //// NAME:

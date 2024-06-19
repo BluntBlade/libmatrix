@@ -19,8 +19,8 @@ typedef struct MX_STORAGE * mx_stor_ptr;
 extern mx_stor_ptr mstr_create(uint32_t rows, uint32_t cols, uint32_t val_sz);
 extern void mstr_destroy(mx_stor_ptr ms);
 
-extern uint32_t mstr_chunks_in_row(mx_stor_ptr ms);
-extern uint32_t mstr_chunks_in_column(mx_stor_ptr ms);
+extern uint32_t mstr_chunks_in_width(mx_stor_ptr ms);
+extern uint32_t mstr_chunks_in_height(mx_stor_ptr ms);
 
 extern mx_stor_ptr mstr_v8si_create(uint32_t rows, uint32_t cols);
 

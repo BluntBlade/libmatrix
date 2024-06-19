@@ -26,24 +26,27 @@ inline static uint32_t ceil_to_or_less_than_16(uint32_t cnt)
 } // ceil_to_or_less_than_16
 
 typedef struct MX_STORAGE {
-    uint32_t    val_sz;         // The size of one value, in bytes.
-    uint32_t    pck_width;      // The number of values in one pack.
-    uint32_t    chk_width;      // The number of values in one chunk.
-    uint32_t    rows;           // The number of rows.
-    uint32_t    cols;           // The number of columns.
-    uint32_t    cols_padded;    // The actual number of columns, including padding ones.
-    uint32_t    alignment;      // The number of bytes to align with.
-    size_t      bytes;          // Allocated bytes of the buffer.
+    uint16_t    val_sz;             // The size of one value, in bytes.
+    uint16_t    alignment;          // The byte boundary to align with.
+    uint16_t    pck_len;            // The number of values in one pack.
+    uint16_t    chk_len;            // The number of rows or columns in one chunk.
+    uint16_t    last_chk_width;     // The number of columns in the last chunk.
+    uint16_t    last_chk_height;    // The number of rows in the last chunk.
+    uint32_t    chks_in_width;      // The number of chunks in the width of the whole matrix.
+    uint32_t    chks_in_height;     // The number of chunks in the height of the whole matrix.
+    uint32_t    rows;               // The number of rows.
+    uint32_t    cols;               // The number of columns.
+    uint32_t    cols_padded;        // The actual number of columns, including padding ones.
+    size_t      bytes;              // Allocated bytes of the buffer.
 
-    void *      buf;            // Non-aligned buffer of values, only for calling free().
+    void *      buf;                // Non-aligned address of allocated memory, only for calling free().
     union {
-        void *      data;       // Aligned buffer of values.
-        int32_t *   i32_vals;
+        void *      data;           // Aligned address of allocated memory.
         v8si_t *    v8si_pcks;
     };
 } mx_stor_t;
 
-static mx_stor_ptr create(uint32_t rows, uint32_t cols, uint32_t val_sz, uint32_t pck_width, uint32_t chk_width)
+static mx_stor_ptr create(uint32_t rows, uint32_t cols, uint32_t val_sz, uint32_t pck_len, uint32_t chk_len)
 {
     uint32_t i = 0;
     mx_stor_ptr ms = NULL;
@@ -56,12 +59,16 @@ static mx_stor_ptr create(uint32_t rows, uint32_t cols, uint32_t val_sz, uint32_
     ms->val_sz = val_sz;
     ms->rows = rows;
     ms->cols = cols;
-    ms->cols_padded = round_to_multiples(cols, pck_width);
+    ms->cols_padded = round_to_multiples(cols, pck_len);
     ms->bytes = ms->val_sz * ms->rows * ms->cols_padded;
-    ms->pck_width = pck_width;
-    ms->chk_width = chk_width;
+    ms->pck_len = pck_len;
+    ms->chk_len = chk_len;
+    ms->last_chk_width = cols - (round_to_multiples(cols, chk_len) - chk_len);
+    ms->last_chk_height = rows - (round_to_multiples(rows, chk_len) - chk_len);
+    ms->chks_in_width = round_to_multiples(cols, chk_len) / chk_len;
+    ms->chks_in_height = round_to_multiples(rows, chk_len) / chk_len;
 
-    ms->alignment = ms->val_sz * ms->pck_width;
+    ms->alignment = ms->val_sz * ms->pck_len;
     ms->buf = malloc(ms->bytes + ms->alignment);
     if (! ms->buf) {
         free(ms);
@@ -86,15 +93,15 @@ void mstr_destroy(mx_stor_ptr ms)
     free(ms);
 } // mstr_destroy
 
-uint32_t mstr_chunks_in_row(mx_stor_ptr ms)
+uint32_t mstr_chunks_in_width(mx_stor_ptr ms)
 {
-    return round_to_multiples(ms->rows, ms->chk_width) / ms->chk_width;
-} // mstr_chunks_in_row
+    return ms->chks_in_width;
+} // mstr_chunks_in_width
 
-uint32_t mstr_chunks_in_column(mx_stor_ptr ms)
+uint32_t mstr_chunks_in_height(mx_stor_ptr ms)
 {
-    return round_to_multiples(ms->cols, ms->chk_width) / ms->chk_width;
-} // mstr_chunks_in_column
+    return ms->chks_in_height;
+} // mstr_chunks_in_height
 
 // ---- V8SI related definitions ----
 
@@ -124,7 +131,7 @@ void mstr_v8si_init_zeros(mx_stor_ptr ms)
 
 void mstr_v8si_init_identity(mx_stor_ptr ms)
 {
-    uint32_t i = mstr_chunks_in_row(ms);
+    uint32_t i = ms->chks_in_width;
     uint32_t last_rows = 0;
     uint32_t cols_padded = 0;
     int32_t * base = NULL;

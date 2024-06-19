@@ -85,20 +85,20 @@ mx_stor_ptr mstr_v8si_create(uint32_t rows, uint32_t cols)
     return create(rows, cols, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
 } // mstr_v8si_create
 
-void mstr_destroy(mx_stor_ptr ms)
+void mstr_v8si_destroy(mx_stor_ptr ms)
 {
     if (ms) {
         free(ms->buf);
     } // if
     free(ms);
-} // mstr_destroy
+} // mstr_v8si_destroy
 
-uint32_t mstr_chunks_in_width(mx_stor_ptr ms)
+uint32_t mstr_v8si_chunks_in_width(mx_stor_ptr ms)
 {
     return ms->chks_in_width;
 } // mstr_chunks_in_width
 
-uint32_t mstr_chunks_in_height(mx_stor_ptr ms)
+uint32_t mstr_v8si_chunks_in_height(mx_stor_ptr ms)
 {
     return ms->chks_in_height;
 } // mstr_chunks_in_height

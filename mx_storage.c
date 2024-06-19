@@ -138,7 +138,7 @@ void mstr_v8si_init_identity(mx_stor_ptr ms)
 
     mstr_v8si_init_zeros(ms);
 
-    last_rows = ms->rows - I32_VALS_IN_CACHE_LINE * (i - 1);
+    last_rows = ms->last_chk_height;
     cols_padded = round_to_multiples_of_8(last_rows);
     base = v8si_calc_base(ms, i - 1, i - 1, last_rows);
     switch (last_rows) {

@@ -313,10 +313,10 @@ static void v8si_assemble_chunk(v8si_t * chk_pck, int32_t * src, uint32_t src_sp
     } // switch
 } // v8si_assemble_chunk
 
-inline static void * v8si_locate_chunk(mx_stor_ptr ms, uint32_t ridx, uint32_t cidx, uint32_t * rows_in_chk, uint32_t * cols_in_chk, bool * full)
+inline static void * v8si_locate_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, uint32_t * rows_in_chk, uint32_t * cols_in_chk, bool * full)
 {
-    uint32_t row_idx = ridx * I32_VALS_IN_CACHE_LINE; // Refer to values.
-    uint32_t col_idx = cidx * I32_VALS_IN_CACHE_LINE; // Refer to values.
+    uint32_t row_idx = chk_ridx * I32_VALS_IN_CACHE_LINE; // Refer to values.
+    uint32_t col_idx = chk_cidx * I32_VALS_IN_CACHE_LINE; // Refer to values.
 
     *rows_in_chk = ceil_to_or_less_than_16(ms->rows - row_idx);
     *cols_in_chk = ceil_to_or_less_than_16(ms->cols - col_idx);
@@ -325,9 +325,9 @@ inline static void * v8si_locate_chunk(mx_stor_ptr ms, uint32_t ridx, uint32_t c
     return v8si_calc_base(ms, row_idx, col_idx, *rows_in_chk);
 } // v8si_locate_chunk
 
-mx_chunk_ptr mstr_v8si_copy_chunk(mx_stor_ptr ms, uint32_t ridx, uint32_t cidx, mx_chunk_ptr chk, uint32_t * rows_in_chk, uint32_t * cols_in_chk, bool * full)
+mx_chunk_ptr mstr_v8si_copy_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr chk, uint32_t * rows_in_chk, uint32_t * cols_in_chk, bool * full)
 {
-    void * base = v8si_locate_chunk(ms, ridx, cidx, rows_in_chk, cols_in_chk, full);
+    void * base = v8si_locate_chunk(ms, chk_ridx, chk_cidx, rows_in_chk, cols_in_chk, full);
 
     if (*full) {
         // If the source chunk is full of 16x16 values, return the pointer to it directly.
@@ -339,15 +339,15 @@ mx_chunk_ptr mstr_v8si_copy_chunk(mx_stor_ptr ms, uint32_t ridx, uint32_t cidx, 
     return chk;
 } // mstr_v8si_copy_chunk
 
-mx_chunk_ptr mstr_v8si_transpose_chunk(mx_stor_ptr ms, uint32_t ridx, uint32_t cidx, mx_chunk_ptr chk, uint32_t * rows_in_chk, uint32_t * cols_in_chk, bool * full)
+mx_chunk_ptr mstr_v8si_transpose_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr chk, uint32_t * rows_in_chk, uint32_t * cols_in_chk, bool * full)
 {
-    void * base = v8si_locate_chunk(ms, ridx, cidx, rows_in_chk, cols_in_chk, full);
+    void * base = v8si_locate_chunk(ms, chk_ridx, chk_cidx, rows_in_chk, cols_in_chk, full);
     v8si_assemble_chunk(&chk->v8si_pcks[0][0], base, 1, round_to_multiples_of_8(*cols_in_chk), *cols_in_chk, *rows_in_chk);
     return chk;
 } // mstr_v8si_transpose_chunk
 
-void mstr_v8si_store_chunk(mx_stor_ptr ms, uint32_t ridx, uint32_t cidx, mx_chunk_ptr chk, uint32_t rows_in_chk, uint32_t cols_in_chk)
+void mstr_v8si_store_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr chk, uint32_t rows_in_chk, uint32_t cols_in_chk)
 {
-    void * base = v8si_calc_base(ms, ridx * I32_VALS_IN_CACHE_LINE, cidx * I32_VALS_IN_CACHE_LINE, rows_in_chk);
+    void * base = v8si_calc_base(ms, chk_ridx * I32_VALS_IN_CACHE_LINE, chk_cidx * I32_VALS_IN_CACHE_LINE, rows_in_chk);
     memcpy(base, chk->v8si_pcks, rows_in_chk * round_to_multiples_of_8(cols_in_chk) * sizeof(int32_t));
 } // mstr_v8si_store_chunk

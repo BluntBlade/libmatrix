@@ -331,7 +331,7 @@ Test(Locate, v8si_calc_base) {
 
         base = v8si_calc_base(ms, 0, 0, ms->last_chk_height);
         off = 0;
-        cr_expect(ms->data - base == off, "Wrong size of the value in the matrix - Expect %p, got %p.", ms->data + off, base);
+        cr_expect(base - ms->data == off, "Wrong base - Expect %p, got %p.", ms->data + off, base);
 
         mstr_v8si_destroy(ms);
     }
@@ -342,7 +342,7 @@ Test(Locate, v8si_calc_base) {
 
         base = v8si_calc_base(ms, 0, 0, ms->last_chk_height);
         off = 0;
-        cr_expect(ms->data - base == off, "Wrong size of the value in the matrix - Expect %p, got %p.", ms->data + off, base);
+        cr_expect(base - ms->data == off, "Wrong base - Expect %p, got %p.", ms->data + off, base);
 
         mstr_v8si_destroy(ms);
     }
@@ -514,5 +514,105 @@ Test(Locate, v8si_calc_base) {
         base = v8si_calc_base(ms, 32, 16, ms->last_chk_height);
         off = 4 * 16 * 16 * 2 + 4 * 16 * 8 * 2 + 4 * 1 * 16;
         cr_expect(base - ms->data == off, "Wrong base - Expect %p, got %p.", ms->data + off, base);
+    }
+}
+
+Test(Locate, v8si_locate_chunk) {
+    mx_stor_ptr ms = NULL;
+    uint32_t off = 0;
+    uint32_t rows_in_chk = 0;
+    uint32_t cols_in_chk = 0;;
+    bool full = false;
+    mx_chunk_ptr chk = NULL;
+
+    // -- 1x1 matrix -- //
+    {
+        ms = mstr_v8si_create(1, 1);
+
+        chk = v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk, &full);
+        off = 0;
+        cr_expect((void *)chk - ms->data == off, "Wrong address of the chunk - Expect %p, got %p.", ms->data + off, chk);
+        cr_expect(rows_in_chk == 1, "Wrong number of rows in the chunk - Expect %d, got %d.", 1, rows_in_chk);
+        cr_expect(cols_in_chk == 1, "Wrong number of columns in the chunk - Expect %d, got %d.", 1, cols_in_chk);
+        cr_expect(full == false, "Wrong full flag of the chunk - Expect %d, got %d.", false, full);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 8x8 matrix -- //
+    {
+        ms = mstr_v8si_create(8, 8);
+
+        chk = v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk, &full);
+        off = 0;
+        cr_expect((void *)chk - ms->data == off, "Wrong address of the chunk - Expect %p, got %p.", ms->data + off, chk);
+        cr_expect(rows_in_chk == 8, "Wrong number of rows in the chunk - Expect %d, got %d.", 8, rows_in_chk);
+        cr_expect(cols_in_chk == 8, "Wrong number of columns in the chunk - Expect %d, got %d.", 8, cols_in_chk);
+        cr_expect(full == false, "Wrong full flag of the chunk - Expect %d, got %d.", false, full);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 15x15 matrix -- //
+    {
+        ms = mstr_v8si_create(15, 15);
+
+        chk = v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk, &full);
+        off = 0;
+        cr_expect((void *)chk - ms->data == off, "Wrong address of the chunk - Expect %p, got %p.", ms->data + off, chk);
+        cr_expect(rows_in_chk == 15, "Wrong number of rows in the chunk - Expect %d, got %d.", 15, rows_in_chk);
+        cr_expect(cols_in_chk == 15, "Wrong number of columns in the chunk - Expect %d, got %d.", 15, cols_in_chk);
+        cr_expect(full == false, "Wrong full flag of the chunk - Expect %d, got %d.", false, full);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 16x16 matrix -- //
+    {
+        ms = mstr_v8si_create(16, 16);
+
+        chk = v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk, &full);
+        off = 0;
+        cr_expect((void *)chk - ms->data == off, "Wrong address of the chunk - Expect %p, got %p.", ms->data + off, chk);
+        cr_expect(rows_in_chk == 16, "Wrong number of rows in the chunk - Expect %d, got %d.", 16, rows_in_chk);
+        cr_expect(cols_in_chk == 16, "Wrong number of columns in the chunk - Expect %d, got %d.", 16, cols_in_chk);
+        cr_expect(full == true, "Wrong full flag of the chunk - Expect %d, got %d.", true, full);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 17x17 matrix -- //
+    {
+        ms = mstr_v8si_create(17, 17);
+
+        chk = v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk, &full);
+        off = 0;
+        cr_expect((void *)chk - ms->data == off, "Wrong address of the chunk - Expect %p, got %p.", ms->data + off, chk);
+        cr_expect(rows_in_chk == 16, "Wrong number of rows in the chunk - Expect %d, got %d.", 16, rows_in_chk);
+        cr_expect(cols_in_chk == 16, "Wrong number of columns in the chunk - Expect %d, got %d.", 16, cols_in_chk);
+        cr_expect(full == true, "Wrong full flag of the chunk - Expect %d, got %d.", true, full);
+
+        chk = v8si_locate_chunk(ms, 0, 1, &rows_in_chk, &cols_in_chk, &full);
+        off = 4 * 16 * 16;
+        cr_expect((void *)chk - ms->data == off, "Wrong address of the chunk - Expect %p, got %p.", ms->data + off, chk);
+        cr_expect(rows_in_chk == 16, "Wrong number of rows in the chunk - Expect %d, got %d.", 16, rows_in_chk);
+        cr_expect(cols_in_chk == 1, "Wrong number of columns in the chunk - Expect %d, got %d.", 1, cols_in_chk);
+        cr_expect(full == false, "Wrong full flag of the chunk - Expect %d, got %d.", false, full);
+
+        chk = v8si_locate_chunk(ms, 1, 0, &rows_in_chk, &cols_in_chk, &full);
+        off = 4 * 16 * 16 + 4 * 16 * 8;
+        cr_expect((void *)chk - ms->data == off, "Wrong address of the chunk - Expect %p, got %p.", ms->data + off, chk);
+        cr_expect(rows_in_chk == 1, "Wrong number of rows in the chunk - Expect %d, got %d.", 1, rows_in_chk);
+        cr_expect(cols_in_chk == 16, "Wrong number of columns in the chunk - Expect %d, got %d.", 16, cols_in_chk);
+        cr_expect(full == false, "Wrong full flag of the chunk - Expect %d, got %d.", false, full);
+
+        chk = v8si_locate_chunk(ms, 1, 1, &rows_in_chk, &cols_in_chk, &full);
+        off = 4 * 16 * 16 + 4 * 16 * 8 + 4 * 1 * 16;
+        cr_expect((void *)chk - ms->data == off, "Wrong address of the chunk - Expect %p, got %p.", ms->data + off, chk);
+        cr_expect(rows_in_chk == 1, "Wrong number of rows in the chunk - Expect %d, got %d.", 1, rows_in_chk);
+        cr_expect(cols_in_chk == 1, "Wrong number of columns in the chunk - Expect %d, got %d.", 1, cols_in_chk);
+        cr_expect(full == false, "Wrong full flag of the chunk - Expect %d, got %d.", false, full);
+
+        mstr_v8si_destroy(ms);
     }
 }

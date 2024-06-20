@@ -7,7 +7,7 @@
 
 // ==== TESTS FOR THE STORAGE MODULE OF MATRIX ==== //
 
-Test(Creation, v8si_create) {
+Test(Creat, v8si_create) {
     mx_stor_ptr ms = NULL;
 
     // -- 1x1 matrix -- //
@@ -317,5 +317,202 @@ Test(Creation, v8si_create) {
         cr_expect(ms->chks_in_height == 2, "Wrong number of chunks in height - Expect %d, got %d.", 2, ms->chks_in_height);
 
         mstr_v8si_destroy(ms);
+    }
+}
+
+Test(Locate, v8si_calc_base) {
+    uint32_t off = 0;
+    mx_stor_ptr ms = NULL;
+    void * base = NULL;
+
+    // -- 1x1 matrix -- //
+    {
+        ms = mstr_v8si_create(1, 1);
+
+        base = v8si_calc_base(ms, 0, 0, ms->last_chk_height);
+        off = 0;
+        cr_expect(ms->data - base == off, "Wrong size of the value in the matrix - Expect %p, got %p.", ms->data + off, base);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 8x8 matrix -- //
+    {
+        ms = mstr_v8si_create(8, 8);
+
+        base = v8si_calc_base(ms, 0, 0, ms->last_chk_height);
+        off = 0;
+        cr_expect(ms->data - base == off, "Wrong size of the value in the matrix - Expect %p, got %p.", ms->data + off, base);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 15x15 matrix -- //
+    {
+        ms = mstr_v8si_create(15, 15);
+
+        base = v8si_calc_base(ms, 0, 0, ms->last_chk_height);
+        off = 0;
+        cr_expect(base - ms->data == off, "Wrong base - Expect %p, got %p.", ms->data + off, base);
+    }
+
+    // -- 16x16 matrix -- //
+    {
+        ms = mstr_v8si_create(16, 16);
+
+        base = v8si_calc_base(ms, 0, 0, ms->last_chk_height);
+        off = 0;
+        cr_expect(base - ms->data == off, "Wrong base - Expect %p, got %p.", ms->data + off, base);
+    }
+
+    // -- 17x17 matrix -- //
+    {
+        ms = mstr_v8si_create(17, 17);
+
+        base = v8si_calc_base(ms, 0, 0, 16);
+        off = 0;
+        cr_expect(base - ms->data == 0, "Wrong base - Expect %p, got %p.", ms->data + off, base);
+
+        base = v8si_calc_base(ms, 0, 16, 16);
+        off = 4 * 16 * 16;
+        cr_expect(base - ms->data == off, "Wrong base - Expect %p, got %p.", ms->data + off, base);
+
+        base = v8si_calc_base(ms, 16, 0, ms->last_chk_height);
+        off = 4 * 16 * 16 + 4 * 16 * 8;
+        cr_expect(base - ms->data == off, "Wrong base - Expect %p, got %p.", ms->data + off, base);
+
+        base = v8si_calc_base(ms, 16, 16, ms->last_chk_height);
+        off = 4 * 16 * 24 + 4 * 1 * 16;
+        cr_expect(base - ms->data == off, "Wrong base - Expect %p, got %p.", ms->data + off, base);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 2x17 matrix -- //
+    {
+        ms = mstr_v8si_create(2, 17);
+
+        base = v8si_calc_base(ms, 0, 0, 2);
+        off = 0;
+        cr_expect(base - ms->data == off, "Wrong base - Expect %p, got %p.", ms->data + off, base);
+
+        base = v8si_calc_base(ms, 0, 16, ms->last_chk_height);
+        off = 4 * 2 * 16;
+        cr_expect(base - ms->data == off, "Wrong base - Expect %p, got %p.", ms->data + off, base);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 2x33 matrix -- //
+    {
+        ms = mstr_v8si_create(2, 33);
+
+        base = v8si_calc_base(ms, 0, 0, 2);
+        off = 0;
+        cr_expect(base - ms->data == off, "Wrong base - Expect %p, got %p.", ms->data + off, base);
+
+        base = v8si_calc_base(ms, 0, 16, 2);
+        off = 4 * 2 * 16;
+        cr_expect(base - ms->data == off, "Wrong base - Expect %p, got %p.", ms->data + off, base);
+
+        base = v8si_calc_base(ms, 0, 32, ms->last_chk_height);
+        off = 4 * 2 * 16 * 2;
+        cr_expect(base - ms->data == off, "Wrong base - Expect %p, got %p.", ms->data + off, base);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 17x33 matrix -- //
+    {
+        ms = mstr_v8si_create(17, 33);
+
+        base = v8si_calc_base(ms, 0, 0, 16);
+        off = 0;
+        cr_expect(base - ms->data == off, "Wrong base - Expect %p, got %p.", ms->data + off, base);
+
+        base = v8si_calc_base(ms, 0, 16, 16);
+        off = 4 * 16 * 16;
+        cr_expect(base - ms->data == off, "Wrong base - Expect %p, got %p.", ms->data + off, base);
+
+        base = v8si_calc_base(ms, 0, 32, 16);
+        off = 4 * 16 * 16 * 2;
+        cr_expect(base - ms->data == off, "Wrong base - Expect %p, got %p.", ms->data + off, base);
+
+        base = v8si_calc_base(ms, 16, 0, ms->last_chk_height);
+        off = 4 * 16 * 16 * 2 + 4 * 16 * 8;
+        cr_expect(base - ms->data == off, "Wrong base - Expect %p, got %p.", ms->data + off, base);
+        
+        base = v8si_calc_base(ms, 16, 16, ms->last_chk_height);
+        off = 4 * 16 * 16 * 2 + 4 * 16 * 8 + 4 * 1 * 16;
+        cr_expect(base - ms->data == off, "Wrong base - Expect %p, got %p.", ms->data + off, base);
+
+        base = v8si_calc_base(ms, 16, 32, ms->last_chk_height);
+        off = 4 * 16 * 16 * 2 + 4 * 16 * 8 + 4 * 1 * 16 * 2;
+        cr_expect(base - ms->data == off, "Wrong base - Expect %p, got %p.", ms->data + off, base);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 17x2 matrix -- //
+    {
+        ms = mstr_v8si_create(17, 2);
+
+        base = v8si_calc_base(ms, 0, 0, 16);
+        off = 0;
+        cr_expect(base - ms->data == 0, "Wrong base - Expect %p, got %p.", ms->data + off, base);
+
+        base = v8si_calc_base(ms, 16, 0, ms->last_chk_height);
+        off = 4 * 16 * 8;
+        cr_expect(base - ms->data == off, "Wrong base - Expect %p, got %p.", ms->data + off, base);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 33x2 matrix -- //
+    {
+        ms = mstr_v8si_create(33, 2);
+
+        base = v8si_calc_base(ms, 0, 0, 16);
+        off = 0;
+        cr_expect(base - ms->data == off, "Wrong base - Expect %p, got %p.", ms->data + off, base);
+
+        base = v8si_calc_base(ms, 16, 0, 16);
+        off = 4 * 16 * 8;
+        cr_expect(base - ms->data == off, "Wrong base - Expect %p, got %p.", ms->data + off, base);
+
+        base = v8si_calc_base(ms, 32, 0, ms->last_chk_height);
+        off = 4 * 32 * 8;
+        cr_expect(base - ms->data == off, "Wrong base - Expect %p, got %p.", ms->data + off, base);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 33x17 matrix -- //
+    {
+        ms = mstr_v8si_create(33, 17);
+
+        base = v8si_calc_base(ms, 0, 0, 16);
+        off = 0;
+        cr_expect(base - ms->data == off, "Wrong base - Expect %p, got %p.", ms->data + off, base);
+
+        base = v8si_calc_base(ms, 0, 16, 16);
+        off = 4 * 16 * 16;
+        cr_expect(base - ms->data == off, "Wrong base - Expect %p, got %p.", ms->data + off, base);
+
+        base = v8si_calc_base(ms, 16, 0, 16);
+        off = 4 * 16 * 16 + 4 * 16 * 8;
+        cr_expect(base - ms->data == off, "Wrong base - Expect %p, got %p.", ms->data + off, base);
+
+        base = v8si_calc_base(ms, 16, 16, 16);
+        off = 4 * 16 * 16 * 2 + 4 * 16 * 8;
+        cr_expect(base - ms->data == off, "Wrong base - Expect %p, got %p.", ms->data + off, base);
+
+        base = v8si_calc_base(ms, 32, 0, ms->last_chk_height);
+        off = 4 * 16 * 16 * 2 + 4 * 16 * 8 * 2;
+        cr_expect(base - ms->data == off, "Wrong base - Expect %p, got %p.", ms->data + off, base);
+
+        base = v8si_calc_base(ms, 32, 16, ms->last_chk_height);
+        off = 4 * 16 * 16 * 2 + 4 * 16 * 8 * 2 + 4 * 1 * 16;
+        cr_expect(base - ms->data == off, "Wrong base - Expect %p, got %p.", ms->data + off, base);
     }
 }

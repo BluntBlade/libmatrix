@@ -37,6 +37,7 @@ BENCHMARK_MATRIX_MULTIPLY = benchmark_matrix_multiply
 all : $(TARGET)
 test : $(TEST_TARGET) $(TEST_STOR_TARGET)
 benchmark : $(BENCHMARK_MATRIX_MULTIPLY)
+
 clean :
 	rm -rf *.o $(TARGET) $(TEST_TARGET) $(BENCHMARK_MATRIX_MULTIPLY)
 
@@ -48,8 +49,8 @@ $(TEST_OBJ) : $(SRC)
 $(TEST_TARGET) : $(TEST_OBJ)
 	gcc -o $@ $(TEST_LDFLAGS) $^ $(LDFLAGS) $(LIBS)
 
-$(TEST_STOR_TARGET) : $(TEST_STOR_OBJ)
-	gcc -o $@ $(TEST_LDFLAGS) $^ $(LDFLAGS) $(LIBS) -lcriterion
+$(TEST_STOR_TARGET) : $(TEST_STOR_OBJ) mx_storage.c
+	gcc -o $@ $(TEST_LDFLAGS) $(TEST_STOR_OBJ) $(LDFLAGS) $(LIBS) -lcriterion
 
 $(BENCHMARK_MATRIX_MULTIPLY) : $(BENCHMARK_MATRIX_MULTIPLY_OBJ)
 	gcc -o $@ $^ $(LDFLAGS) $(LIBS)

@@ -56,9 +56,13 @@
 #define check_full_flag(full, expect) \
     cr_expect(full == expect, "Wrong full flag of the chunk - Expect %d, got %d.", expect, full)
 
+#define check_value(val, expect) \
+    cr_expect(val == expect, "Wrong value - Expect %d, got %d.", expect, val)
+
 // ==== TESTS FOR THE STORAGE MODULE OF MATRIX ==== //
 
-Test(Creat, v8si_create) {
+Test(Creat, v8si_create)
+{
     mx_stor_ptr ms = NULL;
 
     // -- 1x1 matrix -- //
@@ -371,7 +375,8 @@ Test(Creat, v8si_create) {
     }
 }
 
-Test(Locate, v8si_calc_base) {
+Test(Locate, v8si_calc_base)
+{
     mx_stor_ptr ms = NULL;
     void * base = NULL;
 
@@ -537,7 +542,8 @@ Test(Locate, v8si_calc_base) {
     }
 }
 
-Test(Locate, v8si_locate_chunk) {
+Test(Locate, v8si_locate_chunk)
+{
     mx_stor_ptr ms = NULL;
     uint32_t rows_in_chk = 0;
     uint32_t cols_in_chk = 0;;
@@ -623,6 +629,208 @@ Test(Locate, v8si_locate_chunk) {
         check_rows_in_chunk(rows_in_chk, 1);
         check_columns_in_chunk(cols_in_chk, 1);
         check_full_flag(full, false);
+
+        mstr_v8si_destroy(ms);
+    }
+}
+
+Test(GetterSetter, v8si_get)
+{
+    mx_stor_ptr ms = NULL;
+    int32_t * base = NULL;
+    int32_t val = 0;
+
+    // -- 1x1 matrix -- //
+    {
+        ms = mstr_v8si_create(1, 1);
+        base = ms->data;
+
+        base[0 * 8 + 0] = 4567;
+        val = mstr_v8si_get(ms, 0, 0);
+        check_value(val, 4567);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 5x5 matrix -- //
+    {
+        ms = mstr_v8si_create(5, 5);
+        base = ms->data;
+
+        base[4 * 8 + 4] = 4567;
+        val = mstr_v8si_get(ms, 4, 4);
+        check_value(val, 4567);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 8x8 matrix -- //
+    {
+        ms = mstr_v8si_create(8, 8);
+        base = ms->data;
+
+        base[7 * 8] = 4567;
+        val = mstr_v8si_get(ms, 7, 0);
+        check_value(val, 4567);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 9x9 matrix -- //
+    {
+        ms = mstr_v8si_create(9, 9);
+        base = ms->data;
+
+        base[8] = 4567;
+        val = mstr_v8si_get(ms, 0, 8);
+        check_value(val, 4567);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 16x16 matrix -- //
+    {
+        ms = mstr_v8si_create(16, 16);
+        base = ms->data;
+
+        base[15 * 16 + 15] = 4567;
+        val = mstr_v8si_get(ms, 15, 15);
+        check_value(val, 4567);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 17x17 matrix -- //
+    {
+        ms = mstr_v8si_create(17, 17);
+        base = ms->data;
+
+        base[16 * 16 + 0 + 0] = 9876;
+        val = mstr_v8si_get(ms, 0, 16);
+        check_value(val, 9876);
+
+        base[16 * 16 + 16 * 8 + 0] = 1234;
+        val = mstr_v8si_get(ms, 16, 0);
+        check_value(val, 1234);
+
+        base[16 * 16 + 16 * 8 + 1 * 16 + 0] = 4567;
+        val = mstr_v8si_get(ms, 16, 16);
+        check_value(val, 4567);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 34x34 matrix -- //
+    {
+        ms = mstr_v8si_create(34, 34);
+        base = ms->data;
+
+        base[16 * 16 * 2 + 6 * 8 + 1] = 4567;
+        val = mstr_v8si_get(ms, 6, 33);
+        check_value(val, 4567);
+
+        base[16 * 16 * 2 + 16 * 8 + 1 * 16 + 1] = 9876;
+        val = mstr_v8si_get(ms, 17, 1);
+        check_value(val, 9876);
+
+        base[16 * 16 * 2 + 16 * 8 + 16 * 16 + 8 * 16 + 8] = 1234;
+        val = mstr_v8si_get(ms, 24, 24);
+        check_value(val, 1234);
+
+        mstr_v8si_destroy(ms);
+    }
+}
+
+Test(GetterSetter, v8si_set)
+{
+    mx_stor_ptr ms = NULL;
+    int32_t * base = NULL;
+
+    // -- 1x1 matrix -- //
+    {
+        ms = mstr_v8si_create(1, 1);
+        base = ms->data;
+
+        mstr_v8si_set(ms, 0, 0, 4567);
+        check_value(base[0 * 8 + 0], 4567);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 5x5 matrix -- //
+    {
+        ms = mstr_v8si_create(5, 5);
+        base = ms->data;
+
+        mstr_v8si_set(ms, 4, 4, 4567);
+        check_value(base[4 * 8 + 4], 4567);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 8x8 matrix -- //
+    {
+        ms = mstr_v8si_create(8, 8);
+        base = ms->data;
+
+        mstr_v8si_set(ms, 7, 0, 4567);
+        check_value(base[7 * 8], 4567);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 9x9 matrix -- //
+    {
+        ms = mstr_v8si_create(9, 9);
+        base = ms->data;
+
+        mstr_v8si_set(ms, 0, 8, 4567);
+        check_value(base[8], 4567);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 16x16 matrix -- //
+    {
+        ms = mstr_v8si_create(16, 16);
+        base = ms->data;
+
+        mstr_v8si_set(ms, 15, 15, 4567);
+        check_value(base[15 * 16 + 15], 4567);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 17x17 matrix -- //
+    {
+        ms = mstr_v8si_create(17, 17);
+        base = ms->data;
+
+        mstr_v8si_set(ms, 0, 16, 9876);
+        check_value(base[16 * 16 + 0 + 0], 9876);
+
+        mstr_v8si_set(ms, 16, 0, 1234);
+        check_value(base[16 * 16 + 16 * 8 + 0], 1234);
+
+        mstr_v8si_set(ms, 16, 16, 4567);
+        check_value(base[16 * 16 + 16 * 8 + 1 * 16 + 0], 4567);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 34x34 matrix -- //
+    {
+        ms = mstr_v8si_create(34, 34);
+        base = ms->data;
+
+        mstr_v8si_set(ms, 6, 33, 4567);
+        check_value(base[16 * 16 * 2 + 6 * 8 + 1], 4567);
+
+        mstr_v8si_set(ms, 17, 1, 9876);
+        check_value(base[16 * 16 * 2 + 16 * 8 + 1 * 16 + 1], 9876);
+
+        mstr_v8si_set(ms, 24, 24, 1234);
+        check_value(base[16 * 16 * 2 + 16 * 8 + 16 * 16 + 8 * 16 + 8], 1234);
 
         mstr_v8si_destroy(ms);
     }

@@ -139,13 +139,15 @@ void mstr_v8si_init_identity(mx_stor_ptr ms)
     uint32_t i = ms->chks_in_width;
     uint32_t last_rows = 0;
     uint32_t cols_padded = 0;
+    uint32_t val_idx = 0;
     int32_t * base = NULL;
 
     mstr_v8si_init_zeros(ms);
 
     last_rows = ms->last_chk_height;
     cols_padded = round_to_multiples_of_8(last_rows);
-    base = v8si_calc_base(ms, i - 1, i - 1, last_rows);
+    val_idx = (i - 1) * I32_VALS_IN_CACHE_LINE;
+    base = v8si_calc_base(ms, val_idx, val_idx, last_rows);
     switch (last_rows) {
         default: assert(1); break;
         case 16:
@@ -168,7 +170,8 @@ void mstr_v8si_init_identity(mx_stor_ptr ms)
                 if (--i == 0) {
                     break;
                 } // if
-                base = v8si_calc_base(ms, i - 1, i - 1, 16);
+                val_idx = (i - 1) * I32_VALS_IN_CACHE_LINE;
+                base = v8si_calc_base(ms, val_idx, val_idx, 16);
                 cols_padded = 16;
             } while (1);
             break;

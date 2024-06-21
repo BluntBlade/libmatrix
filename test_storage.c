@@ -59,6 +59,9 @@
 #define check_value(val, expect) \
     cr_expect(val == expect, "Wrong value - Expect %d, got %d.", expect, val)
 
+#define check_value_at(val, expect, i, j) \
+    cr_expect(val == expect, "Wrong value at (%d,%d) - Expect %d, got %d.", i, j, expect, val)
+
 // ==== TESTS FOR THE STORAGE MODULE OF MATRIX ==== //
 
 Test(Creat, v8si_create)
@@ -831,6 +834,131 @@ Test(GetterSetter, v8si_set)
 
         mstr_v8si_set(ms, 24, 24, 1234);
         check_value(base[16 * 16 * 2 + 16 * 8 + 16 * 16 + 8 * 16 + 8], 1234);
+
+        mstr_v8si_destroy(ms);
+    }
+}
+
+Test(Initialization, v8si_init_identity)
+{
+    uint32_t i = 0;
+    uint32_t j = 0;
+    mx_stor_ptr ms = NULL;
+
+    // -- 1x1 matrix -- //
+    {
+        ms = mstr_v8si_create(1, 1);
+
+        mstr_v8si_init_identity(ms);
+        check_value_at(mstr_v8si_get(ms, 0, 0), 1, 0, 0);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 5x5 matrix -- //
+    {
+        ms = mstr_v8si_create(5, 5);
+
+        mstr_v8si_init_identity(ms);
+        for (i = 0; i < 5; i += 1) {
+            for (j = 0; j < 5; j += 1) {
+                if (i == j) {
+                    check_value_at(mstr_v8si_get(ms, i, j), 1, i, j);
+                } else {
+                    check_value_at(mstr_v8si_get(ms, i, j), 0, i, j);
+                } // if
+            } // for
+        } // for
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 8x8 matrix -- //
+    {
+        ms = mstr_v8si_create(8, 8);
+
+        mstr_v8si_init_identity(ms);
+        for (i = 0; i < 8; i += 1) {
+            for (j = 0; j < 8; j += 1) {
+                if (i == j) {
+                    check_value_at(mstr_v8si_get(ms, i, j), 1, i, j);
+                } else {
+                    check_value_at(mstr_v8si_get(ms, i, j), 0, i, j);
+                } // if
+            } // for
+        } // for
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 9x9 matrix -- //
+    {
+        ms = mstr_v8si_create(9, 9);
+
+        mstr_v8si_init_identity(ms);
+        for (i = 0; i < 9; i += 1) {
+            for (j = 0; j < 9; j += 1) {
+                if (i == j) {
+                    check_value_at(mstr_v8si_get(ms, i, j), 1, i, j);
+                } else {
+                    check_value_at(mstr_v8si_get(ms, i, j), 0, i, j);
+                } // if
+            } // for
+        } // for
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 16x16 matrix -- //
+    {
+        ms = mstr_v8si_create(16, 16);
+
+        mstr_v8si_init_identity(ms);
+        for (i = 0; i < 16; i += 1) {
+            for (j = 0; j < 16; j += 1) {
+                if (i == j) {
+                    check_value_at(mstr_v8si_get(ms, i, j), 1, i, j);
+                } else {
+                    check_value_at(mstr_v8si_get(ms, i, j), 0, i, j);
+                } // if
+            } // for
+        } // for
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 17x17 matrix -- //
+    {
+        ms = mstr_v8si_create(17, 17);
+
+        mstr_v8si_init_identity(ms);
+        for (i = 0; i < 17; i += 1) {
+            for (j = 0; j < 17; j += 1) {
+                if (i == j) {
+                    check_value_at(mstr_v8si_get(ms, i, j), 1, i, j);
+                } else {
+                    check_value_at(mstr_v8si_get(ms, i, j), 0, i, j);
+                } // if
+            } // for
+        } // for
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 33x33 matrix -- //
+    {
+        ms = mstr_v8si_create(33, 33);
+
+        mstr_v8si_init_identity(ms);
+        for (i = 0; i < 33; i += 1) {
+            for (j = 0; j < 33; j += 1) {
+                if (i == j) {
+                    check_value_at(mstr_v8si_get(ms, i, j), 1, i, j);
+                } else {
+                    check_value_at(mstr_v8si_get(ms, i, j), 0, i, j);
+                } // if
+            } // for
+        } // for
 
         mstr_v8si_destroy(ms);
     }

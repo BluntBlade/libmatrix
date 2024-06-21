@@ -20,6 +20,11 @@ inline static uint32_t round_to_multiples_of_16(uint32_t cnt)
     return (cnt + (16 - 1)) & (~(16 - 1));
 } // round_to_multiples_of_16
 
+inline static uint32_t floor_to_multiples_of_16(uint32_t cnt)
+{
+    return cnt & (~(16 - 1));
+} // floor_to_multiples_of_16
+
 inline static uint32_t ceil_to_or_less_than_16(uint32_t cnt)
 {
     return (cnt < 16) ? cnt : 16;
@@ -119,9 +124,9 @@ static v8si_t v8si_mask[9] = {
 
 static v8si_t v8si_idx[2] = {{0, 1, 2, 3, 4, 5, 6, 7}, {8, 9, 10, 11, 12, 13, 14, 15}};
 
-inline static void * v8si_calc_base(mx_stor_ptr ms, uint32_t row_idx, uint32_t col_idx, uint32_t rows_in_chk)
+inline static void * v8si_calc_base(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, uint32_t rows_in_chk)
 {
-    return ms->data + (row_idx * ms->cols_padded + rows_in_chk * col_idx) * sizeof(int32_t);
+    return ms->data + (val_ridx * ms->cols_padded + rows_in_chk * val_cidx) * sizeof(int32_t);
 } // v8si_calc_base
 
 void mstr_v8si_init_zeros(mx_stor_ptr ms)
@@ -169,6 +174,26 @@ void mstr_v8si_init_identity(mx_stor_ptr ms)
             break;
     } // switch
 } // mstr_v8si_init_identity
+
+int32_t mstr_v8si_get(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx)
+{
+    uint32_t base_ridx = floor_to_multiples_of_16(val_ridx);
+    uint32_t base_cidx = floor_to_multiples_of_16(val_cidx);
+    uint32_t rows_in_chk = ceil_to_or_less_than_16(ms->rows - base_ridx);
+    uint32_t cols_in_chk = ceil_to_or_less_than_16(ms->cols - base_cidx);
+    int32_t * base = v8si_calc_base(ms, base_ridx, base_cidx, rows_in_chk);
+    return base[(val_ridx - base_ridx) * round_to_multiples_of_8(cols_in_chk) + (val_cidx - base_cidx)];
+} // mstr_v8si_get
+
+void mstr_v8si_set(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, int32_t src)
+{
+    uint32_t base_ridx = floor_to_multiples_of_16(val_ridx);
+    uint32_t base_cidx = floor_to_multiples_of_16(val_cidx);
+    uint32_t rows_in_chk = ceil_to_or_less_than_16(ms->rows - base_ridx);
+    uint32_t cols_in_chk = ceil_to_or_less_than_16(ms->cols - base_cidx);
+    int32_t * base = v8si_calc_base(ms, base_ridx, base_cidx, rows_in_chk);
+    base[(val_ridx - base_ridx) * round_to_multiples_of_8(cols_in_chk) + (val_cidx - base_cidx)] = src;
+} // mstr_v8si_set
 
 void mstr_v8si_fill(mx_stor_ptr ms, int32_t val)
 {
@@ -315,15 +340,20 @@ static void v8si_assemble_chunk(v8si_t * chk_pck, int32_t * src, uint32_t src_sp
 
 inline static void * v8si_locate_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, uint32_t * rows_in_chk, uint32_t * cols_in_chk, bool * full)
 {
-    uint32_t row_idx = chk_ridx * I32_VALS_IN_CACHE_LINE; // Refer to values.
-    uint32_t col_idx = chk_cidx * I32_VALS_IN_CACHE_LINE; // Refer to values.
+    uint32_t base_ridx = chk_ridx * I32_VALS_IN_CACHE_LINE; // Refer to values.
+    uint32_t base_cidx = chk_cidx * I32_VALS_IN_CACHE_LINE; // Refer to values.
 
-    *rows_in_chk = ceil_to_or_less_than_16(ms->rows - row_idx);
-    *cols_in_chk = ceil_to_or_less_than_16(ms->cols - col_idx);
+    *rows_in_chk = ceil_to_or_less_than_16(ms->rows - base_ridx);
+    *cols_in_chk = ceil_to_or_less_than_16(ms->cols - base_cidx);
 
     *full = (*rows_in_chk == I32_VALS_IN_CACHE_LINE) && (*cols_in_chk == I32_VALS_IN_CACHE_LINE);
-    return v8si_calc_base(ms, row_idx, col_idx, *rows_in_chk);
+    return v8si_calc_base(ms, base_ridx, base_cidx, *rows_in_chk);
 } // v8si_locate_chunk
+
+inline static uint32_t v8si_to_chunk_index(uint32_t idx)
+{
+    return (idx == round_to_multiples_of_16(idx)) ? (idx / I32_VALS_IN_CACHE_LINE) : (round_to_multiples_of_16(idx) / I32_VALS_IN_CACHE_LINE - 1);
+} // v8si_to_chunk_index
 
 mx_chunk_ptr mstr_v8si_copy_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr chk, uint32_t * rows_in_chk, uint32_t * cols_in_chk, bool * full)
 {

@@ -209,8 +209,8 @@ void mstr_v8si_fill(mx_stor_ptr ms, int32_t val)
         base[i] = src;
     } // for
     for (i = 1; i < ms->rows; i += 1) {
+        base += ms->cols_padded / I32_VALS_IN_V8SI;
         memcpy(base, ms->data, sizeof(int32_t) * ms->cols_padded);
-        base += sizeof(int32_t) * ms->cols_padded;
     } // for
 
     // NOTE: No need to zero out any padded int32_t values.

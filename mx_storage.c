@@ -382,5 +382,8 @@ mx_chunk_ptr mstr_v8si_transpose_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32
 void mstr_v8si_store_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr chk, uint32_t rows_in_chk, uint32_t cols_in_chk)
 {
     void * base = v8si_calc_base(ms, chk_ridx * I32_VALS_IN_CACHE_LINE, chk_cidx * I32_VALS_IN_CACHE_LINE, rows_in_chk);
-    memcpy(base, chk->v8si_pcks, rows_in_chk * round_to_multiples_of_8(cols_in_chk) * sizeof(int32_t));
+    if (base != chk) {
+        memcpy(base, chk->i32_vals, sizeof(int32_t) * rows_in_chk * round_to_multiples_of_8(cols_in_chk));
+    } // if
+    // NOTE: No need to zero out any padded int32_t values.
 } // mstr_v8si_store_chunk

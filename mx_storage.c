@@ -379,7 +379,7 @@ mx_chunk_ptr mstr_v8si_transpose_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32
     return chk;
 } // mstr_v8si_transpose_chunk
 
-void mstr_v8si_store_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr chk, uint32_t rows_in_chk, uint32_t cols_in_chk)
+void mstr_v8si_store_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr chk)
 {
     uint32_t i = 0;
     uint32_t bytes = 0;

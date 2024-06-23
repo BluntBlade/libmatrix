@@ -33,7 +33,7 @@ extern void mstr_v8si_fill(mx_stor_ptr ms, int32_t val);
 extern mx_chunk_ptr mstr_v8si_copy_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr chk, uint32_t * rows_in_chk, uint32_t * cols_in_chk, bool * full);
 extern mx_chunk_ptr mstr_v8si_transpose_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr chk, uint32_t * rows_in_chk, uint32_t * cols_in_chk, bool * full);
 
-extern void mstr_v8si_store_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr chk, uint32_t rows_in_chk, uint32_t cols_in_chk);
+extern void mstr_v8si_store_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr chk);
 
 inline static void mstr_v8si_init_ones(mx_stor_ptr ms)
 {

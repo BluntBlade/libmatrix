@@ -376,6 +376,10 @@ mx_chunk_ptr mstr_v8si_transpose_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32
 {
     void * base = v8si_locate_chunk(ms, chk_ridx, chk_cidx, rows_in_chk, cols_in_chk, full);
     v8si_assemble_chunk(&chk->v8si_pcks[0][0], base, 1, round_to_multiples_of_8(*cols_in_chk), *cols_in_chk, *rows_in_chk);
+    // Swap the number of rows and columns in the source chunk.
+    *rows_in_chk ^= *cols_in_chk;
+    *cols_in_chk ^= *rows_in_chk;
+    *rows_in_chk ^= *cols_in_chk;
     return chk;
 } // mstr_v8si_transpose_chunk
 

@@ -16,7 +16,7 @@ endif
 #TEST_LDFLAGS = -Wl,--wrap=malloc
 TEST_LDFLAGS = -g
 
-SRC = matrix.c mx_storage.c mx_types.c
+SRC = matrix.c mx_storage.c mx_operation.c mx_types.c
 OBJ = $(SRC:.c=.o)
 TARGET = libmatrix.so
 

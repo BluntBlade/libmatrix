@@ -2,7 +2,7 @@ CC = gcc
 
 CFLAGS = -g -fPIC -I. -I/usr/local/include -msse4.1 -mavx2 -Wno-int-conversion
 
-ifndef DEBUG
+ifdef RELEASE
     CFLAGS := $(CFLAGS) -O3
 endif
 
@@ -28,6 +28,10 @@ TEST_STOR_SRC = test_storage.c mx_types.c
 TEST_STOR_OBJ = $(TEST_STOR_SRC:.c=.o)
 TEST_STOR_TARGET = test_storage
 
+TEST_OPER_SRC = test_operation.c mx_storage.c mx_types.c
+TEST_OPER_OBJ = $(TEST_OPER_SRC:.c=.o)
+TEST_OPER_TARGET = test_opertaion
+
 BENCHMARK_MATRIX_MULTIPLY_SRC = benchmark_matrix_multiply.c
 BENCHMARK_MATRIX_MULTIPLY_OBJ = $(BENCHMARK_MATRIX_MULTIPLY_SRC:.c=.o)  $(OBJ)
 BENCHMARK_MATRIX_MULTIPLY = benchmark_matrix_multiply
@@ -35,7 +39,7 @@ BENCHMARK_MATRIX_MULTIPLY = benchmark_matrix_multiply
 .PHONY : all test clean
 
 all : $(TARGET)
-test : $(TEST_TARGET) $(TEST_STOR_TARGET)
+test : $(TEST_TARGET) $(TEST_STOR_TARGET) $(TEST_OPER_TARGET)
 benchmark : $(BENCHMARK_MATRIX_MULTIPLY)
 
 clean :
@@ -51,6 +55,9 @@ $(TEST_TARGET) : $(TEST_OBJ)
 
 $(TEST_STOR_TARGET) : $(TEST_STOR_OBJ) mx_storage.c
 	gcc -o $@ $(TEST_LDFLAGS) $(TEST_STOR_OBJ) $(LDFLAGS) $(LIBS) -lcriterion
+
+$(TEST_OPER_TARGET) : $(TEST_OPER_OBJ) mx_operation.c
+	gcc -o $@ $(TEST_LDFLAGS) $(TEST_OPER_OBJ) $(LDFLAGS) $(LIBS) -lcriterion
 
 $(BENCHMARK_MATRIX_MULTIPLY) : $(BENCHMARK_MATRIX_MULTIPLY_OBJ)
 	gcc -o $@ $^ $(LDFLAGS) $(LIBS)

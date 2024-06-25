@@ -110,18 +110,6 @@ uint32_t mstr_v8si_chunks_in_height(mx_stor_ptr ms)
 
 // ---- V8SI related definitions ----
 
-static v8si_t v8si_mask[9] = {
-    { 0,  0,  0,  0,  0,  0,  0,  0},
-    {~0,  0,  0,  0,  0,  0,  0,  0},
-    {~0, ~0,  0,  0,  0,  0,  0,  0},
-    {~0, ~0, ~0,  0,  0,  0,  0,  0},
-    {~0, ~0, ~0, ~0,  0,  0,  0,  0},
-    {~0, ~0, ~0, ~0, ~0,  0,  0,  0},
-    {~0, ~0, ~0, ~0, ~0, ~0,  0,  0},
-    {~0, ~0, ~0, ~0, ~0, ~0, ~0,  0},
-    {~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0}
-};
-
 static v8si_t v8si_idx[2] = {{0, 1, 2, 3, 4, 5, 6, 7}, {8, 9, 10, 11, 12, 13, 14, 15}};
 
 inline static void * v8si_calc_base(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, uint32_t rows_in_chk)

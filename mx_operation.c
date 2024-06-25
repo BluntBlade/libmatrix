@@ -234,7 +234,7 @@ void mops_v8si_subtract(mx_oper_ptr mp, mx_stor_ptr lhs, mx_stor_ptr rhs, mx_sto
     } // for
 } // mops_v8si_subtract
 
-#define v8si_multiply_chunk_full_imp(row, col) \
+#define v8si_multiply_chunk_full(row, col) \
     { \
         ltmp = __builtin_ia32_pmulld256(lhs->v8si_pcks[row][0], rhs->v8si_pcks[col][0]); \
         rtmp = __builtin_ia32_pmulld256(lhs->v8si_pcks[row][1], rhs->v8si_pcks[col][1]); \
@@ -244,9 +244,22 @@ void mops_v8si_subtract(mx_oper_ptr mp, mx_stor_ptr lhs, mx_stor_ptr rhs, mx_sto
         chk->i32_vals[row][col] += ltmp[0] + ltmp[4]; \
     }
 
-#define v8si_multiply_chunk_half_imp(row, col) \
+#define v8si_multiply_chunk_full_with_mask(row, col, lmask, rmask) \
     { \
         ltmp = __builtin_ia32_pmulld256(lhs->v8si_pcks[row][0], rhs->v8si_pcks[col][0]); \
+        rtmp = __builtin_ia32_pmulld256(lhs->v8si_pcks[row][1], rhs->v8si_pcks[col][1]); \
+        ltmp &= lmask; \
+        rtmp &= rmask; \
+        ltmp = __builtin_ia32_phaddd256(ltmp, rtmp); \
+        ltmp = __builtin_ia32_phaddd256(ltmp, v8si_zero); \
+        ltmp = __builtin_ia32_phaddd256(ltmp, v8si_zero); \
+        chk->i32_vals[row][col] += ltmp[0] + ltmp[4]; \
+    }
+
+#define v8si_multiply_chunk_half_with_mask(row, col, mask) \
+    { \
+        ltmp = __builtin_ia32_pmulld256(lhs->v8si_pcks[row][0], rhs->v8si_pcks[col][0]); \
+        ltmp &= mask; \
         ltmp = __builtin_ia32_phaddd256(ltmp, v8si_zero); \
         ltmp = __builtin_ia32_phaddd256(ltmp, v8si_zero); \
         chk->i32_vals[row][col] += ltmp[0] + ltmp[4]; \
@@ -259,22 +272,22 @@ static void v8si_multiply_chunk_fully(mx_chunk_ptr chk, mx_chunk_ptr lhs, mx_chu
     uint32_t i = 0;
 
     for (i = 0; i < I32_VALS_IN_CACHE_LINE; i += 1) {
-        v8si_multiply_chunk_full_imp(i,  0);
-        v8si_multiply_chunk_full_imp(i,  1);
-        v8si_multiply_chunk_full_imp(i,  2);
-        v8si_multiply_chunk_full_imp(i,  3);
-        v8si_multiply_chunk_full_imp(i,  4);
-        v8si_multiply_chunk_full_imp(i,  5);
-        v8si_multiply_chunk_full_imp(i,  6);
-        v8si_multiply_chunk_full_imp(i,  7);
-        v8si_multiply_chunk_full_imp(i,  8);
-        v8si_multiply_chunk_full_imp(i,  9);
-        v8si_multiply_chunk_full_imp(i, 10);
-        v8si_multiply_chunk_full_imp(i, 11);
-        v8si_multiply_chunk_full_imp(i, 12);
-        v8si_multiply_chunk_full_imp(i, 13);
-        v8si_multiply_chunk_full_imp(i, 14);
-        v8si_multiply_chunk_full_imp(i, 15);
+        v8si_multiply_chunk_full(i,  0);
+        v8si_multiply_chunk_full(i,  1);
+        v8si_multiply_chunk_full(i,  2);
+        v8si_multiply_chunk_full(i,  3);
+        v8si_multiply_chunk_full(i,  4);
+        v8si_multiply_chunk_full(i,  5);
+        v8si_multiply_chunk_full(i,  6);
+        v8si_multiply_chunk_full(i,  7);
+        v8si_multiply_chunk_full(i,  8);
+        v8si_multiply_chunk_full(i,  9);
+        v8si_multiply_chunk_full(i, 10);
+        v8si_multiply_chunk_full(i, 11);
+        v8si_multiply_chunk_full(i, 12);
+        v8si_multiply_chunk_full(i, 13);
+        v8si_multiply_chunk_full(i, 14);
+        v8si_multiply_chunk_full(i, 15);
     } // for
 } // v8si_multiply_chunk_fully
 
@@ -284,49 +297,53 @@ static void v8si_multiply_chunk_partly(mx_chunk_ptr chk, mx_chunk_ptr lhs, mx_ch
     v8si_t rtmp;
     uint32_t i = 0;
     uint32_t j = 0;
+    v8si_t * mask[2];
+
+    mask[0] = &v8si_mask[(mp->lchk_cols <= 8) ? (mp->lchk_cols) : 8];
+    mask[1] = &v8si_mask[(mp->lchk_cols <= 8) ? 0 : (mp->lchk_cols - 8)];
 
     if (mp->lchk_cols <= 8) {
         for (i = 0; i < mp->lchk_rows; i += 1, j = 0) {
             switch (mp->rchk_cols) {
                 default: assert(1); break;
-                case 16: v8si_multiply_chunk_half_imp(i, j); j += 1;
-                case 15: v8si_multiply_chunk_half_imp(i, j); j += 1;
-                case 14: v8si_multiply_chunk_half_imp(i, j); j += 1;
-                case 13: v8si_multiply_chunk_half_imp(i, j); j += 1;
-                case 12: v8si_multiply_chunk_half_imp(i, j); j += 1;
-                case 11: v8si_multiply_chunk_half_imp(i, j); j += 1;
-                case 10: v8si_multiply_chunk_half_imp(i, j); j += 1;
-                case  9: v8si_multiply_chunk_half_imp(i, j); j += 1;
-                case  8: v8si_multiply_chunk_half_imp(i, j); j += 1;
-                case  7: v8si_multiply_chunk_half_imp(i, j); j += 1;
-                case  6: v8si_multiply_chunk_half_imp(i, j); j += 1;
-                case  5: v8si_multiply_chunk_half_imp(i, j); j += 1;
-                case  4: v8si_multiply_chunk_half_imp(i, j); j += 1;
-                case  3: v8si_multiply_chunk_half_imp(i, j); j += 1;
-                case  2: v8si_multiply_chunk_half_imp(i, j); j += 1;
-                case  1: v8si_multiply_chunk_half_imp(i, j);
+                case 16: v8si_multiply_chunk_half_with_mask(i, j, *mask[0]); j += 1;
+                case 15: v8si_multiply_chunk_half_with_mask(i, j, *mask[0]); j += 1;
+                case 14: v8si_multiply_chunk_half_with_mask(i, j, *mask[0]); j += 1;
+                case 13: v8si_multiply_chunk_half_with_mask(i, j, *mask[0]); j += 1;
+                case 12: v8si_multiply_chunk_half_with_mask(i, j, *mask[0]); j += 1;
+                case 11: v8si_multiply_chunk_half_with_mask(i, j, *mask[0]); j += 1;
+                case 10: v8si_multiply_chunk_half_with_mask(i, j, *mask[0]); j += 1;
+                case  9: v8si_multiply_chunk_half_with_mask(i, j, *mask[0]); j += 1;
+                case  8: v8si_multiply_chunk_half_with_mask(i, j, *mask[0]); j += 1;
+                case  7: v8si_multiply_chunk_half_with_mask(i, j, *mask[0]); j += 1;
+                case  6: v8si_multiply_chunk_half_with_mask(i, j, *mask[0]); j += 1;
+                case  5: v8si_multiply_chunk_half_with_mask(i, j, *mask[0]); j += 1;
+                case  4: v8si_multiply_chunk_half_with_mask(i, j, *mask[0]); j += 1;
+                case  3: v8si_multiply_chunk_half_with_mask(i, j, *mask[0]); j += 1;
+                case  2: v8si_multiply_chunk_half_with_mask(i, j, *mask[0]); j += 1;
+                case  1: v8si_multiply_chunk_half_with_mask(i, j, *mask[0]);
             } // switch
         } // for
     } else {
         for (i = 0; i < mp->lchk_rows; i += 1, j = 0) {
             switch (mp->rchk_cols) {
                 default: assert(1); break;
-                case 16: v8si_multiply_chunk_full_imp(i, j); j += 1;
-                case 15: v8si_multiply_chunk_full_imp(i, j); j += 1;
-                case 14: v8si_multiply_chunk_full_imp(i, j); j += 1;
-                case 13: v8si_multiply_chunk_full_imp(i, j); j += 1;
-                case 12: v8si_multiply_chunk_full_imp(i, j); j += 1;
-                case 11: v8si_multiply_chunk_full_imp(i, j); j += 1;
-                case 10: v8si_multiply_chunk_full_imp(i, j); j += 1;
-                case  9: v8si_multiply_chunk_full_imp(i, j); j += 1;
-                case  8: v8si_multiply_chunk_full_imp(i, j); j += 1;
-                case  7: v8si_multiply_chunk_full_imp(i, j); j += 1;
-                case  6: v8si_multiply_chunk_full_imp(i, j); j += 1;
-                case  5: v8si_multiply_chunk_full_imp(i, j); j += 1;
-                case  4: v8si_multiply_chunk_full_imp(i, j); j += 1;
-                case  3: v8si_multiply_chunk_full_imp(i, j); j += 1;
-                case  2: v8si_multiply_chunk_full_imp(i, j); j += 1;
-                case  1: v8si_multiply_chunk_full_imp(i, j);
+                case 16: v8si_multiply_chunk_full_with_mask(i, j, *mask[0], *mask[1]); j += 1;
+                case 15: v8si_multiply_chunk_full_with_mask(i, j, *mask[0], *mask[1]); j += 1;
+                case 14: v8si_multiply_chunk_full_with_mask(i, j, *mask[0], *mask[1]); j += 1;
+                case 13: v8si_multiply_chunk_full_with_mask(i, j, *mask[0], *mask[1]); j += 1;
+                case 12: v8si_multiply_chunk_full_with_mask(i, j, *mask[0], *mask[1]); j += 1;
+                case 11: v8si_multiply_chunk_full_with_mask(i, j, *mask[0], *mask[1]); j += 1;
+                case 10: v8si_multiply_chunk_full_with_mask(i, j, *mask[0], *mask[1]); j += 1;
+                case  9: v8si_multiply_chunk_full_with_mask(i, j, *mask[0], *mask[1]); j += 1;
+                case  8: v8si_multiply_chunk_full_with_mask(i, j, *mask[0], *mask[1]); j += 1;
+                case  7: v8si_multiply_chunk_full_with_mask(i, j, *mask[0], *mask[1]); j += 1;
+                case  6: v8si_multiply_chunk_full_with_mask(i, j, *mask[0], *mask[1]); j += 1;
+                case  5: v8si_multiply_chunk_full_with_mask(i, j, *mask[0], *mask[1]); j += 1;
+                case  4: v8si_multiply_chunk_full_with_mask(i, j, *mask[0], *mask[1]); j += 1;
+                case  3: v8si_multiply_chunk_full_with_mask(i, j, *mask[0], *mask[1]); j += 1;
+                case  2: v8si_multiply_chunk_full_with_mask(i, j, *mask[0], *mask[1]); j += 1;
+                case  1: v8si_multiply_chunk_full_with_mask(i, j, *mask[0], *mask[1]);
             } // switch
         } // for
     } // if

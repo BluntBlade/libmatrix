@@ -30,7 +30,7 @@ TEST_STOR_TARGET = test_storage
 
 TEST_OPER_SRC = test_operation.c mx_storage.c mx_types.c
 TEST_OPER_OBJ = $(TEST_OPER_SRC:.c=.o)
-TEST_OPER_TARGET = test_opertaion
+TEST_OPER_TARGET = test_operation
 
 BENCHMARK_MATRIX_MULTIPLY_SRC = benchmark_matrix_multiply.c
 BENCHMARK_MATRIX_MULTIPLY_OBJ = $(BENCHMARK_MATRIX_MULTIPLY_SRC:.c=.o)  $(OBJ)
@@ -43,7 +43,7 @@ test : $(TEST_TARGET) $(TEST_STOR_TARGET) $(TEST_OPER_TARGET)
 benchmark : $(BENCHMARK_MATRIX_MULTIPLY)
 
 clean :
-	rm -rf *.o $(TARGET) $(TEST_TARGET) $(BENCHMARK_MATRIX_MULTIPLY)
+	rm -rf *.o $(TARGET) $(TEST_TARGET) $(TEST_STOR_TARGET) $(TEST_OPER_TARGET) $(BENCHMARK_MATRIX_MULTIPLY)
 
 $(TARGET) : $(OBJ)
 	gcc -o $@ --shared $^ $(LDFLAGS) $(LIBS)

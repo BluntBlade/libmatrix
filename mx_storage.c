@@ -422,7 +422,5 @@ void mstr_v8si_store_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx,
         case  1:
             memcpy(base, &chk->i32_vals[i][0], bytes);
     } // switch
-    for (i = 0; i < rows_in_chk; i += 1) {
-    } // for
     // NOTE: No need to zero out any padded int32_t values.
 } // mstr_v8si_store_chunk

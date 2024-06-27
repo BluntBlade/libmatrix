@@ -1504,3 +1504,273 @@ Test(Operation, mops_v8si_add)
         mops_v8si_destroy(mp);
     }
 }
+
+Test(Operation, mops_v8si_subtract)
+{
+    uint32_t i = 0;
+    uint32_t j = 0;
+    mx_oper_ptr mp = NULL;
+    mx_stor_ptr lhs = NULL;
+    mx_stor_ptr rhs = NULL;
+    mx_stor_ptr ret = NULL;
+
+    // -- 1x1 matrix subtraction -- //
+    {
+        mp = mops_v8si_create();
+
+        lhs = mstr_v8si_create(1, 1);
+        mstr_v8si_set(lhs, 0, 0, 1);
+
+        rhs = mstr_v8si_create(1, 1);
+        mstr_v8si_set(rhs, 0, 0, 99);
+
+        ret = mstr_v8si_create(1, 1);
+
+        mops_v8si_subtract(mp, lhs, rhs, ret);
+
+        check_value_at(mstr_v8si_get(ret, 0, 0), -98, 0, 0);
+
+        mstr_v8si_destroy(ret);
+        mstr_v8si_destroy(rhs);
+        mstr_v8si_destroy(lhs);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 5x5 matrix subtraction -- //
+    {
+        mp = mops_v8si_create();
+
+        lhs = mstr_v8si_create(5, 5);
+        for (i = 0; i < 5; i += 1) {
+            for (j = 0; j < 5; j += 1) {
+                mstr_v8si_set(lhs, i, j, i * j);
+            } // for
+        } // for
+
+        rhs = mstr_v8si_create(5, 5);
+        for (i = 0; i < 5; i += 1) {
+            for (j = 0; j < 5; j += 1) {
+                mstr_v8si_set(rhs, i, j, i - j);
+            } // for
+        } // for
+
+        ret = mstr_v8si_create(5, 5);
+
+        mops_v8si_subtract(mp, lhs, rhs, ret);
+
+        for (i = 0; i < 5; i += 1) {
+            for (j = 0; j < 5; j += 1) {
+                check_value_at(mstr_v8si_get(ret, i, j), i * j - (i - j), i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(ret);
+        mstr_v8si_destroy(rhs);
+        mstr_v8si_destroy(lhs);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 8x8 matrix subtraction -- //
+    {
+        mp = mops_v8si_create();
+
+        lhs = mstr_v8si_create(8, 8);
+        for (i = 0; i < 8; i += 1) {
+            for (j = 0; j < 8; j += 1) {
+                mstr_v8si_set(lhs, i, j, i * j);
+            } // for
+        } // for
+
+        rhs = mstr_v8si_create(8, 8);
+        for (i = 0; i < 8; i += 1) {
+            for (j = 0; j < 8; j += 1) {
+                mstr_v8si_set(rhs, i, j, i - j);
+            } // for
+        } // for
+
+        ret = mstr_v8si_create(8, 8);
+
+        mops_v8si_subtract(mp, lhs, rhs, ret);
+
+        for (i = 0; i < 8; i += 1) {
+            for (j = 0; j < 8; j += 1) {
+                check_value_at(mstr_v8si_get(ret, i, j), i * j - (i - j), i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(ret);
+        mstr_v8si_destroy(rhs);
+        mstr_v8si_destroy(lhs);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 9x9 matrix subtraction -- //
+    {
+        mp = mops_v8si_create();
+
+        lhs = mstr_v8si_create(9, 9);
+        for (i = 0; i < 9; i += 1) {
+            for (j = 0; j < 9; j += 1) {
+                mstr_v8si_set(lhs, i, j, i * j);
+            } // for
+        } // for
+
+        rhs = mstr_v8si_create(9, 9);
+        for (i = 0; i < 9; i += 1) {
+            for (j = 0; j < 9; j += 1) {
+                mstr_v8si_set(rhs, i, j, i - j);
+            } // for
+        } // for
+
+        ret = mstr_v8si_create(9, 9);
+
+        mops_v8si_subtract(mp, lhs, rhs, ret);
+
+        for (i = 0; i < 9; i += 1) {
+            for (j = 0; j < 9; j += 1) {
+                check_value_at(mstr_v8si_get(ret, i, j), i * j - (i - j), i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(ret);
+        mstr_v8si_destroy(rhs);
+        mstr_v8si_destroy(lhs);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 16x16 matrix subtraction -- //
+    {
+        mp = mops_v8si_create();
+
+        lhs = mstr_v8si_create(16, 16);
+        for (i = 0; i < 16; i += 1) {
+            for (j = 0; j < 16; j += 1) {
+                mstr_v8si_set(lhs, i, j, i * j);
+            } // for
+        } // for
+
+        rhs = mstr_v8si_create(16, 16);
+        for (i = 0; i < 16; i += 1) {
+            for (j = 0; j < 16; j += 1) {
+                mstr_v8si_set(rhs, i, j, i - j);
+            } // for
+        } // for
+
+        ret = mstr_v8si_create(16, 16);
+
+        mops_v8si_subtract(mp, lhs, rhs, ret);
+
+        for (i = 0; i < 16; i += 1) {
+            for (j = 0; j < 16; j += 1) {
+                check_value_at(mstr_v8si_get(ret, i, j), i * j - (i - j), i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(ret);
+        mstr_v8si_destroy(rhs);
+        mstr_v8si_destroy(lhs);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 17x17 matrix subtraction -- //
+    {
+        mp = mops_v8si_create();
+
+        lhs = mstr_v8si_create(17, 17);
+        for (i = 0; i < 17; i += 1) {
+            for (j = 0; j < 17; j += 1) {
+                mstr_v8si_set(lhs, i, j, i * j);
+            } // for
+        } // for
+
+        rhs = mstr_v8si_create(17, 17);
+        for (i = 0; i < 17; i += 1) {
+            for (j = 0; j < 17; j += 1) {
+                mstr_v8si_set(rhs, i, j, i - j);
+            } // for
+        } // for
+
+        ret = mstr_v8si_create(17, 17);
+
+        mops_v8si_subtract(mp, lhs, rhs, ret);
+
+        for (i = 0; i < 17; i += 1) {
+            for (j = 0; j < 17; j += 1) {
+                check_value_at(mstr_v8si_get(ret, i, j), i * j - (i - j), i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(ret);
+        mstr_v8si_destroy(rhs);
+        mstr_v8si_destroy(lhs);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 2x33 matrix subtraction -- //
+    {
+        mp = mops_v8si_create();
+
+        lhs = mstr_v8si_create(2, 33);
+        for (i = 0; i < 2; i += 1) {
+            for (j = 0; j < 33; j += 1) {
+                mstr_v8si_set(lhs, i, j, i * j);
+            } // for
+        } // for
+
+        rhs = mstr_v8si_create(2, 33);
+        for (i = 0; i < 2; i += 1) {
+            for (j = 0; j < 33; j += 1) {
+                mstr_v8si_set(rhs, i, j, i - j);
+            } // for
+        } // for
+
+        ret = mstr_v8si_create(2, 33);
+
+        mops_v8si_subtract(mp, lhs, rhs, ret);
+
+        for (i = 0; i < 2; i += 1) {
+            for (j = 0; j < 33; j += 1) {
+                check_value_at(mstr_v8si_get(ret, i, j), i * j - (i - j), i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(ret);
+        mstr_v8si_destroy(rhs);
+        mstr_v8si_destroy(lhs);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 33x17 matrix subtraction -- //
+    {
+        mp = mops_v8si_create();
+
+        lhs = mstr_v8si_create(33, 17);
+        for (i = 0; i < 33; i += 1) {
+            for (j = 0; j < 17; j += 1) {
+                mstr_v8si_set(lhs, i, j, i * j);
+            } // for
+        } // for
+
+        rhs = mstr_v8si_create(33, 17);
+        for (i = 0; i < 33; i += 1) {
+            for (j = 0; j < 17; j += 1) {
+                mstr_v8si_set(rhs, i, j, i - j);
+            } // for
+        } // for
+
+        ret = mstr_v8si_create(33, 17);
+
+        mops_v8si_subtract(mp, lhs, rhs, ret);
+
+        for (i = 0; i < 33; i += 1) {
+            for (j = 0; j < 17; j += 1) {
+                check_value_at(mstr_v8si_get(ret, i, j), i * j - (i - j), i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(ret);
+        mstr_v8si_destroy(rhs);
+        mstr_v8si_destroy(lhs);
+        mops_v8si_destroy(mp);
+    }
+}

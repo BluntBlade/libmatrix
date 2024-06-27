@@ -118,8 +118,8 @@ void mops_v8si_add(mx_oper_ptr mp, mx_stor_ptr lhs, mx_stor_ptr rhs, mx_stor_ptr
     mx_chunk_ptr rchk = NULL;
     mx_chunk_ptr mchk = NULL;
 
-    for (i = 0; i < mstr_v8si_chunks_in_width(lhs); i += 1) {
-        for (j = 0; j < mstr_v8si_chunks_in_height(lhs); j += 1) {
+    for (i = 0; i < mstr_v8si_chunks_in_height(lhs); i += 1) {
+        for (j = 0; j < mstr_v8si_chunks_in_width(lhs); j += 1) {
             lchk = mstr_v8si_copy_chunk(lhs, i, j, &mp->lchk, &mp->lchk_rows, &mp->lchk_cols, &mp->lchk_full);
             rchk = mstr_v8si_copy_chunk(rhs, i, j, &mp->rchk, &mp->rchk_rows, &mp->rchk_cols, &mp->rchk_full);
             mchk = mstr_v8si_copy_chunk(ret, i, j, &mp->mchk, &mp->mchk_rows, &mp->mchk_cols, &mp->mchk_full);
@@ -219,8 +219,8 @@ void mops_v8si_subtract(mx_oper_ptr mp, mx_stor_ptr lhs, mx_stor_ptr rhs, mx_sto
     mx_chunk_ptr rchk = NULL;
     mx_chunk_ptr mchk = NULL;
 
-    for (i = 0; i < mstr_v8si_chunks_in_width(lhs); i += 1) {
-        for (j = 0; j < mstr_v8si_chunks_in_height(lhs); j += 1) {
+    for (i = 0; i < mstr_v8si_chunks_in_height(lhs); i += 1) {
+        for (j = 0; j < mstr_v8si_chunks_in_width(lhs); j += 1) {
             lchk = mstr_v8si_copy_chunk(lhs, i, j, &mp->lchk, &mp->lchk_rows, &mp->lchk_cols, &mp->lchk_full);
             rchk = mstr_v8si_copy_chunk(rhs, i, j, &mp->rchk, &mp->rchk_rows, &mp->rchk_cols, &mp->rchk_full);
             mchk = mstr_v8si_copy_chunk(ret, i, j, &mp->mchk, &mp->mchk_rows, &mp->mchk_cols, &mp->mchk_full);
@@ -358,11 +358,11 @@ void mops_v8si_multiply(mx_oper_ptr mp, mx_stor_ptr lhs, mx_stor_ptr rhs, mx_sto
     mx_chunk_ptr rchk = NULL;
     mx_chunk_ptr mchk = NULL;
 
-    for (k = 0; k < mstr_v8si_chunks_in_width(rhs); k += 1) {
-        for (j = 0; j < mstr_v8si_chunks_in_height(rhs); j += 1) {
+    for (k = 0; k < mstr_v8si_chunks_in_height(rhs); k += 1) {
+        for (j = 0; j < mstr_v8si_chunks_in_width(rhs); j += 1) {
             rchk = mstr_v8si_transpose_chunk(rhs, k, j, &mp->rchk, &mp->rchk_rows, &mp->rchk_cols, &mp->rchk_full);
 
-            for (i = 0; i < mstr_v8si_chunks_in_width(lhs); i += 1) {
+            for (i = 0; i < mstr_v8si_chunks_in_height(lhs); i += 1) {
                 lchk = mstr_v8si_copy_chunk(lhs, i, k, &mp->lchk, &mp->lchk_rows, &mp->lchk_cols, &mp->lchk_full);
                 mchk = mstr_v8si_copy_chunk(ret, i, j, &mp->mchk, &mp->mchk_rows, &mp->mchk_cols, &mp->mchk_full);
                 if (mp->mchk_full) {
@@ -462,8 +462,8 @@ void mops_v8si_scalar_multiply(mx_oper_ptr mp, int32_t lhs, mx_stor_ptr rhs, mx_
     mx_chunk_ptr rchk = NULL;
     mx_chunk_ptr mchk = NULL;
 
-    for (i = 0; i < mstr_v8si_chunks_in_width(rhs); i += 1) {
-        for (j = 0; j < mstr_v8si_chunks_in_height(rhs); j += 1) {
+    for (i = 0; i < mstr_v8si_chunks_in_height(rhs); i += 1) {
+        for (j = 0; j < mstr_v8si_chunks_in_width(rhs); j += 1) {
             rchk = mstr_v8si_copy_chunk(rhs, i, j, &mp->rchk, &mp->rchk_rows, &mp->rchk_cols, &mp->rchk_full);
             mchk = mstr_v8si_copy_chunk(ret, i, j, &mp->mchk, &mp->mchk_rows, &mp->mchk_cols, &mp->mchk_full);
             if (mp->mchk_full) {

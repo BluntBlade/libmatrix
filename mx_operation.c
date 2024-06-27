@@ -411,8 +411,8 @@ static void v8si_scalar_multiply_chunk_partly(mx_chunk_ptr chk, v8si_t * lhs, mx
 {
     uint32_t i = 0;
 
-    if (mp->lchk_cols <= 8) {
-        switch (mp->lchk_rows) {
+    if (mp->rchk_cols <= 8) {
+        switch (mp->rchk_rows) {
             default: assert(1); break;
             case 16: v8si_scalar_multiply_chunk_half(i); i += 1;
             case 15: v8si_scalar_multiply_chunk_half(i); i += 1;
@@ -432,7 +432,7 @@ static void v8si_scalar_multiply_chunk_partly(mx_chunk_ptr chk, v8si_t * lhs, mx
             case  1: v8si_scalar_multiply_chunk_half(i);
         } // switch
     } else {
-        switch (mp->lchk_rows) {
+        switch (mp->rchk_rows) {
             default: assert(1); break;
             case 16: v8si_scalar_multiply_chunk_full(i); i += 1;
             case 15: v8si_scalar_multiply_chunk_full(i); i += 1;

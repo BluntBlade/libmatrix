@@ -304,7 +304,7 @@ static void v8si_multiply_chunk_partly(mx_chunk_ptr chk, mx_chunk_ptr lhs, mx_ch
 
     if (mp->lchk_cols <= 8) {
         for (i = 0; i < mp->lchk_rows; i += 1, j = 0) {
-            switch (mp->rchk_cols) {
+            switch (mp->rchk_rows) { // Chunk on the right hand side has swapped rows and cols.
                 default: assert(1); break;
                 case 16: v8si_multiply_chunk_half_with_mask(i, j, *mask[0]); j += 1;
                 case 15: v8si_multiply_chunk_half_with_mask(i, j, *mask[0]); j += 1;
@@ -326,7 +326,7 @@ static void v8si_multiply_chunk_partly(mx_chunk_ptr chk, mx_chunk_ptr lhs, mx_ch
         } // for
     } else {
         for (i = 0; i < mp->lchk_rows; i += 1, j = 0) {
-            switch (mp->rchk_cols) {
+            switch (mp->rchk_rows) { // Chunk on the right hand side has swapped rows and cols.
                 default: assert(1); break;
                 case 16: v8si_multiply_chunk_full_with_mask(i, j, *mask[0], *mask[1]); j += 1;
                 case 15: v8si_multiply_chunk_full_with_mask(i, j, *mask[0], *mask[1]); j += 1;

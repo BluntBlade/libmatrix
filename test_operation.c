@@ -2,7 +2,7 @@
 
 #ifndef MX_OPER_C
 #include "mx_operation.c"
-#define MX_OPERSTOR_C
+#define MX_OPER_C
 #endif
 
 // ==== TESTS FOR THE OPERATION MODULE OF MATRIX ==== //
@@ -901,8 +901,8 @@ Test(InternalFunc, v8si_multiply_chunk_partly)
 
         mp->lchk_rows = 5;
         mp->lchk_cols = 2;
-        mp->rchk_rows = 2;
-        mp->rchk_cols = 3;
+        mp->rchk_rows = 3; // Chunk on the right hand side has swapped rows and cols.
+        mp->rchk_cols = 2; // Chunk on the right hand side has swapped rows and cols.
         mp->mchk_rows = 5;
         mp->mchk_cols = 3;
 
@@ -1980,6 +1980,318 @@ Test(Operation, mops_v8si_scalar_multiply)
 
         mstr_v8si_destroy(ret);
         mstr_v8si_destroy(rhs);
+        mops_v8si_destroy(mp);
+    }
+}
+
+Test(Operation, mops_v8si_multiply)
+{
+    uint32_t i = 0;
+    uint32_t j = 0;
+    mx_oper_ptr mp = NULL;
+    mx_stor_ptr lhs = NULL;
+    mx_stor_ptr rhs = NULL;
+    mx_stor_ptr ret = NULL;
+
+    // -- 1x1 matrix multiplication -- //
+    {
+        mp = mops_v8si_create();
+
+        lhs = mstr_v8si_create(1, 1);
+        mstr_v8si_set(lhs, 0, 0, 11);
+
+        rhs = mstr_v8si_create(1, 1);
+        mstr_v8si_set(rhs, 0, 0, 2);
+
+        ret = mstr_v8si_create(1, 1);
+
+        mops_v8si_multiply(mp, lhs, rhs, ret);
+
+        check_value_at(mstr_v8si_get(ret, 0, 0), 22, 0, 0);
+
+        mstr_v8si_destroy(ret);
+        mstr_v8si_destroy(rhs);
+        mstr_v8si_destroy(lhs);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 5x5 matrix multiplication -- //
+    {
+        int32_t ret_vals[5][5] = {
+            {0, 5, 10, 15, 20},
+            {0, 5, 10, 15, 20},
+            {0, 5, 10, 15, 20},
+            {0, 5, 10, 15, 20},
+            {0, 5, 10, 15, 20}
+        };
+        mp = mops_v8si_create();
+
+        lhs = mstr_v8si_create(5, 5);
+        for (i = 0; i < 5; i += 1) {
+            for (j = 0; j < 5; j += 1) {
+                mstr_v8si_set(lhs, i, j, 1);
+            } // for
+        } // for
+
+        rhs = mstr_v8si_create(5, 5);
+        for (i = 0; i < 5; i += 1) {
+            for (j = 0; j < 5; j += 1) {
+                mstr_v8si_set(rhs, i, j, j);
+            } // for
+        } // for
+
+        ret = mstr_v8si_create(5, 5);
+
+        mops_v8si_multiply(mp, lhs, rhs, ret);
+
+        for (i = 0; i < 5; i += 1) {
+            for (j = 0; j < 5; j += 1) {
+                check_value_at(mstr_v8si_get(ret, i, j), ret_vals[i][j], i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(ret);
+        mstr_v8si_destroy(rhs);
+        mstr_v8si_destroy(lhs);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 8x8 matrix multiplication -- //
+    {
+        int32_t ret_vals[8][8] = {
+            {0, 8, 16, 24, 32, 40, 48, 56},
+            {0, 8, 16, 24, 32, 40, 48, 56},
+            {0, 8, 16, 24, 32, 40, 48, 56},
+            {0, 8, 16, 24, 32, 40, 48, 56},
+            {0, 8, 16, 24, 32, 40, 48, 56},
+            {0, 8, 16, 24, 32, 40, 48, 56},
+            {0, 8, 16, 24, 32, 40, 48, 56},
+            {0, 8, 16, 24, 32, 40, 48, 56}
+        };
+        mp = mops_v8si_create();
+
+        lhs = mstr_v8si_create(8, 8);
+        for (i = 0; i < 8; i += 1) {
+            for (j = 0; j < 8; j += 1) {
+                mstr_v8si_set(lhs, i, j, 1);
+            } // for
+        } // for
+
+        rhs = mstr_v8si_create(8, 8);
+        for (i = 0; i < 8; i += 1) {
+            for (j = 0; j < 8; j += 1) {
+                mstr_v8si_set(rhs, i, j, j);
+            } // for
+        } // for
+
+        ret = mstr_v8si_create(8, 8);
+
+        mops_v8si_multiply(mp, lhs, rhs, ret);
+
+        for (i = 0; i < 8; i += 1) {
+            for (j = 0; j < 8; j += 1) {
+                check_value_at(mstr_v8si_get(ret, i, j), ret_vals[i][j], i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(ret);
+        mstr_v8si_destroy(rhs);
+        mstr_v8si_destroy(lhs);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 9x9 matrix multiplication -- //
+    {
+        int32_t ret_vals[9][9] = {
+            {0, 9, 18, 27, 36, 45, 54, 63, 72},
+            {0, 9, 18, 27, 36, 45, 54, 63, 72},
+            {0, 9, 18, 27, 36, 45, 54, 63, 72},
+            {0, 9, 18, 27, 36, 45, 54, 63, 72},
+            {0, 9, 18, 27, 36, 45, 54, 63, 72},
+            {0, 9, 18, 27, 36, 45, 54, 63, 72},
+            {0, 9, 18, 27, 36, 45, 54, 63, 72},
+            {0, 9, 18, 27, 36, 45, 54, 63, 72},
+            {0, 9, 18, 27, 36, 45, 54, 63, 72}
+        };
+        mp = mops_v8si_create();
+
+        lhs = mstr_v8si_create(9, 9);
+        for (i = 0; i < 9; i += 1) {
+            for (j = 0; j < 9; j += 1) {
+                mstr_v8si_set(lhs, i, j, 1);
+            } // for
+        } // for
+
+        rhs = mstr_v8si_create(9, 9);
+        for (i = 0; i < 9; i += 1) {
+            for (j = 0; j < 9; j += 1) {
+                mstr_v8si_set(rhs, i, j, j);
+            } // for
+        } // for
+
+        ret = mstr_v8si_create(9, 9);
+
+        mops_v8si_multiply(mp, lhs, rhs, ret);
+
+        for (i = 0; i < 9; i += 1) {
+            for (j = 0; j < 9; j += 1) {
+                check_value_at(mstr_v8si_get(ret, i, j), ret_vals[i][j], i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(ret);
+        mstr_v8si_destroy(rhs);
+        mstr_v8si_destroy(lhs);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 16x16 matrix multiplication -- //
+    {
+        int32_t ret_vals[16][16] = {
+            {0, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240},
+            {0, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240},
+            {0, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240},
+            {0, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240},
+            {0, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240},
+            {0, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240},
+            {0, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240},
+            {0, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240},
+            {0, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240},
+            {0, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240},
+            {0, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240},
+            {0, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240},
+            {0, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240},
+            {0, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240},
+            {0, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240},
+            {0, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224, 240}
+        };
+        mp = mops_v8si_create();
+
+        lhs = mstr_v8si_create(16, 16);
+        for (i = 0; i < 16; i += 1) {
+            for (j = 0; j < 16; j += 1) {
+                mstr_v8si_set(lhs, i, j, 1);
+            } // for
+        } // for
+
+        rhs = mstr_v8si_create(16, 16);
+        for (i = 0; i < 16; i += 1) {
+            for (j = 0; j < 16; j += 1) {
+                mstr_v8si_set(rhs, i, j, j);
+            } // for
+        } // for
+
+        ret = mstr_v8si_create(16, 16);
+
+        mops_v8si_multiply(mp, lhs, rhs, ret);
+
+        for (i = 0; i < 16; i += 1) {
+            for (j = 0; j < 16; j += 1) {
+                check_value_at(mstr_v8si_get(ret, i, j), ret_vals[i][j], i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(ret);
+        mstr_v8si_destroy(rhs);
+        mstr_v8si_destroy(lhs);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 17x17 matrix multiplication -- //
+    {
+        int32_t ret_vals[17][17] = {
+            {0, 17, 34, 51, 68, 85, 102, 119, 136, 153, 170, 187, 204, 221, 238, 255, 272},
+            {0, 17, 34, 51, 68, 85, 102, 119, 136, 153, 170, 187, 204, 221, 238, 255, 272},
+            {0, 17, 34, 51, 68, 85, 102, 119, 136, 153, 170, 187, 204, 221, 238, 255, 272},
+            {0, 17, 34, 51, 68, 85, 102, 119, 136, 153, 170, 187, 204, 221, 238, 255, 272},
+            {0, 17, 34, 51, 68, 85, 102, 119, 136, 153, 170, 187, 204, 221, 238, 255, 272},
+            {0, 17, 34, 51, 68, 85, 102, 119, 136, 153, 170, 187, 204, 221, 238, 255, 272},
+            {0, 17, 34, 51, 68, 85, 102, 119, 136, 153, 170, 187, 204, 221, 238, 255, 272},
+            {0, 17, 34, 51, 68, 85, 102, 119, 136, 153, 170, 187, 204, 221, 238, 255, 272},
+            {0, 17, 34, 51, 68, 85, 102, 119, 136, 153, 170, 187, 204, 221, 238, 255, 272},
+            {0, 17, 34, 51, 68, 85, 102, 119, 136, 153, 170, 187, 204, 221, 238, 255, 272},
+            {0, 17, 34, 51, 68, 85, 102, 119, 136, 153, 170, 187, 204, 221, 238, 255, 272},
+            {0, 17, 34, 51, 68, 85, 102, 119, 136, 153, 170, 187, 204, 221, 238, 255, 272},
+            {0, 17, 34, 51, 68, 85, 102, 119, 136, 153, 170, 187, 204, 221, 238, 255, 272},
+            {0, 17, 34, 51, 68, 85, 102, 119, 136, 153, 170, 187, 204, 221, 238, 255, 272},
+            {0, 17, 34, 51, 68, 85, 102, 119, 136, 153, 170, 187, 204, 221, 238, 255, 272},
+            {0, 17, 34, 51, 68, 85, 102, 119, 136, 153, 170, 187, 204, 221, 238, 255, 272},
+            {0, 17, 34, 51, 68, 85, 102, 119, 136, 153, 170, 187, 204, 221, 238, 255, 272}
+        };
+        mp = mops_v8si_create();
+
+        lhs = mstr_v8si_create(17, 17);
+        for (i = 0; i < 17; i += 1) {
+            for (j = 0; j < 17; j += 1) {
+                mstr_v8si_set(lhs, i, j, 1);
+            } // for
+        } // for
+
+        rhs = mstr_v8si_create(17, 17);
+        for (i = 0; i < 17; i += 1) {
+            for (j = 0; j < 17; j += 1) {
+                mstr_v8si_set(rhs, i, j, j);
+            } // for
+        } // for
+
+        ret = mstr_v8si_create(17, 17);
+
+        mops_v8si_multiply(mp, lhs, rhs, ret);
+
+        for (i = 0; i < 17; i += 1) {
+            for (j = 0; j < 17; j += 1) {
+                check_value_at(mstr_v8si_get(ret, i, j), ret_vals[i][j], i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(ret);
+        mstr_v8si_destroy(rhs);
+        mstr_v8si_destroy(lhs);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 9x33 and 33x9 matrix multiplication -- //
+    {
+        int32_t ret_vals[9][9] = {
+            {0, 33, 66, 99, 132, 165, 198, 231, 264},
+            {0, 33, 66, 99, 132, 165, 198, 231, 264},
+            {0, 33, 66, 99, 132, 165, 198, 231, 264},
+            {0, 33, 66, 99, 132, 165, 198, 231, 264},
+            {0, 33, 66, 99, 132, 165, 198, 231, 264},
+            {0, 33, 66, 99, 132, 165, 198, 231, 264},
+            {0, 33, 66, 99, 132, 165, 198, 231, 264},
+            {0, 33, 66, 99, 132, 165, 198, 231, 264},
+            {0, 33, 66, 99, 132, 165, 198, 231, 264}
+        };
+        mp = mops_v8si_create();
+
+        lhs = mstr_v8si_create(9, 33);
+        for (i = 0; i < 9; i += 1) {
+            for (j = 0; j < 33; j += 1) {
+                mstr_v8si_set(lhs, i, j, 1);
+            } // for
+        } // for
+
+        rhs = mstr_v8si_create(33, 9);
+        for (i = 0; i < 33; i += 1) {
+            for (j = 0; j < 9; j += 1) {
+                mstr_v8si_set(rhs, i, j, j);
+            } // for
+        } // for
+
+        ret = mstr_v8si_create(9, 9);
+
+        mops_v8si_multiply(mp, lhs, rhs, ret);
+
+        for (i = 0; i < 9; i += 1) {
+            for (j = 0; j < 9; j += 1) {
+                check_value_at(mstr_v8si_get(ret, i, j), ret_vals[i][j], i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(ret);
+        mstr_v8si_destroy(rhs);
+        mstr_v8si_destroy(lhs);
         mops_v8si_destroy(mp);
     }
 }

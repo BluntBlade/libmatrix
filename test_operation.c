@@ -50,8 +50,8 @@ Test(InternalFunc, v8si_add_chunk_fully)
         mp->lchk_cols = 16;
 
         v8si_add_chunk_fully(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->lchk_rows; i += 1) {
-            for (j = 0; j < mp->lchk_cols; j += 1) {
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
                 check_value_at(ret.i32_vals[i][j], sample.i32_vals[i][j] * 2, i, j);
             } // for
         } // for
@@ -76,8 +76,8 @@ Test(InternalFunc, v8si_add_chunk_partly)
         mp->lchk_cols = 1;
 
         v8si_add_chunk_partly(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->lchk_rows; i += 1) {
-            for (j = 0; j < mp->lchk_cols; j += 1) {
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
                     check_value_at(ret.i32_vals[i][j], sample.i32_vals[i][j] * 2, i, j);
                 } else {
@@ -98,8 +98,8 @@ Test(InternalFunc, v8si_add_chunk_partly)
         mp->lchk_cols = 5;
 
         v8si_add_chunk_partly(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->lchk_rows; i += 1) {
-            for (j = 0; j < mp->lchk_cols; j += 1) {
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
                     check_value_at(ret.i32_vals[i][j], sample.i32_vals[i][j] * 2, i, j);
                 } else {
@@ -120,8 +120,8 @@ Test(InternalFunc, v8si_add_chunk_partly)
         mp->lchk_cols = 8;
 
         v8si_add_chunk_partly(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->lchk_rows; i += 1) {
-            for (j = 0; j < mp->lchk_cols; j += 1) {
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
                     check_value_at(ret.i32_vals[i][j], sample.i32_vals[i][j] * 2, i, j);
                 } else {
@@ -142,8 +142,8 @@ Test(InternalFunc, v8si_add_chunk_partly)
         mp->lchk_cols = 9;
 
         v8si_add_chunk_partly(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->lchk_rows; i += 1) {
-            for (j = 0; j < mp->lchk_cols; j += 1) {
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
                     check_value_at(ret.i32_vals[i][j], sample.i32_vals[i][j] * 2, i, j);
                 } else {
@@ -164,8 +164,8 @@ Test(InternalFunc, v8si_add_chunk_partly)
         mp->lchk_cols = 16;
 
         v8si_add_chunk_partly(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->lchk_rows; i += 1) {
-            for (j = 0; j < mp->lchk_cols; j += 1) {
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
                 check_value_at(ret.i32_vals[i][j], sample.i32_vals[i][j] * 2, i, j);
             } // for
         } // for
@@ -182,8 +182,8 @@ Test(InternalFunc, v8si_add_chunk_partly)
         mp->lchk_cols = 5;
 
         v8si_add_chunk_partly(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->lchk_rows; i += 1) {
-            for (j = 0; j < mp->lchk_cols; j += 1) {
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
                     check_value_at(ret.i32_vals[i][j], sample.i32_vals[i][j] * 2, i, j);
                 } else {
@@ -204,8 +204,8 @@ Test(InternalFunc, v8si_add_chunk_partly)
         mp->lchk_cols = 8;
 
         v8si_add_chunk_partly(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->lchk_rows; i += 1) {
-            for (j = 0; j < mp->lchk_cols; j += 1) {
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
                     check_value_at(ret.i32_vals[i][j], sample.i32_vals[i][j] * 2, i, j);
                 } else {
@@ -226,8 +226,8 @@ Test(InternalFunc, v8si_add_chunk_partly)
         mp->lchk_cols = 9;
 
         v8si_add_chunk_partly(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->lchk_rows; i += 1) {
-            for (j = 0; j < mp->lchk_cols; j += 1) {
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
                     check_value_at(ret.i32_vals[i][j], sample.i32_vals[i][j] * 2, i, j);
                 } else {
@@ -248,8 +248,8 @@ Test(InternalFunc, v8si_add_chunk_partly)
         mp->lchk_cols = 1;
 
         v8si_add_chunk_partly(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->lchk_rows; i += 1) {
-            for (j = 0; j < mp->lchk_cols; j += 1) {
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
                     check_value_at(ret.i32_vals[i][j], sample.i32_vals[i][j] * 2, i, j);
                 } else {
@@ -270,8 +270,8 @@ Test(InternalFunc, v8si_add_chunk_partly)
         mp->lchk_cols = 1;
 
         v8si_add_chunk_partly(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->lchk_rows; i += 1) {
-            for (j = 0; j < mp->lchk_cols; j += 1) {
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
                     check_value_at(ret.i32_vals[i][j], sample.i32_vals[i][j] * 2, i, j);
                 } else {
@@ -292,8 +292,8 @@ Test(InternalFunc, v8si_add_chunk_partly)
         mp->lchk_cols = 1;
 
         v8si_add_chunk_partly(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->lchk_rows; i += 1) {
-            for (j = 0; j < mp->lchk_cols; j += 1) {
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
                     check_value_at(ret.i32_vals[i][j], sample.i32_vals[i][j] * 2, i, j);
                 } else {
@@ -322,8 +322,8 @@ Test(InternalFunc, v8si_subtract_chunk_fully)
         mp->lchk_cols = 16;
 
         v8si_subtract_chunk_fully(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->lchk_rows; i += 1) {
-            for (j = 0; j < mp->lchk_cols; j += 1) {
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
                 check_value_at(ret.i32_vals[i][j], 0, i, j);
             } // for
         } // for
@@ -348,8 +348,8 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
         mp->lchk_cols = 1;
 
         v8si_subtract_chunk_partly(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->lchk_rows; i += 1) {
-            for (j = 0; j < mp->lchk_cols; j += 1) {
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
                     check_value_at(ret.i32_vals[i][j], 0, i, j);
                 } else {
@@ -370,8 +370,8 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
         mp->lchk_cols = 5;
 
         v8si_subtract_chunk_partly(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->lchk_rows; i += 1) {
-            for (j = 0; j < mp->lchk_cols; j += 1) {
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
                     check_value_at(ret.i32_vals[i][j], 0, i, j);
                 } else {
@@ -392,8 +392,8 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
         mp->lchk_cols = 8;
 
         v8si_subtract_chunk_partly(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->lchk_rows; i += 1) {
-            for (j = 0; j < mp->lchk_cols; j += 1) {
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
                     check_value_at(ret.i32_vals[i][j], 0, i, j);
                 } else {
@@ -414,8 +414,8 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
         mp->lchk_cols = 9;
 
         v8si_subtract_chunk_partly(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->lchk_rows; i += 1) {
-            for (j = 0; j < mp->lchk_cols; j += 1) {
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
                     check_value_at(ret.i32_vals[i][j], 0, i, j);
                 } else {
@@ -436,8 +436,8 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
         mp->lchk_cols = 16;
 
         v8si_subtract_chunk_partly(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->lchk_rows; i += 1) {
-            for (j = 0; j < mp->lchk_cols; j += 1) {
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
                 check_value_at(ret.i32_vals[i][j], 0, i, j);
             } // for
         } // for
@@ -454,8 +454,8 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
         mp->lchk_cols = 5;
 
         v8si_subtract_chunk_partly(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->lchk_rows; i += 1) {
-            for (j = 0; j < mp->lchk_cols; j += 1) {
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
                     check_value_at(ret.i32_vals[i][j], 0, i, j);
                 } else {
@@ -476,8 +476,8 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
         mp->lchk_cols = 8;
 
         v8si_subtract_chunk_partly(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->lchk_rows; i += 1) {
-            for (j = 0; j < mp->lchk_cols; j += 1) {
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
                     check_value_at(ret.i32_vals[i][j], 0, i, j);
                 } else {
@@ -498,8 +498,8 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
         mp->lchk_cols = 9;
 
         v8si_subtract_chunk_partly(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->lchk_rows; i += 1) {
-            for (j = 0; j < mp->lchk_cols; j += 1) {
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
                     check_value_at(ret.i32_vals[i][j], 0, i, j);
                 } else {
@@ -520,8 +520,8 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
         mp->lchk_cols = 1;
 
         v8si_subtract_chunk_partly(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->lchk_rows; i += 1) {
-            for (j = 0; j < mp->lchk_cols; j += 1) {
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
                     check_value_at(ret.i32_vals[i][j], 0, i, j);
                 } else {
@@ -542,8 +542,8 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
         mp->lchk_cols = 1;
 
         v8si_subtract_chunk_partly(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->lchk_rows; i += 1) {
-            for (j = 0; j < mp->lchk_cols; j += 1) {
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
                     check_value_at(ret.i32_vals[i][j], 0, i, j);
                 } else {
@@ -564,8 +564,8 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
         mp->lchk_cols = 1;
 
         v8si_subtract_chunk_partly(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->lchk_rows; i += 1) {
-            for (j = 0; j < mp->lchk_cols; j += 1) {
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
                     check_value_at(ret.i32_vals[i][j], 0, i, j);
                 } else {
@@ -641,8 +641,8 @@ Test(InternalFunc, v8si_multiply_chunk_fully)
 
         v8si_multiply_chunk_fully(&ret, &qrcode, &qrcode, mp);
 
-        for (i = 0; i < mp->lchk_rows; i += 1) {
-            for (j = 0; j < mp->rchk_cols; j += 1) {
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
                 check_value_at(ret.i32_vals[i][j], ret_qrcode.i32_vals[i][j], i, j);
             } // for
         } // for
@@ -692,8 +692,8 @@ Test(InternalFunc, v8si_multiply_chunk_partly)
 
         v8si_multiply_chunk_partly(&ret, &qrcode, &qrcode, mp);
 
-        for (i = 0; i < mp->lchk_rows; i += 1) {
-            for (j = 0; j < mp->rchk_cols; j += 1) {
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
                 check_value_at(ret.i32_vals[i][j], ret_qrcode.i32_vals[i][j], i, j);
             } // for
         } // for
@@ -735,8 +735,8 @@ Test(InternalFunc, v8si_multiply_chunk_partly)
 
         v8si_multiply_chunk_partly(&ret, &qrcode, &qrcode, mp);
 
-        for (i = 0; i < mp->lchk_rows; i += 1) {
-            for (j = 0; j < mp->rchk_cols; j += 1) {
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
                 check_value_at(ret.i32_vals[i][j], ret_qrcode.i32_vals[i][j], i, j);
             } // for
         } // for
@@ -778,8 +778,8 @@ Test(InternalFunc, v8si_multiply_chunk_partly)
 
         v8si_multiply_chunk_partly(&ret, &qrcode, &qrcode, mp);
 
-        for (i = 0; i < mp->lchk_rows; i += 1) {
-            for (j = 0; j < mp->rchk_cols; j += 1) {
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
                 check_value_at(ret.i32_vals[i][j], ret_qrcode.i32_vals[i][j], i, j);
             } // for
         } // for
@@ -821,8 +821,8 @@ Test(InternalFunc, v8si_multiply_chunk_partly)
 
         v8si_multiply_chunk_partly(&ret, &qrcode, &qrcode, mp);
 
-        for (i = 0; i < mp->lchk_rows; i += 1) {
-            for (j = 0; j < mp->rchk_cols; j += 1) {
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
                 check_value_at(ret.i32_vals[i][j], ret_qrcode.i32_vals[i][j], i, j);
             } // for
         } // for
@@ -865,8 +865,8 @@ Test(InternalFunc, v8si_multiply_chunk_partly)
 
         v8si_multiply_chunk_partly(&ret, &qrcode, &qrcode, mp);
 
-        for (i = 0; i < mp->lchk_rows; i += 1) {
-            for (j = 0; j < mp->rchk_cols; j += 1) {
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
                 check_value_at(ret.i32_vals[i][j], ret_qrcode.i32_vals[i][j], i, j);
             } // for
         } // for
@@ -908,8 +908,8 @@ Test(InternalFunc, v8si_multiply_chunk_partly)
 
         v8si_multiply_chunk_partly(&ret, &qrcode, &qrcode, mp);
 
-        for (i = 0; i < mp->lchk_rows; i += 1) {
-            for (j = 0; j < mp->rchk_cols; j += 1) {
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
                 check_value_at(ret.i32_vals[i][j], ret_qrcode.i32_vals[i][j], i, j);
             } // for
         } // for
@@ -951,9 +951,283 @@ Test(InternalFunc, v8si_multiply_chunk_partly)
 
         v8si_multiply_chunk_partly(&ret, &qrcode, &qrcode, mp);
 
-        for (i = 0; i < mp->lchk_rows; i += 1) {
-            for (j = 0; j < mp->rchk_cols; j += 1) {
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
                 check_value_at(ret.i32_vals[i][j], ret_qrcode.i32_vals[i][j], i, j);
+            } // for
+        } // for
+
+        mops_v8si_destroy(mp);
+    }
+}
+
+Test(InternalFunc, v8si_scalar_multiply_chunk_fully)
+{
+    mx_chunk_t ret;
+    uint32_t i = 0;
+    uint32_t j = 0;
+    mx_oper_ptr mp = NULL;
+    
+    // -- 16x16 chunk -- //
+    {
+        v8si_t factor = {2, 2, 2, 2, 2, 2, 2, 2};
+        mx_chunk_t ret_sample = {
+            .i32_vals = {
+                0,    2,    4,    6,    8,    10,   12,   14,   16,   18,   20,   22,   24,   26,   28,   30,
+                32,   34,   36,   38,   40,   42,   44,   46,   48,   50,   52,   54,   56,   58,   60,   62,
+                64,   66,   68,   70,   72,   74,   76,   78,   80,   82,   84,   86,   88,   90,   92,   94,
+                96,   98,   100,  102,  104,  106,  108,  110,  112,  114,  116,  118,  120,  122,  124,  126,
+                128,  130,  132,  134,  136,  138,  140,  142,  144,  146,  148,  150,  152,  154,  156,  158,
+                160,  162,  164,  166,  168,  170,  172,  174,  176,  178,  180,  182,  184,  186,  188,  190,
+                192,  194,  196,  198,  200,  202,  204,  206,  208,  210,  212,  214,  216,  218,  220,  222,
+                224,  226,  228,  230,  232,  234,  236,  238,  240,  242,  244,  246,  248,  250,  252,  254,
+                256,  258,  260,  262,  264,  266,  268,  270,  272,  274,  276,  278,  280,  282,  284,  286,
+                288,  290,  292,  294,  296,  298,  300,  302,  304,  306,  308,  310,  312,  314,  316,  318,
+                320,  322,  324,  326,  328,  330,  332,  334,  336,  338,  340,  342,  344,  346,  348,  350,
+                352,  354,  356,  358,  360,  362,  364,  366,  368,  370,  372,  374,  376,  378,  380,  382,
+                384,  386,  388,  390,  392,  394,  396,  398,  400,  402,  404,  406,  408,  410,  412,  414,
+                416,  418,  420,  422,  424,  426,  428,  430,  432,  434,  436,  438,  440,  442,  444,  446,
+                448,  450,  452,  454,  456,  458,  460,  462,  464,  466,  468,  470,  472,  474,  476,  478,
+                480,  482,  484,  486,  488,  490,  492,  494,  496,  498,  500,  502,  504,  506,  508,  510
+            }
+        };
+
+        mp = mops_v8si_create();
+        memset(&ret, 0, sizeof(ret));
+
+        mp->rchk_rows = 16;
+        mp->rchk_cols = 16;
+        mp->mchk_rows = 16;
+        mp->mchk_cols = 16;
+
+        v8si_scalar_multiply_chunk_fully(&ret, &factor, &sample, mp);
+
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
+                check_value_at(ret.i32_vals[i][j], ret_sample.i32_vals[i][j], i, j);
+            } // for
+        } // for
+
+        mops_v8si_destroy(mp);
+    }
+}
+
+Test(InternalFunc, v8si_scalar_multiply_chunk_partly)
+{
+    mx_chunk_t ret;
+    uint32_t i = 0;
+    uint32_t j = 0;
+    mx_oper_ptr mp = NULL;
+    
+    // -- 1x1 chunk -- //
+    {
+        v8si_t factor = {2, 2, 2, 2, 2, 2, 2, 2};
+        mx_chunk_t ret_sample = {
+            .i32_vals = {
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            }
+        };
+
+        mp = mops_v8si_create();
+        memset(&ret, 0, sizeof(ret));
+
+        mp->rchk_rows = 1;
+        mp->rchk_cols = 1;
+        mp->mchk_rows = 1;
+        mp->mchk_cols = 1;
+
+        v8si_scalar_multiply_chunk_partly(&ret, &factor, &sample, mp);
+
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
+                check_value_at(ret.i32_vals[i][j], ret_sample.i32_vals[i][j], i, j);
+            } // for
+        } // for
+
+        mops_v8si_destroy(mp);
+    }
+    
+    // -- 5x5 chunk -- //
+    {
+        v8si_t factor = {2, 2, 2, 2, 2, 2, 2, 2};
+        mx_chunk_t ret_sample = {
+            .i32_vals = {
+                  0,   2,   4,   6,   8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                 32,  34,  36,  38,  40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                 64,  66,  68,  70,  72, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                 96,  98, 100, 102, 104, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                128, 130, 132, 134, 136, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                  0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                  0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                  0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                  0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                  0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                  0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                  0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                  0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                  0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                  0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                  0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+            }
+        };
+
+        mp = mops_v8si_create();
+        memset(&ret, 0, sizeof(ret));
+
+        mp->rchk_rows = 5;
+        mp->rchk_cols = 5;
+        mp->mchk_rows = 5;
+        mp->mchk_cols = 5;
+
+        v8si_scalar_multiply_chunk_partly(&ret, &factor, &sample, mp);
+
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
+                check_value_at(ret.i32_vals[i][j], ret_sample.i32_vals[i][j], i, j);
+            } // for
+        } // for
+
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 8x8 chunk -- //
+    {
+        v8si_t factor = {2, 2, 2, 2, 2, 2, 2, 2};
+        mx_chunk_t ret_sample = {
+            .i32_vals = {
+                0,    2,    4,    6,    8,    10,   12,   14,   0,  0,  0,  0,  0,  0,  0,  0,
+                32,   34,   36,   38,   40,   42,   44,   46,   0,  0,  0,  0,  0,  0,  0,  0,
+                64,   66,   68,   70,   72,   74,   76,   78,   0,  0,  0,  0,  0,  0,  0,  0,
+                96,   98,   100,  102,  104,  106,  108,  110,  0,  0,  0,  0,  0,  0,  0,  0,
+                128,  130,  132,  134,  136,  138,  140,  142,  0,  0,  0,  0,  0,  0,  0,  0,
+                160,  162,  164,  166,  168,  170,  172,  174,  0,  0,  0,  0,  0,  0,  0,  0,
+                192,  194,  196,  198,  200,  202,  204,  206,  0,  0,  0,  0,  0,  0,  0,  0,
+                224,  226,  228,  230,  232,  234,  236,  238,  0,  0,  0,  0,  0,  0,  0,  0,
+                  0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,  0,
+                  0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,  0,
+                  0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,  0,
+                  0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,  0,
+                  0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,  0,
+                  0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,  0,
+                  0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,  0,
+                  0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,  0
+            }
+        };
+
+        mp = mops_v8si_create();
+        memset(&ret, 0, sizeof(ret));
+
+        mp->rchk_rows = 8;
+        mp->rchk_cols = 8;
+        mp->mchk_rows = 8;
+        mp->mchk_cols = 8;
+
+        v8si_scalar_multiply_chunk_partly(&ret, &factor, &sample, mp);
+
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
+                check_value_at(ret.i32_vals[i][j], ret_sample.i32_vals[i][j], i, j);
+            } // for
+        } // for
+
+        mops_v8si_destroy(mp);
+    }
+    
+    // -- 9x9 chunk -- //
+    {
+        v8si_t factor = {2, 2, 2, 2, 2, 2, 2, 2};
+        mx_chunk_t ret_sample = {
+            .i32_vals = {
+                0,    2,    4,    6,    8,    10,   12,   14,   16,   0,  0,  0,  0,  0,  0,  0,
+                32,   34,   36,   38,   40,   42,   44,   46,   48,   0,  0,  0,  0,  0,  0,  0,
+                64,   66,   68,   70,   72,   74,   76,   78,   80,   0,  0,  0,  0,  0,  0,  0,
+                96,   98,   100,  102,  104,  106,  108,  110,  112,  0,  0,  0,  0,  0,  0,  0,
+                128,  130,  132,  134,  136,  138,  140,  142,  144,  0,  0,  0,  0,  0,  0,  0,
+                160,  162,  164,  166,  168,  170,  172,  174,  176,  0,  0,  0,  0,  0,  0,  0,
+                192,  194,  196,  198,  200,  202,  204,  206,  208,  0,  0,  0,  0,  0,  0,  0,
+                224,  226,  228,  230,  232,  234,  236,  238,  240,  0,  0,  0,  0,  0,  0,  0,
+                256,  258,  260,  262,  264,  266,  268,  270,  272,  0,  0,  0,  0,  0,  0,  0,
+                  0,    0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,
+                  0,    0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,
+                  0,    0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,
+                  0,    0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,
+                  0,    0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,
+                  0,    0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,
+                  0,    0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0
+            }
+        };
+
+        mp = mops_v8si_create();
+        memset(&ret, 0, sizeof(ret));
+
+        mp->rchk_rows = 9;
+        mp->rchk_cols = 9;
+        mp->mchk_rows = 9;
+        mp->mchk_cols = 9;
+
+        v8si_scalar_multiply_chunk_partly(&ret, &factor, &sample, mp);
+
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
+                check_value_at(ret.i32_vals[i][j], ret_sample.i32_vals[i][j], i, j);
+            } // for
+        } // for
+
+        mops_v8si_destroy(mp);
+    }
+    
+    // -- 16x16 chunk -- //
+    {
+        v8si_t factor = {2, 2, 2, 2, 2, 2, 2, 2};
+        mx_chunk_t ret_sample = {
+            .i32_vals = {
+                0,    2,    4,    6,    8,    10,   12,   14,   16,   18,   20,   22,   24,   26,   28,   30,
+                32,   34,   36,   38,   40,   42,   44,   46,   48,   50,   52,   54,   56,   58,   60,   62,
+                64,   66,   68,   70,   72,   74,   76,   78,   80,   82,   84,   86,   88,   90,   92,   94,
+                96,   98,   100,  102,  104,  106,  108,  110,  112,  114,  116,  118,  120,  122,  124,  126,
+                128,  130,  132,  134,  136,  138,  140,  142,  144,  146,  148,  150,  152,  154,  156,  158,
+                160,  162,  164,  166,  168,  170,  172,  174,  176,  178,  180,  182,  184,  186,  188,  190,
+                192,  194,  196,  198,  200,  202,  204,  206,  208,  210,  212,  214,  216,  218,  220,  222,
+                224,  226,  228,  230,  232,  234,  236,  238,  240,  242,  244,  246,  248,  250,  252,  254,
+                256,  258,  260,  262,  264,  266,  268,  270,  272,  274,  276,  278,  280,  282,  284,  286,
+                288,  290,  292,  294,  296,  298,  300,  302,  304,  306,  308,  310,  312,  314,  316,  318,
+                320,  322,  324,  326,  328,  330,  332,  334,  336,  338,  340,  342,  344,  346,  348,  350,
+                352,  354,  356,  358,  360,  362,  364,  366,  368,  370,  372,  374,  376,  378,  380,  382,
+                384,  386,  388,  390,  392,  394,  396,  398,  400,  402,  404,  406,  408,  410,  412,  414,
+                416,  418,  420,  422,  424,  426,  428,  430,  432,  434,  436,  438,  440,  442,  444,  446,
+                448,  450,  452,  454,  456,  458,  460,  462,  464,  466,  468,  470,  472,  474,  476,  478,
+                480,  482,  484,  486,  488,  490,  492,  494,  496,  498,  500,  502,  504,  506,  508,  510
+            }
+        };
+
+        mp = mops_v8si_create();
+        memset(&ret, 0, sizeof(ret));
+
+        mp->rchk_rows = 16;
+        mp->rchk_cols = 16;
+        mp->mchk_rows = 16;
+        mp->mchk_cols = 16;
+
+        v8si_scalar_multiply_chunk_partly(&ret, &factor, &sample, mp);
+
+        for (i = 0; i < mp->mchk_rows; i += 1) {
+            for (j = 0; j < mp->mchk_cols; j += 1) {
+                check_value_at(ret.i32_vals[i][j], ret_sample.i32_vals[i][j], i, j);
             } // for
         } // for
 

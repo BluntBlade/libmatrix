@@ -1774,3 +1774,212 @@ Test(Operation, mops_v8si_subtract)
         mops_v8si_destroy(mp);
     }
 }
+
+Test(Operation, mops_v8si_scalar_multiply)
+{
+    uint32_t i = 0;
+    uint32_t j = 0;
+    mx_oper_ptr mp = NULL;
+    mx_stor_ptr rhs = NULL;
+    mx_stor_ptr ret = NULL;
+
+    // -- 1x1 matrix scalar multiplication -- //
+    {
+        mp = mops_v8si_create();
+
+        rhs = mstr_v8si_create(1, 1);
+        mstr_v8si_set(rhs, 0, 0, 99);
+
+        ret = mstr_v8si_create(1, 1);
+
+        mops_v8si_scalar_multiply(mp, 2, rhs, ret);
+
+        check_value_at(mstr_v8si_get(ret, 0, 0), 198, 0, 0);
+
+        mstr_v8si_destroy(ret);
+        mstr_v8si_destroy(rhs);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 5x5 matrix scalar multiplication -- //
+    {
+        mp = mops_v8si_create();
+
+        rhs = mstr_v8si_create(5, 5);
+        for (i = 0; i < 5; i += 1) {
+            for (j = 0; j < 5; j += 1) {
+                mstr_v8si_set(rhs, i, j, i - j);
+            } // for
+        } // for
+
+        ret = mstr_v8si_create(5, 5);
+
+        mops_v8si_scalar_multiply(mp, 3, rhs, ret);
+
+        for (i = 0; i < 5; i += 1) {
+            for (j = 0; j < 5; j += 1) {
+                check_value_at(mstr_v8si_get(ret, i, j), 3 * (i - j), i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(ret);
+        mstr_v8si_destroy(rhs);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 8x8 matrix scalar multiplication -- //
+    {
+        mp = mops_v8si_create();
+
+        rhs = mstr_v8si_create(8, 8);
+        for (i = 0; i < 8; i += 1) {
+            for (j = 0; j < 8; j += 1) {
+                mstr_v8si_set(rhs, i, j, i - j);
+            } // for
+        } // for
+
+        ret = mstr_v8si_create(8, 8);
+
+        mops_v8si_scalar_multiply(mp, 14, rhs, ret);
+
+        for (i = 0; i < 8; i += 1) {
+            for (j = 0; j < 8; j += 1) {
+                check_value_at(mstr_v8si_get(ret, i, j), 14 * (i - j), i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(ret);
+        mstr_v8si_destroy(rhs);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 9x9 matrix scalar multiplication -- //
+    {
+        mp = mops_v8si_create();
+
+        rhs = mstr_v8si_create(9, 9);
+        for (i = 0; i < 9; i += 1) {
+            for (j = 0; j < 9; j += 1) {
+                mstr_v8si_set(rhs, i, j, i - j);
+            } // for
+        } // for
+
+        ret = mstr_v8si_create(9, 9);
+
+        mops_v8si_scalar_multiply(mp, 7, rhs, ret);
+
+        for (i = 0; i < 9; i += 1) {
+            for (j = 0; j < 9; j += 1) {
+                check_value_at(mstr_v8si_get(ret, i, j), 7 * (i - j), i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(ret);
+        mstr_v8si_destroy(rhs);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 16x16 matrix scalar multiplication -- //
+    {
+        mp = mops_v8si_create();
+
+        rhs = mstr_v8si_create(16, 16);
+        for (i = 0; i < 16; i += 1) {
+            for (j = 0; j < 16; j += 1) {
+                mstr_v8si_set(rhs, i, j, i - j);
+            } // for
+        } // for
+
+        ret = mstr_v8si_create(16, 16);
+
+        mops_v8si_scalar_multiply(mp, 25, rhs, ret);
+
+        for (i = 0; i < 16; i += 1) {
+            for (j = 0; j < 16; j += 1) {
+                check_value_at(mstr_v8si_get(ret, i, j), 25 * (i - j), i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(ret);
+        mstr_v8si_destroy(rhs);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 17x17 matrix scalar multiplication -- //
+    {
+        mp = mops_v8si_create();
+
+        rhs = mstr_v8si_create(17, 17);
+        for (i = 0; i < 17; i += 1) {
+            for (j = 0; j < 17; j += 1) {
+                mstr_v8si_set(rhs, i, j, i - j);
+            } // for
+        } // for
+
+        ret = mstr_v8si_create(17, 17);
+
+        mops_v8si_scalar_multiply(mp, 99, rhs, ret);
+
+        for (i = 0; i < 17; i += 1) {
+            for (j = 0; j < 17; j += 1) {
+                check_value_at(mstr_v8si_get(ret, i, j), 99 * (i - j), i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(ret);
+        mstr_v8si_destroy(rhs);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 2x33 matrix scalar multiplication -- //
+    {
+        mp = mops_v8si_create();
+
+        rhs = mstr_v8si_create(2, 33);
+        for (i = 0; i < 2; i += 1) {
+            for (j = 0; j < 33; j += 1) {
+                mstr_v8si_set(rhs, i, j, i - j);
+            } // for
+        } // for
+
+        ret = mstr_v8si_create(2, 33);
+
+        mops_v8si_scalar_multiply(mp, 13, rhs, ret);
+
+        for (i = 0; i < 2; i += 1) {
+            for (j = 0; j < 33; j += 1) {
+                check_value_at(mstr_v8si_get(ret, i, j), 13 * (i - j), i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(ret);
+        mstr_v8si_destroy(rhs);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 33x17 matrix scalar multiplication -- //
+    {
+        mp = mops_v8si_create();
+
+        rhs = mstr_v8si_create(33, 17);
+        for (i = 0; i < 33; i += 1) {
+            for (j = 0; j < 17; j += 1) {
+                mstr_v8si_set(rhs, i, j, i - j);
+            } // for
+        } // for
+
+        ret = mstr_v8si_create(33, 17);
+
+        mops_v8si_scalar_multiply(mp, 77, rhs, ret);
+
+        for (i = 0; i < 33; i += 1) {
+            for (j = 0; j < 17; j += 1) {
+                check_value_at(mstr_v8si_get(ret, i, j), 77 * (i - j), i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(ret);
+        mstr_v8si_destroy(rhs);
+        mops_v8si_destroy(mp);
+    }
+}

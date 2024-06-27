@@ -358,6 +358,7 @@ void mops_v8si_multiply(mx_oper_ptr mp, mx_stor_ptr lhs, mx_stor_ptr rhs, mx_sto
     mx_chunk_ptr rchk = NULL;
     mx_chunk_ptr mchk = NULL;
 
+    mstr_v8si_init_zeros(ret);
     for (k = 0; k < mstr_v8si_chunks_in_height(rhs); k += 1) {
         for (j = 0; j < mstr_v8si_chunks_in_width(rhs); j += 1) {
             rchk = mstr_v8si_transpose_chunk(rhs, k, j, &mp->rchk, &mp->rchk_rows, &mp->rchk_cols, &mp->rchk_full);

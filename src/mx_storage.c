@@ -98,15 +98,40 @@ void mstr_v8si_destroy(mx_stor_ptr ms)
     free(ms);
 } // mstr_v8si_destroy
 
-uint32_t mstr_v8si_chunks_in_width(mx_stor_ptr ms)
+uint32_t mstr_v8si_rows(mx_stor_ptr ms)
 {
-    return ms->chks_in_width;
-} // mstr_chunks_in_width
+    return ms->rows;
+} // mstr_v8si_rows
+
+uint32_t mstr_v8si_columns(mx_stor_ptr ms)
+{
+    return ms->cols;
+} // mstr_v8si_columns
+
+uint32_t mstr_v8si_values(mx_stor_ptr ms)
+{
+    return ms->rows * ms->cols;
+} // mstr_v8si_values
+
+uint32_t mstr_v8si_value_size(mx_stor_ptr ms)
+{
+    return ms->val_sz;
+} // mstr_v8si_value_size
 
 uint32_t mstr_v8si_chunks_in_height(mx_stor_ptr ms)
 {
     return ms->chks_in_height;
 } // mstr_chunks_in_height
+
+uint32_t mstr_v8si_chunks_in_width(mx_stor_ptr ms)
+{
+    return ms->chks_in_width;
+} // mstr_chunks_in_width
+
+uint32_t mstr_v8si_chunks(mx_stor_ptr ms)
+{
+    return ms->chks_in_height * ms->chks_in_width;
+} // mstr_v8si_chunks
 
 // ---- V8SI related definitions ----
 

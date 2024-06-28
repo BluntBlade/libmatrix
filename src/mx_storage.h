@@ -11,7 +11,7 @@
 
 #include "mx_types.h"
 
-// ==== Storage Struct ====
+// ==== Storage Module ==== //
 
 struct MX_STORAGE;
 typedef struct MX_STORAGE * mx_stor_ptr;
@@ -19,8 +19,14 @@ typedef struct MX_STORAGE * mx_stor_ptr;
 extern mx_stor_ptr mstr_v8si_create(uint32_t rows, uint32_t cols);
 extern void mstr_v8si_destroy(mx_stor_ptr ms);
 
-extern uint32_t mstr_v8si_chunks_in_width(mx_stor_ptr ms);
+extern uint32_t mstr_v8si_rows(mx_stor_ptr ms);
+extern uint32_t mstr_v8si_columns(mx_stor_ptr ms);
+extern uint32_t mstr_v8si_values(mx_stor_ptr ms);
+extern uint32_t mstr_v8si_value_size(mx_stor_ptr ms);
+
 extern uint32_t mstr_v8si_chunks_in_height(mx_stor_ptr ms);
+extern uint32_t mstr_v8si_chunks_in_width(mx_stor_ptr ms);
+extern uint32_t mstr_v8si_chunks(mx_stor_ptr ms);
 
 extern void mstr_v8si_init_zeros(mx_stor_ptr ms);
 extern void mstr_v8si_init_identity(mx_stor_ptr ms);

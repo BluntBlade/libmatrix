@@ -1,8 +1,8 @@
 #include <criterion/criterion.h>
 
-#ifndef MX_OPER_C
-#include "src/mx_operation.c"
-#define MX_OPER_C
+#ifndef V8SI_OPER_C
+#include "src/v8si_operation.c"
+#define V8SI_OPER_C
 #endif
 
 // ==== TESTS FOR THE OPERATION MODULE OF MATRIX ==== //

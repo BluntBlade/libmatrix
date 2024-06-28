@@ -2,7 +2,8 @@
 #include <stdlib.h>
 
 #include "src/mx_common.h"
-#include "src/mx_operation.h"
+#include "src/v8si_storage.h"
+#include "src/v8si_operation.h"
 
 typedef struct MX_OPERATION {
     mx_chunk_t      lchk;

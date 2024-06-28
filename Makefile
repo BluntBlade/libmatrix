@@ -21,9 +21,10 @@ endif
 TEST_LDFLAGS = -g
 
 SRC = src/matrix.c \
+      src/mx_types.c \
       src/mx_storage.c \
-      src/mx_operation.c \
-      src/mx_types.c
+      src/v8si_storage.c \
+      src/v8si_operation.c
 OBJ = $(SRC:.c=.o)
 TARGET = bin/libmatrix.dylib
 
@@ -32,14 +33,17 @@ TEST_SRC = test/matrix.c \
 TEST_OBJ = $(TEST_SRC:.c=.o)
 TEST_TARGET = test/matrix
 
-TEST_STOR_SRC = test/storage.c \
-                src/mx_types.c
+TEST_STOR_SRC = test/v8si_storage.c \
+                src/mx_types.c \
+                src/mx_storage.c \
+                src/v8si_storage.c
 TEST_STOR_OBJ = $(TEST_STOR_SRC:.c=.o)
 TEST_STOR_TARGET = test/storage
 
-TEST_OPER_SRC = test/operation.c \
+TEST_OPER_SRC = test/v8si_operation.c \
+                src/mx_types.c \
                 src/mx_storage.c \
-                src/mx_types.c
+                src/v8si_storage.c
 TEST_OPER_OBJ = $(TEST_OPER_SRC:.c=.o)
 TEST_OPER_TARGET = test/operation
 
@@ -67,7 +71,7 @@ $(TEST_TARGET) : $(TEST_OBJ)
 $(TEST_STOR_TARGET) : $(TEST_STOR_OBJ) src/mx_storage.c
 	gcc -o $@ $(TEST_STOR_OBJ) $(LDFLAGS) $(LIBS) -lcriterion
 
-$(TEST_OPER_TARGET) : $(TEST_OPER_OBJ) src/mx_operation.c
+$(TEST_OPER_TARGET) : $(TEST_OPER_OBJ) src/v8si_operation.c
 	gcc -o $@ $(TEST_OPER_OBJ) $(LDFLAGS) $(LIBS) -lcriterion
 
 $(BM_MATRIX_MULTIPLY) : $(BM_MATRIX_MULTIPLY_OBJ)

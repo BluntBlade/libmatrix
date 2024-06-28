@@ -10,121 +10,121 @@ typedef enum MATRIX_OPTION_T {
     MX_SIMD_CODE = 0x0001,
 } mx_opt_t;
 
-// ==== Declarations of the mi32_t type ====
+// ==== Declarations of the i32m_t type ====
 
-struct MATRIX_I32_T;
-typedef struct MATRIX_I32_T * p_mi32_t;
+struct I32_MATRIX_T;
+typedef struct I32_MATRIX_T * i32_matrix_ptr;
 
 /* ==== Common functions. ==== */
 
-extern p_mi32_t mi32_allocate(uint32_t row_cnt, uint32_t col_cnt);
-extern p_mi32_t mi32_allocate_for_multiplying(p_mi32_t lhs, p_mi32_t rhs);
-extern p_mi32_t mi32_allocate_for_transposing(p_mi32_t src);
-extern p_mi32_t mi32_allocate_in_shape_of(p_mi32_t src);
+extern i32_matrix_ptr i32m_allocate(uint32_t row_cnt, uint32_t col_cnt);
+extern i32_matrix_ptr i32m_allocate_for_multiplying(i32_matrix_ptr lhs, i32_matrix_ptr rhs);
+extern i32_matrix_ptr i32m_allocate_for_transposing(i32_matrix_ptr src);
+extern i32_matrix_ptr i32m_allocate_in_shape_of(i32_matrix_ptr src);
 
-extern p_mi32_t mi32_duplicate(p_mi32_t src);
+extern i32_matrix_ptr i32m_duplicate(i32_matrix_ptr src);
 
-extern void mi32_destroy(p_mi32_t m);
+extern void i32m_destroy(i32_matrix_ptr m);
 
-extern void mi32_init_identity(p_mi32_t m, mx_opt_t opt);
-extern void mi32_init_zeros(p_mi32_t m, mx_opt_t opt);
-extern void mi32_init_ones(p_mi32_t m, mx_opt_t opt);
+extern void i32m_init_identity(i32_matrix_ptr m, mx_opt_t opt);
+extern void i32m_init_zeros(i32_matrix_ptr m, mx_opt_t opt);
+extern void i32m_init_ones(i32_matrix_ptr m, mx_opt_t opt);
 
-extern uint32_t mi32_rows(p_mi32_t m);
-extern uint32_t mi32_columns(p_mi32_t m);
-extern uint32_t mi32_values(p_mi32_t m);
+extern uint32_t i32m_rows(i32_matrix_ptr m);
+extern uint32_t i32m_columns(i32_matrix_ptr m);
+extern uint32_t i32m_values(i32_matrix_ptr m);
 
-extern int32_t mi32_get(p_mi32_t m, uint32_t row, uint32_t col);
-extern void mi32_set(p_mi32_t m, uint32_t row, uint32_t col, int32_t src_val);
-extern void mi32_set_each(p_mi32_t m, int32_t src_val);
+extern int32_t i32m_get(i32_matrix_ptr m, uint32_t row, uint32_t col);
+extern void i32m_set(i32_matrix_ptr m, uint32_t row, uint32_t col, int32_t src_val);
+extern void i32m_fill(i32_matrix_ptr m, int32_t src_val);
 
-extern int mi32_can_do_add(p_mi32_t lhs, p_mi32_t rhs);
-extern int mi32_can_do_multiply(p_mi32_t lhs, p_mi32_t rhs);
+extern int i32m_can_add(i32_matrix_ptr lhs, i32_matrix_ptr rhs);
+extern int i32m_can_multiply(i32_matrix_ptr lhs, i32_matrix_ptr rhs);
 
-extern void mi32_transpose_and_store(p_mi32_t m, p_mi32_t src);
+extern void i32m_transpose_and_store(i32_matrix_ptr m, i32_matrix_ptr src);
 
-extern void mi32_add_and_store(p_mi32_t m, p_mi32_t lhs, p_mi32_t rhs, mx_opt_t opt);
-extern void mi32_sub_and_store(p_mi32_t m, p_mi32_t lhs, p_mi32_t rhs, mx_opt_t opt);
-extern void mi32_mul_and_store(p_mi32_t m, p_mi32_t lhs, p_mi32_t rhs, mx_opt_t opt);
+extern void i32m_add_and_store(i32_matrix_ptr m, i32_matrix_ptr lhs, i32_matrix_ptr rhs, mx_opt_t opt);
+extern void i32m_sub_and_store(i32_matrix_ptr m, i32_matrix_ptr lhs, i32_matrix_ptr rhs, mx_opt_t opt);
+extern void i32m_mul_and_store(i32_matrix_ptr m, i32_matrix_ptr lhs, i32_matrix_ptr rhs, mx_opt_t opt);
 
-extern void mi32_scalar_multiply_and_store(p_mi32_t m, int32_t lhs, p_mi32_t rhs, mx_opt_t opt);
+extern void i32m_scalar_multiply_and_store(i32_matrix_ptr m, int32_t lhs, i32_matrix_ptr rhs, mx_opt_t opt);
 
-inline static p_mi32_t mi32_create_zeros(uint32_t row_cnt, uint32_t col_cnt, mx_opt_t opt)
+inline static i32_matrix_ptr i32m_create_zeros(uint32_t row_cnt, uint32_t col_cnt, mx_opt_t opt)
 {
-    p_mi32_t m = mi32_allocate(row_cnt, col_cnt);
+    i32_matrix_ptr m = i32m_allocate(row_cnt, col_cnt);
     if (m) {
-        mi32_init_zeros(m, opt);
+        i32m_init_zeros(m, opt);
     } /* if */
     return m;
-} /* mi32_create_zeros */
+} /* i32m_create_zeros */
 
-inline static p_mi32_t mi32_create_ones(uint32_t row_cnt, uint32_t col_cnt, mx_opt_t opt)
+inline static i32_matrix_ptr i32m_create_ones(uint32_t row_cnt, uint32_t col_cnt, mx_opt_t opt)
 {
-    p_mi32_t m = mi32_allocate(row_cnt, col_cnt);
+    i32_matrix_ptr m = i32m_allocate(row_cnt, col_cnt);
     if (m) {
-        mi32_init_ones(m, opt);
+        i32m_init_ones(m, opt);
     } /* if */
     return m;
-} /* mi32_create_ones */
+} /* i32m_create_ones */
 
-inline static p_mi32_t mi32_create_identity(uint32_t row_cnt, uint32_t col_cnt, mx_opt_t opt)
+inline static i32_matrix_ptr i32m_create_identity(uint32_t row_cnt, uint32_t col_cnt, mx_opt_t opt)
 {
-    p_mi32_t m = mi32_allocate(row_cnt, col_cnt);
+    i32_matrix_ptr m = i32m_allocate(row_cnt, col_cnt);
     if (m) {
-        mi32_init_identity(m, opt);
+        i32m_init_identity(m, opt);
     } /* if */
     return m;
-} /* mi32_create_identity */
+} /* i32m_create_identity */
 
-inline static p_mi32_t mi32_transpose(p_mi32_t src)
+inline static i32_matrix_ptr i32m_transpose(i32_matrix_ptr src)
 {
-    p_mi32_t m = mi32_allocate_for_transposing(src);
+    i32_matrix_ptr m = i32m_allocate_for_transposing(src);
     if (m) {
-        mi32_transpose_and_store(m, src);
+        i32m_transpose_and_store(m, src);
     } // if
     return m;
-} /* mi32_transpose */
+} /* i32m_transpose */
 
-inline static int mi32_can_do_sub(p_mi32_t lhs, p_mi32_t rhs)
+inline static int i32m_can_sub(i32_matrix_ptr lhs, i32_matrix_ptr rhs)
 {
-    return mi32_can_do_add(lhs, rhs);
-} /* mi32_can_do_sub */
+    return i32m_can_add(lhs, rhs);
+} /* i32m_can_sub */
 
-inline static p_mi32_t mi32_add(p_mi32_t lhs, p_mi32_t rhs, mx_opt_t opt)
+inline static i32_matrix_ptr i32m_add(i32_matrix_ptr lhs, i32_matrix_ptr rhs, mx_opt_t opt)
 {
-    p_mi32_t m = mi32_allocate_in_shape_of(lhs);
+    i32_matrix_ptr m = i32m_allocate_in_shape_of(lhs);
     if (m) {
-        mi32_add_and_store(m, lhs, rhs, opt);
+        i32m_add_and_store(m, lhs, rhs, opt);
     } /* if */
     return m;
-} /* mi32_add */
+} /* i32m_add */
 
-inline static p_mi32_t mi32_sub(p_mi32_t lhs, p_mi32_t rhs, mx_opt_t opt)
+inline static i32_matrix_ptr i32m_sub(i32_matrix_ptr lhs, i32_matrix_ptr rhs, mx_opt_t opt)
 {
-    p_mi32_t m = mi32_allocate_in_shape_of(lhs);
+    i32_matrix_ptr m = i32m_allocate_in_shape_of(lhs);
     if (m) {
-        mi32_sub_and_store(m, lhs, rhs, opt);
+        i32m_sub_and_store(m, lhs, rhs, opt);
     } /* if */
     return m;
-} /* mi32_sub */
+} /* i32m_sub */
 
-inline static p_mi32_t mi32_multiply(p_mi32_t lhs, p_mi32_t rhs, mx_opt_t opt)
+inline static i32_matrix_ptr i32m_multiply(i32_matrix_ptr lhs, i32_matrix_ptr rhs, mx_opt_t opt)
 {
-    p_mi32_t m = mi32_allocate_for_multiplying(lhs, rhs);
+    i32_matrix_ptr m = i32m_allocate_for_multiplying(lhs, rhs);
     if (m) {
-        mi32_mul_and_store(m, lhs, rhs, opt);
+        i32m_mul_and_store(m, lhs, rhs, opt);
     } /* if */
     return m;
-} /* mi32_multiply */
+} /* i32m_multiply */
 
-inline static p_mi32_t mi32_scalar_multiply(int32_t lhs, p_mi32_t rhs, mx_opt_t opt)
+inline static i32_matrix_ptr i32m_scalar_multiply(int32_t lhs, i32_matrix_ptr rhs, mx_opt_t opt)
 {
-    p_mi32_t m = mi32_allocate_in_shape_of(rhs);
+    i32_matrix_ptr m = i32m_allocate_in_shape_of(rhs);
     if (m) {
-        mi32_scalar_multiply_and_store(m, lhs, rhs, opt);
+        i32m_scalar_multiply_and_store(m, lhs, rhs, opt);
     } /* if */
     return m;
-} /* mi32_scalar_multiply */
+} /* i32m_scalar_multiply */
 
 #endif /* MATRIX_H */
 

@@ -551,7 +551,7 @@ Test(Locate, v8si_calc_base)
     }
 }
 
-Test(Locate, v8si_locate_chunk)
+Test(Locate, mstr_v8si_locate_chunk)
 {
     mx_stor_ptr ms = NULL;
     uint32_t rows_in_chk = 0;
@@ -563,7 +563,7 @@ Test(Locate, v8si_locate_chunk)
     {
         ms = mstr_v8si_create(1, 1);
 
-        chk = v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk, &full);
+        chk = mstr_v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk, &full);
         check_base(ms, chk, 0);
         check_rows_in_chunk(rows_in_chk, 1);
         check_columns_in_chunk(cols_in_chk, 1);
@@ -576,7 +576,7 @@ Test(Locate, v8si_locate_chunk)
     {
         ms = mstr_v8si_create(8, 8);
 
-        chk = v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk, &full);
+        chk = mstr_v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk, &full);
         check_base(ms, chk, 0);
         check_rows_in_chunk(rows_in_chk, 8);
         check_columns_in_chunk(cols_in_chk, 8);
@@ -589,7 +589,7 @@ Test(Locate, v8si_locate_chunk)
     {
         ms = mstr_v8si_create(15, 15);
 
-        chk = v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk, &full);
+        chk = mstr_v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk, &full);
         check_base(ms, chk, 0);
         check_rows_in_chunk(rows_in_chk, 15);
         check_columns_in_chunk(cols_in_chk, 15);
@@ -602,7 +602,7 @@ Test(Locate, v8si_locate_chunk)
     {
         ms = mstr_v8si_create(16, 16);
 
-        chk = v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk, &full);
+        chk = mstr_v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk, &full);
         check_base(ms, chk, 0);
         check_rows_in_chunk(rows_in_chk, 16);
         check_columns_in_chunk(cols_in_chk, 16);
@@ -615,25 +615,25 @@ Test(Locate, v8si_locate_chunk)
     {
         ms = mstr_v8si_create(17, 17);
 
-        chk = v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk, &full);
+        chk = mstr_v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk, &full);
         check_base(ms, chk, 0);
         check_rows_in_chunk(rows_in_chk, 16);
         check_columns_in_chunk(cols_in_chk, 16);
         check_full_flag(full, true);
 
-        chk = v8si_locate_chunk(ms, 0, 1, &rows_in_chk, &cols_in_chk, &full);
+        chk = mstr_v8si_locate_chunk(ms, 0, 1, &rows_in_chk, &cols_in_chk, &full);
         check_base(ms, chk, 4 * 16 * 16);
         check_rows_in_chunk(rows_in_chk, 16);
         check_columns_in_chunk(cols_in_chk, 1);
         check_full_flag(full, false);
 
-        chk = v8si_locate_chunk(ms, 1, 0, &rows_in_chk, &cols_in_chk, &full);
+        chk = mstr_v8si_locate_chunk(ms, 1, 0, &rows_in_chk, &cols_in_chk, &full);
         check_base(ms, chk, 4 * 16 * 16 + 4 * 16 * 8);
         check_rows_in_chunk(rows_in_chk, 1);
         check_columns_in_chunk(cols_in_chk, 16);
         check_full_flag(full, false);
 
-        chk = v8si_locate_chunk(ms, 1, 1, &rows_in_chk, &cols_in_chk, &full);
+        chk = mstr_v8si_locate_chunk(ms, 1, 1, &rows_in_chk, &cols_in_chk, &full);
         check_base(ms, chk, 4 * 16 * 16 + 4 * 16 * 8 + 4 * 1 * 16);
         check_rows_in_chunk(rows_in_chk, 1);
         check_columns_in_chunk(cols_in_chk, 1);

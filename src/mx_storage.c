@@ -229,7 +229,7 @@ void mstr_v8si_fill(mx_stor_ptr ms, int32_t src)
 } // mstr_v8si_fill
 
 //// NAME:
-////   v8si_assemble_chunk
+////   mstr_v8si_assemble_chunk
 ////
 //// ACTION:
 ////   Copy int32_t values from given source addresses and assemble them into packs.
@@ -245,7 +245,7 @@ void mstr_v8si_fill(mx_stor_ptr ms, int32_t src)
 ////
 //// RETURN VALUE:
 ////   none
-static void v8si_assemble_chunk(v8si_t * chk_pck, int32_t * src, uint32_t src_span, uint32_t idx_span, uint32_t itrs, uint32_t msks)
+void mstr_v8si_assemble_chunk(v8si_t * chk_pck, int32_t * src, uint32_t src_span, uint32_t idx_span, uint32_t itrs, uint32_t msks)
 {
     v8si_t idx[2];
     v8si_t * mask[2];
@@ -351,9 +351,9 @@ static void v8si_assemble_chunk(v8si_t * chk_pck, int32_t * src, uint32_t src_sp
             chk_pck[0] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[0], *mask[0], sizeof(int32_t));
             chk_pck[1] = __builtin_ia32_gathersiv8si(v8si_zero, src, idx[1], *mask[1], sizeof(int32_t));
     } // switch
-} // v8si_assemble_chunk
+} // mstr_v8si_assemble_chunk
 
-inline static void * v8si_locate_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, uint32_t * rows_in_chk, uint32_t * cols_in_chk, bool * full)
+void * mstr_v8si_locate_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, uint32_t * rows_in_chk, uint32_t * cols_in_chk, bool * full)
 {
     uint32_t base_ridx = chk_ridx * I32_VALS_IN_CACHE_LINE; // Refer to values.
     uint32_t base_cidx = chk_cidx * I32_VALS_IN_CACHE_LINE; // Refer to values.
@@ -363,7 +363,7 @@ inline static void * v8si_locate_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32
 
     *full = (*rows_in_chk == I32_VALS_IN_CACHE_LINE) && (*cols_in_chk == I32_VALS_IN_CACHE_LINE);
     return v8si_calc_base(ms, base_ridx, base_cidx, *rows_in_chk);
-} // v8si_locate_chunk
+} // mstr_v8si_locate_chunk
 
 inline static uint32_t v8si_to_chunk_index(uint32_t idx)
 {
@@ -372,7 +372,7 @@ inline static uint32_t v8si_to_chunk_index(uint32_t idx)
 
 mx_chunk_ptr mstr_v8si_copy_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr chk, uint32_t * rows_in_chk, uint32_t * cols_in_chk, bool * full)
 {
-    void * base = v8si_locate_chunk(ms, chk_ridx, chk_cidx, rows_in_chk, cols_in_chk, full);
+    void * base = mstr_v8si_locate_chunk(ms, chk_ridx, chk_cidx, rows_in_chk, cols_in_chk, full);
 
     if (*full) {
         // If the source chunk is full of 16x16 values, return the pointer to it directly.
@@ -380,14 +380,14 @@ mx_chunk_ptr mstr_v8si_copy_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t ch
     } // if
 
     // Otherwise copy it totally.
-    v8si_assemble_chunk(&chk->v8si_pcks[0][0], base, round_to_multiples_of_8(*cols_in_chk), 1, *rows_in_chk, *cols_in_chk);
+    mstr_v8si_assemble_chunk(&chk->v8si_pcks[0][0], base, round_to_multiples_of_8(*cols_in_chk), 1, *rows_in_chk, *cols_in_chk);
     return chk;
 } // mstr_v8si_copy_chunk
 
 mx_chunk_ptr mstr_v8si_transpose_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr chk, uint32_t * rows_in_chk, uint32_t * cols_in_chk, bool * full)
 {
-    void * base = v8si_locate_chunk(ms, chk_ridx, chk_cidx, rows_in_chk, cols_in_chk, full);
-    v8si_assemble_chunk(&chk->v8si_pcks[0][0], base, 1, round_to_multiples_of_8(*cols_in_chk), *cols_in_chk, *rows_in_chk);
+    void * base = mstr_v8si_locate_chunk(ms, chk_ridx, chk_cidx, rows_in_chk, cols_in_chk, full);
+    mstr_v8si_assemble_chunk(&chk->v8si_pcks[0][0], base, 1, round_to_multiples_of_8(*cols_in_chk), *cols_in_chk, *rows_in_chk);
     // Swap the number of rows and columns of the target chunk since it is transposed.
     *rows_in_chk ^= *cols_in_chk;
     *cols_in_chk ^= *rows_in_chk;
@@ -402,7 +402,7 @@ void mstr_v8si_store_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx,
     uint32_t rows_in_chk = 0;
     uint32_t cols_in_chk = 0;
     bool full = false;
-    void * base = v8si_locate_chunk(ms, chk_ridx, chk_cidx, &rows_in_chk, &cols_in_chk, &full);
+    void * base = mstr_v8si_locate_chunk(ms, chk_ridx, chk_cidx, &rows_in_chk, &cols_in_chk, &full);
 
     if (base == chk) {
         return;

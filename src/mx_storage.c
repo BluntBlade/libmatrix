@@ -211,21 +211,20 @@ void mstr_v8si_set(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, int32_t
     base[(val_ridx - base_ridx) * round_to_multiples_of_8(cols_in_chk) + (val_cidx - base_cidx)] = src;
 } // mstr_v8si_set
 
-void mstr_v8si_fill(mx_stor_ptr ms, int32_t val)
+void mstr_v8si_fill(mx_stor_ptr ms, int32_t src)
 {
-    v8si_t src = {val, val, val, val, val, val, val, val};
+    v8si_t vals = {src, src, src, src, src, src, src, src};
     uint32_t i = 0;
     v8si_t * base = NULL;
 
     base = ms->data;
     for (i = 0; i < ms->cols_padded / I32_VALS_IN_V8SI; i += 1) {
-        base[i] = src;
+        base[i] = vals;
     } // for
     for (i = 1; i < ms->rows; i += 1) {
         base += ms->cols_padded / I32_VALS_IN_V8SI;
         memcpy(base, ms->data, sizeof(int32_t) * ms->cols_padded);
     } // for
-
     // NOTE: No need to zero out any padded int32_t values.
 } // mstr_v8si_fill
 
@@ -389,7 +388,7 @@ mx_chunk_ptr mstr_v8si_transpose_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32
 {
     void * base = v8si_locate_chunk(ms, chk_ridx, chk_cidx, rows_in_chk, cols_in_chk, full);
     v8si_assemble_chunk(&chk->v8si_pcks[0][0], base, 1, round_to_multiples_of_8(*cols_in_chk), *cols_in_chk, *rows_in_chk);
-    // Swap the number of rows and columns in the source chunk.
+    // Swap the number of rows and columns of the target chunk since it is transposed.
     *rows_in_chk ^= *cols_in_chk;
     *cols_in_chk ^= *rows_in_chk;
     *rows_in_chk ^= *cols_in_chk;
@@ -412,40 +411,23 @@ void mstr_v8si_store_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx,
     // NOTE: Copy bytes depends on the number of columns in the target chunk.
     bytes = sizeof(int32_t) * round_to_multiples_of_8(cols_in_chk);
     switch (rows_in_chk) {
-        default:
-            assert(1); break;
-        case 16:
-            memcpy(base, &chk->i32_vals[i][0], bytes); base += bytes; i += 1;
-        case 15:
-            memcpy(base, &chk->i32_vals[i][0], bytes); base += bytes; i += 1;
-        case 14:
-            memcpy(base, &chk->i32_vals[i][0], bytes); base += bytes; i += 1;
-        case 13:
-            memcpy(base, &chk->i32_vals[i][0], bytes); base += bytes; i += 1;
-        case 12:
-            memcpy(base, &chk->i32_vals[i][0], bytes); base += bytes; i += 1;
-        case 11:
-            memcpy(base, &chk->i32_vals[i][0], bytes); base += bytes; i += 1;
-        case 10:
-            memcpy(base, &chk->i32_vals[i][0], bytes); base += bytes; i += 1;
-        case  9:
-            memcpy(base, &chk->i32_vals[i][0], bytes); base += bytes; i += 1;
-        case  8:
-            memcpy(base, &chk->i32_vals[i][0], bytes); base += bytes; i += 1;
-        case  7:
-            memcpy(base, &chk->i32_vals[i][0], bytes); base += bytes; i += 1;
-        case  6:
-            memcpy(base, &chk->i32_vals[i][0], bytes); base += bytes; i += 1;
-        case  5:
-            memcpy(base, &chk->i32_vals[i][0], bytes); base += bytes; i += 1;
-        case  4:
-            memcpy(base, &chk->i32_vals[i][0], bytes); base += bytes; i += 1;
-        case  3:
-            memcpy(base, &chk->i32_vals[i][0], bytes); base += bytes; i += 1;
-        case  2:
-            memcpy(base, &chk->i32_vals[i][0], bytes); base += bytes; i += 1;
-        case  1:
-            memcpy(base, &chk->i32_vals[i][0], bytes);
+        default: assert(1); break;
+        case 16: memcpy(base, &chk->i32_vals[i][0], bytes); base += bytes; i += 1;
+        case 15: memcpy(base, &chk->i32_vals[i][0], bytes); base += bytes; i += 1;
+        case 14: memcpy(base, &chk->i32_vals[i][0], bytes); base += bytes; i += 1;
+        case 13: memcpy(base, &chk->i32_vals[i][0], bytes); base += bytes; i += 1;
+        case 12: memcpy(base, &chk->i32_vals[i][0], bytes); base += bytes; i += 1;
+        case 11: memcpy(base, &chk->i32_vals[i][0], bytes); base += bytes; i += 1;
+        case 10: memcpy(base, &chk->i32_vals[i][0], bytes); base += bytes; i += 1;
+        case  9: memcpy(base, &chk->i32_vals[i][0], bytes); base += bytes; i += 1;
+        case  8: memcpy(base, &chk->i32_vals[i][0], bytes); base += bytes; i += 1;
+        case  7: memcpy(base, &chk->i32_vals[i][0], bytes); base += bytes; i += 1;
+        case  6: memcpy(base, &chk->i32_vals[i][0], bytes); base += bytes; i += 1;
+        case  5: memcpy(base, &chk->i32_vals[i][0], bytes); base += bytes; i += 1;
+        case  4: memcpy(base, &chk->i32_vals[i][0], bytes); base += bytes; i += 1;
+        case  3: memcpy(base, &chk->i32_vals[i][0], bytes); base += bytes; i += 1;
+        case  2: memcpy(base, &chk->i32_vals[i][0], bytes); base += bytes; i += 1;
+        case  1: memcpy(base, &chk->i32_vals[i][0], bytes);
     } // switch
     // NOTE: No need to zero out any padded int32_t values.
 } // mstr_v8si_store_chunk

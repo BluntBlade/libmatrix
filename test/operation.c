@@ -1,7 +1,7 @@
 #include <criterion/criterion.h>
 
 #ifndef MX_OPER_C
-#include "mx_operation.c"
+#include "src/mx_operation.c"
 #define MX_OPER_C
 #endif
 

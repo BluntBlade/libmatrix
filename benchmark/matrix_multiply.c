@@ -3,7 +3,7 @@
 #include <string.h>
 #include <sys/time.h>
 
-#include "matrix.h"
+#include "src/matrix.h"
 
 enum {
     PLAIN = 0x1,
@@ -20,9 +20,9 @@ int main(int argc, const char * argv[])
     int cnt = 1000;
     int n = 256;
     unsigned int code = 0;
-    ptr_matrix_t lhs = NULL;
-    ptr_matrix_t rhs = NULL;
-    ptr_matrix_t m = NULL;
+    p_mi32_t lhs = NULL;
+    p_mi32_t rhs = NULL;
+    p_mi32_t m = NULL;
 
     if (argc > 1) {
         cnt = atoi(argv[1]); 
@@ -42,20 +42,20 @@ int main(int argc, const char * argv[])
         } /* if */
     } /* if */
 
-    lhs = mtx_i32_allocate(n, n);
-    rhs = mtx_i32_allocate(n, n);
-    m = mtx_allocate_for_multiplying(lhs, rhs);
+    lhs = mi32_allocate(n, n);
+    rhs = mi32_allocate(n, n);
+    m = mi32_allocate_for_multiplying(lhs, rhs);
 
     printf("Multiply %dx%d matrices, iterate for %d times.\n", n, n, cnt);
 
-    mtx_initialize_ones(lhs, MTX_PLAIN_CODE);
-    mtx_initialize_ones(rhs, MTX_PLAIN_CODE);
+    mi32_init_ones(lhs, MX_PLAIN_CODE);
+    mi32_init_ones(rhs, MX_PLAIN_CODE);
 
     if (code & PLAIN) {
         printf("Calculating using plain code.\n");
         gettimeofday(&begin, NULL);
         for (i = 0; i < cnt; i += 1) {
-            mtx_multiply_and_store(m, lhs, rhs, MTX_PLAIN_CODE);
+            mi32_mul_and_store(m, lhs, rhs, MX_PLAIN_CODE);
         } /* for */
         gettimeofday(&end, NULL);
         diff = (end.tv_sec * 1000000 + end.tv_usec) - (begin.tv_sec * 1000000 + begin.tv_usec);
@@ -66,15 +66,15 @@ int main(int argc, const char * argv[])
         printf("Calculating using simd code.\n");
         gettimeofday(&begin, NULL);
         for (i = 0; i < cnt; i += 1) {
-            mtx_multiply_and_store(m, lhs, rhs, MTX_SIMD_CODE);
+            mi32_mul_and_store(m, lhs, rhs, MX_SIMD_CODE);
         } /* for */
         gettimeofday(&end, NULL);
         diff = (end.tv_sec * 1000000 + end.tv_usec) - (begin.tv_sec * 1000000 + begin.tv_usec);
         printf("Time for mtx_multiply_and_store() using SIMD code = %7.6fs\n", (float)diff / 1000000);
     } /* if */
 
-    mtx_destroy(m);
-    mtx_destroy(rhs);
-    mtx_destroy(lhs);
+    mi32_destroy(m);
+    mi32_destroy(rhs);
+    mi32_destroy(lhs);
     return 0;
 }

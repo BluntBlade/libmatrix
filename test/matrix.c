@@ -1,7 +1,7 @@
 #include <exotic/cester.h>
 
 #ifndef MATRIX_C
-#include "matrix.c"
+#include "src/matrix.c"
 #define MATRIX_C
 #endif
 

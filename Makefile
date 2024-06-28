@@ -1,4 +1,8 @@
-CC = gcc
+ifdef LLVM
+    CC = /usr/bin/gcc
+else
+    CC = /usr/local/bin/gcc
+endif
 
 CFLAGS = -g -fPIC -I. -I/usr/local/include -msse4.1 -mavx2 -Wno-int-conversion
 
@@ -6,7 +10,7 @@ ifdef RELEASE
     CFLAGS := $(CFLAGS) -O3
 endif
 
-LDFLAGS := $(LDFLAGS) -L/usr/local/lib
+LDFLAGS := $(LDFLAGS) -g -L/usr/local/lib
 
 ifdef OPENMP
     CFLAGS := $(CFLAGS) -Xpreprocessor -fopenmp
@@ -16,34 +20,41 @@ endif
 #TEST_LDFLAGS = -Wl,--wrap=malloc
 TEST_LDFLAGS = -g
 
-SRC = matrix.c mx_storage.c mx_operation.c mx_types.c
+SRC = src/matrix.c \
+      src/mx_storage.c \
+      src/mx_operation.c \
+      src/mx_types.c
 OBJ = $(SRC:.c=.o)
-TARGET = libmatrix.so
+TARGET = bin/libmatrix.dylib
 
-TEST_SRC = test_matrix.c mx_types.c
+TEST_SRC = test/matrix.c \
+           src/mx_types.c
 TEST_OBJ = $(TEST_SRC:.c=.o)
-TEST_TARGET = test_matrix
+TEST_TARGET = test/matrix
 
-TEST_STOR_SRC = test_storage.c mx_types.c
+TEST_STOR_SRC = test/storage.c \
+                src/mx_types.c
 TEST_STOR_OBJ = $(TEST_STOR_SRC:.c=.o)
-TEST_STOR_TARGET = test_storage
+TEST_STOR_TARGET = test/storage
 
-TEST_OPER_SRC = test_operation.c mx_storage.c mx_types.c
+TEST_OPER_SRC = test/operation.c \
+                src/mx_storage.c \
+                src/mx_types.c
 TEST_OPER_OBJ = $(TEST_OPER_SRC:.c=.o)
-TEST_OPER_TARGET = test_operation
+TEST_OPER_TARGET = test/operation
 
-BENCHMARK_MATRIX_MULTIPLY_SRC = benchmark_matrix_multiply.c
-BENCHMARK_MATRIX_MULTIPLY_OBJ = $(BENCHMARK_MATRIX_MULTIPLY_SRC:.c=.o)  $(OBJ)
-BENCHMARK_MATRIX_MULTIPLY = benchmark_matrix_multiply
+BM_MATRIX_MULTIPLY_SRC = benchmark/matrix_multiply.c $(SRC)
+BM_MATRIX_MULTIPLY_OBJ = $(BM_MATRIX_MULTIPLY_SRC:.c=.o)
+BM_MATRIX_MULTIPLY = benchmark/matrix_multiply
 
 .PHONY : all test clean
 
 all : $(TARGET)
 test : $(TEST_TARGET) $(TEST_STOR_TARGET) $(TEST_OPER_TARGET)
-benchmark : $(BENCHMARK_MATRIX_MULTIPLY)
+benchmark : $(BM_MATRIX_MULTIPLY)
 
 clean :
-	rm -rf *.o $(TARGET) $(TEST_TARGET) $(TEST_STOR_TARGET) $(TEST_OPER_TARGET) $(BENCHMARK_MATRIX_MULTIPLY)
+	rm -rf $(TARGET) $(TEST_TARGET) $(TEST_STOR_TARGET) $(TEST_OPER_TARGET) $(BM_MATRIX_MULTIPLY) $(OBJ) $(TEST_OBJ) $(TEST_STOR_OBJ) $(TEST_OPER_OBJ) $(BM_MATRIX_MULTIPLY_OBJ)
 
 $(TARGET) : $(OBJ)
 	gcc -o $@ --shared $^ $(LDFLAGS) $(LIBS)
@@ -51,13 +62,13 @@ $(TARGET) : $(OBJ)
 $(TEST_OBJ) : $(SRC)
 
 $(TEST_TARGET) : $(TEST_OBJ)
-	gcc -o $@ $(TEST_LDFLAGS) $^ $(LDFLAGS) $(LIBS)
+	gcc -o $@ $^ $(LDFLAGS) $(LIBS)
 
-$(TEST_STOR_TARGET) : $(TEST_STOR_OBJ) mx_storage.c
-	gcc -o $@ $(TEST_LDFLAGS) $(TEST_STOR_OBJ) $(LDFLAGS) $(LIBS) -lcriterion
+$(TEST_STOR_TARGET) : $(TEST_STOR_OBJ) src/mx_storage.c
+	gcc -o $@ $(TEST_STOR_OBJ) $(LDFLAGS) $(LIBS) -lcriterion
 
-$(TEST_OPER_TARGET) : $(TEST_OPER_OBJ) mx_operation.c
-	gcc -o $@ $(TEST_LDFLAGS) $(TEST_OPER_OBJ) $(LDFLAGS) $(LIBS) -lcriterion
+$(TEST_OPER_TARGET) : $(TEST_OPER_OBJ) src/mx_operation.c
+	gcc -o $@ $(TEST_OPER_OBJ) $(LDFLAGS) $(LIBS) -lcriterion
 
-$(BENCHMARK_MATRIX_MULTIPLY) : $(BENCHMARK_MATRIX_MULTIPLY_OBJ)
+$(BM_MATRIX_MULTIPLY) : $(BM_MATRIX_MULTIPLY_OBJ)
 	gcc -o $@ $^ $(LDFLAGS) $(LIBS)

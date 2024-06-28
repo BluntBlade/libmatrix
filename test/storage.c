@@ -1,7 +1,7 @@
 #include <criterion/criterion.h>
 
 #ifndef MX_STOR_C
-#include "mx_storage.c"
+#include "src/mx_storage.c"
 #define MX_STOR_C
 #endif
 

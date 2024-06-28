@@ -2,33 +2,9 @@
 #include <string.h>
 #include <immintrin.h>
 
-#include "config.h"
-#include "mx_storage.h"
-
-inline static uint32_t round_to_multiples(uint32_t cnt, uint32_t n)
-{
-    return (cnt + (n - 1)) & (~(n - 1));
-} // round_to_multiples
-
-inline static uint32_t round_to_multiples_of_8(uint32_t cnt)
-{
-    return (cnt + (8 - 1)) & (~(8 - 1));
-} // round_to_multiples_of_8
-
-inline static uint32_t round_to_multiples_of_16(uint32_t cnt)
-{
-    return (cnt + (16 - 1)) & (~(16 - 1));
-} // round_to_multiples_of_16
-
-inline static uint32_t floor_to_multiples_of_16(uint32_t cnt)
-{
-    return cnt & (~(16 - 1));
-} // floor_to_multiples_of_16
-
-inline static uint32_t ceil_to_or_less_than_16(uint32_t cnt)
-{
-    return (cnt < 16) ? cnt : 16;
-} // ceil_to_or_less_than_16
+#include "src/config.h"
+#include "src/mx_common.h"
+#include "src/mx_storage.h"
 
 typedef struct MX_STORAGE {
     uint16_t    val_sz;             // The size of one value, in bytes.
@@ -64,14 +40,14 @@ static mx_stor_ptr create(uint32_t rows, uint32_t cols, uint32_t val_sz, uint32_
     ms->val_sz = val_sz;
     ms->rows = rows;
     ms->cols = cols;
-    ms->cols_padded = round_to_multiples(cols, pck_len);
+    ms->cols_padded = mx_round_to_multiples(cols, pck_len);
     ms->bytes = ms->val_sz * ms->rows * ms->cols_padded;
     ms->pck_len = pck_len;
     ms->chk_len = chk_len;
-    ms->last_chk_width = cols - (round_to_multiples(cols, chk_len) - chk_len);
-    ms->last_chk_height = rows - (round_to_multiples(rows, chk_len) - chk_len);
-    ms->chks_in_width = round_to_multiples(cols, chk_len) / chk_len;
-    ms->chks_in_height = round_to_multiples(rows, chk_len) / chk_len;
+    ms->last_chk_width = cols - (mx_round_to_multiples(cols, chk_len) - chk_len);
+    ms->last_chk_height = rows - (mx_round_to_multiples(rows, chk_len) - chk_len);
+    ms->chks_in_width = mx_round_to_multiples(cols, chk_len) / chk_len;
+    ms->chks_in_height = mx_round_to_multiples(rows, chk_len) / chk_len;
 
     ms->alignment = ms->val_sz * ms->pck_len;
     ms->buf = malloc(ms->bytes + ms->alignment);
@@ -158,7 +134,7 @@ void mstr_v8si_init_identity(mx_stor_ptr ms)
     mstr_v8si_init_zeros(ms);
 
     last_rows = ms->last_chk_height;
-    cols_padded = round_to_multiples_of_8(last_rows);
+    cols_padded = mx_round_to_multiples_of_8(last_rows);
     val_idx = (i - 1) * I32_VALS_IN_CACHE_LINE;
     base = v8si_calc_base(ms, val_idx, val_idx, last_rows);
     switch (last_rows) {
@@ -193,22 +169,22 @@ void mstr_v8si_init_identity(mx_stor_ptr ms)
 
 int32_t mstr_v8si_get(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx)
 {
-    uint32_t base_ridx = floor_to_multiples_of_16(val_ridx);
-    uint32_t base_cidx = floor_to_multiples_of_16(val_cidx);
-    uint32_t rows_in_chk = ceil_to_or_less_than_16(ms->rows - base_ridx);
-    uint32_t cols_in_chk = ceil_to_or_less_than_16(ms->cols - base_cidx);
+    uint32_t base_ridx = mx_floor_to_multiples_of_16(val_ridx);
+    uint32_t base_cidx = mx_floor_to_multiples_of_16(val_cidx);
+    uint32_t rows_in_chk = mx_ceil_to_or_less_than_16(ms->rows - base_ridx);
+    uint32_t cols_in_chk = mx_ceil_to_or_less_than_16(ms->cols - base_cidx);
     int32_t * base = v8si_calc_base(ms, base_ridx, base_cidx, rows_in_chk);
-    return base[(val_ridx - base_ridx) * round_to_multiples_of_8(cols_in_chk) + (val_cidx - base_cidx)];
+    return base[(val_ridx - base_ridx) * mx_round_to_multiples_of_8(cols_in_chk) + (val_cidx - base_cidx)];
 } // mstr_v8si_get
 
 void mstr_v8si_set(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, int32_t src)
 {
-    uint32_t base_ridx = floor_to_multiples_of_16(val_ridx);
-    uint32_t base_cidx = floor_to_multiples_of_16(val_cidx);
-    uint32_t rows_in_chk = ceil_to_or_less_than_16(ms->rows - base_ridx);
-    uint32_t cols_in_chk = ceil_to_or_less_than_16(ms->cols - base_cidx);
+    uint32_t base_ridx = mx_floor_to_multiples_of_16(val_ridx);
+    uint32_t base_cidx = mx_floor_to_multiples_of_16(val_cidx);
+    uint32_t rows_in_chk = mx_ceil_to_or_less_than_16(ms->rows - base_ridx);
+    uint32_t cols_in_chk = mx_ceil_to_or_less_than_16(ms->cols - base_cidx);
     int32_t * base = v8si_calc_base(ms, base_ridx, base_cidx, rows_in_chk);
-    base[(val_ridx - base_ridx) * round_to_multiples_of_8(cols_in_chk) + (val_cidx - base_cidx)] = src;
+    base[(val_ridx - base_ridx) * mx_round_to_multiples_of_8(cols_in_chk) + (val_cidx - base_cidx)] = src;
 } // mstr_v8si_set
 
 void mstr_v8si_fill(mx_stor_ptr ms, int32_t src)
@@ -358,17 +334,12 @@ void * mstr_v8si_locate_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_ci
     uint32_t base_ridx = chk_ridx * I32_VALS_IN_CACHE_LINE; // Refer to values.
     uint32_t base_cidx = chk_cidx * I32_VALS_IN_CACHE_LINE; // Refer to values.
 
-    *rows_in_chk = ceil_to_or_less_than_16(ms->rows - base_ridx);
-    *cols_in_chk = ceil_to_or_less_than_16(ms->cols - base_cidx);
+    *rows_in_chk = mx_ceil_to_or_less_than_16(ms->rows - base_ridx);
+    *cols_in_chk = mx_ceil_to_or_less_than_16(ms->cols - base_cidx);
 
     *full = (*rows_in_chk == I32_VALS_IN_CACHE_LINE) && (*cols_in_chk == I32_VALS_IN_CACHE_LINE);
     return v8si_calc_base(ms, base_ridx, base_cidx, *rows_in_chk);
 } // mstr_v8si_locate_chunk
-
-inline static uint32_t v8si_to_chunk_index(uint32_t idx)
-{
-    return (idx == round_to_multiples_of_16(idx)) ? (idx / I32_VALS_IN_CACHE_LINE) : (round_to_multiples_of_16(idx) / I32_VALS_IN_CACHE_LINE - 1);
-} // v8si_to_chunk_index
 
 mx_chunk_ptr mstr_v8si_copy_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr chk, uint32_t * rows_in_chk, uint32_t * cols_in_chk, bool * full)
 {
@@ -380,14 +351,14 @@ mx_chunk_ptr mstr_v8si_copy_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t ch
     } // if
 
     // Otherwise copy it totally.
-    mstr_v8si_assemble_chunk(&chk->v8si_pcks[0][0], base, round_to_multiples_of_8(*cols_in_chk), 1, *rows_in_chk, *cols_in_chk);
+    mstr_v8si_assemble_chunk(&chk->v8si_pcks[0][0], base, mx_round_to_multiples_of_8(*cols_in_chk), 1, *rows_in_chk, *cols_in_chk);
     return chk;
 } // mstr_v8si_copy_chunk
 
 mx_chunk_ptr mstr_v8si_transpose_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr chk, uint32_t * rows_in_chk, uint32_t * cols_in_chk, bool * full)
 {
     void * base = mstr_v8si_locate_chunk(ms, chk_ridx, chk_cidx, rows_in_chk, cols_in_chk, full);
-    mstr_v8si_assemble_chunk(&chk->v8si_pcks[0][0], base, 1, round_to_multiples_of_8(*cols_in_chk), *cols_in_chk, *rows_in_chk);
+    mstr_v8si_assemble_chunk(&chk->v8si_pcks[0][0], base, 1, mx_round_to_multiples_of_8(*cols_in_chk), *cols_in_chk, *rows_in_chk);
     // Swap the number of rows and columns of the target chunk since it is transposed.
     *rows_in_chk ^= *cols_in_chk;
     *cols_in_chk ^= *rows_in_chk;
@@ -409,7 +380,7 @@ void mstr_v8si_store_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx,
     } // if
 
     // NOTE: Copy bytes depends on the number of columns in the target chunk.
-    bytes = sizeof(int32_t) * round_to_multiples_of_8(cols_in_chk);
+    bytes = sizeof(int32_t) * mx_round_to_multiples_of_8(cols_in_chk);
     switch (rows_in_chk) {
         default: assert(1); break;
         case 16: memcpy(base, &chk->i32_vals[i][0], bytes); base += bytes; i += 1;

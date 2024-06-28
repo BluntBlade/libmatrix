@@ -1,7 +1,8 @@
 #include <assert.h>
 #include <stdlib.h>
 
-#include "mx_operation.h"
+#include "src/mx_common.h"
+#include "src/mx_operation.h"
 
 typedef struct MX_OPERATION {
     mx_chunk_t      lchk;
@@ -476,3 +477,35 @@ void mops_v8si_scalar_multiply(mx_oper_ptr mp, int32_t lhs, mx_stor_ptr rhs, mx_
         } // for
     } // for
 } // mops_v8si_scalar_multiply
+
+void mops_v8si_transpose(mx_oper_ptr mp, mx_stor_ptr src, mx_stor_ptr dst)
+{
+    uint32_t i = 0;
+    uint32_t j = 0;
+    void * base = NULL;
+    mx_chunk_ptr ret = NULL;
+
+    for (i = 0; i < mstr_v8si_chunks_in_height(src) - 1; i += 1) {
+        for (j = 0; j < mstr_v8si_chunks_in_width(src) - 1; j += 1) {
+            base = mstr_v8si_locate_chunk(src, i, j, &mp->lchk_rows, &mp->lchk_cols, &mp->lchk_full);
+            ret = mstr_v8si_locate_chunk(dst, j, i, &mp->rchk_rows, &mp->rchk_cols, &mp->rchk_full);
+            mstr_v8si_assemble_chunk(&ret->v8si_pcks[0][0], base, 1, mx_round_to_multiples_of_8(mp->lchk_cols), mp->lchk_cols, mp->lchk_rows);
+        } // for
+    } // for
+
+    j = mstr_v8si_chunks_in_width(src) - 1;
+    for (i = 0; i < mstr_v8si_chunks_in_height(src) - 1; i += 1) {
+        ret = mstr_v8si_transpose_chunk(src, i, j, &mp->lchk, &mp->lchk_rows, &mp->lchk_cols, &mp->lchk_full);
+        mstr_v8si_store_chunk(dst, j, i, ret);
+    } // for
+
+    i = mstr_v8si_chunks_in_height(src) - 1;
+    for (j = 0; j < mstr_v8si_chunks_in_width(src) - 1; j += 1) {
+        ret = mstr_v8si_transpose_chunk(src, i, j, &mp->lchk, &mp->lchk_rows, &mp->lchk_cols, &mp->lchk_full);
+        mstr_v8si_store_chunk(dst, j, i, ret);
+    } // for
+
+    // Transpose the right-bottom chunk.
+    ret = mstr_v8si_transpose_chunk(src, i, j, &mp->lchk, &mp->lchk_rows, &mp->lchk_cols, &mp->lchk_full);
+    mstr_v8si_store_chunk(dst, j, i, ret);
+} // mops_v8si_transpose

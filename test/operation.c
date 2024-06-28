@@ -2295,3 +2295,237 @@ Test(Operation, mops_v8si_multiply)
         mops_v8si_destroy(mp);
     }
 }
+
+Test(Operation, mops_v8si_transpose)
+{
+    uint32_t i = 0;
+    uint32_t j = 0;
+    mx_oper_ptr mp = NULL;
+    mx_stor_ptr src = NULL;
+    mx_stor_ptr dst = NULL;
+
+    // -- 1x1 matrix transpose -- //
+    {
+        mp = mops_v8si_create();
+
+        src = mstr_v8si_create(1, 1);
+        mstr_v8si_set(src, 0, 0, 11);
+
+        dst = mstr_v8si_create(1, 1);
+        mops_v8si_transpose(mp, src, dst);
+
+        check_value_at(mstr_v8si_get(dst, 0, 0), 11, 0, 0);
+
+        mstr_v8si_destroy(dst);
+        mstr_v8si_destroy(src);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 5x5 matrix transpose -- //
+    {
+        mp = mops_v8si_create();
+
+        src = mstr_v8si_create(5, 5);
+
+        for (i = 0; i < 5; i += 1) {
+            for (j = 0; j < 5; j += 1) {
+                mstr_v8si_set(src, i, j, i * j);
+            } // for
+        } // for
+
+        dst = mstr_v8si_create(5, 5);
+        mops_v8si_transpose(mp, src, dst);
+
+        for (i = 0; i < 5; i += 1) {
+            for (j = 0; j < 5; j += 1) {
+                check_value_at(mstr_v8si_get(dst, i, j), mstr_v8si_get(src, j, i), i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(dst);
+        mstr_v8si_destroy(src);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 8x8 matrix transpose -- //
+    {
+        mp = mops_v8si_create();
+
+        src = mstr_v8si_create(8, 8);
+
+        for (i = 0; i < 8; i += 1) {
+            for (j = 0; j < 8; j += 1) {
+                mstr_v8si_set(src, i, j, i * j);
+            } // for
+        } // for
+
+        dst = mstr_v8si_create(8, 8);
+        mops_v8si_transpose(mp, src, dst);
+
+        for (i = 0; i < 8; i += 1) {
+            for (j = 0; j < 8; j += 1) {
+                check_value_at(mstr_v8si_get(dst, i, j), mstr_v8si_get(src, j, i), i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(dst);
+        mstr_v8si_destroy(src);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 9x9 matrix transpose -- //
+    {
+        mp = mops_v8si_create();
+
+        src = mstr_v8si_create(9, 9);
+
+        for (i = 0; i < 9; i += 1) {
+            for (j = 0; j < 9; j += 1) {
+                mstr_v8si_set(src, i, j, i * j);
+            } // for
+        } // for
+
+        dst = mstr_v8si_create(9, 9);
+        mops_v8si_transpose(mp, src, dst);
+
+        for (i = 0; i < 9; i += 1) {
+            for (j = 0; j < 9; j += 1) {
+                check_value_at(mstr_v8si_get(dst, i, j), mstr_v8si_get(src, j, i), i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(dst);
+        mstr_v8si_destroy(src);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 16x16 matrix transpose -- //
+    {
+        mp = mops_v8si_create();
+
+        src = mstr_v8si_create(16, 16);
+
+        for (i = 0; i < 16; i += 1) {
+            for (j = 0; j < 16; j += 1) {
+                mstr_v8si_set(src, i, j, i * j);
+            } // for
+        } // for
+
+        dst = mstr_v8si_create(16, 16);
+        mops_v8si_transpose(mp, src, dst);
+
+        for (i = 0; i < 16; i += 1) {
+            for (j = 0; j < 16; j += 1) {
+                check_value_at(mstr_v8si_get(dst, i, j), mstr_v8si_get(src, j, i), i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(dst);
+        mstr_v8si_destroy(src);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 17x17 matrix transpose -- //
+    {
+        mp = mops_v8si_create();
+
+        src = mstr_v8si_create(17, 17);
+
+        for (i = 0; i < 17; i += 1) {
+            for (j = 0; j < 17; j += 1) {
+                mstr_v8si_set(src, i, j, i * j);
+            } // for
+        } // for
+
+        dst = mstr_v8si_create(17, 17);
+        mops_v8si_transpose(mp, src, dst);
+
+        for (i = 0; i < 17; i += 1) {
+            for (j = 0; j < 17; j += 1) {
+                check_value_at(mstr_v8si_get(dst, i, j), mstr_v8si_get(src, j, i), i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(dst);
+        mstr_v8si_destroy(src);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 2x9 matrix transpose -- //
+    {
+        mp = mops_v8si_create();
+
+        src = mstr_v8si_create(2, 9);
+
+        for (i = 0; i < 2; i += 1) {
+            for (j = 0; j < 9; j += 1) {
+                mstr_v8si_set(src, i, j, i * j);
+            } // for
+        } // for
+
+        dst = mstr_v8si_create(9, 2);
+        mops_v8si_transpose(mp, src, dst);
+
+        for (i = 0; i < 9; i += 1) {
+            for (j = 0; j < 2; j += 1) {
+                check_value_at(mstr_v8si_get(dst, i, j), mstr_v8si_get(src, j, i), i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(dst);
+        mstr_v8si_destroy(src);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 9x2 matrix transpose -- //
+    {
+        mp = mops_v8si_create();
+
+        src = mstr_v8si_create(9, 2);
+
+        for (i = 0; i < 9; i += 1) {
+            for (j = 0; j < 2; j += 1) {
+                mstr_v8si_set(src, i, j, i * j);
+            } // for
+        } // for
+
+        dst = mstr_v8si_create(2, 9);
+        mops_v8si_transpose(mp, src, dst);
+
+        for (i = 0; i < 2; i += 1) {
+            for (j = 0; j < 9; j += 1) {
+                check_value_at(mstr_v8si_get(dst, i, j), mstr_v8si_get(src, j, i), i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(dst);
+        mstr_v8si_destroy(src);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 17x33 matrix transpose -- //
+    {
+        mp = mops_v8si_create();
+
+        src = mstr_v8si_create(17, 33);
+
+        for (i = 0; i < 17; i += 1) {
+            for (j = 0; j < 33; j += 1) {
+                mstr_v8si_set(src, i, j, i * j);
+            } // for
+        } // for
+
+        dst = mstr_v8si_create(33, 17);
+        mops_v8si_transpose(mp, src, dst);
+
+        for (i = 0; i < 33; i += 1) {
+            for (j = 0; j < 17; j += 1) {
+                check_value_at(mstr_v8si_get(dst, i, j), mstr_v8si_get(src, j, i), i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(dst);
+        mstr_v8si_destroy(src);
+        mops_v8si_destroy(mp);
+    }
+}

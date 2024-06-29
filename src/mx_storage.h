@@ -15,7 +15,7 @@ typedef struct MX_STORAGE {
     uint32_t    rows;               // The number of rows.
     uint32_t    cols;               // The number of columns.
     uint32_t    cols_padded;        // The actual number of columns, including padding ones.
-    size_t      bytes;              // Allocated bytes of the buffer.
+    size_t      bytes;              // Total bytes that store values, including no aligned ones.
 
     void *      buf;                // Non-aligned address of allocated memory, only for calling free().
     union {

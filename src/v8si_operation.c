@@ -5,25 +5,6 @@
 #include "src/v8si_storage.h"
 #include "src/v8si_operation.h"
 
-typedef struct MX_OPERATION {
-    mx_chunk_t      lchk;
-    mx_chunk_t      rchk;
-    mx_chunk_t      mchk;
-
-    uint32_t        lchk_rows;
-    uint32_t        lchk_cols;
-
-    uint32_t        rchk_rows;
-    uint32_t        rchk_cols;
-
-    uint32_t        mchk_rows;
-    uint32_t        mchk_cols;
-
-    bool            lchk_full;
-    bool            rchk_full;
-    bool            mchk_full;
-} mx_oper_t;
-
 mx_oper_ptr mops_v8si_create(void)
 {
     return calloc(sizeof(mx_oper_t), 1);

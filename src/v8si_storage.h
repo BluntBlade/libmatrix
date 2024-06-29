@@ -80,9 +80,9 @@ inline static void mstr_v8si_init_ones(mx_stor_ptr ms)
     return mstr_v8si_fill(ms, 1);
 } // mstr_v8si_init_ones
 
-inline static void * mstr_v8si_calc_base(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, uint32_t rows_in_chk)
+inline static void * mstr_v8si_calc_base(mx_stor_ptr ms, uint32_t base_ridx, uint32_t base_cidx, uint32_t rows_in_chk)
 {
-    return ms->data + (val_ridx * ms->cols_padded + rows_in_chk * val_cidx) * sizeof(int32_t);
+    return ms->data + (base_ridx * ms->cols_padded + rows_in_chk * base_cidx) * sizeof(int32_t);
 } // mstr_v8si_calc_base
 
 inline static void * mstr_v8si_locate_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, uint32_t * rows_in_chk, uint32_t * cols_in_chk, bool * full)

@@ -59,24 +59,25 @@ void mstr_v8si_init_identity(mx_stor_ptr ms)
     } // switch
 } // mstr_v8si_init_identity
 
-int32_t mstr_v8si_get(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx)
+inline static int32_t * v8si_locate_value(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx)
 {
     uint32_t base_ridx = mx_floor_to_multiples_of_16(val_ridx);
     uint32_t base_cidx = mx_floor_to_multiples_of_16(val_cidx);
+    // NOTE: In the case that val's index is equal to base's index, then the difference between them will be zero.
     uint32_t rows_in_chk = mx_ceil_to_or_less_than_16(ms->rows - base_ridx);
     uint32_t cols_in_chk = mx_ceil_to_or_less_than_16(ms->cols - base_cidx);
     int32_t * base = mstr_v8si_calc_base(ms, base_ridx, base_cidx, rows_in_chk);
-    return base[(val_ridx - base_ridx) * mx_round_to_multiples_of_8(cols_in_chk) + (val_cidx - base_cidx)];
+    return base + (val_ridx - base_ridx) * mx_round_to_multiples_of_8(cols_in_chk) + (val_cidx - base_cidx);
+} // v8si_locate_value
+
+int32_t mstr_v8si_get(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx)
+{
+    return v8si_locate_value(ms, val_ridx, val_cidx)[0];
 } // mstr_v8si_get
 
 void mstr_v8si_set(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, int32_t src)
 {
-    uint32_t base_ridx = mx_floor_to_multiples_of_16(val_ridx);
-    uint32_t base_cidx = mx_floor_to_multiples_of_16(val_cidx);
-    uint32_t rows_in_chk = mx_ceil_to_or_less_than_16(ms->rows - base_ridx);
-    uint32_t cols_in_chk = mx_ceil_to_or_less_than_16(ms->cols - base_cidx);
-    int32_t * base = mstr_v8si_calc_base(ms, base_ridx, base_cidx, rows_in_chk);
-    base[(val_ridx - base_ridx) * mx_round_to_multiples_of_8(cols_in_chk) + (val_cidx - base_cidx)] = src;
+    v8si_locate_value(ms, val_ridx, val_cidx)[0] = src;
 } // mstr_v8si_set
 
 void mstr_v8si_fill(mx_stor_ptr ms, int32_t src)

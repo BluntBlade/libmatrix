@@ -63,7 +63,6 @@ typedef union MX_CHUNK {
     v8sf_t v8sf_pcks[F32_VALS_IN_CACHE_LINE][V8SF_PCKS_IN_CACHE_LINE];
     v4df_t v4df_pcks[D64_VALS_IN_CACHE_LINE][V4DF_PCKS_IN_CACHE_LINE];
 
-    int32_t i32_vals[I32_VALS_IN_CACHE_LINE][I32_VALS_IN_CACHE_LINE];
     int32_t i32_16x16[16][16];
     int32_t i32_8x8[8][8];
 } mx_chunk_t __attribute__ ((aligned (32)));

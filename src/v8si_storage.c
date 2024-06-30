@@ -232,14 +232,14 @@ mx_chunk_ptr mstr_v8si_copy_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t ch
     } // if
 
     // Otherwise copy it totally.
-    mstr_v8si_assemble_chunk(&chk->v8si_pcks[0][0], base, mx_round_to_multiples_of_8(*cols_in_chk), 1, *rows_in_chk, *cols_in_chk);
+    mstr_v8si_assemble_chunk(&chk->v8si_16x2[0][0], base, mx_round_to_multiples_of_8(*cols_in_chk), 1, *rows_in_chk, *cols_in_chk);
     return chk;
 } // mstr_v8si_copy_chunk
 
 mx_chunk_ptr mstr_v8si_transpose_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr chk, uint32_t * rows_in_chk, uint32_t * cols_in_chk, bool * full)
 {
     void * base = mstr_v8si_locate_chunk(ms, chk_ridx, chk_cidx, rows_in_chk, cols_in_chk, full);
-    mstr_v8si_assemble_chunk(&chk->v8si_pcks[0][0], base, 1, mx_round_to_multiples_of_8(*cols_in_chk), *cols_in_chk, *rows_in_chk);
+    mstr_v8si_assemble_chunk(&chk->v8si_16x2[0][0], base, 1, mx_round_to_multiples_of_8(*cols_in_chk), *cols_in_chk, *rows_in_chk);
     // Swap the number of rows and columns of the target chunk since it is transposed.
     *rows_in_chk ^= *cols_in_chk;
     *cols_in_chk ^= *rows_in_chk;

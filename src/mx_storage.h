@@ -18,10 +18,7 @@ typedef struct MX_STORAGE {
     size_t      bytes;              // Total bytes that store values, including no aligned ones.
 
     void *      buf;                // Non-aligned address of allocated memory, only for calling free().
-    union {
-        void *      data;           // Aligned address of allocated memory.
-        v8si_t *    v8si_pcks;
-    };
+    void *      data;               // Aligned address of allocated memory.
 } mx_stor_t, *mx_stor_ptr;
 
 extern mx_stor_ptr mstr_init(mx_stor_ptr ms, uint32_t rows, uint32_t cols, uint32_t val_sz, uint32_t pck_len, uint32_t chk_len);

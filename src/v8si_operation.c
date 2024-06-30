@@ -110,7 +110,6 @@ void mops_v8si_add(mx_oper_ptr mp, mx_stor_ptr lhs, mx_stor_ptr rhs, mx_stor_ptr
                 v8si_add_chunk_fully(mchk, lchk, rchk, mp);
             } else {
                 v8si_add_chunk_partly(mchk, lchk, rchk, mp);
-                mstr_v8si_store_chunk(ret, i, j, mchk);
             } // if
         } // for
     } // for
@@ -211,7 +210,6 @@ void mops_v8si_subtract(mx_oper_ptr mp, mx_stor_ptr lhs, mx_stor_ptr rhs, mx_sto
                 v8si_subtract_chunk_fully(mchk, lchk, rchk, mp);
             } else {
                 v8si_subtract_chunk_partly(mchk, lchk, rchk, mp);
-                mstr_v8si_store_chunk(ret, i, j, mchk);
             } // if
         } // for
     } // for
@@ -457,7 +455,6 @@ void mops_v8si_scalar_multiply(mx_oper_ptr mp, int32_t lhs, mx_stor_ptr rhs, mx_
                 v8si_scalar_multiply_chunk_fully(mchk, &src, rchk, mp);
             } else {
                 v8si_scalar_multiply_chunk_partly(mchk, &src, rchk, mp);
-                mstr_v8si_store_chunk(ret, i, j, mchk);
             } // if
         } // for
     } // for

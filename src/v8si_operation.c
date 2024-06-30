@@ -17,13 +17,13 @@ void mops_v8si_destroy(mx_oper_ptr mp)
 
 #define v8si_add_chunk_full(row) \
     { \
-        chk->v8si_pcks[row][0] = __builtin_ia32_paddd256(lhs->v8si_pcks[row][0], rhs->v8si_pcks[row][0]); \
-        chk->v8si_pcks[row][1] = __builtin_ia32_paddd256(lhs->v8si_pcks[row][1], rhs->v8si_pcks[row][1]); \
+        chk->v8si_16x2[row][0] = __builtin_ia32_paddd256(lhs->v8si_16x2[row][0], rhs->v8si_16x2[row][0]); \
+        chk->v8si_16x2[row][1] = __builtin_ia32_paddd256(lhs->v8si_16x2[row][1], rhs->v8si_16x2[row][1]); \
     }
 
 #define v8si_add_chunk_half(row) \
     { \
-        chk->v8si_pcks[row][0] = __builtin_ia32_paddd256(lhs->v8si_pcks[row][0], rhs->v8si_pcks[row][0]); \
+        chk->v8si_8x1[row][0] = __builtin_ia32_paddd256(lhs->v8si_8x1[row][0], rhs->v8si_8x1[row][0]); \
     }
 
 static void v8si_add_chunk_fully(mx_chunk_ptr chk, mx_chunk_ptr lhs, mx_chunk_ptr rhs, mx_oper_ptr mp)
@@ -118,13 +118,13 @@ void mops_v8si_add(mx_oper_ptr mp, mx_stor_ptr lhs, mx_stor_ptr rhs, mx_stor_ptr
 
 #define v8si_subtract_chunk_full(row) \
     { \
-        chk->v8si_pcks[row][0] = __builtin_ia32_psubd256(lhs->v8si_pcks[row][0], rhs->v8si_pcks[row][0]); \
-        chk->v8si_pcks[row][1] = __builtin_ia32_psubd256(lhs->v8si_pcks[row][1], rhs->v8si_pcks[row][1]); \
+        chk->v8si_16x2[row][0] = __builtin_ia32_psubd256(lhs->v8si_16x2[row][0], rhs->v8si_16x2[row][0]); \
+        chk->v8si_16x2[row][1] = __builtin_ia32_psubd256(lhs->v8si_16x2[row][1], rhs->v8si_16x2[row][1]); \
     }
 
 #define v8si_subtract_chunk_half(row) \
     { \
-        chk->v8si_pcks[row][0] = __builtin_ia32_psubd256(lhs->v8si_pcks[row][0], rhs->v8si_pcks[row][0]); \
+        chk->v8si_8x1[row][0] = __builtin_ia32_psubd256(lhs->v8si_8x1[row][0], rhs->v8si_8x1[row][0]); \
     }
 
 static void v8si_subtract_chunk_fully(mx_chunk_ptr chk, mx_chunk_ptr lhs, mx_chunk_ptr rhs, mx_oper_ptr mp)
@@ -362,13 +362,13 @@ void mops_v8si_multiply(mx_oper_ptr mp, mx_stor_ptr lhs, mx_stor_ptr rhs, mx_sto
 
 #define v8si_scalar_multiply_chunk_full(row) \
     { \
-        chk->v8si_pcks[row][0] = __builtin_ia32_pmulld256(*lhs, rhs->v8si_pcks[row][0]); \
-        chk->v8si_pcks[row][1] = __builtin_ia32_pmulld256(*lhs, rhs->v8si_pcks[row][1]); \
+        chk->v8si_16x2[row][0] = __builtin_ia32_pmulld256(*lhs, rhs->v8si_16x2[row][0]); \
+        chk->v8si_16x2[row][1] = __builtin_ia32_pmulld256(*lhs, rhs->v8si_16x2[row][1]); \
     }
 
 #define v8si_scalar_multiply_chunk_half(row) \
     { \
-        chk->v8si_pcks[row][0] = __builtin_ia32_pmulld256(*lhs, rhs->v8si_pcks[row][0]); \
+        chk->v8si_8x1[row][0] = __builtin_ia32_pmulld256(*lhs, rhs->v8si_8x1[row][0]); \
     }
 
 static void v8si_scalar_multiply_chunk_fully(mx_chunk_ptr chk, v8si_t * lhs, mx_chunk_ptr rhs, mx_oper_ptr mp)
@@ -467,20 +467,23 @@ void mops_v8si_transpose(mx_oper_ptr mp, mx_stor_ptr src, mx_stor_ptr dst)
     void * base = NULL;
     mx_chunk_ptr ret = NULL;
 
+    // Transpose full chunks.
     for (i = 0; i < mstr_v8si_chunks_in_height(src) - 1; i += 1) {
         for (j = 0; j < mstr_v8si_chunks_in_width(src) - 1; j += 1) {
             base = mstr_v8si_locate_chunk(src, i, j, &mp->lchk_rows, &mp->lchk_cols, &mp->lchk_full);
             ret = mstr_v8si_locate_chunk(dst, j, i, &mp->rchk_rows, &mp->rchk_cols, &mp->rchk_full);
-            mstr_v8si_assemble_chunk(&ret->v8si_pcks[0][0], base, 1, mx_round_to_multiples_of_8(mp->lchk_cols), mp->lchk_cols, mp->lchk_rows);
+            mstr_v8si_assemble_chunk(&ret->v8si_16x2[0][0], base, 1, mx_round_to_multiples_of_8(mp->lchk_cols), mp->lchk_cols, mp->lchk_rows);
         } // for
     } // for
 
+    // Transpose edge chunks on the right-most column.
     j = mstr_v8si_chunks_in_width(src) - 1;
     for (i = 0; i < mstr_v8si_chunks_in_height(src) - 1; i += 1) {
         ret = mstr_v8si_transpose_chunk(src, i, j, &mp->lchk, &mp->lchk_rows, &mp->lchk_cols, &mp->lchk_full);
         mstr_v8si_store_chunk(dst, j, i, ret);
     } // for
 
+    // Transpose edge chunks on the bottom-most row.
     i = mstr_v8si_chunks_in_height(src) - 1;
     for (j = 0; j < mstr_v8si_chunks_in_width(src) - 1; j += 1) {
         ret = mstr_v8si_transpose_chunk(src, i, j, &mp->lchk, &mp->lchk_rows, &mp->lchk_cols, &mp->lchk_full);

@@ -236,7 +236,7 @@ void mops_v8si_subtract(mx_oper_ptr mp, mx_stor_ptr lhs, mx_stor_ptr rhs, mx_sto
         ltmp = __builtin_ia32_phaddd256(ltmp, rtmp); \
         ltmp = __builtin_ia32_phaddd256(ltmp, v8si_zero); \
         ltmp = __builtin_ia32_phaddd256(ltmp, v8si_zero); \
-        ((int32_t *)&chk->i32_16x16[0][0])[row * col_off + col] += ltmp[0] + ltmp[4]; \
+        base[col] += ltmp[0] + ltmp[4]; \
     }
 
 #define v8si_multiply_chunk_half_with_mask(row, col, mask) \
@@ -245,7 +245,7 @@ void mops_v8si_subtract(mx_oper_ptr mp, mx_stor_ptr lhs, mx_stor_ptr rhs, mx_sto
         ltmp &= mask; \
         ltmp = __builtin_ia32_phaddd256(ltmp, v8si_zero); \
         ltmp = __builtin_ia32_phaddd256(ltmp, v8si_zero); \
-        ((int32_t *)&chk->i32_16x16[0][0])[row * col_off + col] += ltmp[0] + ltmp[4]; \
+        base[col] += ltmp[0] + ltmp[4]; \
     }
 
 static void v8si_multiply_chunk_fully(mx_chunk_ptr chk, mx_chunk_ptr lhs, mx_chunk_ptr rhs, mx_oper_ptr mp)
@@ -281,6 +281,7 @@ static void v8si_multiply_chunk_partly(mx_chunk_ptr chk, mx_chunk_ptr lhs, mx_ch
     uint32_t i = 0;
     uint32_t j = 0;
     uint32_t col_off = mx_round_to_multiples_of_8(mp->mchk_cols);
+    int32_t * base = (int32_t *)&chk->i32_16x16[0][0];
     v8si_t * mask[2];
 
     mask[0] = &v8si_mask[(mp->lchk_cols <= 8) ? (mp->lchk_cols) : 8];
@@ -307,6 +308,7 @@ static void v8si_multiply_chunk_partly(mx_chunk_ptr chk, mx_chunk_ptr lhs, mx_ch
                 case  2: v8si_multiply_chunk_half_with_mask(i, j, *mask[0]); j += 1;
                 case  1: v8si_multiply_chunk_half_with_mask(i, j, *mask[0]);
             } // switch
+            base += col_off;
         } // for
     } else {
         for (i = 0; i < mp->lchk_rows; i += 1, j = 0) {
@@ -329,6 +331,7 @@ static void v8si_multiply_chunk_partly(mx_chunk_ptr chk, mx_chunk_ptr lhs, mx_ch
                 case  2: v8si_multiply_chunk_full_with_mask(i, j, *mask[0], *mask[1]); j += 1;
                 case  1: v8si_multiply_chunk_full_with_mask(i, j, *mask[0], *mask[1]);
             } // switch
+            base += col_off;
         } // for
     } // if
 } // v8si_multiply_chunk_partly

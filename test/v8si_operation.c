@@ -1,8 +1,8 @@
 #include <criterion/criterion.h>
 
-#ifndef MX_OPER_C
-#include "src/mx_operation.c"
-#define MX_OPER_C
+#ifndef V8SI_OPER_C
+#define V8SI_OPER_C
+#include "src/v8si_operation.c"
 #endif
 
 // ==== TESTS FOR THE OPERATION MODULE OF MATRIX ==== //
@@ -14,23 +14,23 @@
     cr_expect(val == expect, "Wrong value at (%d,%d) - Expect %d, got %d.", i, j, expect, val)
 
 static mx_chunk_t sample = {
-    .i32_vals = {
-        {  0,    1,    2,    3,    4,    5,    6,    7,    8,    9,   10,   11,   12,   13,   14,   15},
-        { 16,   17,   18,   19,   20,   21,   22,   23,   24,   25,   26,   27,   28,   29,   30,   31},
-        { 32,   33,   34,   35,   36,   37,   38,   39,   40,   41,   42,   43,   44,   45,   46,   47},
-        { 48,   49,   50,   51,   52,   53,   54,   55,   56,   57,   58,   59,   60,   61,   62,   63},
-        { 64,   65,   66,   67,   68,   69,   70,   71,   72,   73,   74,   75,   76,   77,   78,   79},
-        { 80,   81,   82,   83,   84,   85,   86,   87,   88,   89,   90,   91,   92,   93,   94,   95},
-        { 96,   97,   98,   99,  100,  101,  102,  103,  104,  105,  106,  107,  108,  109,  110,  111},
-        {112,  113,  114,  115,  116,  117,  118,  119,  120,  121,  122,  123,  124,  125,  126,  127},
-        {128,  129,  130,  131,  132,  133,  134,  135,  136,  137,  138,  139,  140,  141,  142,  143},
-        {144,  145,  146,  147,  148,  149,  150,  151,  152,  153,  154,  155,  156,  157,  158,  159},
-        {160,  161,  162,  163,  164,  165,  166,  167,  168,  169,  170,  171,  172,  173,  174,  175},
-        {176,  177,  178,  179,  180,  181,  182,  183,  184,  185,  186,  187,  188,  189,  190,  191},
-        {192,  193,  194,  195,  196,  197,  198,  199,  200,  201,  202,  203,  204,  205,  206,  207},
-        {208,  209,  210,  211,  212,  213,  214,  215,  216,  217,  218,  219,  220,  221,  222,  223},
-        {224,  225,  226,  227,  228,  229,  230,  231,  232,  233,  234,  235,  236,  237,  238,  239},
-        {240,  241,  242,  243,  244,  245,  246,  247,  248,  249,  250,  251,  252,  253,  254,  255}
+    .i32_16x16 = {
+        {  0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,  13,  14,  15},
+        { 16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  26,  27,  28,  29,  30,  31},
+        { 32,  33,  34,  35,  36,  37,  38,  39,  40,  41,  42,  43,  44,  45,  46,  47},
+        { 48,  49,  50,  51,  52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  62,  63},
+        { 64,  65,  66,  67,  68,  69,  70,  71,  72,  73,  74,  75,  76,  77,  78,  79},
+        { 80,  81,  82,  83,  84,  85,  86,  87,  88,  89,  90,  91,  92,  93,  94,  95},
+        { 96,  97,  98,  99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111},
+        {112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127},
+        {128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143},
+        {144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159},
+        {160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175},
+        {176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191},
+        {192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207},
+        {208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223},
+        {224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239},
+        {240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255},
     }
 };
 
@@ -52,7 +52,7 @@ Test(InternalFunc, v8si_add_chunk_fully)
         v8si_add_chunk_fully(&ret, &sample, &sample, mp);
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
-                check_value_at(ret.i32_vals[i][j], sample.i32_vals[i][j] * 2, i, j);
+                check_value_at(ret.i32_16x16[i][j], sample.i32_16x16[i][j] * 2, i, j);
             } // for
         } // for
 
@@ -79,9 +79,9 @@ Test(InternalFunc, v8si_add_chunk_partly)
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
-                    check_value_at(ret.i32_vals[i][j], sample.i32_vals[i][j] * 2, i, j);
+                    check_value_at(ret.i32_8x8[i][j], sample.i32_8x8[i][j] * 2, i, j);
                 } else {
-                    check_value_at(ret.i32_vals[i][j], 0, i, j);
+                    check_value_at(ret.i32_8x8[i][j], 0, i, j);
                 } // if
             } // for
         } // for
@@ -101,9 +101,9 @@ Test(InternalFunc, v8si_add_chunk_partly)
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
-                    check_value_at(ret.i32_vals[i][j], sample.i32_vals[i][j] * 2, i, j);
+                    check_value_at(ret.i32_8x8[i][j], sample.i32_8x8[i][j] * 2, i, j);
                 } else {
-                    check_value_at(ret.i32_vals[i][j], 0, i, j);
+                    check_value_at(ret.i32_8x8[i][j], 0, i, j);
                 } // if
             } // for
         } // for
@@ -123,9 +123,9 @@ Test(InternalFunc, v8si_add_chunk_partly)
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
-                    check_value_at(ret.i32_vals[i][j], sample.i32_vals[i][j] * 2, i, j);
+                    check_value_at(ret.i32_8x8[i][j], sample.i32_8x8[i][j] * 2, i, j);
                 } else {
-                    check_value_at(ret.i32_vals[i][j], 0, i, j);
+                    check_value_at(ret.i32_8x8[i][j], 0, i, j);
                 } // if
             } // for
         } // for
@@ -145,9 +145,9 @@ Test(InternalFunc, v8si_add_chunk_partly)
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
-                    check_value_at(ret.i32_vals[i][j], sample.i32_vals[i][j] * 2, i, j);
+                    check_value_at(ret.i32_16x16[i][j], sample.i32_16x16[i][j] * 2, i, j);
                 } else {
-                    check_value_at(ret.i32_vals[i][j], 0, i, j);
+                    check_value_at(ret.i32_16x16[i][j], 0, i, j);
                 } // if
             } // for
         } // for
@@ -166,7 +166,7 @@ Test(InternalFunc, v8si_add_chunk_partly)
         v8si_add_chunk_partly(&ret, &sample, &sample, mp);
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
-                check_value_at(ret.i32_vals[i][j], sample.i32_vals[i][j] * 2, i, j);
+                check_value_at(ret.i32_16x16[i][j], sample.i32_16x16[i][j] * 2, i, j);
             } // for
         } // for
 
@@ -185,9 +185,9 @@ Test(InternalFunc, v8si_add_chunk_partly)
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
-                    check_value_at(ret.i32_vals[i][j], sample.i32_vals[i][j] * 2, i, j);
+                    check_value_at(ret.i32_8x8[i][j], sample.i32_8x8[i][j] * 2, i, j);
                 } else {
-                    check_value_at(ret.i32_vals[i][j], 0, i, j);
+                    check_value_at(ret.i32_8x8[i][j], 0, i, j);
                 } // if
             } // for
         } // for
@@ -207,9 +207,9 @@ Test(InternalFunc, v8si_add_chunk_partly)
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
-                    check_value_at(ret.i32_vals[i][j], sample.i32_vals[i][j] * 2, i, j);
+                    check_value_at(ret.i32_8x8[i][j], sample.i32_8x8[i][j] * 2, i, j);
                 } else {
-                    check_value_at(ret.i32_vals[i][j], 0, i, j);
+                    check_value_at(ret.i32_8x8[i][j], 0, i, j);
                 } // if
             } // for
         } // for
@@ -229,9 +229,9 @@ Test(InternalFunc, v8si_add_chunk_partly)
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
-                    check_value_at(ret.i32_vals[i][j], sample.i32_vals[i][j] * 2, i, j);
+                    check_value_at(ret.i32_8x8[i][j], sample.i32_8x8[i][j] * 2, i, j);
                 } else {
-                    check_value_at(ret.i32_vals[i][j], 0, i, j);
+                    check_value_at(ret.i32_8x8[i][j], 0, i, j);
                 } // if
             } // for
         } // for
@@ -251,9 +251,9 @@ Test(InternalFunc, v8si_add_chunk_partly)
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
-                    check_value_at(ret.i32_vals[i][j], sample.i32_vals[i][j] * 2, i, j);
+                    check_value_at(ret.i32_8x8[i][j], sample.i32_8x8[i][j] * 2, i, j);
                 } else {
-                    check_value_at(ret.i32_vals[i][j], 0, i, j);
+                    check_value_at(ret.i32_8x8[i][j], 0, i, j);
                 } // if
             } // for
         } // for
@@ -273,9 +273,9 @@ Test(InternalFunc, v8si_add_chunk_partly)
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
-                    check_value_at(ret.i32_vals[i][j], sample.i32_vals[i][j] * 2, i, j);
+                    check_value_at(ret.i32_8x8[i][j], sample.i32_8x8[i][j] * 2, i, j);
                 } else {
-                    check_value_at(ret.i32_vals[i][j], 0, i, j);
+                    check_value_at(ret.i32_8x8[i][j], 0, i, j);
                 } // if
             } // for
         } // for
@@ -295,9 +295,9 @@ Test(InternalFunc, v8si_add_chunk_partly)
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
-                    check_value_at(ret.i32_vals[i][j], sample.i32_vals[i][j] * 2, i, j);
+                    check_value_at(ret.i32_16x16[i][j], sample.i32_16x16[i][j] * 2, i, j);
                 } else {
-                    check_value_at(ret.i32_vals[i][j], 0, i, j);
+                    check_value_at(ret.i32_16x16[i][j], 0, i, j);
                 } // if
             } // for
         } // for
@@ -324,7 +324,7 @@ Test(InternalFunc, v8si_subtract_chunk_fully)
         v8si_subtract_chunk_fully(&ret, &sample, &sample, mp);
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
-                check_value_at(ret.i32_vals[i][j], 0, i, j);
+                check_value_at(ret.i32_16x16[i][j], 0, i, j);
             } // for
         } // for
 
@@ -351,9 +351,9 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
-                    check_value_at(ret.i32_vals[i][j], 0, i, j);
+                    check_value_at(ret.i32_8x8[i][j], 0, i, j);
                 } else {
-                    check_value_at(ret.i32_vals[i][j], 4321, i, j);
+                    check_value_at(ret.i32_8x8[i][j], 4321, i, j);
                 } // if
             } // for
         } // for
@@ -373,9 +373,9 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
-                    check_value_at(ret.i32_vals[i][j], 0, i, j);
+                    check_value_at(ret.i32_8x8[i][j], 0, i, j);
                 } else {
-                    check_value_at(ret.i32_vals[i][j], 4321, i, j);
+                    check_value_at(ret.i32_8x8[i][j], 4321, i, j);
                 } // if
             } // for
         } // for
@@ -395,9 +395,9 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
-                    check_value_at(ret.i32_vals[i][j], 0, i, j);
+                    check_value_at(ret.i32_8x8[i][j], 0, i, j);
                 } else {
-                    check_value_at(ret.i32_vals[i][j], 4321, i, j);
+                    check_value_at(ret.i32_8x8[i][j], 4321, i, j);
                 } // if
             } // for
         } // for
@@ -417,9 +417,9 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
-                    check_value_at(ret.i32_vals[i][j], 0, i, j);
+                    check_value_at(ret.i32_16x16[i][j], 0, i, j);
                 } else {
-                    check_value_at(ret.i32_vals[i][j], 4321, i, j);
+                    check_value_at(ret.i32_16x16[i][j], 4321, i, j);
                 } // if
             } // for
         } // for
@@ -438,7 +438,7 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
         v8si_subtract_chunk_partly(&ret, &sample, &sample, mp);
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
-                check_value_at(ret.i32_vals[i][j], 0, i, j);
+                check_value_at(ret.i32_16x16[i][j], 0, i, j);
             } // for
         } // for
 
@@ -457,9 +457,9 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
-                    check_value_at(ret.i32_vals[i][j], 0, i, j);
+                    check_value_at(ret.i32_8x8[i][j], 0, i, j);
                 } else {
-                    check_value_at(ret.i32_vals[i][j], 4321, i, j);
+                    check_value_at(ret.i32_8x8[i][j], 4321, i, j);
                 } // if
             } // for
         } // for
@@ -479,9 +479,9 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
-                    check_value_at(ret.i32_vals[i][j], 0, i, j);
+                    check_value_at(ret.i32_8x8[i][j], 0, i, j);
                 } else {
-                    check_value_at(ret.i32_vals[i][j], 4321, i, j);
+                    check_value_at(ret.i32_8x8[i][j], 4321, i, j);
                 } // if
             } // for
         } // for
@@ -501,9 +501,9 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
-                    check_value_at(ret.i32_vals[i][j], 0, i, j);
+                    check_value_at(ret.i32_16x16[i][j], 0, i, j);
                 } else {
-                    check_value_at(ret.i32_vals[i][j], 4321, i, j);
+                    check_value_at(ret.i32_16x16[i][j], 4321, i, j);
                 } // if
             } // for
         } // for
@@ -523,9 +523,9 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
-                    check_value_at(ret.i32_vals[i][j], 0, i, j);
+                    check_value_at(ret.i32_8x8[i][j], 0, i, j);
                 } else {
-                    check_value_at(ret.i32_vals[i][j], 4321, i, j);
+                    check_value_at(ret.i32_8x8[i][j], 4321, i, j);
                 } // if
             } // for
         } // for
@@ -545,9 +545,9 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
-                    check_value_at(ret.i32_vals[i][j], 0, i, j);
+                    check_value_at(ret.i32_8x8[i][j], 0, i, j);
                 } else {
-                    check_value_at(ret.i32_vals[i][j], 4321, i, j);
+                    check_value_at(ret.i32_8x8[i][j], 4321, i, j);
                 } // if
             } // for
         } // for
@@ -567,9 +567,9 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
                 if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
-                    check_value_at(ret.i32_vals[i][j], 0, i, j);
+                    check_value_at(ret.i32_16x16[i][j], 0, i, j);
                 } else {
-                    check_value_at(ret.i32_vals[i][j], 4321, i, j);
+                    check_value_at(ret.i32_16x16[i][j], 4321, i, j);
                 } // if
             } // for
         } // for
@@ -578,8 +578,8 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
     }
 }
 
-static mx_chunk_t qrcode = {
-    .i32_vals = {
+static mx_chunk_t qrcode_16x16 = {
+    .i32_16x16 = {
         {2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2},
         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
         {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
@@ -599,6 +599,19 @@ static mx_chunk_t qrcode = {
     }
 };
 
+static mx_chunk_t qrcode_8x8 = {
+    .i32_8x8 = {
+        {2, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1},
+        {1, 1, 1, 1, 1, 1, 1, 1},
+    }
+};
+
 Test(InternalFunc, v8si_multiply_chunk_fully)
 {
     mx_chunk_t ret;
@@ -608,25 +621,23 @@ Test(InternalFunc, v8si_multiply_chunk_fully)
     
     // -- 16x16 chunk -- //
     {
-        mx_chunk_t ret_qrcode = {
-            .i32_vals = {
-                {22, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 22},
-                {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
-                {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
-                {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
-                {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
-                {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
-                {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
-                {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
-                {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
-                {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
-                {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
-                {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
-                {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
-                {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
-                {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
-                {22, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 22},
-            }
+        int32_t ret_vals[16][16] = {
+            {22, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 22},
+            {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
+            {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
+            {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
+            {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
+            {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
+            {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
+            {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
+            {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
+            {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
+            {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
+            {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
+            {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
+            {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
+            {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
+            {22, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 22},
         };
 
         mp = mops_v8si_create();
@@ -639,11 +650,11 @@ Test(InternalFunc, v8si_multiply_chunk_fully)
         mp->mchk_rows = 16;
         mp->mchk_cols = 16;
 
-        v8si_multiply_chunk_fully(&ret, &qrcode, &qrcode, mp);
+        v8si_multiply_chunk_fully(&ret, &qrcode_16x16, &qrcode_16x16, mp);
 
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
-                check_value_at(ret.i32_vals[i][j], ret_qrcode.i32_vals[i][j], i, j);
+                check_value_at(ret.i32_16x16[i][j], ret_vals[i][j], i, j);
             } // for
         } // for
 
@@ -660,25 +671,23 @@ Test(InternalFunc, v8si_multiply_chunk_partly)
     
     // -- 1x1 chunk -- //
     {
-        mx_chunk_t ret_qrcode = {
-            .i32_vals = {
-                {4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            }
+        int32_t ret_vals[16][16] = {
+            {4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         };
         mp = mops_v8si_create();
         memset(&ret, 0, sizeof(ret));
@@ -690,11 +699,11 @@ Test(InternalFunc, v8si_multiply_chunk_partly)
         mp->mchk_rows = 1;
         mp->mchk_cols = 1;
 
-        v8si_multiply_chunk_partly(&ret, &qrcode, &qrcode, mp);
+        v8si_multiply_chunk_partly(&ret, &qrcode_8x8, &qrcode_16x16, mp);
 
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
-                check_value_at(ret.i32_vals[i][j], ret_qrcode.i32_vals[i][j], i, j);
+                check_value_at(ret.i32_8x8[i][j], ret_vals[i][j], i, j);
             } // for
         } // for
 
@@ -703,25 +712,23 @@ Test(InternalFunc, v8si_multiply_chunk_partly)
 
     // -- 5x5 chunk -- //
     {
-        mx_chunk_t ret_qrcode = {
-            .i32_vals = {
-                {8, 6, 6, 6, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {6, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {6, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {6, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {6, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            }
+        int32_t ret_vals[16][16] = {
+            {8, 6, 6, 6, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {6, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {6, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {6, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {6, 5, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         };
         mp = mops_v8si_create();
         memset(&ret, 0, sizeof(ret));
@@ -733,11 +740,11 @@ Test(InternalFunc, v8si_multiply_chunk_partly)
         mp->mchk_rows = 5;
         mp->mchk_cols = 5;
 
-        v8si_multiply_chunk_partly(&ret, &qrcode, &qrcode, mp);
+        v8si_multiply_chunk_partly(&ret, &qrcode_8x8, &qrcode_16x16, mp);
 
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
-                check_value_at(ret.i32_vals[i][j], ret_qrcode.i32_vals[i][j], i, j);
+                check_value_at(ret.i32_8x8[i][j], ret_vals[i][j], i, j);
             } // for
         } // for
 
@@ -746,25 +753,23 @@ Test(InternalFunc, v8si_multiply_chunk_partly)
 
     // -- 8x8 chunk -- //
     {
-        mx_chunk_t ret_qrcode = {
-            .i32_vals = {
-                {11, 9, 9, 9, 9, 9, 9, 9, 0, 0, 0, 0, 0, 0, 0, 0},
-                { 9, 8, 8, 8, 8, 8, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0},
-                { 9, 8, 8, 8, 8, 8, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0},
-                { 9, 8, 8, 8, 8, 8, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0},
-                { 9, 8, 8, 8, 8, 8, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0},
-                { 9, 8, 8, 8, 8, 8, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0},
-                { 9, 8, 8, 8, 8, 8, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0},
-                { 9, 8, 8, 8, 8, 8, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0},
-                { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-            }
+        int32_t ret_vals[16][16] = {
+            {11, 9, 9, 9, 9, 9, 9, 9, 0, 0, 0, 0, 0, 0, 0, 0},
+            { 9, 8, 8, 8, 8, 8, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0},
+            { 9, 8, 8, 8, 8, 8, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0},
+            { 9, 8, 8, 8, 8, 8, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0},
+            { 9, 8, 8, 8, 8, 8, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0},
+            { 9, 8, 8, 8, 8, 8, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0},
+            { 9, 8, 8, 8, 8, 8, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0},
+            { 9, 8, 8, 8, 8, 8, 8, 8, 0, 0, 0, 0, 0, 0, 0, 0},
+            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         };
         mp = mops_v8si_create();
         memset(&ret, 0, sizeof(ret));
@@ -776,11 +781,11 @@ Test(InternalFunc, v8si_multiply_chunk_partly)
         mp->mchk_rows = 8;
         mp->mchk_cols = 8;
 
-        v8si_multiply_chunk_partly(&ret, &qrcode, &qrcode, mp);
+        v8si_multiply_chunk_partly(&ret, &qrcode_8x8, &qrcode_16x16, mp);
 
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
-                check_value_at(ret.i32_vals[i][j], ret_qrcode.i32_vals[i][j], i, j);
+                check_value_at(ret.i32_8x8[i][j], ret_vals[i][j], i, j);
             } // for
         } // for
 
@@ -789,25 +794,23 @@ Test(InternalFunc, v8si_multiply_chunk_partly)
 
     // -- 9x9 chunk -- //
     {
-        mx_chunk_t ret_qrcode = {
-            .i32_vals = {
-                {12, 10, 10, 10, 10, 10, 10, 10, 10,  0,  0,  0,  0,  0,  0,  0},
-                {10,  9,  9,  9,  9,  9,  9,  9,  9,  0,  0,  0,  0,  0,  0,  0},
-                {10,  9,  9,  9,  9,  9,  9,  9,  9,  0,  0,  0,  0,  0,  0,  0},
-                {10,  9,  9,  9,  9,  9,  9,  9,  9,  0,  0,  0,  0,  0,  0,  0},
-                {10,  9,  9,  9,  9,  9,  9,  9,  9,  0,  0,  0,  0,  0,  0,  0},
-                {10,  9,  9,  9,  9,  9,  9,  9,  9,  0,  0,  0,  0,  0,  0,  0},
-                {10,  9,  9,  9,  9,  9,  9,  9,  9,  0,  0,  0,  0,  0,  0,  0},
-                {10,  9,  9,  9,  9,  9,  9,  9,  9,  0,  0,  0,  0,  0,  0,  0},
-                {10,  9,  9,  9,  9,  9,  9,  9,  9,  0,  0,  0,  0,  0,  0,  0},
-                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
-                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
-                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
-                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
-                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
-                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
-                { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
-            }
+        int32_t ret_vals[16][16] = {
+            {12, 10, 10, 10, 10, 10, 10, 10, 10,  0,  0,  0,  0,  0,  0,  0},
+            {10,  9,  9,  9,  9,  9,  9,  9,  9,  0,  0,  0,  0,  0,  0,  0},
+            {10,  9,  9,  9,  9,  9,  9,  9,  9,  0,  0,  0,  0,  0,  0,  0},
+            {10,  9,  9,  9,  9,  9,  9,  9,  9,  0,  0,  0,  0,  0,  0,  0},
+            {10,  9,  9,  9,  9,  9,  9,  9,  9,  0,  0,  0,  0,  0,  0,  0},
+            {10,  9,  9,  9,  9,  9,  9,  9,  9,  0,  0,  0,  0,  0,  0,  0},
+            {10,  9,  9,  9,  9,  9,  9,  9,  9,  0,  0,  0,  0,  0,  0,  0},
+            {10,  9,  9,  9,  9,  9,  9,  9,  9,  0,  0,  0,  0,  0,  0,  0},
+            {10,  9,  9,  9,  9,  9,  9,  9,  9,  0,  0,  0,  0,  0,  0,  0},
+            { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
+            { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
+            { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
+            { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
+            { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
+            { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
+            { 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0},
         };
         mp = mops_v8si_create();
         memset(&ret, 0, sizeof(ret));
@@ -819,11 +822,11 @@ Test(InternalFunc, v8si_multiply_chunk_partly)
         mp->mchk_rows = 9;
         mp->mchk_cols = 9;
 
-        v8si_multiply_chunk_partly(&ret, &qrcode, &qrcode, mp);
+        v8si_multiply_chunk_partly(&ret, &qrcode_16x16, &qrcode_16x16, mp);
 
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
-                check_value_at(ret.i32_vals[i][j], ret_qrcode.i32_vals[i][j], i, j);
+                check_value_at(ret.i32_16x16[i][j], ret_vals[i][j], i, j);
             } // for
         } // for
 
@@ -832,27 +835,24 @@ Test(InternalFunc, v8si_multiply_chunk_partly)
     
     // -- 16x16 chunk -- //
     {
-        mx_chunk_t ret_qrcode = {
-            .i32_vals = {
-                {22, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 22},
-                {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
-                {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
-                {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
-                {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
-                {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
-                {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
-                {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
-                {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
-                {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
-                {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
-                {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
-                {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
-                {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
-                {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
-                {22, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 22},
-            }
+        int32_t ret_vals[16][16] = {
+            {22, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 22},
+            {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
+            {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
+            {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
+            {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
+            {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
+            {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
+            {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
+            {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
+            {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
+            {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
+            {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
+            {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
+            {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
+            {18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 18},
+            {22, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 22},
         };
-
         mp = mops_v8si_create();
         memset(&ret, 0, sizeof(ret));
 
@@ -863,11 +863,11 @@ Test(InternalFunc, v8si_multiply_chunk_partly)
         mp->mchk_rows = 16;
         mp->mchk_cols = 16;
 
-        v8si_multiply_chunk_partly(&ret, &qrcode, &qrcode, mp);
+        v8si_multiply_chunk_partly(&ret, &qrcode_16x16, &qrcode_16x16, mp);
 
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
-                check_value_at(ret.i32_vals[i][j], ret_qrcode.i32_vals[i][j], i, j);
+                check_value_at(ret.i32_16x16[i][j], ret_vals[i][j], i, j);
             } // for
         } // for
 
@@ -876,25 +876,52 @@ Test(InternalFunc, v8si_multiply_chunk_partly)
     
     // -- 5x2 and 2x3 chunk -- //
     {
-        mx_chunk_t ret_qrcode = {
-            .i32_vals = {
-                {5, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {3, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {3, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {3, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {3, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        mx_chunk_t lhs = {
+            .i32_8x8 = {
+                {2, 1, 0, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0, 0},
             }
+        };
+        mx_chunk_t rhs = {
+            .i32_16x16 = {
+                {2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+            }
+        };
+        int32_t ret_vals[16][16] = {
+            {5, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {3, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {3, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {3, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {3, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         };
         mp = mops_v8si_create();
         memset(&ret, 0, sizeof(ret));
@@ -906,11 +933,11 @@ Test(InternalFunc, v8si_multiply_chunk_partly)
         mp->mchk_rows = 5;
         mp->mchk_cols = 3;
 
-        v8si_multiply_chunk_partly(&ret, &qrcode, &qrcode, mp);
+        v8si_multiply_chunk_partly(&ret, &lhs, &rhs, mp);
 
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
-                check_value_at(ret.i32_vals[i][j], ret_qrcode.i32_vals[i][j], i, j);
+                check_value_at(ret.i32_8x8[i][j], ret_vals[i][j], i, j);
             } // for
         } // for
 
@@ -919,25 +946,23 @@ Test(InternalFunc, v8si_multiply_chunk_partly)
     
     // -- 1x9 and 9x8 chunk -- //
     {
-        mx_chunk_t ret_qrcode = {
-            .i32_vals = {
-                {12, 10, 10, 10, 10, 10, 10, 10, 0, 0, 0, 0, 0, 0, 0, 0},
-                { 0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0},
-                { 0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0},
-                { 0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0},
-                { 0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0},
-                { 0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0},
-                { 0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0},
-                { 0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0},
-                { 0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0},
-                { 0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0},
-                { 0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0},
-                { 0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0},
-                { 0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0},
-                { 0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0},
-                { 0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0},
-                { 0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0},
-            }
+        int32_t ret_vals[16][16] = {
+            {12, 10, 10, 10, 10, 10, 10, 10, 0, 0, 0, 0, 0, 0, 0, 0},
+            { 0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0},
+            { 0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0},
+            { 0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0},
+            { 0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0},
+            { 0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0},
+            { 0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0},
+            { 0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0},
+            { 0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0},
+            { 0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0},
+            { 0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0},
+            { 0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0},
+            { 0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0},
+            { 0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0},
+            { 0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0},
+            { 0,  0,  0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0},
         };
         mp = mops_v8si_create();
         memset(&ret, 0, sizeof(ret));
@@ -949,11 +974,11 @@ Test(InternalFunc, v8si_multiply_chunk_partly)
         mp->mchk_rows = 1;
         mp->mchk_cols = 8;
 
-        v8si_multiply_chunk_partly(&ret, &qrcode, &qrcode, mp);
+        v8si_multiply_chunk_partly(&ret, &qrcode_16x16, &qrcode_16x16, mp);
 
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
-                check_value_at(ret.i32_vals[i][j], ret_qrcode.i32_vals[i][j], i, j);
+                check_value_at(ret.i32_8x8[i][j], ret_vals[i][j], i, j);
             } // for
         } // for
 
@@ -971,25 +996,43 @@ Test(InternalFunc, v8si_scalar_multiply_chunk_fully)
     // -- 16x16 chunk -- //
     {
         v8si_t factor = {2, 2, 2, 2, 2, 2, 2, 2};
-        mx_chunk_t ret_sample = {
-            .i32_vals = {
-                0,    2,    4,    6,    8,    10,   12,   14,   16,   18,   20,   22,   24,   26,   28,   30,
-                32,   34,   36,   38,   40,   42,   44,   46,   48,   50,   52,   54,   56,   58,   60,   62,
-                64,   66,   68,   70,   72,   74,   76,   78,   80,   82,   84,   86,   88,   90,   92,   94,
-                96,   98,   100,  102,  104,  106,  108,  110,  112,  114,  116,  118,  120,  122,  124,  126,
-                128,  130,  132,  134,  136,  138,  140,  142,  144,  146,  148,  150,  152,  154,  156,  158,
-                160,  162,  164,  166,  168,  170,  172,  174,  176,  178,  180,  182,  184,  186,  188,  190,
-                192,  194,  196,  198,  200,  202,  204,  206,  208,  210,  212,  214,  216,  218,  220,  222,
-                224,  226,  228,  230,  232,  234,  236,  238,  240,  242,  244,  246,  248,  250,  252,  254,
-                256,  258,  260,  262,  264,  266,  268,  270,  272,  274,  276,  278,  280,  282,  284,  286,
-                288,  290,  292,  294,  296,  298,  300,  302,  304,  306,  308,  310,  312,  314,  316,  318,
-                320,  322,  324,  326,  328,  330,  332,  334,  336,  338,  340,  342,  344,  346,  348,  350,
-                352,  354,  356,  358,  360,  362,  364,  366,  368,  370,  372,  374,  376,  378,  380,  382,
-                384,  386,  388,  390,  392,  394,  396,  398,  400,  402,  404,  406,  408,  410,  412,  414,
-                416,  418,  420,  422,  424,  426,  428,  430,  432,  434,  436,  438,  440,  442,  444,  446,
-                448,  450,  452,  454,  456,  458,  460,  462,  464,  466,  468,  470,  472,  474,  476,  478,
-                480,  482,  484,  486,  488,  490,  492,  494,  496,  498,  500,  502,  504,  506,  508,  510
+        mx_chunk_t src = {
+            .i32_16x16 = {
+                {  0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,  13,  14,  15},
+                { 16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  26,  27,  28,  29,  30,  31},
+                { 32,  33,  34,  35,  36,  37,  38,  39,  40,  41,  42,  43,  44,  45,  46,  47},
+                { 48,  49,  50,  51,  52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  62,  63},
+                { 64,  65,  66,  67,  68,  69,  70,  71,  72,  73,  74,  75,  76,  77,  78,  79},
+                { 80,  81,  82,  83,  84,  85,  86,  87,  88,  89,  90,  91,  92,  93,  94,  95},
+                { 96,  97,  98,  99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111},
+                {112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127},
+                {128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143},
+                {144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159},
+                {160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175},
+                {176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191},
+                {192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207},
+                {208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223},
+                {224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239},
+                {240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255},
             }
+        };
+        int32_t ret_vals[16][16] = {
+            {0,    2,    4,    6,    8,    10,   12,   14,   16,   18,   20,   22,   24,   26,   28,   30},
+            {32,   34,   36,   38,   40,   42,   44,   46,   48,   50,   52,   54,   56,   58,   60,   62},
+            {64,   66,   68,   70,   72,   74,   76,   78,   80,   82,   84,   86,   88,   90,   92,   94},
+            {96,   98,   100,  102,  104,  106,  108,  110,  112,  114,  116,  118,  120,  122,  124,  126},
+            {128,  130,  132,  134,  136,  138,  140,  142,  144,  146,  148,  150,  152,  154,  156,  158},
+            {160,  162,  164,  166,  168,  170,  172,  174,  176,  178,  180,  182,  184,  186,  188,  190},
+            {192,  194,  196,  198,  200,  202,  204,  206,  208,  210,  212,  214,  216,  218,  220,  222},
+            {224,  226,  228,  230,  232,  234,  236,  238,  240,  242,  244,  246,  248,  250,  252,  254},
+            {256,  258,  260,  262,  264,  266,  268,  270,  272,  274,  276,  278,  280,  282,  284,  286},
+            {288,  290,  292,  294,  296,  298,  300,  302,  304,  306,  308,  310,  312,  314,  316,  318},
+            {320,  322,  324,  326,  328,  330,  332,  334,  336,  338,  340,  342,  344,  346,  348,  350},
+            {352,  354,  356,  358,  360,  362,  364,  366,  368,  370,  372,  374,  376,  378,  380,  382},
+            {384,  386,  388,  390,  392,  394,  396,  398,  400,  402,  404,  406,  408,  410,  412,  414},
+            {416,  418,  420,  422,  424,  426,  428,  430,  432,  434,  436,  438,  440,  442,  444,  446},
+            {448,  450,  452,  454,  456,  458,  460,  462,  464,  466,  468,  470,  472,  474,  476,  478},
+            {480,  482,  484,  486,  488,  490,  492,  494,  496,  498,  500,  502,  504,  506,  508,  510},
         };
 
         mp = mops_v8si_create();
@@ -1000,11 +1043,11 @@ Test(InternalFunc, v8si_scalar_multiply_chunk_fully)
         mp->mchk_rows = 16;
         mp->mchk_cols = 16;
 
-        v8si_scalar_multiply_chunk_fully(&ret, &factor, &sample, mp);
+        v8si_scalar_multiply_chunk_fully(&ret, &factor, &src, mp);
 
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
-                check_value_at(ret.i32_vals[i][j], ret_sample.i32_vals[i][j], i, j);
+                check_value_at(ret.i32_16x16[i][j], ret_vals[i][j], i, j);
             } // for
         } // for
 
@@ -1022,25 +1065,35 @@ Test(InternalFunc, v8si_scalar_multiply_chunk_partly)
     // -- 1x1 chunk -- //
     {
         v8si_t factor = {2, 2, 2, 2, 2, 2, 2, 2};
-        mx_chunk_t ret_sample = {
-            .i32_vals = {
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        mx_chunk_t src = {
+            .i32_8x8 = {
+                {  0,   1,   2,   3,   4,   5,   6,   7},
+                { 16,  17,  18,  19,  20,  21,  22,  23},
+                { 32,  33,  34,  35,  36,  37,  38,  39},
+                { 48,  49,  50,  51,  52,  53,  54,  55},
+                { 64,  65,  66,  67,  68,  69,  70,  71},
+                { 80,  81,  82,  83,  84,  85,  86,  87},
+                { 96,  97,  98,  99, 100, 101, 102, 103},
+                {112, 113, 114, 115, 116, 117, 118, 119},
             }
+        };
+        int32_t ret_vals[16][16] = {
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         };
 
         mp = mops_v8si_create();
@@ -1051,11 +1104,11 @@ Test(InternalFunc, v8si_scalar_multiply_chunk_partly)
         mp->mchk_rows = 1;
         mp->mchk_cols = 1;
 
-        v8si_scalar_multiply_chunk_partly(&ret, &factor, &sample, mp);
+        v8si_scalar_multiply_chunk_partly(&ret, &factor, &src, mp);
 
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
-                check_value_at(ret.i32_vals[i][j], ret_sample.i32_vals[i][j], i, j);
+                check_value_at(ret.i32_8x8[i][j], ret_vals[i][j], i, j);
             } // for
         } // for
 
@@ -1065,25 +1118,35 @@ Test(InternalFunc, v8si_scalar_multiply_chunk_partly)
     // -- 5x5 chunk -- //
     {
         v8si_t factor = {2, 2, 2, 2, 2, 2, 2, 2};
-        mx_chunk_t ret_sample = {
-            .i32_vals = {
-                  0,   2,   4,   6,   8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                 32,  34,  36,  38,  40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                 64,  66,  68,  70,  72, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                 96,  98, 100, 102, 104, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                128, 130, 132, 134, 136, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                  0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                  0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                  0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                  0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                  0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                  0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                  0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                  0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                  0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                  0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                  0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        mx_chunk_t src = {
+            .i32_8x8 = {
+                {  0,   1,   2,   3,   4,   5,   6,   7},
+                { 16,  17,  18,  19,  20,  21,  22,  23},
+                { 32,  33,  34,  35,  36,  37,  38,  39},
+                { 48,  49,  50,  51,  52,  53,  54,  55},
+                { 64,  65,  66,  67,  68,  69,  70,  71},
+                { 80,  81,  82,  83,  84,  85,  86,  87},
+                { 96,  97,  98,  99, 100, 101, 102, 103},
+                {112, 113, 114, 115, 116, 117, 118, 119},
             }
+        };
+        int32_t ret_vals[16][16] = {
+            {  0,   2,   4,   6,   8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            { 32,  34,  36,  38,  40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            { 64,  66,  68,  70,  72, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            { 96,  98, 100, 102, 104, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {128, 130, 132, 134, 136, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {  0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {  0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {  0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {  0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {  0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {  0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {  0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {  0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {  0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {  0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {  0,   0,   0,   0,   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         };
 
         mp = mops_v8si_create();
@@ -1094,11 +1157,11 @@ Test(InternalFunc, v8si_scalar_multiply_chunk_partly)
         mp->mchk_rows = 5;
         mp->mchk_cols = 5;
 
-        v8si_scalar_multiply_chunk_partly(&ret, &factor, &sample, mp);
+        v8si_scalar_multiply_chunk_partly(&ret, &factor, &src, mp);
 
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
-                check_value_at(ret.i32_vals[i][j], ret_sample.i32_vals[i][j], i, j);
+                check_value_at(ret.i32_8x8[i][j], ret_vals[i][j], i, j);
             } // for
         } // for
 
@@ -1108,25 +1171,35 @@ Test(InternalFunc, v8si_scalar_multiply_chunk_partly)
     // -- 8x8 chunk -- //
     {
         v8si_t factor = {2, 2, 2, 2, 2, 2, 2, 2};
-        mx_chunk_t ret_sample = {
-            .i32_vals = {
-                0,    2,    4,    6,    8,    10,   12,   14,   0,  0,  0,  0,  0,  0,  0,  0,
-                32,   34,   36,   38,   40,   42,   44,   46,   0,  0,  0,  0,  0,  0,  0,  0,
-                64,   66,   68,   70,   72,   74,   76,   78,   0,  0,  0,  0,  0,  0,  0,  0,
-                96,   98,   100,  102,  104,  106,  108,  110,  0,  0,  0,  0,  0,  0,  0,  0,
-                128,  130,  132,  134,  136,  138,  140,  142,  0,  0,  0,  0,  0,  0,  0,  0,
-                160,  162,  164,  166,  168,  170,  172,  174,  0,  0,  0,  0,  0,  0,  0,  0,
-                192,  194,  196,  198,  200,  202,  204,  206,  0,  0,  0,  0,  0,  0,  0,  0,
-                224,  226,  228,  230,  232,  234,  236,  238,  0,  0,  0,  0,  0,  0,  0,  0,
-                  0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,  0,
-                  0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,  0,
-                  0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,  0,
-                  0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,  0,
-                  0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,  0,
-                  0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,  0,
-                  0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,  0,
-                  0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,  0
+        mx_chunk_t src = {
+            .i32_8x8 = {
+                {  0,   1,   2,   3,   4,   5,   6,   7},
+                { 16,  17,  18,  19,  20,  21,  22,  23},
+                { 32,  33,  34,  35,  36,  37,  38,  39},
+                { 48,  49,  50,  51,  52,  53,  54,  55},
+                { 64,  65,  66,  67,  68,  69,  70,  71},
+                { 80,  81,  82,  83,  84,  85,  86,  87},
+                { 96,  97,  98,  99, 100, 101, 102, 103},
+                {112, 113, 114, 115, 116, 117, 118, 119},
             }
+        };
+        int32_t ret_vals[16][16] = {
+            {0,    2,    4,    6,    8,    10,   12,   14,   0,  0,  0,  0,  0,  0,  0,  0},
+            {32,   34,   36,   38,   40,   42,   44,   46,   0,  0,  0,  0,  0,  0,  0,  0},
+            {64,   66,   68,   70,   72,   74,   76,   78,   0,  0,  0,  0,  0,  0,  0,  0},
+            {96,   98,   100,  102,  104,  106,  108,  110,  0,  0,  0,  0,  0,  0,  0,  0},
+            {128,  130,  132,  134,  136,  138,  140,  142,  0,  0,  0,  0,  0,  0,  0,  0},
+            {160,  162,  164,  166,  168,  170,  172,  174,  0,  0,  0,  0,  0,  0,  0,  0},
+            {192,  194,  196,  198,  200,  202,  204,  206,  0,  0,  0,  0,  0,  0,  0,  0},
+            {224,  226,  228,  230,  232,  234,  236,  238,  0,  0,  0,  0,  0,  0,  0,  0},
+            {  0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,  0},
+            {  0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,  0},
+            {  0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,  0},
+            {  0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,  0},
+            {  0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,  0},
+            {  0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,  0},
+            {  0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,  0},
+            {  0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,  0},
         };
 
         mp = mops_v8si_create();
@@ -1137,11 +1210,11 @@ Test(InternalFunc, v8si_scalar_multiply_chunk_partly)
         mp->mchk_rows = 8;
         mp->mchk_cols = 8;
 
-        v8si_scalar_multiply_chunk_partly(&ret, &factor, &sample, mp);
+        v8si_scalar_multiply_chunk_partly(&ret, &factor, &src, mp);
 
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
-                check_value_at(ret.i32_vals[i][j], ret_sample.i32_vals[i][j], i, j);
+                check_value_at(ret.i32_8x8[i][j], ret_vals[i][j], i, j);
             } // for
         } // for
 
@@ -1151,27 +1224,37 @@ Test(InternalFunc, v8si_scalar_multiply_chunk_partly)
     // -- 9x9 chunk -- //
     {
         v8si_t factor = {2, 2, 2, 2, 2, 2, 2, 2};
-        mx_chunk_t ret_sample = {
-            .i32_vals = {
-                0,    2,    4,    6,    8,    10,   12,   14,   16,   0,  0,  0,  0,  0,  0,  0,
-                32,   34,   36,   38,   40,   42,   44,   46,   48,   0,  0,  0,  0,  0,  0,  0,
-                64,   66,   68,   70,   72,   74,   76,   78,   80,   0,  0,  0,  0,  0,  0,  0,
-                96,   98,   100,  102,  104,  106,  108,  110,  112,  0,  0,  0,  0,  0,  0,  0,
-                128,  130,  132,  134,  136,  138,  140,  142,  144,  0,  0,  0,  0,  0,  0,  0,
-                160,  162,  164,  166,  168,  170,  172,  174,  176,  0,  0,  0,  0,  0,  0,  0,
-                192,  194,  196,  198,  200,  202,  204,  206,  208,  0,  0,  0,  0,  0,  0,  0,
-                224,  226,  228,  230,  232,  234,  236,  238,  240,  0,  0,  0,  0,  0,  0,  0,
-                256,  258,  260,  262,  264,  266,  268,  270,  272,  0,  0,  0,  0,  0,  0,  0,
-                  0,    0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,
-                  0,    0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,
-                  0,    0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,
-                  0,    0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,
-                  0,    0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,
-                  0,    0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0,
-                  0,    0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0
+        mx_chunk_t src = {
+            .i32_16x16 = {
+                {  0,   1,   2,   3,   4,   5,   6,   7,   8},
+                { 16,  17,  18,  19,  20,  21,  22,  23,  24},
+                { 32,  33,  34,  35,  36,  37,  38,  39,  40},
+                { 48,  49,  50,  51,  52,  53,  54,  55,  56},
+                { 64,  65,  66,  67,  68,  69,  70,  71,  72},
+                { 80,  81,  82,  83,  84,  85,  86,  87,  88},
+                { 96,  97,  98,  99, 100, 101, 102, 103, 104},
+                {112, 113, 114, 115, 116, 117, 118, 119, 120},
+                {128, 129, 130, 131, 132, 133, 134, 135, 136},
             }
         };
-
+        int32_t ret_vals[16][16] = {
+            {0,    2,    4,    6,    8,    10,   12,   14,   16,   0,  0,  0,  0,  0,  0,  0},
+            {32,   34,   36,   38,   40,   42,   44,   46,   48,   0,  0,  0,  0,  0,  0,  0},
+            {64,   66,   68,   70,   72,   74,   76,   78,   80,   0,  0,  0,  0,  0,  0,  0},
+            {96,   98,   100,  102,  104,  106,  108,  110,  112,  0,  0,  0,  0,  0,  0,  0},
+            {128,  130,  132,  134,  136,  138,  140,  142,  144,  0,  0,  0,  0,  0,  0,  0},
+            {160,  162,  164,  166,  168,  170,  172,  174,  176,  0,  0,  0,  0,  0,  0,  0},
+            {192,  194,  196,  198,  200,  202,  204,  206,  208,  0,  0,  0,  0,  0,  0,  0},
+            {224,  226,  228,  230,  232,  234,  236,  238,  240,  0,  0,  0,  0,  0,  0,  0},
+            {256,  258,  260,  262,  264,  266,  268,  270,  272,  0,  0,  0,  0,  0,  0,  0},
+            {  0,    0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0},
+            {  0,    0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0},
+            {  0,    0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0},
+            {  0,    0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0},
+            {  0,    0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0},
+            {  0,    0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0},
+            {  0,    0,    0,    0,    0,    0,    0,    0,    0,  0,  0,  0,  0,  0,  0,  0},
+        };
         mp = mops_v8si_create();
         memset(&ret, 0, sizeof(ret));
 
@@ -1180,11 +1263,11 @@ Test(InternalFunc, v8si_scalar_multiply_chunk_partly)
         mp->mchk_rows = 9;
         mp->mchk_cols = 9;
 
-        v8si_scalar_multiply_chunk_partly(&ret, &factor, &sample, mp);
+        v8si_scalar_multiply_chunk_partly(&ret, &factor, &src, mp);
 
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
-                check_value_at(ret.i32_vals[i][j], ret_sample.i32_vals[i][j], i, j);
+                check_value_at(ret.i32_16x16[i][j], ret_vals[i][j], i, j);
             } // for
         } // for
 
@@ -1194,25 +1277,43 @@ Test(InternalFunc, v8si_scalar_multiply_chunk_partly)
     // -- 16x16 chunk -- //
     {
         v8si_t factor = {2, 2, 2, 2, 2, 2, 2, 2};
-        mx_chunk_t ret_sample = {
-            .i32_vals = {
-                0,    2,    4,    6,    8,    10,   12,   14,   16,   18,   20,   22,   24,   26,   28,   30,
-                32,   34,   36,   38,   40,   42,   44,   46,   48,   50,   52,   54,   56,   58,   60,   62,
-                64,   66,   68,   70,   72,   74,   76,   78,   80,   82,   84,   86,   88,   90,   92,   94,
-                96,   98,   100,  102,  104,  106,  108,  110,  112,  114,  116,  118,  120,  122,  124,  126,
-                128,  130,  132,  134,  136,  138,  140,  142,  144,  146,  148,  150,  152,  154,  156,  158,
-                160,  162,  164,  166,  168,  170,  172,  174,  176,  178,  180,  182,  184,  186,  188,  190,
-                192,  194,  196,  198,  200,  202,  204,  206,  208,  210,  212,  214,  216,  218,  220,  222,
-                224,  226,  228,  230,  232,  234,  236,  238,  240,  242,  244,  246,  248,  250,  252,  254,
-                256,  258,  260,  262,  264,  266,  268,  270,  272,  274,  276,  278,  280,  282,  284,  286,
-                288,  290,  292,  294,  296,  298,  300,  302,  304,  306,  308,  310,  312,  314,  316,  318,
-                320,  322,  324,  326,  328,  330,  332,  334,  336,  338,  340,  342,  344,  346,  348,  350,
-                352,  354,  356,  358,  360,  362,  364,  366,  368,  370,  372,  374,  376,  378,  380,  382,
-                384,  386,  388,  390,  392,  394,  396,  398,  400,  402,  404,  406,  408,  410,  412,  414,
-                416,  418,  420,  422,  424,  426,  428,  430,  432,  434,  436,  438,  440,  442,  444,  446,
-                448,  450,  452,  454,  456,  458,  460,  462,  464,  466,  468,  470,  472,  474,  476,  478,
-                480,  482,  484,  486,  488,  490,  492,  494,  496,  498,  500,  502,  504,  506,  508,  510
+        mx_chunk_t src = {
+            .i32_16x16 = {
+                {  0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,  13,  14,  15},
+                { 16,  17,  18,  19,  20,  21,  22,  23,  24,  25,  26,  27,  28,  29,  30,  31},
+                { 32,  33,  34,  35,  36,  37,  38,  39,  40,  41,  42,  43,  44,  45,  46,  47},
+                { 48,  49,  50,  51,  52,  53,  54,  55,  56,  57,  58,  59,  60,  61,  62,  63},
+                { 64,  65,  66,  67,  68,  69,  70,  71,  72,  73,  74,  75,  76,  77,  78,  79},
+                { 80,  81,  82,  83,  84,  85,  86,  87,  88,  89,  90,  91,  92,  93,  94,  95},
+                { 96,  97,  98,  99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111},
+                {112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127},
+                {128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143},
+                {144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159},
+                {160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175},
+                {176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191},
+                {192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207},
+                {208, 209, 210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223},
+                {224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239},
+                {240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255},
             }
+        };
+        int32_t ret_vals[16][16] = {
+            {0,    2,    4,    6,    8,    10,   12,   14,   16,   18,   20,   22,   24,   26,   28,   30},
+            {32,   34,   36,   38,   40,   42,   44,   46,   48,   50,   52,   54,   56,   58,   60,   62},
+            {64,   66,   68,   70,   72,   74,   76,   78,   80,   82,   84,   86,   88,   90,   92,   94},
+            {96,   98,   100,  102,  104,  106,  108,  110,  112,  114,  116,  118,  120,  122,  124,  126},
+            {128,  130,  132,  134,  136,  138,  140,  142,  144,  146,  148,  150,  152,  154,  156,  158},
+            {160,  162,  164,  166,  168,  170,  172,  174,  176,  178,  180,  182,  184,  186,  188,  190},
+            {192,  194,  196,  198,  200,  202,  204,  206,  208,  210,  212,  214,  216,  218,  220,  222},
+            {224,  226,  228,  230,  232,  234,  236,  238,  240,  242,  244,  246,  248,  250,  252,  254},
+            {256,  258,  260,  262,  264,  266,  268,  270,  272,  274,  276,  278,  280,  282,  284,  286},
+            {288,  290,  292,  294,  296,  298,  300,  302,  304,  306,  308,  310,  312,  314,  316,  318},
+            {320,  322,  324,  326,  328,  330,  332,  334,  336,  338,  340,  342,  344,  346,  348,  350},
+            {352,  354,  356,  358,  360,  362,  364,  366,  368,  370,  372,  374,  376,  378,  380,  382},
+            {384,  386,  388,  390,  392,  394,  396,  398,  400,  402,  404,  406,  408,  410,  412,  414},
+            {416,  418,  420,  422,  424,  426,  428,  430,  432,  434,  436,  438,  440,  442,  444,  446},
+            {448,  450,  452,  454,  456,  458,  460,  462,  464,  466,  468,  470,  472,  474,  476,  478},
+            {480,  482,  484,  486,  488,  490,  492,  494,  496,  498,  500,  502,  504,  506,  508,  510},
         };
 
         mp = mops_v8si_create();
@@ -1223,11 +1324,11 @@ Test(InternalFunc, v8si_scalar_multiply_chunk_partly)
         mp->mchk_rows = 16;
         mp->mchk_cols = 16;
 
-        v8si_scalar_multiply_chunk_partly(&ret, &factor, &sample, mp);
+        v8si_scalar_multiply_chunk_partly(&ret, &factor, &src, mp);
 
         for (i = 0; i < mp->mchk_rows; i += 1) {
             for (j = 0; j < mp->mchk_cols; j += 1) {
-                check_value_at(ret.i32_vals[i][j], ret_sample.i32_vals[i][j], i, j);
+                check_value_at(ret.i32_16x16[i][j], ret_vals[i][j], i, j);
             } // for
         } // for
 
@@ -2292,6 +2393,240 @@ Test(Operation, mops_v8si_multiply)
         mstr_v8si_destroy(ret);
         mstr_v8si_destroy(rhs);
         mstr_v8si_destroy(lhs);
+        mops_v8si_destroy(mp);
+    }
+}
+
+Test(Operation, mops_v8si_transpose)
+{
+    uint32_t i = 0;
+    uint32_t j = 0;
+    mx_oper_ptr mp = NULL;
+    mx_stor_ptr src = NULL;
+    mx_stor_ptr dst = NULL;
+
+    // -- 1x1 matrix transpose -- //
+    {
+        mp = mops_v8si_create();
+
+        src = mstr_v8si_create(1, 1);
+        mstr_v8si_set(src, 0, 0, 11);
+
+        dst = mstr_v8si_create(1, 1);
+        mops_v8si_transpose(mp, src, dst);
+
+        check_value_at(mstr_v8si_get(dst, 0, 0), 11, 0, 0);
+
+        mstr_v8si_destroy(dst);
+        mstr_v8si_destroy(src);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 5x5 matrix transpose -- //
+    {
+        mp = mops_v8si_create();
+
+        src = mstr_v8si_create(5, 5);
+
+        for (i = 0; i < 5; i += 1) {
+            for (j = 0; j < 5; j += 1) {
+                mstr_v8si_set(src, i, j, i * j);
+            } // for
+        } // for
+
+        dst = mstr_v8si_create(5, 5);
+        mops_v8si_transpose(mp, src, dst);
+
+        for (i = 0; i < 5; i += 1) {
+            for (j = 0; j < 5; j += 1) {
+                check_value_at(mstr_v8si_get(dst, i, j), mstr_v8si_get(src, j, i), i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(dst);
+        mstr_v8si_destroy(src);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 8x8 matrix transpose -- //
+    {
+        mp = mops_v8si_create();
+
+        src = mstr_v8si_create(8, 8);
+
+        for (i = 0; i < 8; i += 1) {
+            for (j = 0; j < 8; j += 1) {
+                mstr_v8si_set(src, i, j, i * j);
+            } // for
+        } // for
+
+        dst = mstr_v8si_create(8, 8);
+        mops_v8si_transpose(mp, src, dst);
+
+        for (i = 0; i < 8; i += 1) {
+            for (j = 0; j < 8; j += 1) {
+                check_value_at(mstr_v8si_get(dst, i, j), mstr_v8si_get(src, j, i), i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(dst);
+        mstr_v8si_destroy(src);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 9x9 matrix transpose -- //
+    {
+        mp = mops_v8si_create();
+
+        src = mstr_v8si_create(9, 9);
+
+        for (i = 0; i < 9; i += 1) {
+            for (j = 0; j < 9; j += 1) {
+                mstr_v8si_set(src, i, j, i * j);
+            } // for
+        } // for
+
+        dst = mstr_v8si_create(9, 9);
+        mops_v8si_transpose(mp, src, dst);
+
+        for (i = 0; i < 9; i += 1) {
+            for (j = 0; j < 9; j += 1) {
+                check_value_at(mstr_v8si_get(dst, i, j), mstr_v8si_get(src, j, i), i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(dst);
+        mstr_v8si_destroy(src);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 16x16 matrix transpose -- //
+    {
+        mp = mops_v8si_create();
+
+        src = mstr_v8si_create(16, 16);
+
+        for (i = 0; i < 16; i += 1) {
+            for (j = 0; j < 16; j += 1) {
+                mstr_v8si_set(src, i, j, i * j);
+            } // for
+        } // for
+
+        dst = mstr_v8si_create(16, 16);
+        mops_v8si_transpose(mp, src, dst);
+
+        for (i = 0; i < 16; i += 1) {
+            for (j = 0; j < 16; j += 1) {
+                check_value_at(mstr_v8si_get(dst, i, j), mstr_v8si_get(src, j, i), i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(dst);
+        mstr_v8si_destroy(src);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 17x17 matrix transpose -- //
+    {
+        mp = mops_v8si_create();
+
+        src = mstr_v8si_create(17, 17);
+
+        for (i = 0; i < 17; i += 1) {
+            for (j = 0; j < 17; j += 1) {
+                mstr_v8si_set(src, i, j, i * j);
+            } // for
+        } // for
+
+        dst = mstr_v8si_create(17, 17);
+        mops_v8si_transpose(mp, src, dst);
+
+        for (i = 0; i < 17; i += 1) {
+            for (j = 0; j < 17; j += 1) {
+                check_value_at(mstr_v8si_get(dst, i, j), mstr_v8si_get(src, j, i), i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(dst);
+        mstr_v8si_destroy(src);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 2x9 matrix transpose -- //
+    {
+        mp = mops_v8si_create();
+
+        src = mstr_v8si_create(2, 9);
+
+        for (i = 0; i < 2; i += 1) {
+            for (j = 0; j < 9; j += 1) {
+                mstr_v8si_set(src, i, j, i * j);
+            } // for
+        } // for
+
+        dst = mstr_v8si_create(9, 2);
+        mops_v8si_transpose(mp, src, dst);
+
+        for (i = 0; i < 9; i += 1) {
+            for (j = 0; j < 2; j += 1) {
+                check_value_at(mstr_v8si_get(dst, i, j), mstr_v8si_get(src, j, i), i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(dst);
+        mstr_v8si_destroy(src);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 9x2 matrix transpose -- //
+    {
+        mp = mops_v8si_create();
+
+        src = mstr_v8si_create(9, 2);
+
+        for (i = 0; i < 9; i += 1) {
+            for (j = 0; j < 2; j += 1) {
+                mstr_v8si_set(src, i, j, i * j);
+            } // for
+        } // for
+
+        dst = mstr_v8si_create(2, 9);
+        mops_v8si_transpose(mp, src, dst);
+
+        for (i = 0; i < 2; i += 1) {
+            for (j = 0; j < 9; j += 1) {
+                check_value_at(mstr_v8si_get(dst, i, j), mstr_v8si_get(src, j, i), i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(dst);
+        mstr_v8si_destroy(src);
+        mops_v8si_destroy(mp);
+    }
+
+    // -- 17x33 matrix transpose -- //
+    {
+        mp = mops_v8si_create();
+
+        src = mstr_v8si_create(17, 33);
+
+        for (i = 0; i < 17; i += 1) {
+            for (j = 0; j < 33; j += 1) {
+                mstr_v8si_set(src, i, j, i * j);
+            } // for
+        } // for
+
+        dst = mstr_v8si_create(33, 17);
+        mops_v8si_transpose(mp, src, dst);
+
+        for (i = 0; i < 33; i += 1) {
+            for (j = 0; j < 17; j += 1) {
+                check_value_at(mstr_v8si_get(dst, i, j), mstr_v8si_get(src, j, i), i, j);
+            } // for
+        } // for
+
+        mstr_v8si_destroy(dst);
+        mstr_v8si_destroy(src);
         mops_v8si_destroy(mp);
     }
 }

@@ -1,9 +1,6 @@
 #include <criterion/criterion.h>
 
-#ifndef MX_STOR_C
-#include "src/mx_storage.c"
-#define MX_STOR_C
-#endif
+#include "src/v8si_storage.h"
 
 #define check_vals_sz(ms, expect) \
     cr_expect(ms->val_sz == expect, "Wrong value size - Expect %d, got %d.", expect, ms->val_sz)
@@ -384,7 +381,7 @@ Test(Creat, v8si_create)
     }
 }
 
-Test(Locate, v8si_calc_base)
+Test(Locate, mstr_v8si_calc_base)
 {
     mx_stor_ptr ms = NULL;
     void * base = NULL;
@@ -393,7 +390,7 @@ Test(Locate, v8si_calc_base)
     {
         ms = mstr_v8si_create(1, 1);
 
-        base = v8si_calc_base(ms, 0, 0, ms->last_chk_height);
+        base = mstr_v8si_calc_base(ms, 0, 0, ms->last_chk_height);
         check_base(ms, base, 0);
 
         mstr_v8si_destroy(ms);
@@ -403,7 +400,7 @@ Test(Locate, v8si_calc_base)
     {
         ms = mstr_v8si_create(8, 8);
 
-        base = v8si_calc_base(ms, 0, 0, ms->last_chk_height);
+        base = mstr_v8si_calc_base(ms, 0, 0, ms->last_chk_height);
         check_base(ms, base, 0);
 
         mstr_v8si_destroy(ms);
@@ -413,7 +410,7 @@ Test(Locate, v8si_calc_base)
     {
         ms = mstr_v8si_create(15, 15);
 
-        base = v8si_calc_base(ms, 0, 0, ms->last_chk_height);
+        base = mstr_v8si_calc_base(ms, 0, 0, ms->last_chk_height);
         check_base(ms, base, 0);
     }
 
@@ -421,7 +418,7 @@ Test(Locate, v8si_calc_base)
     {
         ms = mstr_v8si_create(16, 16);
 
-        base = v8si_calc_base(ms, 0, 0, ms->last_chk_height);
+        base = mstr_v8si_calc_base(ms, 0, 0, ms->last_chk_height);
         check_base(ms, base, 0);
     }
 
@@ -429,16 +426,16 @@ Test(Locate, v8si_calc_base)
     {
         ms = mstr_v8si_create(17, 17);
 
-        base = v8si_calc_base(ms, 0, 0, 16);
+        base = mstr_v8si_calc_base(ms, 0, 0, 16);
         check_base(ms, base, 0);
 
-        base = v8si_calc_base(ms, 0, 16, 16);
+        base = mstr_v8si_calc_base(ms, 0, 16, 16);
         check_base(ms, base, 4 * 16 * 16);
 
-        base = v8si_calc_base(ms, 16, 0, ms->last_chk_height);
+        base = mstr_v8si_calc_base(ms, 16, 0, ms->last_chk_height);
         check_base(ms, base, 4 * 16 * 16 + 4 * 16 * 8);
 
-        base = v8si_calc_base(ms, 16, 16, ms->last_chk_height);
+        base = mstr_v8si_calc_base(ms, 16, 16, ms->last_chk_height);
         check_base(ms, base, 4 * 16 * 24 + 4 * 1 * 16);
 
         mstr_v8si_destroy(ms);
@@ -448,10 +445,10 @@ Test(Locate, v8si_calc_base)
     {
         ms = mstr_v8si_create(2, 17);
 
-        base = v8si_calc_base(ms, 0, 0, 2);
+        base = mstr_v8si_calc_base(ms, 0, 0, 2);
         check_base(ms, base, 0);
 
-        base = v8si_calc_base(ms, 0, 16, ms->last_chk_height);
+        base = mstr_v8si_calc_base(ms, 0, 16, ms->last_chk_height);
         check_base(ms, base, 4 * 2 * 16);
 
         mstr_v8si_destroy(ms);
@@ -461,13 +458,13 @@ Test(Locate, v8si_calc_base)
     {
         ms = mstr_v8si_create(2, 33);
 
-        base = v8si_calc_base(ms, 0, 0, 2);
+        base = mstr_v8si_calc_base(ms, 0, 0, 2);
         check_base(ms, base, 0);
 
-        base = v8si_calc_base(ms, 0, 16, 2);
+        base = mstr_v8si_calc_base(ms, 0, 16, 2);
         check_base(ms, base, 4 * 2 * 16);
 
-        base = v8si_calc_base(ms, 0, 32, ms->last_chk_height);
+        base = mstr_v8si_calc_base(ms, 0, 32, ms->last_chk_height);
         check_base(ms, base, 4 * 2 * 16 * 2);
 
         mstr_v8si_destroy(ms);
@@ -477,22 +474,22 @@ Test(Locate, v8si_calc_base)
     {
         ms = mstr_v8si_create(17, 33);
 
-        base = v8si_calc_base(ms, 0, 0, 16);
+        base = mstr_v8si_calc_base(ms, 0, 0, 16);
         check_base(ms, base, 0);
 
-        base = v8si_calc_base(ms, 0, 16, 16);
+        base = mstr_v8si_calc_base(ms, 0, 16, 16);
         check_base(ms, base, 4 * 16 * 16);
 
-        base = v8si_calc_base(ms, 0, 32, 16);
+        base = mstr_v8si_calc_base(ms, 0, 32, 16);
         check_base(ms, base, 4 * 16 * 16 * 2);
 
-        base = v8si_calc_base(ms, 16, 0, ms->last_chk_height);
+        base = mstr_v8si_calc_base(ms, 16, 0, ms->last_chk_height);
         check_base(ms, base, 4 * 16 * 16 * 2 + 4 * 16 * 8);
         
-        base = v8si_calc_base(ms, 16, 16, ms->last_chk_height);
+        base = mstr_v8si_calc_base(ms, 16, 16, ms->last_chk_height);
         check_base(ms, base, 4 * 16 * 16 * 2 + 4 * 16 * 8 + 4 * 1 * 16);
 
-        base = v8si_calc_base(ms, 16, 32, ms->last_chk_height);
+        base = mstr_v8si_calc_base(ms, 16, 32, ms->last_chk_height);
         check_base(ms, base, 4 * 16 * 16 * 2 + 4 * 16 * 8 + 4 * 1 * 16 * 2);
 
         mstr_v8si_destroy(ms);
@@ -502,10 +499,10 @@ Test(Locate, v8si_calc_base)
     {
         ms = mstr_v8si_create(17, 2);
 
-        base = v8si_calc_base(ms, 0, 0, 16);
+        base = mstr_v8si_calc_base(ms, 0, 0, 16);
         check_base(ms, base, 0);
 
-        base = v8si_calc_base(ms, 16, 0, ms->last_chk_height);
+        base = mstr_v8si_calc_base(ms, 16, 0, ms->last_chk_height);
         check_base(ms, base, 4 * 16 * 8);
 
         mstr_v8si_destroy(ms);
@@ -515,13 +512,13 @@ Test(Locate, v8si_calc_base)
     {
         ms = mstr_v8si_create(33, 2);
 
-        base = v8si_calc_base(ms, 0, 0, 16);
+        base = mstr_v8si_calc_base(ms, 0, 0, 16);
         check_base(ms, base, 0);
 
-        base = v8si_calc_base(ms, 16, 0, 16);
+        base = mstr_v8si_calc_base(ms, 16, 0, 16);
         check_base(ms, base, 4 * 16 * 8);
 
-        base = v8si_calc_base(ms, 32, 0, ms->last_chk_height);
+        base = mstr_v8si_calc_base(ms, 32, 0, ms->last_chk_height);
         check_base(ms, base, 4 * 32 * 8);
 
         mstr_v8si_destroy(ms);
@@ -531,27 +528,27 @@ Test(Locate, v8si_calc_base)
     {
         ms = mstr_v8si_create(33, 17);
 
-        base = v8si_calc_base(ms, 0, 0, 16);
+        base = mstr_v8si_calc_base(ms, 0, 0, 16);
         check_base(ms, base, 0);
 
-        base = v8si_calc_base(ms, 0, 16, 16);
+        base = mstr_v8si_calc_base(ms, 0, 16, 16);
         check_base(ms, base, 4 * 16 * 16);
 
-        base = v8si_calc_base(ms, 16, 0, 16);
+        base = mstr_v8si_calc_base(ms, 16, 0, 16);
         check_base(ms, base, 4 * 16 * 16 + 4 * 16 * 8);
 
-        base = v8si_calc_base(ms, 16, 16, 16);
+        base = mstr_v8si_calc_base(ms, 16, 16, 16);
         check_base(ms, base, 4 * 16 * 16 * 2 + 4 * 16 * 8);
 
-        base = v8si_calc_base(ms, 32, 0, ms->last_chk_height);
+        base = mstr_v8si_calc_base(ms, 32, 0, ms->last_chk_height);
         check_base(ms, base, 4 * 16 * 16 * 2 + 4 * 16 * 8 * 2);
 
-        base = v8si_calc_base(ms, 32, 16, ms->last_chk_height);
+        base = mstr_v8si_calc_base(ms, 32, 16, ms->last_chk_height);
         check_base(ms, base, 4 * 16 * 16 * 2 + 4 * 16 * 8 * 2 + 4 * 1 * 16);
     }
 }
 
-Test(Locate, v8si_locate_chunk)
+Test(Locate, mstr_v8si_locate_chunk)
 {
     mx_stor_ptr ms = NULL;
     uint32_t rows_in_chk = 0;
@@ -563,7 +560,7 @@ Test(Locate, v8si_locate_chunk)
     {
         ms = mstr_v8si_create(1, 1);
 
-        chk = v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk, &full);
+        chk = mstr_v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk, &full);
         check_base(ms, chk, 0);
         check_rows_in_chunk(rows_in_chk, 1);
         check_columns_in_chunk(cols_in_chk, 1);
@@ -576,7 +573,7 @@ Test(Locate, v8si_locate_chunk)
     {
         ms = mstr_v8si_create(8, 8);
 
-        chk = v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk, &full);
+        chk = mstr_v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk, &full);
         check_base(ms, chk, 0);
         check_rows_in_chunk(rows_in_chk, 8);
         check_columns_in_chunk(cols_in_chk, 8);
@@ -589,7 +586,7 @@ Test(Locate, v8si_locate_chunk)
     {
         ms = mstr_v8si_create(15, 15);
 
-        chk = v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk, &full);
+        chk = mstr_v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk, &full);
         check_base(ms, chk, 0);
         check_rows_in_chunk(rows_in_chk, 15);
         check_columns_in_chunk(cols_in_chk, 15);
@@ -602,7 +599,7 @@ Test(Locate, v8si_locate_chunk)
     {
         ms = mstr_v8si_create(16, 16);
 
-        chk = v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk, &full);
+        chk = mstr_v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk, &full);
         check_base(ms, chk, 0);
         check_rows_in_chunk(rows_in_chk, 16);
         check_columns_in_chunk(cols_in_chk, 16);
@@ -615,25 +612,25 @@ Test(Locate, v8si_locate_chunk)
     {
         ms = mstr_v8si_create(17, 17);
 
-        chk = v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk, &full);
+        chk = mstr_v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk, &full);
         check_base(ms, chk, 0);
         check_rows_in_chunk(rows_in_chk, 16);
         check_columns_in_chunk(cols_in_chk, 16);
         check_full_flag(full, true);
 
-        chk = v8si_locate_chunk(ms, 0, 1, &rows_in_chk, &cols_in_chk, &full);
+        chk = mstr_v8si_locate_chunk(ms, 0, 1, &rows_in_chk, &cols_in_chk, &full);
         check_base(ms, chk, 4 * 16 * 16);
         check_rows_in_chunk(rows_in_chk, 16);
         check_columns_in_chunk(cols_in_chk, 1);
         check_full_flag(full, false);
 
-        chk = v8si_locate_chunk(ms, 1, 0, &rows_in_chk, &cols_in_chk, &full);
+        chk = mstr_v8si_locate_chunk(ms, 1, 0, &rows_in_chk, &cols_in_chk, &full);
         check_base(ms, chk, 4 * 16 * 16 + 4 * 16 * 8);
         check_rows_in_chunk(rows_in_chk, 1);
         check_columns_in_chunk(cols_in_chk, 16);
         check_full_flag(full, false);
 
-        chk = v8si_locate_chunk(ms, 1, 1, &rows_in_chk, &cols_in_chk, &full);
+        chk = mstr_v8si_locate_chunk(ms, 1, 1, &rows_in_chk, &cols_in_chk, &full);
         check_base(ms, chk, 4 * 16 * 16 + 4 * 16 * 8 + 4 * 1 * 16);
         check_rows_in_chunk(rows_in_chk, 1);
         check_columns_in_chunk(cols_in_chk, 1);
@@ -1178,7 +1175,7 @@ Test(Operation, mstr_v8si_store_chunk)
     uint32_t j = 0;
     mx_stor_ptr ms = NULL;
     mx_chunk_t src = {
-        .i32_vals = {
+        .i32_16x16 = {
             {  0,    1,    2,    3,    4,    5,    6,    7,    8,    9,   10,   11,   12,   13,   14,   15},
             { 16,   17,   18,   19,   20,   21,   22,   23,   24,   25,   26,   27,   28,   29,   30,   31},
             { 32,   33,   34,   35,   36,   37,   38,   39,   40,   41,   42,   43,   44,   45,   46,   47},
@@ -1216,7 +1213,7 @@ Test(Operation, mstr_v8si_store_chunk)
         mstr_v8si_store_chunk(ms, 0, 0, &src);
         for (i = 0; i < 5; i += 1) {
             for (j = 0; j < 5; j += 1) {
-                check_value_at(mstr_v8si_get(ms, i, j), src.i32_vals[i][j], i, j);
+                check_value_at(mstr_v8si_get(ms, i, j), src.i32_16x16[i][j], i, j);
             } // for
         } // for
 
@@ -1230,7 +1227,7 @@ Test(Operation, mstr_v8si_store_chunk)
         mstr_v8si_store_chunk(ms, 0, 0, &src);
         for (i = 0; i < 8; i += 1) {
             for (j = 0; j < 8; j += 1) {
-                check_value_at(mstr_v8si_get(ms, i, j), src.i32_vals[i][j], i, j);
+                check_value_at(mstr_v8si_get(ms, i, j), src.i32_16x16[i][j], i, j);
             } // for
         } // for
 
@@ -1244,7 +1241,7 @@ Test(Operation, mstr_v8si_store_chunk)
         mstr_v8si_store_chunk(ms, 0, 0, &src);
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 9; j += 1) {
-                check_value_at(mstr_v8si_get(ms, i, j), src.i32_vals[i][j], i, j);
+                check_value_at(mstr_v8si_get(ms, i, j), src.i32_16x16[i][j], i, j);
             } // for
         } // for
 
@@ -1258,7 +1255,7 @@ Test(Operation, mstr_v8si_store_chunk)
         mstr_v8si_store_chunk(ms, 0, 0, &src);
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 16; j += 1) {
-                check_value_at(mstr_v8si_get(ms, i, j), src.i32_vals[i][j], i, j);
+                check_value_at(mstr_v8si_get(ms, i, j), src.i32_16x16[i][j], i, j);
             } // for
         } // for
 
@@ -1273,7 +1270,7 @@ Test(Operation, mstr_v8si_store_chunk)
         mstr_v8si_store_chunk(ms, 0, 0, &src);
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 16; j += 1) {
-                check_value_at(mstr_v8si_get(ms, i, j), src.i32_vals[i][j], i, j);
+                check_value_at(mstr_v8si_get(ms, i, j), src.i32_16x16[i][j], i, j);
             } // for
         } // for
 
@@ -1292,7 +1289,7 @@ Test(Operation, mstr_v8si_store_chunk)
         mstr_v8si_store_chunk(ms, 0, 0, &src);
         for (i = 0; i < 2; i += 1) {
             for (j = 0; j < 15; j += 1) {
-                check_value_at(mstr_v8si_get(ms, i, j), src.i32_vals[i][j], i, j);
+                check_value_at(mstr_v8si_get(ms, i, j), src.i32_16x16[i][j], i, j);
             } // for
         } // for
 
@@ -1307,7 +1304,7 @@ Test(Operation, mstr_v8si_store_chunk)
         mstr_v8si_store_chunk(ms, 0, 0, &src);
         for (i = 0; i < 15; i += 1) {
             for (j = 0; j < 2; j += 1) {
-                check_value_at(mstr_v8si_get(ms, i, j), src.i32_vals[i][j], i, j);
+                check_value_at(mstr_v8si_get(ms, i, j), src.i32_16x16[i][j], i, j);
             } // for
         } // for
 
@@ -1325,7 +1322,7 @@ Test(Operation, mstr_v8si_copy_chunk)
     mx_stor_ptr ms = NULL;
     mx_chunk_ptr ret = NULL;
     mx_chunk_t src = {
-        .i32_vals = {
+        .i32_16x16 = {
             {  0,    1,    2,    3,    4,    5,    6,    7,    8,    9,   10,   11,   12,   13,   14,   15},
             { 16,   17,   18,   19,   20,   21,   22,   23,   24,   25,   26,   27,   28,   29,   30,   31},
             { 32,   33,   34,   35,   36,   37,   38,   39,   40,   41,   42,   43,   44,   45,   46,   47},
@@ -1363,7 +1360,7 @@ Test(Operation, mstr_v8si_copy_chunk)
         check_rows_in_chunk(rows_in_chk, 1);
         check_columns_in_chunk(cols_in_chk, 1);
         check_full_flag(full, false);
-        check_value_at(dst.i32_vals[0][0], 0, 0, 0);
+        check_value_at(dst.i32_16x16[0][0], 0, 0, 0);
 
         mstr_v8si_destroy(ms);
     }
@@ -1388,7 +1385,7 @@ Test(Operation, mstr_v8si_copy_chunk)
 
         for (i = 0; i < 5; i += 1) {
             for (j = 0; j < 5; j += 1) {
-                check_value_at(dst.i32_vals[i][j], src.i32_vals[i][j], i, j);
+                check_value_at(dst.i32_16x16[i][j], src.i32_16x16[i][j], i, j);
             } // for
         } // for
 
@@ -1415,7 +1412,7 @@ Test(Operation, mstr_v8si_copy_chunk)
 
         for (i = 0; i < 8; i += 1) {
             for (j = 0; j < 8; j += 1) {
-                check_value_at(dst.i32_vals[i][j], src.i32_vals[i][j], i, j);
+                check_value_at(dst.i32_16x16[i][j], src.i32_16x16[i][j], i, j);
             } // for
         } // for
 
@@ -1442,7 +1439,7 @@ Test(Operation, mstr_v8si_copy_chunk)
 
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 9; j += 1) {
-                check_value_at(dst.i32_vals[i][j], src.i32_vals[i][j], i, j);
+                check_value_at(dst.i32_16x16[i][j], src.i32_16x16[i][j], i, j);
             } // for
         } // for
 
@@ -1462,7 +1459,7 @@ Test(Operation, mstr_v8si_copy_chunk)
         mstr_v8si_store_chunk(ms, 0, 0, &src);
         ret = mstr_v8si_copy_chunk(ms, 0, 0, &dst, &rows_in_chk, &cols_in_chk, &full);
 
-        check_equal_poitners(ret, v8si_calc_base(ms, 0, 0, 16));
+        check_equal_poitners(ret, mstr_v8si_calc_base(ms, 0, 0, 16));
         check_not_equal_poitners(ret, &dst);
         check_rows_in_chunk(rows_in_chk, 16);
         check_columns_in_chunk(cols_in_chk, 16);
@@ -1484,7 +1481,7 @@ Test(Operation, mstr_v8si_copy_chunk)
         mstr_v8si_store_chunk(ms, 0, 0, &src);
         ret = mstr_v8si_copy_chunk(ms, 0, 0, &dst, &rows_in_chk, &cols_in_chk, &full);
 
-        check_equal_poitners(ret, v8si_calc_base(ms, 0, 0, 16));
+        check_equal_poitners(ret, mstr_v8si_calc_base(ms, 0, 0, 16));
         check_not_equal_poitners(ret, &dst);
         check_rows_in_chunk(rows_in_chk, 16);
         check_columns_in_chunk(cols_in_chk, 16);
@@ -1499,7 +1496,7 @@ Test(Operation, mstr_v8si_copy_chunk)
 
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 1; j += 1) {
-                check_value_at(dst.i32_vals[i][j], 4321, i, j);
+                check_value_at(dst.i32_16x16[i][j], 4321, i, j);
             } // for
         } // for
 
@@ -1512,7 +1509,7 @@ Test(Operation, mstr_v8si_copy_chunk)
 
         for (i = 0; i < 1; i += 1) {
             for (j = 0; j < 16; j += 1) {
-                check_value_at(dst.i32_vals[i][j], 4321, i, j);
+                check_value_at(dst.i32_16x16[i][j], 4321, i, j);
             } // for
         } // for
 
@@ -1522,7 +1519,7 @@ Test(Operation, mstr_v8si_copy_chunk)
         check_rows_in_chunk(rows_in_chk, 1);
         check_columns_in_chunk(cols_in_chk, 1);
         check_full_flag(full, false);
-        check_value_at(dst.i32_vals[0][0], 4321, 0, 0);
+        check_value_at(dst.i32_16x16[0][0], 4321, 0, 0);
 
         mstr_v8si_destroy(ms);
     }
@@ -1547,7 +1544,7 @@ Test(Operation, mstr_v8si_copy_chunk)
 
         for (i = 0; i < 2; i += 1) {
             for (j = 0; j < 5; j += 1) {
-                check_value_at(dst.i32_vals[i][j], src.i32_vals[i][j], i, j);
+                check_value_at(dst.i32_16x16[i][j], src.i32_16x16[i][j], i, j);
             } // for
         } // for
 
@@ -1574,7 +1571,7 @@ Test(Operation, mstr_v8si_copy_chunk)
 
         for (i = 0; i < 5; i += 1) {
             for (j = 0; j < 2; j += 1) {
-                check_value_at(dst.i32_vals[i][j], src.i32_vals[i][j], i, j);
+                check_value_at(dst.i32_16x16[i][j], src.i32_16x16[i][j], i, j);
             } // for
         } // for
 
@@ -1592,7 +1589,7 @@ Test(Operation, mstr_v8si_transpose_chunk)
     mx_stor_ptr ms = NULL;
     mx_chunk_ptr ret = NULL;
     mx_chunk_t src = {
-        .i32_vals = {
+        .i32_16x16 = {
             {  0,    1,    2,    3,    4,    5,    6,    7,    8,    9,   10,   11,   12,   13,   14,   15},
             { 16,   17,   18,   19,   20,   21,   22,   23,   24,   25,   26,   27,   28,   29,   30,   31},
             { 32,   33,   34,   35,   36,   37,   38,   39,   40,   41,   42,   43,   44,   45,   46,   47},
@@ -1630,7 +1627,7 @@ Test(Operation, mstr_v8si_transpose_chunk)
         check_rows_in_chunk(rows_in_chk, 1);
         check_columns_in_chunk(cols_in_chk, 1);
         check_full_flag(full, false);
-        check_value_at(dst.i32_vals[0][0], 0, 0, 0);
+        check_value_at(dst.i32_16x16[0][0], 0, 0, 0);
 
         mstr_v8si_destroy(ms);
     }
@@ -1655,7 +1652,7 @@ Test(Operation, mstr_v8si_transpose_chunk)
 
         for (i = 0; i < 5; i += 1) {
             for (j = 0; j < 5; j += 1) {
-                check_value_at(dst.i32_vals[i][j], src.i32_vals[j][i], i, j);
+                check_value_at(dst.i32_16x16[i][j], src.i32_16x16[j][i], i, j);
             } // for
         } // for
 
@@ -1682,7 +1679,7 @@ Test(Operation, mstr_v8si_transpose_chunk)
 
         for (i = 0; i < 8; i += 1) {
             for (j = 0; j < 8; j += 1) {
-                check_value_at(dst.i32_vals[i][j], src.i32_vals[j][i], i, j);
+                check_value_at(dst.i32_16x16[i][j], src.i32_16x16[j][i], i, j);
             } // for
         } // for
 
@@ -1709,7 +1706,7 @@ Test(Operation, mstr_v8si_transpose_chunk)
 
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 9; j += 1) {
-                check_value_at(dst.i32_vals[i][j], src.i32_vals[j][i], i, j);
+                check_value_at(dst.i32_16x16[i][j], src.i32_16x16[j][i], i, j);
             } // for
         } // for
 
@@ -1736,7 +1733,7 @@ Test(Operation, mstr_v8si_transpose_chunk)
 
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 16; j += 1) {
-                check_value_at(dst.i32_vals[i][j], src.i32_vals[j][i], i, j);
+                check_value_at(dst.i32_16x16[i][j], src.i32_16x16[j][i], i, j);
             } // for
         } // for
 
@@ -1763,7 +1760,7 @@ Test(Operation, mstr_v8si_transpose_chunk)
 
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 16; j += 1) {
-                check_value_at(dst.i32_vals[i][j], src.i32_vals[j][i], i, j);
+                check_value_at(dst.i32_16x16[i][j], src.i32_16x16[j][i], i, j);
             } // for
         } // for
 
@@ -1776,7 +1773,7 @@ Test(Operation, mstr_v8si_transpose_chunk)
 
         for (i = 0; i < 1; i += 1) {
             for (j = 0; j < 16; j += 1) {
-                check_value_at(dst.i32_vals[i][j], 4321, i, j);
+                check_value_at(dst.i32_16x16[i][j], 4321, i, j);
             } // for
         } // for
 
@@ -1789,7 +1786,7 @@ Test(Operation, mstr_v8si_transpose_chunk)
 
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 1; j += 1) {
-                check_value_at(dst.i32_vals[i][j], 4321, i, j);
+                check_value_at(dst.i32_16x16[i][j], 4321, i, j);
             } // for
         } // for
 
@@ -1799,7 +1796,7 @@ Test(Operation, mstr_v8si_transpose_chunk)
         check_rows_in_chunk(rows_in_chk, 1);
         check_columns_in_chunk(cols_in_chk, 1);
         check_full_flag(full, false);
-        check_value_at(dst.i32_vals[0][0], 4321, 0, 0);
+        check_value_at(dst.i32_16x16[0][0], 4321, 0, 0);
 
         mstr_v8si_destroy(ms);
     }
@@ -1824,7 +1821,7 @@ Test(Operation, mstr_v8si_transpose_chunk)
 
         for (i = 0; i < 5; i += 1) {
             for (j = 0; j < 2; j += 1) {
-                check_value_at(dst.i32_vals[i][j], src.i32_vals[j][i], i, j);
+                check_value_at(dst.i32_16x16[i][j], src.i32_16x16[j][i], i, j);
             } // for
         } // for
 
@@ -1851,7 +1848,7 @@ Test(Operation, mstr_v8si_transpose_chunk)
 
         for (i = 0; i < 2; i += 1) {
             for (j = 0; j < 5; j += 1) {
-                check_value_at(dst.i32_vals[i][j], src.i32_vals[j][i], i, j);
+                check_value_at(dst.i32_16x16[i][j], src.i32_16x16[j][i], i, j);
             } // for
         } // for
 

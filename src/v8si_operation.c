@@ -1,26 +1,9 @@
 #include <assert.h>
 #include <stdlib.h>
 
-#include "mx_operation.h"
-
-typedef struct MX_OPERATION {
-    mx_chunk_t      lchk;
-    mx_chunk_t      rchk;
-    mx_chunk_t      mchk;
-
-    uint32_t        lchk_rows;
-    uint32_t        lchk_cols;
-
-    uint32_t        rchk_rows;
-    uint32_t        rchk_cols;
-
-    uint32_t        mchk_rows;
-    uint32_t        mchk_cols;
-
-    bool            lchk_full;
-    bool            rchk_full;
-    bool            mchk_full;
-} mx_oper_t;
+#include "src/mx_common.h"
+#include "src/v8si_storage.h"
+#include "src/v8si_operation.h"
 
 mx_oper_ptr mops_v8si_create(void)
 {
@@ -34,13 +17,13 @@ void mops_v8si_destroy(mx_oper_ptr mp)
 
 #define v8si_add_chunk_full(row) \
     { \
-        chk->v8si_pcks[row][0] = __builtin_ia32_paddd256(lhs->v8si_pcks[row][0], rhs->v8si_pcks[row][0]); \
-        chk->v8si_pcks[row][1] = __builtin_ia32_paddd256(lhs->v8si_pcks[row][1], rhs->v8si_pcks[row][1]); \
+        chk->v8si_16x2[row][0] = __builtin_ia32_paddd256(lhs->v8si_16x2[row][0], rhs->v8si_16x2[row][0]); \
+        chk->v8si_16x2[row][1] = __builtin_ia32_paddd256(lhs->v8si_16x2[row][1], rhs->v8si_16x2[row][1]); \
     }
 
 #define v8si_add_chunk_half(row) \
     { \
-        chk->v8si_pcks[row][0] = __builtin_ia32_paddd256(lhs->v8si_pcks[row][0], rhs->v8si_pcks[row][0]); \
+        chk->v8si_8x1[row][0] = __builtin_ia32_paddd256(lhs->v8si_8x1[row][0], rhs->v8si_8x1[row][0]); \
     }
 
 static void v8si_add_chunk_fully(mx_chunk_ptr chk, mx_chunk_ptr lhs, mx_chunk_ptr rhs, mx_oper_ptr mp)
@@ -120,14 +103,13 @@ void mops_v8si_add(mx_oper_ptr mp, mx_stor_ptr lhs, mx_stor_ptr rhs, mx_stor_ptr
 
     for (i = 0; i < mstr_v8si_chunks_in_height(lhs); i += 1) {
         for (j = 0; j < mstr_v8si_chunks_in_width(lhs); j += 1) {
-            lchk = mstr_v8si_copy_chunk(lhs, i, j, &mp->lchk, &mp->lchk_rows, &mp->lchk_cols, &mp->lchk_full);
-            rchk = mstr_v8si_copy_chunk(rhs, i, j, &mp->rchk, &mp->rchk_rows, &mp->rchk_cols, &mp->rchk_full);
-            mchk = mstr_v8si_copy_chunk(ret, i, j, &mp->mchk, &mp->mchk_rows, &mp->mchk_cols, &mp->mchk_full);
-            if (mp->mchk_full) {
+            lchk = mstr_v8si_locate_chunk(lhs, i, j, &mp->lchk_rows, &mp->lchk_cols, &mp->lchk_full);
+            rchk = mstr_v8si_locate_chunk(rhs, i, j, &mp->rchk_rows, &mp->rchk_cols, &mp->rchk_full);
+            mchk = mstr_v8si_locate_chunk(ret, i, j, &mp->mchk_rows, &mp->mchk_cols, &mp->mchk_full);
+            if (mp->lchk_full && mp->rchk_full) {
                 v8si_add_chunk_fully(mchk, lchk, rchk, mp);
             } else {
                 v8si_add_chunk_partly(mchk, lchk, rchk, mp);
-                mstr_v8si_store_chunk(ret, i, j, mchk);
             } // if
         } // for
     } // for
@@ -135,13 +117,13 @@ void mops_v8si_add(mx_oper_ptr mp, mx_stor_ptr lhs, mx_stor_ptr rhs, mx_stor_ptr
 
 #define v8si_subtract_chunk_full(row) \
     { \
-        chk->v8si_pcks[row][0] = __builtin_ia32_psubd256(lhs->v8si_pcks[row][0], rhs->v8si_pcks[row][0]); \
-        chk->v8si_pcks[row][1] = __builtin_ia32_psubd256(lhs->v8si_pcks[row][1], rhs->v8si_pcks[row][1]); \
+        chk->v8si_16x2[row][0] = __builtin_ia32_psubd256(lhs->v8si_16x2[row][0], rhs->v8si_16x2[row][0]); \
+        chk->v8si_16x2[row][1] = __builtin_ia32_psubd256(lhs->v8si_16x2[row][1], rhs->v8si_16x2[row][1]); \
     }
 
 #define v8si_subtract_chunk_half(row) \
     { \
-        chk->v8si_pcks[row][0] = __builtin_ia32_psubd256(lhs->v8si_pcks[row][0], rhs->v8si_pcks[row][0]); \
+        chk->v8si_8x1[row][0] = __builtin_ia32_psubd256(lhs->v8si_8x1[row][0], rhs->v8si_8x1[row][0]); \
     }
 
 static void v8si_subtract_chunk_fully(mx_chunk_ptr chk, mx_chunk_ptr lhs, mx_chunk_ptr rhs, mx_oper_ptr mp)
@@ -221,14 +203,13 @@ void mops_v8si_subtract(mx_oper_ptr mp, mx_stor_ptr lhs, mx_stor_ptr rhs, mx_sto
 
     for (i = 0; i < mstr_v8si_chunks_in_height(lhs); i += 1) {
         for (j = 0; j < mstr_v8si_chunks_in_width(lhs); j += 1) {
-            lchk = mstr_v8si_copy_chunk(lhs, i, j, &mp->lchk, &mp->lchk_rows, &mp->lchk_cols, &mp->lchk_full);
-            rchk = mstr_v8si_copy_chunk(rhs, i, j, &mp->rchk, &mp->rchk_rows, &mp->rchk_cols, &mp->rchk_full);
-            mchk = mstr_v8si_copy_chunk(ret, i, j, &mp->mchk, &mp->mchk_rows, &mp->mchk_cols, &mp->mchk_full);
-            if (mp->mchk_full) {
+            lchk = mstr_v8si_locate_chunk(lhs, i, j, &mp->lchk_rows, &mp->lchk_cols, &mp->lchk_full);
+            rchk = mstr_v8si_locate_chunk(rhs, i, j, &mp->rchk_rows, &mp->rchk_cols, &mp->rchk_full);
+            mchk = mstr_v8si_locate_chunk(ret, i, j, &mp->mchk_rows, &mp->mchk_cols, &mp->mchk_full);
+            if (mp->lchk_full && mp->rchk_full) {
                 v8si_subtract_chunk_fully(mchk, lchk, rchk, mp);
             } else {
                 v8si_subtract_chunk_partly(mchk, lchk, rchk, mp);
-                mstr_v8si_store_chunk(ret, i, j, mchk);
             } // if
         } // for
     } // for
@@ -236,33 +217,33 @@ void mops_v8si_subtract(mx_oper_ptr mp, mx_stor_ptr lhs, mx_stor_ptr rhs, mx_sto
 
 #define v8si_multiply_chunk_full(row, col) \
     { \
-        ltmp = __builtin_ia32_pmulld256(lhs->v8si_pcks[row][0], rhs->v8si_pcks[col][0]); \
-        rtmp = __builtin_ia32_pmulld256(lhs->v8si_pcks[row][1], rhs->v8si_pcks[col][1]); \
+        ltmp = __builtin_ia32_pmulld256(lhs->v8si_16x2[row][0], rhs->v8si_16x2[col][0]); \
+        rtmp = __builtin_ia32_pmulld256(lhs->v8si_16x2[row][1], rhs->v8si_16x2[col][1]); \
         ltmp = __builtin_ia32_phaddd256(ltmp, rtmp); \
         ltmp = __builtin_ia32_phaddd256(ltmp, v8si_zero); \
         ltmp = __builtin_ia32_phaddd256(ltmp, v8si_zero); \
-        chk->i32_vals[row][col] += ltmp[0] + ltmp[4]; \
+        chk->i32_16x16[row][col] += ltmp[0] + ltmp[4]; \
     }
 
 #define v8si_multiply_chunk_full_with_mask(row, col, lmask, rmask) \
     { \
-        ltmp = __builtin_ia32_pmulld256(lhs->v8si_pcks[row][0], rhs->v8si_pcks[col][0]); \
-        rtmp = __builtin_ia32_pmulld256(lhs->v8si_pcks[row][1], rhs->v8si_pcks[col][1]); \
+        ltmp = __builtin_ia32_pmulld256(lhs->v8si_16x2[row][0], rhs->v8si_16x2[col][0]); \
+        rtmp = __builtin_ia32_pmulld256(lhs->v8si_16x2[row][1], rhs->v8si_16x2[col][1]); \
         ltmp &= lmask; \
         rtmp &= rmask; \
         ltmp = __builtin_ia32_phaddd256(ltmp, rtmp); \
         ltmp = __builtin_ia32_phaddd256(ltmp, v8si_zero); \
         ltmp = __builtin_ia32_phaddd256(ltmp, v8si_zero); \
-        chk->i32_vals[row][col] += ltmp[0] + ltmp[4]; \
+        base[col] += ltmp[0] + ltmp[4]; \
     }
 
 #define v8si_multiply_chunk_half_with_mask(row, col, mask) \
     { \
-        ltmp = __builtin_ia32_pmulld256(lhs->v8si_pcks[row][0], rhs->v8si_pcks[col][0]); \
+        ltmp = __builtin_ia32_pmulld256(lhs->v8si_8x1[row][0], rhs->v8si_16x2[col][0]); \
         ltmp &= mask; \
         ltmp = __builtin_ia32_phaddd256(ltmp, v8si_zero); \
         ltmp = __builtin_ia32_phaddd256(ltmp, v8si_zero); \
-        chk->i32_vals[row][col] += ltmp[0] + ltmp[4]; \
+        base[col] += ltmp[0] + ltmp[4]; \
     }
 
 static void v8si_multiply_chunk_fully(mx_chunk_ptr chk, mx_chunk_ptr lhs, mx_chunk_ptr rhs, mx_oper_ptr mp)
@@ -297,6 +278,8 @@ static void v8si_multiply_chunk_partly(mx_chunk_ptr chk, mx_chunk_ptr lhs, mx_ch
     v8si_t rtmp;
     uint32_t i = 0;
     uint32_t j = 0;
+    uint32_t col_off = mx_round_to_multiples_of_8(mp->mchk_cols);
+    int32_t * base = (int32_t *)&chk->i32_16x16[0][0];
     v8si_t * mask[2];
 
     mask[0] = &v8si_mask[(mp->lchk_cols <= 8) ? (mp->lchk_cols) : 8];
@@ -323,6 +306,7 @@ static void v8si_multiply_chunk_partly(mx_chunk_ptr chk, mx_chunk_ptr lhs, mx_ch
                 case  2: v8si_multiply_chunk_half_with_mask(i, j, *mask[0]); j += 1;
                 case  1: v8si_multiply_chunk_half_with_mask(i, j, *mask[0]);
             } // switch
+            base += col_off;
         } // for
     } else {
         for (i = 0; i < mp->lchk_rows; i += 1, j = 0) {
@@ -345,6 +329,7 @@ static void v8si_multiply_chunk_partly(mx_chunk_ptr chk, mx_chunk_ptr lhs, mx_ch
                 case  2: v8si_multiply_chunk_full_with_mask(i, j, *mask[0], *mask[1]); j += 1;
                 case  1: v8si_multiply_chunk_full_with_mask(i, j, *mask[0], *mask[1]);
             } // switch
+            base += col_off;
         } // for
     } // if
 } // v8si_multiply_chunk_partly
@@ -364,13 +349,12 @@ void mops_v8si_multiply(mx_oper_ptr mp, mx_stor_ptr lhs, mx_stor_ptr rhs, mx_sto
             rchk = mstr_v8si_transpose_chunk(rhs, k, j, &mp->rchk, &mp->rchk_rows, &mp->rchk_cols, &mp->rchk_full);
 
             for (i = 0; i < mstr_v8si_chunks_in_height(lhs); i += 1) {
-                lchk = mstr_v8si_copy_chunk(lhs, i, k, &mp->lchk, &mp->lchk_rows, &mp->lchk_cols, &mp->lchk_full);
-                mchk = mstr_v8si_copy_chunk(ret, i, j, &mp->mchk, &mp->mchk_rows, &mp->mchk_cols, &mp->mchk_full);
-                if (mp->mchk_full) {
+                lchk = mstr_v8si_locate_chunk(lhs, i, k, &mp->lchk_rows, &mp->lchk_cols, &mp->lchk_full);
+                mchk = mstr_v8si_locate_chunk(ret, i, j, &mp->mchk_rows, &mp->mchk_cols, &mp->mchk_full);
+                if (mp->lchk_full && mp->rchk_full) {
                     v8si_multiply_chunk_fully(mchk, lchk, rchk, mp);
                 } else {
                     v8si_multiply_chunk_partly(mchk, lchk, rchk, mp);
-                    mstr_v8si_store_chunk(ret, i, j, mchk);
                 } // if
             } // for
         } // for
@@ -379,13 +363,13 @@ void mops_v8si_multiply(mx_oper_ptr mp, mx_stor_ptr lhs, mx_stor_ptr rhs, mx_sto
 
 #define v8si_scalar_multiply_chunk_full(row) \
     { \
-        chk->v8si_pcks[row][0] = __builtin_ia32_pmulld256(*lhs, rhs->v8si_pcks[row][0]); \
-        chk->v8si_pcks[row][1] = __builtin_ia32_pmulld256(*lhs, rhs->v8si_pcks[row][1]); \
+        chk->v8si_16x2[row][0] = __builtin_ia32_pmulld256(*lhs, rhs->v8si_16x2[row][0]); \
+        chk->v8si_16x2[row][1] = __builtin_ia32_pmulld256(*lhs, rhs->v8si_16x2[row][1]); \
     }
 
 #define v8si_scalar_multiply_chunk_half(row) \
     { \
-        chk->v8si_pcks[row][0] = __builtin_ia32_pmulld256(*lhs, rhs->v8si_pcks[row][0]); \
+        chk->v8si_8x1[row][0] = __builtin_ia32_pmulld256(*lhs, rhs->v8si_8x1[row][0]); \
     }
 
 static void v8si_scalar_multiply_chunk_fully(mx_chunk_ptr chk, v8si_t * lhs, mx_chunk_ptr rhs, mx_oper_ptr mp)
@@ -465,14 +449,48 @@ void mops_v8si_scalar_multiply(mx_oper_ptr mp, int32_t lhs, mx_stor_ptr rhs, mx_
 
     for (i = 0; i < mstr_v8si_chunks_in_height(rhs); i += 1) {
         for (j = 0; j < mstr_v8si_chunks_in_width(rhs); j += 1) {
-            rchk = mstr_v8si_copy_chunk(rhs, i, j, &mp->rchk, &mp->rchk_rows, &mp->rchk_cols, &mp->rchk_full);
-            mchk = mstr_v8si_copy_chunk(ret, i, j, &mp->mchk, &mp->mchk_rows, &mp->mchk_cols, &mp->mchk_full);
-            if (mp->mchk_full) {
+            rchk = mstr_v8si_locate_chunk(rhs, i, j, &mp->rchk_rows, &mp->rchk_cols, &mp->rchk_full);
+            mchk = mstr_v8si_locate_chunk(ret, i, j, &mp->mchk_rows, &mp->mchk_cols, &mp->mchk_full);
+            if (mp->rchk_full) {
                 v8si_scalar_multiply_chunk_fully(mchk, &src, rchk, mp);
             } else {
                 v8si_scalar_multiply_chunk_partly(mchk, &src, rchk, mp);
-                mstr_v8si_store_chunk(ret, i, j, mchk);
             } // if
         } // for
     } // for
 } // mops_v8si_scalar_multiply
+
+void mops_v8si_transpose(mx_oper_ptr mp, mx_stor_ptr src, mx_stor_ptr dst)
+{
+    uint32_t i = 0;
+    uint32_t j = 0;
+    void * base = NULL;
+    mx_chunk_ptr ret = NULL;
+
+    // Transpose full chunks.
+    for (i = 0; i < mstr_v8si_chunks_in_height(src) - 1; i += 1) {
+        for (j = 0; j < mstr_v8si_chunks_in_width(src) - 1; j += 1) {
+            base = mstr_v8si_locate_chunk(src, i, j, &mp->lchk_rows, &mp->lchk_cols, &mp->lchk_full);
+            ret = mstr_v8si_locate_chunk(dst, j, i, &mp->rchk_rows, &mp->rchk_cols, &mp->rchk_full);
+            mstr_v8si_assemble_chunk(&ret->v8si_16x2[0][0], base, 1, mx_round_to_multiples_of_8(mp->lchk_cols), mp->lchk_cols, mp->lchk_rows);
+        } // for
+    } // for
+
+    // Transpose edge chunks on the right-most column.
+    j = mstr_v8si_chunks_in_width(src) - 1;
+    for (i = 0; i < mstr_v8si_chunks_in_height(src) - 1; i += 1) {
+        ret = mstr_v8si_transpose_chunk(src, i, j, &mp->lchk, &mp->lchk_rows, &mp->lchk_cols, &mp->lchk_full);
+        mstr_v8si_store_chunk(dst, j, i, ret);
+    } // for
+
+    // Transpose edge chunks on the bottom-most row.
+    i = mstr_v8si_chunks_in_height(src) - 1;
+    for (j = 0; j < mstr_v8si_chunks_in_width(src) - 1; j += 1) {
+        ret = mstr_v8si_transpose_chunk(src, i, j, &mp->lchk, &mp->lchk_rows, &mp->lchk_cols, &mp->lchk_full);
+        mstr_v8si_store_chunk(dst, j, i, ret);
+    } // for
+
+    // Transpose the right-bottom chunk.
+    ret = mstr_v8si_transpose_chunk(src, i, j, &mp->lchk, &mp->lchk_rows, &mp->lchk_cols, &mp->lchk_full);
+    mstr_v8si_store_chunk(dst, j, i, ret);
+} // mops_v8si_transpose

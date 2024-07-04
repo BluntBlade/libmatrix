@@ -58,6 +58,7 @@ typedef union MX_CHUNK {
 
     // 256 bits.
     v8si_t v8si_16x2[16][2];
+    v8si_t v8si_16x1[16][1];
     v8si_t v8si_8x1[8][1];
     v4di_t v4di_pcks[I64_VALS_IN_CACHE_LINE][V4DI_PCKS_IN_CACHE_LINE];
     v8sf_t v8sf_pcks[F32_VALS_IN_CACHE_LINE][V8SF_PCKS_IN_CACHE_LINE];

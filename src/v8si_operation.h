@@ -25,7 +25,7 @@ typedef struct MX_OPERATION {
 extern mx_oper_ptr mops_v8si_create(void);
 extern void mops_v8si_destroy(mx_oper_ptr mp);
 
-extern void mops_v8si_add(mx_oper_ptr mp, mx_stor_ptr lhs, mx_stor_ptr rhs, mx_stor_ptr dst);
+extern void mops_v8si_add(mx_stor_ptr dst, mx_stor_ptr lhs, mx_stor_ptr rhs);
 extern void mops_v8si_subtract(mx_oper_ptr mp, mx_stor_ptr lhs, mx_stor_ptr rhs, mx_stor_ptr dst);
 extern void mops_v8si_multiply(mx_oper_ptr mp, mx_stor_ptr lhs, mx_stor_ptr rhs, mx_stor_ptr dst);
 extern void mops_v8si_scalar_multiply(mx_oper_ptr mp, int32_t lhs, mx_stor_ptr rhs, mx_stor_ptr dst);

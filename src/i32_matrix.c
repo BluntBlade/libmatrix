@@ -123,7 +123,7 @@ void i32m_add_and_store(i32_matrix_ptr mx, i32_matrix_ptr lhs, i32_matrix_ptr rh
 
 void i32m_subtract_and_store(i32_matrix_ptr mx, i32_matrix_ptr lhs, i32_matrix_ptr rhs)
 {
-    mops_v8si_subtract(&mx->oper, &lhs->stor, &rhs->stor, &mx->stor);
+    mops_v8si_subtract(&mx->stor, &lhs->stor, &rhs->stor);
 } // i32m_subtract_and_store
 
 void i32m_multiply_and_store(i32_matrix_ptr mx, i32_matrix_ptr lhs, i32_matrix_ptr rhs)

@@ -364,24 +364,44 @@ Test(InternalFunc, v8si_subtract_chunk_fully)
     mx_chunk_t ret;
     uint32_t i = 0;
     uint32_t j = 0;
-    mx_oper_ptr mp = NULL;
     
     // -- 16x16 chunk -- //
     {
-        mp = mops_v8si_create();
-        memset(&ret, 4321, sizeof(ret));
+        mx_chunk_t src = {
+            .v8si_16x2 = {
+                {{  0,   1,   2,   3,   4,   5,   6,   7}, {  8,   9,  10,  11,  12,  13,  14,  15}},
+                {{ 16,  17,  18,  19,  20,  21,  22,  23}, { 24,  25,  26,  27,  28,  29,  30,  31}},
+                {{ 32,  33,  34,  35,  36,  37,  38,  39}, { 40,  41,  42,  43,  44,  45,  46,  47}},
+                {{ 48,  49,  50,  51,  52,  53,  54,  55}, { 56,  57,  58,  59,  60,  61,  62,  63}},
+                {{ 64,  65,  66,  67,  68,  69,  70,  71}, { 72,  73,  74,  75,  76,  77,  78,  79}},
+                {{ 80,  81,  82,  83,  84,  85,  86,  87}, { 88,  89,  90,  91,  92,  93,  94,  95}},
+                {{ 96,  97,  98,  99, 100, 101, 102, 103}, {104, 105, 106, 107, 108, 109, 110, 111}},
+                {{112, 113, 114, 115, 116, 117, 118, 119}, {120, 121, 122, 123, 124, 125, 126, 127}},
+                {{128, 129, 130, 131, 132, 133, 134, 135}, {136, 137, 138, 139, 140, 141, 142, 143}},
+                {{144, 145, 146, 147, 148, 149, 150, 151}, {152, 153, 154, 155, 156, 157, 158, 159}},
+                {{160, 161, 162, 163, 164, 165, 166, 167}, {168, 169, 170, 171, 172, 173, 174, 175}},
+                {{176, 177, 178, 179, 180, 181, 182, 183}, {184, 185, 186, 187, 188, 189, 190, 191}},
+                {{192, 193, 194, 195, 196, 197, 198, 199}, {200, 201, 202, 203, 204, 205, 206, 207}},
+                {{208, 209, 210, 211, 212, 213, 214, 215}, {216, 217, 218, 219, 220, 221, 222, 223}},
+                {{224, 225, 226, 227, 228, 229, 230, 231}, {232, 233, 234, 235, 236, 237, 238, 239}},
+                {{240, 241, 242, 243, 244, 245, 246, 247}, {248, 249, 250, 251, 252, 253, 254, 255}},
+            }
+        };
+        memset(&ret, 0, sizeof(ret));
 
-        mp->lchk_rows = 16;
-        mp->lchk_cols = 16;
-
-        v8si_subtract_chunk_fully(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->mchk_rows; i += 1) {
-            for (j = 0; j < mp->mchk_cols; j += 1) {
-                check_value_at(ret.i32_16x16[i][j], 0, i, j);
+        v8si_subtract_chunk_fully(&ret, &src, &src);
+        for (i = 0; i < 16; i += 1) {
+            for (j = 0; j < 2; j += 1) {
+                check_value_at(ret.v8si_16x2[i][j][0], 0, i, j * 8 + 0);
+                check_value_at(ret.v8si_16x2[i][j][1], 0, i, j * 8 + 1);
+                check_value_at(ret.v8si_16x2[i][j][2], 0, i, j * 8 + 2);
+                check_value_at(ret.v8si_16x2[i][j][3], 0, i, j * 8 + 3);
+                check_value_at(ret.v8si_16x2[i][j][4], 0, i, j * 8 + 4);
+                check_value_at(ret.v8si_16x2[i][j][5], 0, i, j * 8 + 5);
+                check_value_at(ret.v8si_16x2[i][j][6], 0, i, j * 8 + 6);
+                check_value_at(ret.v8si_16x2[i][j][7], 0, i, j * 8 + 7);
             } // for
         } // for
-
-        mops_v8si_destroy(mp);
     }
 }
 
@@ -390,244 +410,277 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
     mx_chunk_t ret;
     uint32_t i = 0;
     uint32_t j = 0;
-    mx_oper_ptr mp = NULL;
 
     // -- 1x1 chunk -- //
     {
-        mp = mops_v8si_create();
-        memset(&ret, 4321, sizeof(ret));
+        mx_chunk_t src = {
+            .v8si_16x1 = {
+                {{0, 0, 0, 0, 0, 0, 0, 0}},
+            }
+        };
+        memset(&ret, 0, sizeof(ret));
 
-        mp->lchk_rows = 1;
-        mp->lchk_cols = 1;
-
-        v8si_subtract_chunk_partly(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->mchk_rows; i += 1) {
-            for (j = 0; j < mp->mchk_cols; j += 1) {
-                if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
-                    check_value_at(ret.i32_8x8[i][j], 0, i, j);
-                } else {
-                    check_value_at(ret.i32_8x8[i][j], 4321, i, j);
-                } // if
-            } // for
-        } // for
-
-        mops_v8si_destroy(mp);
+        v8si_subtract_chunk_partly(&ret, &src, &src, 1, 1);
+        check_value_at(ret.v8si_16x1[0][0][0], 0, 0, 0 * 8 + 0);
     }
 
     // -- 5x5 chunk -- //
     {
-        mp = mops_v8si_create();
-        memset(&ret, 4321, sizeof(ret));
+        mx_chunk_t src = {
+            .v8si_16x1 = {
+                {{ 0,  1,  2,  3,  4, 0, 0, 0}},
+                {{16, 17, 18, 19, 20, 0, 0, 0}},
+                {{32, 33, 34, 35, 36, 0, 0, 0}},
+                {{48, 49, 50, 51, 52, 0, 0, 0}},
+                {{64, 65, 66, 67, 68, 0, 0, 0}},
+            }
+        };
+        memset(&ret, 0, sizeof(ret));
 
-        mp->lchk_rows = 5;
-        mp->lchk_cols = 5;
-
-        v8si_subtract_chunk_partly(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->mchk_rows; i += 1) {
-            for (j = 0; j < mp->mchk_cols; j += 1) {
-                if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
-                    check_value_at(ret.i32_8x8[i][j], 0, i, j);
-                } else {
-                    check_value_at(ret.i32_8x8[i][j], 4321, i, j);
-                } // if
-            } // for
+        v8si_subtract_chunk_partly(&ret, &src, &src, 5, 5);
+        for (i = 0; i < 5; i += 1) {
+            check_value_at(ret.v8si_16x1[0][0][0], 0, 0, 0 * 8 + 0);
+            check_value_at(ret.v8si_16x1[0][0][1], 0, 0, 0 * 8 + 1);
+            check_value_at(ret.v8si_16x1[0][0][2], 0, 0, 0 * 8 + 2);
+            check_value_at(ret.v8si_16x1[0][0][3], 0, 0, 0 * 8 + 3);
+            check_value_at(ret.v8si_16x1[0][0][4], 0, 0, 0 * 8 + 4);
         } // for
-
-        mops_v8si_destroy(mp);
     }
 
     // -- 8x8 chunk -- //
     {
-        mp = mops_v8si_create();
-        memset(&ret, 4321, sizeof(ret));
+        mx_chunk_t src = {
+            .v8si_16x1 = {
+                {{  0,   1,   2,   3,   4,   5,   6,   7}},
+                {{ 16,  17,  18,  19,  20,  21,  22,  23}},
+                {{ 32,  33,  34,  35,  36,  37,  38,  39}},
+                {{ 48,  49,  50,  51,  52,  53,  54,  55}},
+                {{ 64,  65,  66,  67,  68,  69,  70,  71}},
+                {{ 80,  81,  82,  83,  84,  85,  86,  87}},
+                {{ 96,  97,  98,  99, 100, 101, 102, 103}},
+                {{112, 113, 114, 115, 116, 117, 118, 119}},
+            }
+        };
+        memset(&ret, 0, sizeof(ret));
 
-        mp->lchk_rows = 8;
-        mp->lchk_cols = 8;
-
-        v8si_subtract_chunk_partly(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->mchk_rows; i += 1) {
-            for (j = 0; j < mp->mchk_cols; j += 1) {
-                if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
-                    check_value_at(ret.i32_8x8[i][j], 0, i, j);
-                } else {
-                    check_value_at(ret.i32_8x8[i][j], 4321, i, j);
-                } // if
-            } // for
+        v8si_subtract_chunk_partly(&ret, &src, &src, 8, 8);
+        for (i = 0; i < 8; i += 1) {
+            check_value_at(ret.v8si_16x1[0][0][0], 0, 0, 0 * 8 + 0);
+            check_value_at(ret.v8si_16x1[0][0][1], 0, 0, 0 * 8 + 1);
+            check_value_at(ret.v8si_16x1[0][0][2], 0, 0, 0 * 8 + 2);
+            check_value_at(ret.v8si_16x1[0][0][3], 0, 0, 0 * 8 + 3);
+            check_value_at(ret.v8si_16x1[0][0][4], 0, 0, 0 * 8 + 4);
+            check_value_at(ret.v8si_16x1[0][0][5], 0, 0, 0 * 8 + 5);
+            check_value_at(ret.v8si_16x1[0][0][6], 0, 0, 0 * 8 + 6);
+            check_value_at(ret.v8si_16x1[0][0][7], 0, 0, 0 * 8 + 7);
         } // for
-
-        mops_v8si_destroy(mp);
     }
 
     // -- 9x9 chunk -- //
     {
-        mp = mops_v8si_create();
-        memset(&ret, 4321, sizeof(ret));
+        mx_chunk_t src = {
+            .v8si_16x2 = {
+                {{  0,   1,   2,   3,   4,   5,   6,   7}, {  8, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 16,  17,  18,  19,  20,  21,  22,  23}, { 24, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 32,  33,  34,  35,  36,  37,  38,  39}, { 40, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 48,  49,  50,  51,  52,  53,  54,  55}, { 56, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 64,  65,  66,  67,  68,  69,  70,  71}, { 72, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 80,  81,  82,  83,  84,  85,  86,  87}, { 88, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 96,  97,  98,  99, 100, 101, 102, 103}, {104, 0, 0, 0, 0, 0, 0, 0}},
+                {{112, 113, 114, 115, 116, 117, 118, 119}, {120, 0, 0, 0, 0, 0, 0, 0}},
+                {{128, 129, 130, 131, 132, 133, 134, 135}, {136, 0, 0, 0, 0, 0, 0, 0}},
+            }
+        };
+        memset(&ret, 0, sizeof(ret));
 
-        mp->lchk_rows = 9;
-        mp->lchk_cols = 9;
+        v8si_subtract_chunk_partly(&ret, &src, &src, 9, 9);
+        for (i = 0; i < 9; i += 1) {
+            check_value_at(ret.v8si_16x2[0][0][0], 0, 0, 0 * 8 + 0);
+            check_value_at(ret.v8si_16x2[0][0][1], 0, 0, 0 * 8 + 1);
+            check_value_at(ret.v8si_16x2[0][0][2], 0, 0, 0 * 8 + 2);
+            check_value_at(ret.v8si_16x2[0][0][3], 0, 0, 0 * 8 + 3);
+            check_value_at(ret.v8si_16x2[0][0][4], 0, 0, 0 * 8 + 4);
+            check_value_at(ret.v8si_16x2[0][0][5], 0, 0, 0 * 8 + 5);
+            check_value_at(ret.v8si_16x2[0][0][6], 0, 0, 0 * 8 + 6);
+            check_value_at(ret.v8si_16x2[0][0][7], 0, 0, 0 * 8 + 7);
 
-        v8si_subtract_chunk_partly(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->mchk_rows; i += 1) {
-            for (j = 0; j < mp->mchk_cols; j += 1) {
-                if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
-                    check_value_at(ret.i32_16x16[i][j], 0, i, j);
-                } else {
-                    check_value_at(ret.i32_16x16[i][j], 4321, i, j);
-                } // if
-            } // for
+            check_value_at(ret.v8si_16x2[0][1][0], 0, 0, 1 * 8 + 0);
         } // for
-
-        mops_v8si_destroy(mp);
     }
     
     // -- 16x16 chunk -- //
     {
-        mp = mops_v8si_create();
-        memset(&ret, 4321, sizeof(ret));
+        mx_chunk_t src = {
+            .v8si_16x2 = {
+                {{  0,   1,   2,   3,   4,   5,   6,   7}, {  8,   9,  10,  11,  12,  13,  14,  15}},
+                {{ 16,  17,  18,  19,  20,  21,  22,  23}, { 24,  25,  26,  27,  28,  29,  30,  31}},
+                {{ 32,  33,  34,  35,  36,  37,  38,  39}, { 40,  41,  42,  43,  44,  45,  46,  47}},
+                {{ 48,  49,  50,  51,  52,  53,  54,  55}, { 56,  57,  58,  59,  60,  61,  62,  63}},
+                {{ 64,  65,  66,  67,  68,  69,  70,  71}, { 72,  73,  74,  75,  76,  77,  78,  79}},
+                {{ 80,  81,  82,  83,  84,  85,  86,  87}, { 88,  89,  90,  91,  92,  93,  94,  95}},
+                {{ 96,  97,  98,  99, 100, 101, 102, 103}, {104, 105, 106, 107, 108, 109, 110, 111}},
+                {{112, 113, 114, 115, 116, 117, 118, 119}, {120, 121, 122, 123, 124, 125, 126, 127}},
+                {{128, 129, 130, 131, 132, 133, 134, 135}, {136, 137, 138, 139, 140, 141, 142, 143}},
+                {{144, 145, 146, 147, 148, 149, 150, 151}, {152, 153, 154, 155, 156, 157, 158, 159}},
+                {{160, 161, 162, 163, 164, 165, 166, 167}, {168, 169, 170, 171, 172, 173, 174, 175}},
+                {{176, 177, 178, 179, 180, 181, 182, 183}, {184, 185, 186, 187, 188, 189, 190, 191}},
+                {{192, 193, 194, 195, 196, 197, 198, 199}, {200, 201, 202, 203, 204, 205, 206, 207}},
+                {{208, 209, 210, 211, 212, 213, 214, 215}, {216, 217, 218, 219, 220, 221, 222, 223}},
+                {{224, 225, 226, 227, 228, 229, 230, 231}, {232, 233, 234, 235, 236, 237, 238, 239}},
+                {{240, 241, 242, 243, 244, 245, 246, 247}, {248, 249, 250, 251, 252, 253, 254, 255}},
+            }
+        };
+        memset(&ret, 0, sizeof(ret));
 
-        mp->lchk_rows = 16;
-        mp->lchk_cols = 16;
-
-        v8si_subtract_chunk_partly(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->mchk_rows; i += 1) {
-            for (j = 0; j < mp->mchk_cols; j += 1) {
-                check_value_at(ret.i32_16x16[i][j], 0, i, j);
+        v8si_subtract_chunk_partly(&ret, &src, &src, 16, 16);
+        for (i = 0; i < 16; i += 1) {
+            for (j = 0; j < 2; j += 1) {
+                check_value_at(ret.v8si_16x2[i][j][0], 0, i, j * 8 + 0);
+                check_value_at(ret.v8si_16x2[i][j][1], 0, i, j * 8 + 1);
+                check_value_at(ret.v8si_16x2[i][j][2], 0, i, j * 8 + 2);
+                check_value_at(ret.v8si_16x2[i][j][3], 0, i, j * 8 + 3);
+                check_value_at(ret.v8si_16x2[i][j][4], 0, i, j * 8 + 4);
+                check_value_at(ret.v8si_16x2[i][j][5], 0, i, j * 8 + 5);
+                check_value_at(ret.v8si_16x2[i][j][6], 0, i, j * 8 + 6);
+                check_value_at(ret.v8si_16x2[i][j][7], 0, i, j * 8 + 7);
             } // for
         } // for
-
-        mops_v8si_destroy(mp);
     }
 
     // -- 1x5 chunk -- //
     {
-        mp = mops_v8si_create();
-        memset(&ret, 4321, sizeof(ret));
+        mx_chunk_t src = {
+            .v8si_16x1 = {
+                {{ 0,  1,  2,  3,  4, 0, 0, 0}},
+            }
+        };
+        memset(&ret, 0, sizeof(ret));
 
-        mp->lchk_rows = 1;
-        mp->lchk_cols = 5;
-
-        v8si_subtract_chunk_partly(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->mchk_rows; i += 1) {
-            for (j = 0; j < mp->mchk_cols; j += 1) {
-                if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
-                    check_value_at(ret.i32_8x8[i][j], 0, i, j);
-                } else {
-                    check_value_at(ret.i32_8x8[i][j], 4321, i, j);
-                } // if
-            } // for
-        } // for
-
-        mops_v8si_destroy(mp);
+        v8si_subtract_chunk_partly(&ret, &src, &src, 1, 5);
+        check_value_at(ret.v8si_16x1[0][0][0], 0, 0, 0 * 8 + 0);
+        check_value_at(ret.v8si_16x1[0][0][1], 0, 0, 0 * 8 + 1);
+        check_value_at(ret.v8si_16x1[0][0][2], 0, 0, 0 * 8 + 2);
+        check_value_at(ret.v8si_16x1[0][0][3], 0, 0, 0 * 8 + 3);
+        check_value_at(ret.v8si_16x1[0][0][4], 0, 0, 0 * 8 + 4);
     }
 
     // -- 1x8 chunk -- //
     {
-        mp = mops_v8si_create();
-        memset(&ret, 4321, sizeof(ret));
+        mx_chunk_t src = {
+            .v8si_16x1 = {
+                {{0, 1, 2, 3, 4, 5, 6, 7}},
+            }
+        };
+        memset(&ret, 0, sizeof(ret));
 
-        mp->lchk_rows = 1;
-        mp->lchk_cols = 8;
-
-        v8si_subtract_chunk_partly(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->mchk_rows; i += 1) {
-            for (j = 0; j < mp->mchk_cols; j += 1) {
-                if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
-                    check_value_at(ret.i32_8x8[i][j], 0, i, j);
-                } else {
-                    check_value_at(ret.i32_8x8[i][j], 4321, i, j);
-                } // if
-            } // for
-        } // for
-
-        mops_v8si_destroy(mp);
+        v8si_subtract_chunk_partly(&ret, &src, &src, 1, 8);
+        check_value_at(ret.v8si_16x1[0][0][0], 0, 0, 0 * 8 + 0);
+        check_value_at(ret.v8si_16x1[0][0][1], 0, 0, 0 * 8 + 1);
+        check_value_at(ret.v8si_16x1[0][0][2], 0, 0, 0 * 8 + 2);
+        check_value_at(ret.v8si_16x1[0][0][3], 0, 0, 0 * 8 + 3);
+        check_value_at(ret.v8si_16x1[0][0][4], 0, 0, 0 * 8 + 4);
+        check_value_at(ret.v8si_16x1[0][0][5], 0, 0, 0 * 8 + 5);
+        check_value_at(ret.v8si_16x1[0][0][6], 0, 0, 0 * 8 + 6);
+        check_value_at(ret.v8si_16x1[0][0][7], 0, 0, 0 * 8 + 7);
     }
 
     // -- 1x9 chunk -- //
     {
-        mp = mops_v8si_create();
-        memset(&ret, 4321, sizeof(ret));
+        mx_chunk_t src = {
+            .v8si_16x2 = {
+                {{0, 1, 2, 3, 4, 5, 6, 7}, {8, 0, 0, 0, 0, 0, 0, 0}},
+            }
+        };
+        memset(&ret, 0, sizeof(ret));
 
-        mp->lchk_rows = 1;
-        mp->lchk_cols = 9;
+        v8si_subtract_chunk_partly(&ret, &src, &src, 1, 9);
+        check_value_at(ret.v8si_16x2[0][0][0], 0, 0, 0 * 8 + 0);
+        check_value_at(ret.v8si_16x2[0][0][1], 0, 0, 0 * 8 + 1);
+        check_value_at(ret.v8si_16x2[0][0][2], 0, 0, 0 * 8 + 2);
+        check_value_at(ret.v8si_16x2[0][0][3], 0, 0, 0 * 8 + 3);
+        check_value_at(ret.v8si_16x2[0][0][4], 0, 0, 0 * 8 + 4);
+        check_value_at(ret.v8si_16x2[0][0][5], 0, 0, 0 * 8 + 5);
+        check_value_at(ret.v8si_16x2[0][0][6], 0, 0, 0 * 8 + 6);
+        check_value_at(ret.v8si_16x2[0][0][7], 0, 0, 0 * 8 + 7);
 
-        v8si_subtract_chunk_partly(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->mchk_rows; i += 1) {
-            for (j = 0; j < mp->mchk_cols; j += 1) {
-                if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
-                    check_value_at(ret.i32_16x16[i][j], 0, i, j);
-                } else {
-                    check_value_at(ret.i32_16x16[i][j], 4321, i, j);
-                } // if
-            } // for
-        } // for
-
-        mops_v8si_destroy(mp);
+        check_value_at(ret.v8si_16x2[0][1][0], 0, 0, 1 * 8 + 0);
     }
 
     // -- 5x1 chunk -- //
     {
-        mp = mops_v8si_create();
-        memset(&ret, 4321, sizeof(ret));
+        mx_chunk_t src = {
+            .v8si_16x1 = {
+                {{  0, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 16, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 32, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 48, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 64, 0, 0, 0, 0, 0, 0, 0}},
+            }
+        };
+        memset(&ret, 0, sizeof(ret));
 
-        mp->lchk_rows = 5;
-        mp->lchk_cols = 1;
-
-        v8si_subtract_chunk_partly(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->mchk_rows; i += 1) {
-            for (j = 0; j < mp->mchk_cols; j += 1) {
-                if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
-                    check_value_at(ret.i32_8x8[i][j], 0, i, j);
-                } else {
-                    check_value_at(ret.i32_8x8[i][j], 4321, i, j);
-                } // if
-            } // for
-        } // for
-
-        mops_v8si_destroy(mp);
+        v8si_subtract_chunk_partly(&ret, &src, &src, 5, 1);
+        check_value_at(ret.v8si_16x1[0][0][0], 0, 0, 0 * 8 + 0);
+        check_value_at(ret.v8si_16x1[1][0][0], 0, 1, 0 * 8 + 1);
+        check_value_at(ret.v8si_16x1[2][0][0], 0, 2, 0 * 8 + 2);
+        check_value_at(ret.v8si_16x1[3][0][0], 0, 3, 0 * 8 + 3);
+        check_value_at(ret.v8si_16x1[4][0][0], 0, 4, 0 * 8 + 4);
     }
 
     // -- 8x1 chunk -- //
     {
-        mp = mops_v8si_create();
-        memset(&ret, 4321, sizeof(ret));
+        mx_chunk_t src = {
+            .v8si_16x1 = {
+                {{  0, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 16, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 32, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 48, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 64, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 80, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 96, 0, 0, 0, 0, 0, 0, 0}},
+                {{112, 0, 0, 0, 0, 0, 0, 0}},
+            }
+        };
+        memset(&ret, 0, sizeof(ret));
 
-        mp->lchk_rows = 8;
-        mp->lchk_cols = 1;
-
-        v8si_subtract_chunk_partly(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->mchk_rows; i += 1) {
-            for (j = 0; j < mp->mchk_cols; j += 1) {
-                if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
-                    check_value_at(ret.i32_8x8[i][j], 0, i, j);
-                } else {
-                    check_value_at(ret.i32_8x8[i][j], 4321, i, j);
-                } // if
-            } // for
-        } // for
-
-        mops_v8si_destroy(mp);
+        v8si_subtract_chunk_partly(&ret, &src, &src, 8, 1);
+        check_value_at(ret.v8si_16x1[0][0][0], 0, 0, 0 * 8 + 0);
+        check_value_at(ret.v8si_16x1[1][0][0], 0, 1, 0 * 8 + 1);
+        check_value_at(ret.v8si_16x1[2][0][0], 0, 2, 0 * 8 + 2);
+        check_value_at(ret.v8si_16x1[3][0][0], 0, 3, 0 * 8 + 3);
+        check_value_at(ret.v8si_16x1[4][0][0], 0, 4, 0 * 8 + 4);
+        check_value_at(ret.v8si_16x1[5][0][0], 0, 5, 0 * 8 + 5);
+        check_value_at(ret.v8si_16x1[6][0][0], 0, 6, 0 * 8 + 6);
+        check_value_at(ret.v8si_16x1[7][0][0], 0, 7, 0 * 8 + 7);
     }
 
     // -- 9x1 chunk -- //
     {
-        mp = mops_v8si_create();
-        memset(&ret, 4321, sizeof(ret));
+        mx_chunk_t src = {
+            .v8si_16x1 = {
+                {{  0, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 16, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 32, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 48, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 64, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 80, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 96, 0, 0, 0, 0, 0, 0, 0}},
+                {{112, 0, 0, 0, 0, 0, 0, 0}},
+                {{128, 0, 0, 0, 0, 0, 0, 0}},
+            }
+        };
+        memset(&ret, 0, sizeof(ret));
 
-        mp->lchk_rows = 9;
-        mp->lchk_cols = 1;
-
-        v8si_subtract_chunk_partly(&ret, &sample, &sample, mp);
-        for (i = 0; i < mp->mchk_rows; i += 1) {
-            for (j = 0; j < mp->mchk_cols; j += 1) {
-                if (i <= mp->lchk_rows && j <= mp->lchk_cols) {
-                    check_value_at(ret.i32_16x16[i][j], 0, i, j);
-                } else {
-                    check_value_at(ret.i32_16x16[i][j], 4321, i, j);
-                } // if
-            } // for
-        } // for
-
-        mops_v8si_destroy(mp);
+        v8si_subtract_chunk_partly(&ret, &src, &src, 9, 1);
+        check_value_at(ret.v8si_16x1[0][0][0], 0, 0, 0 * 8 + 0);
+        check_value_at(ret.v8si_16x1[1][0][0], 0, 1, 0 * 8 + 1);
+        check_value_at(ret.v8si_16x1[2][0][0], 0, 2, 0 * 8 + 2);
+        check_value_at(ret.v8si_16x1[3][0][0], 0, 3, 0 * 8 + 3);
+        check_value_at(ret.v8si_16x1[4][0][0], 0, 4, 0 * 8 + 4);
+        check_value_at(ret.v8si_16x1[5][0][0], 0, 5, 0 * 8 + 5);
+        check_value_at(ret.v8si_16x1[6][0][0], 0, 6, 0 * 8 + 6);
+        check_value_at(ret.v8si_16x1[7][0][0], 0, 7, 0 * 8 + 7);
+        check_value_at(ret.v8si_16x1[8][1][0], 0, 8, 1 * 8 + 0);
     }
 }
 
@@ -1638,37 +1691,31 @@ Test(Operation, mops_v8si_subtract)
 {
     uint32_t i = 0;
     uint32_t j = 0;
-    mx_oper_ptr mp = NULL;
     mx_stor_ptr lhs = NULL;
     mx_stor_ptr rhs = NULL;
-    mx_stor_ptr ret = NULL;
+    mx_stor_ptr mx = NULL;
 
     // -- 1x1 matrix subtraction -- //
     {
-        mp = mops_v8si_create();
-
         lhs = mstr_v8si_create(1, 1);
         mstr_v8si_set(lhs, 0, 0, 1);
 
         rhs = mstr_v8si_create(1, 1);
         mstr_v8si_set(rhs, 0, 0, 99);
 
-        ret = mstr_v8si_create(1, 1);
+        mx = mstr_v8si_create(1, 1);
 
-        mops_v8si_subtract(mp, lhs, rhs, ret);
+        mops_v8si_subtract(mx, lhs, rhs);
 
-        check_value_at(mstr_v8si_get(ret, 0, 0), -98, 0, 0);
+        check_value_at(mstr_v8si_get(mx, 0, 0), -98, 0, 0);
 
-        mstr_v8si_destroy(ret);
+        mstr_v8si_destroy(mx);
         mstr_v8si_destroy(rhs);
         mstr_v8si_destroy(lhs);
-        mops_v8si_destroy(mp);
     }
 
     // -- 5x5 matrix subtraction -- //
     {
-        mp = mops_v8si_create();
-
         lhs = mstr_v8si_create(5, 5);
         for (i = 0; i < 5; i += 1) {
             for (j = 0; j < 5; j += 1) {
@@ -1683,26 +1730,23 @@ Test(Operation, mops_v8si_subtract)
             } // for
         } // for
 
-        ret = mstr_v8si_create(5, 5);
+        mx = mstr_v8si_create(5, 5);
 
-        mops_v8si_subtract(mp, lhs, rhs, ret);
+        mops_v8si_subtract(mx, lhs, rhs);
 
         for (i = 0; i < 5; i += 1) {
             for (j = 0; j < 5; j += 1) {
-                check_value_at(mstr_v8si_get(ret, i, j), i * j - (i - j), i, j);
+                check_value_at(mstr_v8si_get(mx, i, j), i * j - (i - j), i, j);
             } // for
         } // for
 
-        mstr_v8si_destroy(ret);
+        mstr_v8si_destroy(mx);
         mstr_v8si_destroy(rhs);
         mstr_v8si_destroy(lhs);
-        mops_v8si_destroy(mp);
     }
 
     // -- 8x8 matrix subtraction -- //
     {
-        mp = mops_v8si_create();
-
         lhs = mstr_v8si_create(8, 8);
         for (i = 0; i < 8; i += 1) {
             for (j = 0; j < 8; j += 1) {
@@ -1717,26 +1761,23 @@ Test(Operation, mops_v8si_subtract)
             } // for
         } // for
 
-        ret = mstr_v8si_create(8, 8);
+        mx = mstr_v8si_create(8, 8);
 
-        mops_v8si_subtract(mp, lhs, rhs, ret);
+        mops_v8si_subtract(mx, lhs, rhs);
 
         for (i = 0; i < 8; i += 1) {
             for (j = 0; j < 8; j += 1) {
-                check_value_at(mstr_v8si_get(ret, i, j), i * j - (i - j), i, j);
+                check_value_at(mstr_v8si_get(mx, i, j), i * j - (i - j), i, j);
             } // for
         } // for
 
-        mstr_v8si_destroy(ret);
+        mstr_v8si_destroy(mx);
         mstr_v8si_destroy(rhs);
         mstr_v8si_destroy(lhs);
-        mops_v8si_destroy(mp);
     }
 
     // -- 9x9 matrix subtraction -- //
     {
-        mp = mops_v8si_create();
-
         lhs = mstr_v8si_create(9, 9);
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 9; j += 1) {
@@ -1751,26 +1792,23 @@ Test(Operation, mops_v8si_subtract)
             } // for
         } // for
 
-        ret = mstr_v8si_create(9, 9);
+        mx = mstr_v8si_create(9, 9);
 
-        mops_v8si_subtract(mp, lhs, rhs, ret);
+        mops_v8si_subtract(mx, lhs, rhs);
 
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 9; j += 1) {
-                check_value_at(mstr_v8si_get(ret, i, j), i * j - (i - j), i, j);
+                check_value_at(mstr_v8si_get(mx, i, j), i * j - (i - j), i, j);
             } // for
         } // for
 
-        mstr_v8si_destroy(ret);
+        mstr_v8si_destroy(mx);
         mstr_v8si_destroy(rhs);
         mstr_v8si_destroy(lhs);
-        mops_v8si_destroy(mp);
     }
 
     // -- 16x16 matrix subtraction -- //
     {
-        mp = mops_v8si_create();
-
         lhs = mstr_v8si_create(16, 16);
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 16; j += 1) {
@@ -1785,26 +1823,23 @@ Test(Operation, mops_v8si_subtract)
             } // for
         } // for
 
-        ret = mstr_v8si_create(16, 16);
+        mx = mstr_v8si_create(16, 16);
 
-        mops_v8si_subtract(mp, lhs, rhs, ret);
+        mops_v8si_subtract(mx, lhs, rhs);
 
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 16; j += 1) {
-                check_value_at(mstr_v8si_get(ret, i, j), i * j - (i - j), i, j);
+                check_value_at(mstr_v8si_get(mx, i, j), i * j - (i - j), i, j);
             } // for
         } // for
 
-        mstr_v8si_destroy(ret);
+        mstr_v8si_destroy(mx);
         mstr_v8si_destroy(rhs);
         mstr_v8si_destroy(lhs);
-        mops_v8si_destroy(mp);
     }
 
     // -- 17x17 matrix subtraction -- //
     {
-        mp = mops_v8si_create();
-
         lhs = mstr_v8si_create(17, 17);
         for (i = 0; i < 17; i += 1) {
             for (j = 0; j < 17; j += 1) {
@@ -1819,26 +1854,23 @@ Test(Operation, mops_v8si_subtract)
             } // for
         } // for
 
-        ret = mstr_v8si_create(17, 17);
+        mx = mstr_v8si_create(17, 17);
 
-        mops_v8si_subtract(mp, lhs, rhs, ret);
+        mops_v8si_subtract(mx, lhs, rhs);
 
         for (i = 0; i < 17; i += 1) {
             for (j = 0; j < 17; j += 1) {
-                check_value_at(mstr_v8si_get(ret, i, j), i * j - (i - j), i, j);
+                check_value_at(mstr_v8si_get(mx, i, j), i * j - (i - j), i, j);
             } // for
         } // for
 
-        mstr_v8si_destroy(ret);
+        mstr_v8si_destroy(mx);
         mstr_v8si_destroy(rhs);
         mstr_v8si_destroy(lhs);
-        mops_v8si_destroy(mp);
     }
 
     // -- 2x33 matrix subtraction -- //
     {
-        mp = mops_v8si_create();
-
         lhs = mstr_v8si_create(2, 33);
         for (i = 0; i < 2; i += 1) {
             for (j = 0; j < 33; j += 1) {
@@ -1853,26 +1885,23 @@ Test(Operation, mops_v8si_subtract)
             } // for
         } // for
 
-        ret = mstr_v8si_create(2, 33);
+        mx = mstr_v8si_create(2, 33);
 
-        mops_v8si_subtract(mp, lhs, rhs, ret);
+        mops_v8si_subtract(mx, lhs, rhs);
 
         for (i = 0; i < 2; i += 1) {
             for (j = 0; j < 33; j += 1) {
-                check_value_at(mstr_v8si_get(ret, i, j), i * j - (i - j), i, j);
+                check_value_at(mstr_v8si_get(mx, i, j), i * j - (i - j), i, j);
             } // for
         } // for
 
-        mstr_v8si_destroy(ret);
+        mstr_v8si_destroy(mx);
         mstr_v8si_destroy(rhs);
         mstr_v8si_destroy(lhs);
-        mops_v8si_destroy(mp);
     }
 
     // -- 33x17 matrix subtraction -- //
     {
-        mp = mops_v8si_create();
-
         lhs = mstr_v8si_create(33, 17);
         for (i = 0; i < 33; i += 1) {
             for (j = 0; j < 17; j += 1) {
@@ -1887,20 +1916,19 @@ Test(Operation, mops_v8si_subtract)
             } // for
         } // for
 
-        ret = mstr_v8si_create(33, 17);
+        mx = mstr_v8si_create(33, 17);
 
-        mops_v8si_subtract(mp, lhs, rhs, ret);
+        mops_v8si_subtract(mx, lhs, rhs);
 
         for (i = 0; i < 33; i += 1) {
             for (j = 0; j < 17; j += 1) {
-                check_value_at(mstr_v8si_get(ret, i, j), i * j - (i - j), i, j);
+                check_value_at(mstr_v8si_get(mx, i, j), i * j - (i - j), i, j);
             } // for
         } // for
 
-        mstr_v8si_destroy(ret);
+        mstr_v8si_destroy(mx);
         mstr_v8si_destroy(rhs);
         mstr_v8si_destroy(lhs);
-        mops_v8si_destroy(mp);
     }
 }
 

@@ -381,16 +381,16 @@ void mops_v8si_multiply(mx_oper_ptr mp, mx_stor_ptr lhs, mx_stor_ptr rhs, mx_sto
 
 #define v8si_scalar_multiply_chunk_full(row) \
     { \
-        chk->v8si_16x2[row][0] = __builtin_ia32_pmulld256(*lhs, rhs->v8si_16x2[row][0]); \
-        chk->v8si_16x2[row][1] = __builtin_ia32_pmulld256(*lhs, rhs->v8si_16x2[row][1]); \
+        dst->v8si_16x2[row][0] = __builtin_ia32_pmulld256(*vals, src->v8si_16x2[row][0]); \
+        dst->v8si_16x2[row][1] = __builtin_ia32_pmulld256(*vals, src->v8si_16x2[row][1]); \
     }
 
 #define v8si_scalar_multiply_chunk_half(row) \
     { \
-        chk->v8si_8x1[row][0] = __builtin_ia32_pmulld256(*lhs, rhs->v8si_8x1[row][0]); \
+        dst->v8si_16x1[row][0] = __builtin_ia32_pmulld256(*vals, src->v8si_16x1[row][0]); \
     }
 
-static void v8si_scalar_multiply_chunk_fully(mx_chunk_ptr chk, v8si_t * lhs, mx_chunk_ptr rhs, mx_oper_ptr mp)
+static void v8si_multiply_scalar_chunk_fully(mx_chunk_ptr dst, mx_chunk_ptr src, v8si_t * vals)
 {
     v8si_scalar_multiply_chunk_full( 0);
     v8si_scalar_multiply_chunk_full( 1);
@@ -408,14 +408,14 @@ static void v8si_scalar_multiply_chunk_fully(mx_chunk_ptr chk, v8si_t * lhs, mx_
     v8si_scalar_multiply_chunk_full(13);
     v8si_scalar_multiply_chunk_full(14);
     v8si_scalar_multiply_chunk_full(15);
-} // v8si_scalar_multiply_chunk_fully
+} // v8si_multiply_scalar_chunk_fully
 
-static void v8si_scalar_multiply_chunk_partly(mx_chunk_ptr chk, v8si_t * lhs, mx_chunk_ptr rhs, mx_oper_ptr mp)
+static void v8si_multiply_scalar_chunk_partly(mx_chunk_ptr dst, mx_chunk_ptr src, v8si_t * vals, uint32_t src_rows, uint32_t src_cols)
 {
     uint32_t i = 0;
 
-    if (mp->rchk_cols <= 8) {
-        switch (mp->rchk_rows) {
+    if (src_cols <= 8) {
+        switch (src_rows) {
             default: assert(1); break;
             case 16: v8si_scalar_multiply_chunk_half(i); i += 1;
             case 15: v8si_scalar_multiply_chunk_half(i); i += 1;
@@ -435,7 +435,7 @@ static void v8si_scalar_multiply_chunk_partly(mx_chunk_ptr chk, v8si_t * lhs, mx
             case  1: v8si_scalar_multiply_chunk_half(i);
         } // switch
     } else {
-        switch (mp->rchk_rows) {
+        switch (src_rows) {
             default: assert(1); break;
             case 16: v8si_scalar_multiply_chunk_full(i); i += 1;
             case 15: v8si_scalar_multiply_chunk_full(i); i += 1;
@@ -455,28 +455,34 @@ static void v8si_scalar_multiply_chunk_partly(mx_chunk_ptr chk, v8si_t * lhs, mx
             case  1: v8si_scalar_multiply_chunk_full(i);
         } // switch
     } // if
-} // v8si_scalar_multiply_chunk_partly
+} // v8si_multiply_scalar_chunk_partly
 
-void mops_v8si_scalar_multiply(mx_oper_ptr mp, int32_t lhs, mx_stor_ptr rhs, mx_stor_ptr dst)
+void mops_v8si_multiply_scalar(mx_stor_ptr dst, mx_stor_ptr src, int32_t val)
 {
-    v8si_t src = {lhs, lhs, lhs, lhs, lhs, lhs, lhs, lhs};
+    v8si_t vals = {val, val, val, val, val, val, val, val};
     uint32_t i = 0;
     uint32_t j = 0;
-    mx_chunk_ptr rchk = NULL;
+    uint32_t schk_rows = 0;
+    uint32_t schk_cols = 0;
+    uint32_t mchk_rows = 0;
+    uint32_t mchk_cols = 0;
+    bool schk_full = false;
+    bool mchk_full = false;
+    mx_chunk_ptr schk = NULL;
     mx_chunk_ptr mchk = NULL;
 
-    for (i = 0; i < mstr_v8si_chunks_in_height(rhs); i += 1) {
-        for (j = 0; j < mstr_v8si_chunks_in_width(rhs); j += 1) {
-            rchk = mstr_v8si_locate_chunk(rhs, i, j, &mp->rchk_rows, &mp->rchk_cols, &mp->rchk_full);
-            mchk = mstr_v8si_locate_chunk(dst, i, j, &mp->mchk_rows, &mp->mchk_cols, &mp->mchk_full);
-            if (mp->rchk_full) {
-                v8si_scalar_multiply_chunk_fully(mchk, &src, rchk, mp);
+    for (i = 0; i < mstr_v8si_chunks_in_height(src); i += 1) {
+        for (j = 0; j < mstr_v8si_chunks_in_width(src); j += 1) {
+            schk = mstr_v8si_locate_chunk(src, i, j, &schk_rows, &schk_cols, &schk_full);
+            mchk = mstr_v8si_locate_chunk(dst, i, j, &mchk_rows, &mchk_cols, &mchk_full);
+            if (schk_full) {
+                v8si_multiply_scalar_chunk_fully(mchk, schk, &vals);
             } else {
-                v8si_scalar_multiply_chunk_partly(mchk, &src, rchk, mp);
+                v8si_multiply_scalar_chunk_partly(mchk, schk, &vals, schk_rows, schk_cols);
             } // if
         } // for
     } // for
-} // mops_v8si_scalar_multiply
+} // mops_v8si_multiply_scalar
 
 void mops_v8si_transpose(mx_oper_ptr mp, mx_stor_ptr src, mx_stor_ptr dst)
 {

@@ -39,7 +39,7 @@ extern void i32m_add_and_store(i32_matrix_ptr mx, i32_matrix_ptr lhs, i32_matrix
 extern void i32m_subtract_and_store(i32_matrix_ptr mx, i32_matrix_ptr lhs, i32_matrix_ptr rhs);
 extern void i32m_multiply_and_store(i32_matrix_ptr mx, i32_matrix_ptr lhs, i32_matrix_ptr rhs);
 
-extern void i32m_scalar_multiply_and_store(i32_matrix_ptr mx, int32_t lhs, i32_matrix_ptr rhs);
+extern void i32m_multiply_scalar_and_store(i32_matrix_ptr mx, i32_matrix_ptr src, int32_t val);
 
 inline static i32_matrix_ptr i32m_create_zeros(uint32_t rows, uint32_t cols)
 {
@@ -109,11 +109,11 @@ inline static i32_matrix_ptr i32m_multiply(i32_matrix_ptr lhs, i32_matrix_ptr rh
     return mx;
 } // i32m_multiply
 
-inline static i32_matrix_ptr i32m_scalar_multiply(int32_t lhs, i32_matrix_ptr rhs)
+inline static i32_matrix_ptr i32m_multiply_scalar(i32_matrix_ptr src, int32_t val)
 {
-    i32_matrix_ptr mx = i32m_allocate_in_shape_of(rhs);
+    i32_matrix_ptr mx = i32m_allocate_in_shape_of(src);
     if (mx) {
-        i32m_scalar_multiply_and_store(mx, lhs, rhs);
+        i32m_multiply_scalar_and_store(mx, src, val);
     } // if
     return mx;
 } // i32m_scalar_multiply

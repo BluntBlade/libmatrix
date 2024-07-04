@@ -131,7 +131,7 @@ void i32m_multiply_and_store(i32_matrix_ptr mx, i32_matrix_ptr lhs, i32_matrix_p
     mops_v8si_multiply(&mx->oper, &lhs->stor, &rhs->stor, &mx->stor);
 } // i32m_multiply_and_store
 
-void i32m_scalar_multiply_and_store(i32_matrix_ptr mx, int32_t lhs, i32_matrix_ptr rhs)
+void i32m_multiply_scalar_and_store(i32_matrix_ptr mx, i32_matrix_ptr src, int32_t val)
 {
-    mops_v8si_scalar_multiply(&mx->oper, lhs, &rhs->stor, &mx->stor);
-} // i32m_scalar_multiply_and_store
+    mops_v8si_multiply_scalar(&mx->stor, &src->stor, val);
+} // i32m_multiply_scalar_and_store

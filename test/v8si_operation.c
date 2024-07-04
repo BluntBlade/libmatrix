@@ -1221,16 +1221,16 @@ Test(InternalFunc, v8si_multiply_scalar_chunk_partly)
     {
         v8si_t factor = {2, 2, 2, 2, 2, 2, 2, 2};
         mx_chunk_t src = {
-            .i32_16x16 = {
-                {  0,   1,   2,   3,   4,   5,   6,   7,   8},
-                { 16,  17,  18,  19,  20,  21,  22,  23,  24},
-                { 32,  33,  34,  35,  36,  37,  38,  39,  40},
-                { 48,  49,  50,  51,  52,  53,  54,  55,  56},
-                { 64,  65,  66,  67,  68,  69,  70,  71,  72},
-                { 80,  81,  82,  83,  84,  85,  86,  87,  88},
-                { 96,  97,  98,  99, 100, 101, 102, 103, 104},
-                {112, 113, 114, 115, 116, 117, 118, 119, 120},
-                {128, 129, 130, 131, 132, 133, 134, 135, 136},
+            .v8si_16x2 = {
+                {{  0,   1,   2,   3,   4,   5,   6,   7}, {  8, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 16,  17,  18,  19,  20,  21,  22,  23}, { 24, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 32,  33,  34,  35,  36,  37,  38,  39}, { 40, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 48,  49,  50,  51,  52,  53,  54,  55}, { 56, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 64,  65,  66,  67,  68,  69,  70,  71}, { 72, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 80,  81,  82,  83,  84,  85,  86,  87}, { 88, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 96,  97,  98,  99, 100, 101, 102, 103}, {104, 0, 0, 0, 0, 0, 0, 0}},
+                {{112, 113, 114, 115, 116, 117, 118, 119}, {120, 0, 0, 0, 0, 0, 0, 0}},
+                {{128, 129, 130, 131, 132, 133, 134, 135}, {136, 0, 0, 0, 0, 0, 0, 0}},
             }
         };
 
@@ -1290,6 +1290,148 @@ Test(InternalFunc, v8si_multiply_scalar_chunk_partly)
                 check_value_at(dst.v8si_16x2[i][j][7], src.v8si_16x2[i][j][7] * 2, i, j * 8 + 7);
             } // for
         } // for
+    }
+
+    // -- 1x5 chunk -- //
+    {
+        v8si_t factor = {2, 2, 2, 2, 2, 2, 2, 2};
+        mx_chunk_t src = {
+            .v8si_16x1 = {
+                {{ 0,  1,  2,  3,  4, 0, 0, 0}},
+            }
+        };
+        memset(&dst, 0, sizeof(dst));
+
+        v8si_multiply_scalar_chunk_partly(&dst, &src, &factor, 1, 5);
+        check_value_at(dst.v8si_16x1[0][0][0], src.v8si_16x1[0][0][0] * 2, 0, 0 * 8 + 0);
+        check_value_at(dst.v8si_16x1[0][0][1], src.v8si_16x1[0][0][1] * 2, 0, 0 * 8 + 1);
+        check_value_at(dst.v8si_16x1[0][0][2], src.v8si_16x1[0][0][2] * 2, 0, 0 * 8 + 2);
+        check_value_at(dst.v8si_16x1[0][0][3], src.v8si_16x1[0][0][3] * 2, 0, 0 * 8 + 3);
+        check_value_at(dst.v8si_16x1[0][0][4], src.v8si_16x1[0][0][4] * 2, 0, 0 * 8 + 4);
+    }
+
+    // -- 1x8 chunk -- //
+    {
+        v8si_t factor = {2, 2, 2, 2, 2, 2, 2, 2};
+        mx_chunk_t src = {
+            .v8si_16x1 = {
+                {{0, 1, 2, 3, 4, 5, 6, 7}},
+            }
+        };
+        memset(&dst, 0, sizeof(dst));
+
+        v8si_multiply_scalar_chunk_partly(&dst, &src, &factor, 1, 8);
+        check_value_at(dst.v8si_16x1[0][0][0], src.v8si_16x1[0][0][0] * 2, 0, 0 * 8 + 0);
+        check_value_at(dst.v8si_16x1[0][0][1], src.v8si_16x1[0][0][1] * 2, 0, 0 * 8 + 1);
+        check_value_at(dst.v8si_16x1[0][0][2], src.v8si_16x1[0][0][2] * 2, 0, 0 * 8 + 2);
+        check_value_at(dst.v8si_16x1[0][0][3], src.v8si_16x1[0][0][3] * 2, 0, 0 * 8 + 3);
+        check_value_at(dst.v8si_16x1[0][0][4], src.v8si_16x1[0][0][4] * 2, 0, 0 * 8 + 4);
+        check_value_at(dst.v8si_16x1[0][0][5], src.v8si_16x1[0][0][5] * 2, 0, 0 * 8 + 5);
+        check_value_at(dst.v8si_16x1[0][0][6], src.v8si_16x1[0][0][6] * 2, 0, 0 * 8 + 6);
+        check_value_at(dst.v8si_16x1[0][0][7], src.v8si_16x1[0][0][7] * 2, 0, 0 * 8 + 7);
+    }
+
+    // -- 1x9 chunk -- //
+    {
+        v8si_t factor = {2, 2, 2, 2, 2, 2, 2, 2};
+        mx_chunk_t src = {
+            .v8si_16x2 = {
+                {{0, 1, 2, 3, 4, 5, 6, 7}, {8, 0, 0, 0, 0, 0, 0, 0}},
+            }
+        };
+        memset(&dst, 0, sizeof(dst));
+
+        v8si_multiply_scalar_chunk_partly(&dst, &src, &factor, 1, 9);
+        check_value_at(dst.v8si_16x2[0][0][0], src.v8si_16x2[0][0][0] * 2, 0, 0 * 8 + 0);
+        check_value_at(dst.v8si_16x2[0][0][1], src.v8si_16x2[0][0][1] * 2, 0, 0 * 8 + 1);
+        check_value_at(dst.v8si_16x2[0][0][2], src.v8si_16x2[0][0][2] * 2, 0, 0 * 8 + 2);
+        check_value_at(dst.v8si_16x2[0][0][3], src.v8si_16x2[0][0][3] * 2, 0, 0 * 8 + 3);
+        check_value_at(dst.v8si_16x2[0][0][4], src.v8si_16x2[0][0][4] * 2, 0, 0 * 8 + 4);
+        check_value_at(dst.v8si_16x2[0][0][5], src.v8si_16x2[0][0][5] * 2, 0, 0 * 8 + 5);
+        check_value_at(dst.v8si_16x2[0][0][6], src.v8si_16x2[0][0][6] * 2, 0, 0 * 8 + 6);
+        check_value_at(dst.v8si_16x2[0][0][7], src.v8si_16x2[0][0][7] * 2, 0, 0 * 8 + 7);
+
+        check_value_at(dst.v8si_16x2[0][1][0], src.v8si_16x2[0][1][0] * 2, 0, 1 * 8 + 0);
+    }
+
+    // -- 5x1 chunk -- //
+    {
+        v8si_t factor = {2, 2, 2, 2, 2, 2, 2, 2};
+        mx_chunk_t src = {
+            .v8si_16x1 = {
+                {{  0, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 16, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 32, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 48, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 64, 0, 0, 0, 0, 0, 0, 0}},
+            }
+        };
+        memset(&dst, 0, sizeof(dst));
+
+        v8si_multiply_scalar_chunk_partly(&dst, &src, &factor, 5, 1);
+        check_value_at(dst.v8si_16x1[0][0][0], src.v8si_16x1[0][0][0] * 2, 0, 0 * 8 + 0);
+        check_value_at(dst.v8si_16x1[1][0][0], src.v8si_16x1[1][0][0] * 2, 1, 0 * 8 + 1);
+        check_value_at(dst.v8si_16x1[2][0][0], src.v8si_16x1[2][0][0] * 2, 2, 0 * 8 + 2);
+        check_value_at(dst.v8si_16x1[3][0][0], src.v8si_16x1[3][0][0] * 2, 3, 0 * 8 + 3);
+        check_value_at(dst.v8si_16x1[4][0][0], src.v8si_16x1[4][0][0] * 2, 4, 0 * 8 + 4);
+    }
+
+    // -- 8x1 chunk -- //
+    {
+        v8si_t factor = {2, 2, 2, 2, 2, 2, 2, 2};
+        mx_chunk_t src = {
+            .v8si_16x1 = {
+                {{  0, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 16, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 32, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 48, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 64, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 80, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 96, 0, 0, 0, 0, 0, 0, 0}},
+                {{112, 0, 0, 0, 0, 0, 0, 0}},
+            }
+        };
+        memset(&dst, 0, sizeof(dst));
+
+        v8si_multiply_scalar_chunk_partly(&dst, &src, &factor, 8, 1);
+        check_value_at(dst.v8si_16x1[0][0][0], src.v8si_16x1[0][0][0] * 2, 0, 0 * 8 + 0);
+        check_value_at(dst.v8si_16x1[1][0][0], src.v8si_16x1[1][0][0] * 2, 1, 0 * 8 + 1);
+        check_value_at(dst.v8si_16x1[2][0][0], src.v8si_16x1[2][0][0] * 2, 2, 0 * 8 + 2);
+        check_value_at(dst.v8si_16x1[3][0][0], src.v8si_16x1[3][0][0] * 2, 3, 0 * 8 + 3);
+        check_value_at(dst.v8si_16x1[4][0][0], src.v8si_16x1[4][0][0] * 2, 4, 0 * 8 + 4);
+        check_value_at(dst.v8si_16x1[5][0][0], src.v8si_16x1[5][0][0] * 2, 5, 0 * 8 + 5);
+        check_value_at(dst.v8si_16x1[6][0][0], src.v8si_16x1[6][0][0] * 2, 6, 0 * 8 + 6);
+        check_value_at(dst.v8si_16x1[7][0][0], src.v8si_16x1[7][0][0] * 2, 7, 0 * 8 + 7);
+    }
+
+    // -- 9x1 chunk -- //
+    {
+        v8si_t factor = {2, 2, 2, 2, 2, 2, 2, 2};
+        mx_chunk_t src = {
+            .v8si_16x1 = {
+                {{  0, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 16, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 32, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 48, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 64, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 80, 0, 0, 0, 0, 0, 0, 0}},
+                {{ 96, 0, 0, 0, 0, 0, 0, 0}},
+                {{112, 0, 0, 0, 0, 0, 0, 0}},
+                {{128, 0, 0, 0, 0, 0, 0, 0}},
+            }
+        };
+        memset(&dst, 0, sizeof(dst));
+
+        v8si_multiply_scalar_chunk_partly(&dst, &src, &factor, 9, 1);
+        check_value_at(dst.v8si_16x1[0][0][0], src.v8si_16x1[0][0][0] * 2, 0, 0 * 8 + 0);
+        check_value_at(dst.v8si_16x1[1][0][0], src.v8si_16x1[1][0][0] * 2, 1, 0 * 8 + 1);
+        check_value_at(dst.v8si_16x1[2][0][0], src.v8si_16x1[2][0][0] * 2, 2, 0 * 8 + 2);
+        check_value_at(dst.v8si_16x1[3][0][0], src.v8si_16x1[3][0][0] * 2, 3, 0 * 8 + 3);
+        check_value_at(dst.v8si_16x1[4][0][0], src.v8si_16x1[4][0][0] * 2, 4, 0 * 8 + 4);
+        check_value_at(dst.v8si_16x1[5][0][0], src.v8si_16x1[5][0][0] * 2, 5, 0 * 8 + 5);
+        check_value_at(dst.v8si_16x1[6][0][0], src.v8si_16x1[6][0][0] * 2, 6, 0 * 8 + 6);
+        check_value_at(dst.v8si_16x1[7][0][0], src.v8si_16x1[7][0][0] * 2, 7, 0 * 8 + 7);
+        check_value_at(dst.v8si_16x1[8][1][0], src.v8si_16x1[8][1][0] * 2, 8, 1 * 8 + 0);
     }
 }
 

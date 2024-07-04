@@ -36,7 +36,7 @@ static mx_chunk_t sample = {
 
 Test(InternalFunc, v8si_add_chunk_fully)
 {
-    mx_chunk_t ret;
+    mx_chunk_t dst;
     uint32_t i = 0;
     uint32_t j = 0;
     
@@ -62,19 +62,19 @@ Test(InternalFunc, v8si_add_chunk_fully)
                 {{240, 241, 242, 243, 244, 245, 246, 247}, {248, 249, 250, 251, 252, 253, 254, 255}},
             }
         };
-        memset(&ret, 0, sizeof(ret));
+        memset(&dst, 0, sizeof(dst));
 
-        v8si_add_chunk_fully(&ret, &src, &src);
+        v8si_add_chunk_fully(&dst, &src, &src);
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 2; j += 1) {
-                check_value_at(ret.v8si_16x2[i][j][0], src.v8si_16x2[i][j][0] * 2, i, j * 8 + 0);
-                check_value_at(ret.v8si_16x2[i][j][1], src.v8si_16x2[i][j][1] * 2, i, j * 8 + 1);
-                check_value_at(ret.v8si_16x2[i][j][2], src.v8si_16x2[i][j][2] * 2, i, j * 8 + 2);
-                check_value_at(ret.v8si_16x2[i][j][3], src.v8si_16x2[i][j][3] * 2, i, j * 8 + 3);
-                check_value_at(ret.v8si_16x2[i][j][4], src.v8si_16x2[i][j][4] * 2, i, j * 8 + 4);
-                check_value_at(ret.v8si_16x2[i][j][5], src.v8si_16x2[i][j][5] * 2, i, j * 8 + 5);
-                check_value_at(ret.v8si_16x2[i][j][6], src.v8si_16x2[i][j][6] * 2, i, j * 8 + 6);
-                check_value_at(ret.v8si_16x2[i][j][7], src.v8si_16x2[i][j][7] * 2, i, j * 8 + 7);
+                check_value_at(dst.v8si_16x2[i][j][0], src.v8si_16x2[i][j][0] * 2, i, j * 8 + 0);
+                check_value_at(dst.v8si_16x2[i][j][1], src.v8si_16x2[i][j][1] * 2, i, j * 8 + 1);
+                check_value_at(dst.v8si_16x2[i][j][2], src.v8si_16x2[i][j][2] * 2, i, j * 8 + 2);
+                check_value_at(dst.v8si_16x2[i][j][3], src.v8si_16x2[i][j][3] * 2, i, j * 8 + 3);
+                check_value_at(dst.v8si_16x2[i][j][4], src.v8si_16x2[i][j][4] * 2, i, j * 8 + 4);
+                check_value_at(dst.v8si_16x2[i][j][5], src.v8si_16x2[i][j][5] * 2, i, j * 8 + 5);
+                check_value_at(dst.v8si_16x2[i][j][6], src.v8si_16x2[i][j][6] * 2, i, j * 8 + 6);
+                check_value_at(dst.v8si_16x2[i][j][7], src.v8si_16x2[i][j][7] * 2, i, j * 8 + 7);
             } // for
         } // for
     }
@@ -82,7 +82,7 @@ Test(InternalFunc, v8si_add_chunk_fully)
 
 Test(InternalFunc, v8si_add_chunk_partly)
 {
-    mx_chunk_t ret;
+    mx_chunk_t dst;
     uint32_t i = 0;
     uint32_t j = 0;
 
@@ -93,10 +93,10 @@ Test(InternalFunc, v8si_add_chunk_partly)
                 {{0, 0, 0, 0, 0, 0, 0, 0}},
             }
         };
-        memset(&ret, 0, sizeof(ret));
+        memset(&dst, 0, sizeof(dst));
 
-        v8si_add_chunk_partly(&ret, &src, &src, 1, 1);
-        check_value_at(ret.v8si_16x1[0][0][0], src.v8si_16x1[0][0][0] * 2, 0, 0 * 8 + 0);
+        v8si_add_chunk_partly(&dst, &src, &src, 1, 1);
+        check_value_at(dst.v8si_16x1[0][0][0], src.v8si_16x1[0][0][0] * 2, 0, 0 * 8 + 0);
     }
 
     // -- 5x5 chunk -- //
@@ -110,15 +110,15 @@ Test(InternalFunc, v8si_add_chunk_partly)
                 {{64, 65, 66, 67, 68, 0, 0, 0}},
             }
         };
-        memset(&ret, 0, sizeof(ret));
+        memset(&dst, 0, sizeof(dst));
 
-        v8si_add_chunk_partly(&ret, &src, &src, 5, 5);
+        v8si_add_chunk_partly(&dst, &src, &src, 5, 5);
         for (i = 0; i < 5; i += 1) {
-            check_value_at(ret.v8si_16x1[0][0][0], src.v8si_16x1[0][0][0] * 2, 0, 0 * 8 + 0);
-            check_value_at(ret.v8si_16x1[0][0][1], src.v8si_16x1[0][0][1] * 2, 0, 0 * 8 + 1);
-            check_value_at(ret.v8si_16x1[0][0][2], src.v8si_16x1[0][0][2] * 2, 0, 0 * 8 + 2);
-            check_value_at(ret.v8si_16x1[0][0][3], src.v8si_16x1[0][0][3] * 2, 0, 0 * 8 + 3);
-            check_value_at(ret.v8si_16x1[0][0][4], src.v8si_16x1[0][0][4] * 2, 0, 0 * 8 + 4);
+            check_value_at(dst.v8si_16x1[0][0][0], src.v8si_16x1[0][0][0] * 2, 0, 0 * 8 + 0);
+            check_value_at(dst.v8si_16x1[0][0][1], src.v8si_16x1[0][0][1] * 2, 0, 0 * 8 + 1);
+            check_value_at(dst.v8si_16x1[0][0][2], src.v8si_16x1[0][0][2] * 2, 0, 0 * 8 + 2);
+            check_value_at(dst.v8si_16x1[0][0][3], src.v8si_16x1[0][0][3] * 2, 0, 0 * 8 + 3);
+            check_value_at(dst.v8si_16x1[0][0][4], src.v8si_16x1[0][0][4] * 2, 0, 0 * 8 + 4);
         } // for
     }
 
@@ -136,18 +136,18 @@ Test(InternalFunc, v8si_add_chunk_partly)
                 {{112, 113, 114, 115, 116, 117, 118, 119}},
             }
         };
-        memset(&ret, 0, sizeof(ret));
+        memset(&dst, 0, sizeof(dst));
 
-        v8si_add_chunk_partly(&ret, &src, &src, 8, 8);
+        v8si_add_chunk_partly(&dst, &src, &src, 8, 8);
         for (i = 0; i < 8; i += 1) {
-            check_value_at(ret.v8si_16x1[0][0][0], src.v8si_16x1[0][0][0] * 2, 0, 0 * 8 + 0);
-            check_value_at(ret.v8si_16x1[0][0][1], src.v8si_16x1[0][0][1] * 2, 0, 0 * 8 + 1);
-            check_value_at(ret.v8si_16x1[0][0][2], src.v8si_16x1[0][0][2] * 2, 0, 0 * 8 + 2);
-            check_value_at(ret.v8si_16x1[0][0][3], src.v8si_16x1[0][0][3] * 2, 0, 0 * 8 + 3);
-            check_value_at(ret.v8si_16x1[0][0][4], src.v8si_16x1[0][0][4] * 2, 0, 0 * 8 + 4);
-            check_value_at(ret.v8si_16x1[0][0][5], src.v8si_16x1[0][0][5] * 2, 0, 0 * 8 + 5);
-            check_value_at(ret.v8si_16x1[0][0][6], src.v8si_16x1[0][0][6] * 2, 0, 0 * 8 + 6);
-            check_value_at(ret.v8si_16x1[0][0][7], src.v8si_16x1[0][0][7] * 2, 0, 0 * 8 + 7);
+            check_value_at(dst.v8si_16x1[0][0][0], src.v8si_16x1[0][0][0] * 2, 0, 0 * 8 + 0);
+            check_value_at(dst.v8si_16x1[0][0][1], src.v8si_16x1[0][0][1] * 2, 0, 0 * 8 + 1);
+            check_value_at(dst.v8si_16x1[0][0][2], src.v8si_16x1[0][0][2] * 2, 0, 0 * 8 + 2);
+            check_value_at(dst.v8si_16x1[0][0][3], src.v8si_16x1[0][0][3] * 2, 0, 0 * 8 + 3);
+            check_value_at(dst.v8si_16x1[0][0][4], src.v8si_16x1[0][0][4] * 2, 0, 0 * 8 + 4);
+            check_value_at(dst.v8si_16x1[0][0][5], src.v8si_16x1[0][0][5] * 2, 0, 0 * 8 + 5);
+            check_value_at(dst.v8si_16x1[0][0][6], src.v8si_16x1[0][0][6] * 2, 0, 0 * 8 + 6);
+            check_value_at(dst.v8si_16x1[0][0][7], src.v8si_16x1[0][0][7] * 2, 0, 0 * 8 + 7);
         } // for
     }
 
@@ -166,20 +166,20 @@ Test(InternalFunc, v8si_add_chunk_partly)
                 {{128, 129, 130, 131, 132, 133, 134, 135}, {136, 0, 0, 0, 0, 0, 0, 0}},
             }
         };
-        memset(&ret, 0, sizeof(ret));
+        memset(&dst, 0, sizeof(dst));
 
-        v8si_add_chunk_partly(&ret, &src, &src, 9, 9);
+        v8si_add_chunk_partly(&dst, &src, &src, 9, 9);
         for (i = 0; i < 9; i += 1) {
-            check_value_at(ret.v8si_16x2[0][0][0], src.v8si_16x2[0][0][0] * 2, 0, 0 * 8 + 0);
-            check_value_at(ret.v8si_16x2[0][0][1], src.v8si_16x2[0][0][1] * 2, 0, 0 * 8 + 1);
-            check_value_at(ret.v8si_16x2[0][0][2], src.v8si_16x2[0][0][2] * 2, 0, 0 * 8 + 2);
-            check_value_at(ret.v8si_16x2[0][0][3], src.v8si_16x2[0][0][3] * 2, 0, 0 * 8 + 3);
-            check_value_at(ret.v8si_16x2[0][0][4], src.v8si_16x2[0][0][4] * 2, 0, 0 * 8 + 4);
-            check_value_at(ret.v8si_16x2[0][0][5], src.v8si_16x2[0][0][5] * 2, 0, 0 * 8 + 5);
-            check_value_at(ret.v8si_16x2[0][0][6], src.v8si_16x2[0][0][6] * 2, 0, 0 * 8 + 6);
-            check_value_at(ret.v8si_16x2[0][0][7], src.v8si_16x2[0][0][7] * 2, 0, 0 * 8 + 7);
+            check_value_at(dst.v8si_16x2[0][0][0], src.v8si_16x2[0][0][0] * 2, 0, 0 * 8 + 0);
+            check_value_at(dst.v8si_16x2[0][0][1], src.v8si_16x2[0][0][1] * 2, 0, 0 * 8 + 1);
+            check_value_at(dst.v8si_16x2[0][0][2], src.v8si_16x2[0][0][2] * 2, 0, 0 * 8 + 2);
+            check_value_at(dst.v8si_16x2[0][0][3], src.v8si_16x2[0][0][3] * 2, 0, 0 * 8 + 3);
+            check_value_at(dst.v8si_16x2[0][0][4], src.v8si_16x2[0][0][4] * 2, 0, 0 * 8 + 4);
+            check_value_at(dst.v8si_16x2[0][0][5], src.v8si_16x2[0][0][5] * 2, 0, 0 * 8 + 5);
+            check_value_at(dst.v8si_16x2[0][0][6], src.v8si_16x2[0][0][6] * 2, 0, 0 * 8 + 6);
+            check_value_at(dst.v8si_16x2[0][0][7], src.v8si_16x2[0][0][7] * 2, 0, 0 * 8 + 7);
 
-            check_value_at(ret.v8si_16x2[0][1][0], src.v8si_16x2[0][1][0] * 2, 0, 1 * 8 + 0);
+            check_value_at(dst.v8si_16x2[0][1][0], src.v8si_16x2[0][1][0] * 2, 0, 1 * 8 + 0);
         } // for
     }
     
@@ -205,19 +205,19 @@ Test(InternalFunc, v8si_add_chunk_partly)
                 {{240, 241, 242, 243, 244, 245, 246, 247}, {248, 249, 250, 251, 252, 253, 254, 255}},
             }
         };
-        memset(&ret, 0, sizeof(ret));
+        memset(&dst, 0, sizeof(dst));
 
-        v8si_add_chunk_partly(&ret, &src, &src, 16, 16);
+        v8si_add_chunk_partly(&dst, &src, &src, 16, 16);
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 2; j += 1) {
-                check_value_at(ret.v8si_16x2[i][j][0], src.v8si_16x2[i][j][0] * 2, i, j * 8 + 0);
-                check_value_at(ret.v8si_16x2[i][j][1], src.v8si_16x2[i][j][1] * 2, i, j * 8 + 1);
-                check_value_at(ret.v8si_16x2[i][j][2], src.v8si_16x2[i][j][2] * 2, i, j * 8 + 2);
-                check_value_at(ret.v8si_16x2[i][j][3], src.v8si_16x2[i][j][3] * 2, i, j * 8 + 3);
-                check_value_at(ret.v8si_16x2[i][j][4], src.v8si_16x2[i][j][4] * 2, i, j * 8 + 4);
-                check_value_at(ret.v8si_16x2[i][j][5], src.v8si_16x2[i][j][5] * 2, i, j * 8 + 5);
-                check_value_at(ret.v8si_16x2[i][j][6], src.v8si_16x2[i][j][6] * 2, i, j * 8 + 6);
-                check_value_at(ret.v8si_16x2[i][j][7], src.v8si_16x2[i][j][7] * 2, i, j * 8 + 7);
+                check_value_at(dst.v8si_16x2[i][j][0], src.v8si_16x2[i][j][0] * 2, i, j * 8 + 0);
+                check_value_at(dst.v8si_16x2[i][j][1], src.v8si_16x2[i][j][1] * 2, i, j * 8 + 1);
+                check_value_at(dst.v8si_16x2[i][j][2], src.v8si_16x2[i][j][2] * 2, i, j * 8 + 2);
+                check_value_at(dst.v8si_16x2[i][j][3], src.v8si_16x2[i][j][3] * 2, i, j * 8 + 3);
+                check_value_at(dst.v8si_16x2[i][j][4], src.v8si_16x2[i][j][4] * 2, i, j * 8 + 4);
+                check_value_at(dst.v8si_16x2[i][j][5], src.v8si_16x2[i][j][5] * 2, i, j * 8 + 5);
+                check_value_at(dst.v8si_16x2[i][j][6], src.v8si_16x2[i][j][6] * 2, i, j * 8 + 6);
+                check_value_at(dst.v8si_16x2[i][j][7], src.v8si_16x2[i][j][7] * 2, i, j * 8 + 7);
             } // for
         } // for
     }
@@ -229,14 +229,14 @@ Test(InternalFunc, v8si_add_chunk_partly)
                 {{ 0,  1,  2,  3,  4, 0, 0, 0}},
             }
         };
-        memset(&ret, 0, sizeof(ret));
+        memset(&dst, 0, sizeof(dst));
 
-        v8si_add_chunk_partly(&ret, &src, &src, 1, 5);
-        check_value_at(ret.v8si_16x1[0][0][0], src.v8si_16x1[0][0][0] * 2, 0, 0 * 8 + 0);
-        check_value_at(ret.v8si_16x1[0][0][1], src.v8si_16x1[0][0][1] * 2, 0, 0 * 8 + 1);
-        check_value_at(ret.v8si_16x1[0][0][2], src.v8si_16x1[0][0][2] * 2, 0, 0 * 8 + 2);
-        check_value_at(ret.v8si_16x1[0][0][3], src.v8si_16x1[0][0][3] * 2, 0, 0 * 8 + 3);
-        check_value_at(ret.v8si_16x1[0][0][4], src.v8si_16x1[0][0][4] * 2, 0, 0 * 8 + 4);
+        v8si_add_chunk_partly(&dst, &src, &src, 1, 5);
+        check_value_at(dst.v8si_16x1[0][0][0], src.v8si_16x1[0][0][0] * 2, 0, 0 * 8 + 0);
+        check_value_at(dst.v8si_16x1[0][0][1], src.v8si_16x1[0][0][1] * 2, 0, 0 * 8 + 1);
+        check_value_at(dst.v8si_16x1[0][0][2], src.v8si_16x1[0][0][2] * 2, 0, 0 * 8 + 2);
+        check_value_at(dst.v8si_16x1[0][0][3], src.v8si_16x1[0][0][3] * 2, 0, 0 * 8 + 3);
+        check_value_at(dst.v8si_16x1[0][0][4], src.v8si_16x1[0][0][4] * 2, 0, 0 * 8 + 4);
     }
 
     // -- 1x8 chunk -- //
@@ -246,17 +246,17 @@ Test(InternalFunc, v8si_add_chunk_partly)
                 {{0, 1, 2, 3, 4, 5, 6, 7}},
             }
         };
-        memset(&ret, 0, sizeof(ret));
+        memset(&dst, 0, sizeof(dst));
 
-        v8si_add_chunk_partly(&ret, &src, &src, 1, 8);
-        check_value_at(ret.v8si_16x1[0][0][0], src.v8si_16x1[0][0][0] * 2, 0, 0 * 8 + 0);
-        check_value_at(ret.v8si_16x1[0][0][1], src.v8si_16x1[0][0][1] * 2, 0, 0 * 8 + 1);
-        check_value_at(ret.v8si_16x1[0][0][2], src.v8si_16x1[0][0][2] * 2, 0, 0 * 8 + 2);
-        check_value_at(ret.v8si_16x1[0][0][3], src.v8si_16x1[0][0][3] * 2, 0, 0 * 8 + 3);
-        check_value_at(ret.v8si_16x1[0][0][4], src.v8si_16x1[0][0][4] * 2, 0, 0 * 8 + 4);
-        check_value_at(ret.v8si_16x1[0][0][5], src.v8si_16x1[0][0][5] * 2, 0, 0 * 8 + 5);
-        check_value_at(ret.v8si_16x1[0][0][6], src.v8si_16x1[0][0][6] * 2, 0, 0 * 8 + 6);
-        check_value_at(ret.v8si_16x1[0][0][7], src.v8si_16x1[0][0][7] * 2, 0, 0 * 8 + 7);
+        v8si_add_chunk_partly(&dst, &src, &src, 1, 8);
+        check_value_at(dst.v8si_16x1[0][0][0], src.v8si_16x1[0][0][0] * 2, 0, 0 * 8 + 0);
+        check_value_at(dst.v8si_16x1[0][0][1], src.v8si_16x1[0][0][1] * 2, 0, 0 * 8 + 1);
+        check_value_at(dst.v8si_16x1[0][0][2], src.v8si_16x1[0][0][2] * 2, 0, 0 * 8 + 2);
+        check_value_at(dst.v8si_16x1[0][0][3], src.v8si_16x1[0][0][3] * 2, 0, 0 * 8 + 3);
+        check_value_at(dst.v8si_16x1[0][0][4], src.v8si_16x1[0][0][4] * 2, 0, 0 * 8 + 4);
+        check_value_at(dst.v8si_16x1[0][0][5], src.v8si_16x1[0][0][5] * 2, 0, 0 * 8 + 5);
+        check_value_at(dst.v8si_16x1[0][0][6], src.v8si_16x1[0][0][6] * 2, 0, 0 * 8 + 6);
+        check_value_at(dst.v8si_16x1[0][0][7], src.v8si_16x1[0][0][7] * 2, 0, 0 * 8 + 7);
     }
 
     // -- 1x9 chunk -- //
@@ -266,19 +266,19 @@ Test(InternalFunc, v8si_add_chunk_partly)
                 {{0, 1, 2, 3, 4, 5, 6, 7}, {8, 0, 0, 0, 0, 0, 0, 0}},
             }
         };
-        memset(&ret, 0, sizeof(ret));
+        memset(&dst, 0, sizeof(dst));
 
-        v8si_add_chunk_partly(&ret, &src, &src, 1, 9);
-        check_value_at(ret.v8si_16x2[0][0][0], src.v8si_16x2[0][0][0] * 2, 0, 0 * 8 + 0);
-        check_value_at(ret.v8si_16x2[0][0][1], src.v8si_16x2[0][0][1] * 2, 0, 0 * 8 + 1);
-        check_value_at(ret.v8si_16x2[0][0][2], src.v8si_16x2[0][0][2] * 2, 0, 0 * 8 + 2);
-        check_value_at(ret.v8si_16x2[0][0][3], src.v8si_16x2[0][0][3] * 2, 0, 0 * 8 + 3);
-        check_value_at(ret.v8si_16x2[0][0][4], src.v8si_16x2[0][0][4] * 2, 0, 0 * 8 + 4);
-        check_value_at(ret.v8si_16x2[0][0][5], src.v8si_16x2[0][0][5] * 2, 0, 0 * 8 + 5);
-        check_value_at(ret.v8si_16x2[0][0][6], src.v8si_16x2[0][0][6] * 2, 0, 0 * 8 + 6);
-        check_value_at(ret.v8si_16x2[0][0][7], src.v8si_16x2[0][0][7] * 2, 0, 0 * 8 + 7);
+        v8si_add_chunk_partly(&dst, &src, &src, 1, 9);
+        check_value_at(dst.v8si_16x2[0][0][0], src.v8si_16x2[0][0][0] * 2, 0, 0 * 8 + 0);
+        check_value_at(dst.v8si_16x2[0][0][1], src.v8si_16x2[0][0][1] * 2, 0, 0 * 8 + 1);
+        check_value_at(dst.v8si_16x2[0][0][2], src.v8si_16x2[0][0][2] * 2, 0, 0 * 8 + 2);
+        check_value_at(dst.v8si_16x2[0][0][3], src.v8si_16x2[0][0][3] * 2, 0, 0 * 8 + 3);
+        check_value_at(dst.v8si_16x2[0][0][4], src.v8si_16x2[0][0][4] * 2, 0, 0 * 8 + 4);
+        check_value_at(dst.v8si_16x2[0][0][5], src.v8si_16x2[0][0][5] * 2, 0, 0 * 8 + 5);
+        check_value_at(dst.v8si_16x2[0][0][6], src.v8si_16x2[0][0][6] * 2, 0, 0 * 8 + 6);
+        check_value_at(dst.v8si_16x2[0][0][7], src.v8si_16x2[0][0][7] * 2, 0, 0 * 8 + 7);
 
-        check_value_at(ret.v8si_16x2[0][1][0], src.v8si_16x2[0][1][0] * 2, 0, 1 * 8 + 0);
+        check_value_at(dst.v8si_16x2[0][1][0], src.v8si_16x2[0][1][0] * 2, 0, 1 * 8 + 0);
     }
 
     // -- 5x1 chunk -- //
@@ -292,14 +292,14 @@ Test(InternalFunc, v8si_add_chunk_partly)
                 {{ 64, 0, 0, 0, 0, 0, 0, 0}},
             }
         };
-        memset(&ret, 0, sizeof(ret));
+        memset(&dst, 0, sizeof(dst));
 
-        v8si_add_chunk_partly(&ret, &src, &src, 5, 1);
-        check_value_at(ret.v8si_16x1[0][0][0], src.v8si_16x1[0][0][0] * 2, 0, 0 * 8 + 0);
-        check_value_at(ret.v8si_16x1[1][0][0], src.v8si_16x1[1][0][0] * 2, 1, 0 * 8 + 1);
-        check_value_at(ret.v8si_16x1[2][0][0], src.v8si_16x1[2][0][0] * 2, 2, 0 * 8 + 2);
-        check_value_at(ret.v8si_16x1[3][0][0], src.v8si_16x1[3][0][0] * 2, 3, 0 * 8 + 3);
-        check_value_at(ret.v8si_16x1[4][0][0], src.v8si_16x1[4][0][0] * 2, 4, 0 * 8 + 4);
+        v8si_add_chunk_partly(&dst, &src, &src, 5, 1);
+        check_value_at(dst.v8si_16x1[0][0][0], src.v8si_16x1[0][0][0] * 2, 0, 0 * 8 + 0);
+        check_value_at(dst.v8si_16x1[1][0][0], src.v8si_16x1[1][0][0] * 2, 1, 0 * 8 + 1);
+        check_value_at(dst.v8si_16x1[2][0][0], src.v8si_16x1[2][0][0] * 2, 2, 0 * 8 + 2);
+        check_value_at(dst.v8si_16x1[3][0][0], src.v8si_16x1[3][0][0] * 2, 3, 0 * 8 + 3);
+        check_value_at(dst.v8si_16x1[4][0][0], src.v8si_16x1[4][0][0] * 2, 4, 0 * 8 + 4);
     }
 
     // -- 8x1 chunk -- //
@@ -316,17 +316,17 @@ Test(InternalFunc, v8si_add_chunk_partly)
                 {{112, 0, 0, 0, 0, 0, 0, 0}},
             }
         };
-        memset(&ret, 0, sizeof(ret));
+        memset(&dst, 0, sizeof(dst));
 
-        v8si_add_chunk_partly(&ret, &src, &src, 8, 1);
-        check_value_at(ret.v8si_16x1[0][0][0], src.v8si_16x1[0][0][0] * 2, 0, 0 * 8 + 0);
-        check_value_at(ret.v8si_16x1[1][0][0], src.v8si_16x1[1][0][0] * 2, 1, 0 * 8 + 1);
-        check_value_at(ret.v8si_16x1[2][0][0], src.v8si_16x1[2][0][0] * 2, 2, 0 * 8 + 2);
-        check_value_at(ret.v8si_16x1[3][0][0], src.v8si_16x1[3][0][0] * 2, 3, 0 * 8 + 3);
-        check_value_at(ret.v8si_16x1[4][0][0], src.v8si_16x1[4][0][0] * 2, 4, 0 * 8 + 4);
-        check_value_at(ret.v8si_16x1[5][0][0], src.v8si_16x1[5][0][0] * 2, 5, 0 * 8 + 5);
-        check_value_at(ret.v8si_16x1[6][0][0], src.v8si_16x1[6][0][0] * 2, 6, 0 * 8 + 6);
-        check_value_at(ret.v8si_16x1[7][0][0], src.v8si_16x1[7][0][0] * 2, 7, 0 * 8 + 7);
+        v8si_add_chunk_partly(&dst, &src, &src, 8, 1);
+        check_value_at(dst.v8si_16x1[0][0][0], src.v8si_16x1[0][0][0] * 2, 0, 0 * 8 + 0);
+        check_value_at(dst.v8si_16x1[1][0][0], src.v8si_16x1[1][0][0] * 2, 1, 0 * 8 + 1);
+        check_value_at(dst.v8si_16x1[2][0][0], src.v8si_16x1[2][0][0] * 2, 2, 0 * 8 + 2);
+        check_value_at(dst.v8si_16x1[3][0][0], src.v8si_16x1[3][0][0] * 2, 3, 0 * 8 + 3);
+        check_value_at(dst.v8si_16x1[4][0][0], src.v8si_16x1[4][0][0] * 2, 4, 0 * 8 + 4);
+        check_value_at(dst.v8si_16x1[5][0][0], src.v8si_16x1[5][0][0] * 2, 5, 0 * 8 + 5);
+        check_value_at(dst.v8si_16x1[6][0][0], src.v8si_16x1[6][0][0] * 2, 6, 0 * 8 + 6);
+        check_value_at(dst.v8si_16x1[7][0][0], src.v8si_16x1[7][0][0] * 2, 7, 0 * 8 + 7);
     }
 
     // -- 9x1 chunk -- //
@@ -344,24 +344,24 @@ Test(InternalFunc, v8si_add_chunk_partly)
                 {{128, 0, 0, 0, 0, 0, 0, 0}},
             }
         };
-        memset(&ret, 0, sizeof(ret));
+        memset(&dst, 0, sizeof(dst));
 
-        v8si_add_chunk_partly(&ret, &src, &src, 9, 1);
-        check_value_at(ret.v8si_16x1[0][0][0], src.v8si_16x1[0][0][0] * 2, 0, 0 * 8 + 0);
-        check_value_at(ret.v8si_16x1[1][0][0], src.v8si_16x1[1][0][0] * 2, 1, 0 * 8 + 1);
-        check_value_at(ret.v8si_16x1[2][0][0], src.v8si_16x1[2][0][0] * 2, 2, 0 * 8 + 2);
-        check_value_at(ret.v8si_16x1[3][0][0], src.v8si_16x1[3][0][0] * 2, 3, 0 * 8 + 3);
-        check_value_at(ret.v8si_16x1[4][0][0], src.v8si_16x1[4][0][0] * 2, 4, 0 * 8 + 4);
-        check_value_at(ret.v8si_16x1[5][0][0], src.v8si_16x1[5][0][0] * 2, 5, 0 * 8 + 5);
-        check_value_at(ret.v8si_16x1[6][0][0], src.v8si_16x1[6][0][0] * 2, 6, 0 * 8 + 6);
-        check_value_at(ret.v8si_16x1[7][0][0], src.v8si_16x1[7][0][0] * 2, 7, 0 * 8 + 7);
-        check_value_at(ret.v8si_16x1[8][1][0], src.v8si_16x1[8][1][0] * 2, 8, 1 * 8 + 0);
+        v8si_add_chunk_partly(&dst, &src, &src, 9, 1);
+        check_value_at(dst.v8si_16x1[0][0][0], src.v8si_16x1[0][0][0] * 2, 0, 0 * 8 + 0);
+        check_value_at(dst.v8si_16x1[1][0][0], src.v8si_16x1[1][0][0] * 2, 1, 0 * 8 + 1);
+        check_value_at(dst.v8si_16x1[2][0][0], src.v8si_16x1[2][0][0] * 2, 2, 0 * 8 + 2);
+        check_value_at(dst.v8si_16x1[3][0][0], src.v8si_16x1[3][0][0] * 2, 3, 0 * 8 + 3);
+        check_value_at(dst.v8si_16x1[4][0][0], src.v8si_16x1[4][0][0] * 2, 4, 0 * 8 + 4);
+        check_value_at(dst.v8si_16x1[5][0][0], src.v8si_16x1[5][0][0] * 2, 5, 0 * 8 + 5);
+        check_value_at(dst.v8si_16x1[6][0][0], src.v8si_16x1[6][0][0] * 2, 6, 0 * 8 + 6);
+        check_value_at(dst.v8si_16x1[7][0][0], src.v8si_16x1[7][0][0] * 2, 7, 0 * 8 + 7);
+        check_value_at(dst.v8si_16x1[8][1][0], src.v8si_16x1[8][1][0] * 2, 8, 1 * 8 + 0);
     }
 }
 
 Test(InternalFunc, v8si_subtract_chunk_fully)
 {
-    mx_chunk_t ret;
+    mx_chunk_t dst;
     uint32_t i = 0;
     uint32_t j = 0;
     
@@ -387,19 +387,19 @@ Test(InternalFunc, v8si_subtract_chunk_fully)
                 {{240, 241, 242, 243, 244, 245, 246, 247}, {248, 249, 250, 251, 252, 253, 254, 255}},
             }
         };
-        memset(&ret, 0, sizeof(ret));
+        memset(&dst, 0, sizeof(dst));
 
-        v8si_subtract_chunk_fully(&ret, &src, &src);
+        v8si_subtract_chunk_fully(&dst, &src, &src);
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 2; j += 1) {
-                check_value_at(ret.v8si_16x2[i][j][0], 0, i, j * 8 + 0);
-                check_value_at(ret.v8si_16x2[i][j][1], 0, i, j * 8 + 1);
-                check_value_at(ret.v8si_16x2[i][j][2], 0, i, j * 8 + 2);
-                check_value_at(ret.v8si_16x2[i][j][3], 0, i, j * 8 + 3);
-                check_value_at(ret.v8si_16x2[i][j][4], 0, i, j * 8 + 4);
-                check_value_at(ret.v8si_16x2[i][j][5], 0, i, j * 8 + 5);
-                check_value_at(ret.v8si_16x2[i][j][6], 0, i, j * 8 + 6);
-                check_value_at(ret.v8si_16x2[i][j][7], 0, i, j * 8 + 7);
+                check_value_at(dst.v8si_16x2[i][j][0], 0, i, j * 8 + 0);
+                check_value_at(dst.v8si_16x2[i][j][1], 0, i, j * 8 + 1);
+                check_value_at(dst.v8si_16x2[i][j][2], 0, i, j * 8 + 2);
+                check_value_at(dst.v8si_16x2[i][j][3], 0, i, j * 8 + 3);
+                check_value_at(dst.v8si_16x2[i][j][4], 0, i, j * 8 + 4);
+                check_value_at(dst.v8si_16x2[i][j][5], 0, i, j * 8 + 5);
+                check_value_at(dst.v8si_16x2[i][j][6], 0, i, j * 8 + 6);
+                check_value_at(dst.v8si_16x2[i][j][7], 0, i, j * 8 + 7);
             } // for
         } // for
     }
@@ -407,7 +407,7 @@ Test(InternalFunc, v8si_subtract_chunk_fully)
 
 Test(InternalFunc, v8si_subtract_chunk_partly)
 {
-    mx_chunk_t ret;
+    mx_chunk_t dst;
     uint32_t i = 0;
     uint32_t j = 0;
 
@@ -418,10 +418,10 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
                 {{0, 0, 0, 0, 0, 0, 0, 0}},
             }
         };
-        memset(&ret, 0, sizeof(ret));
+        memset(&dst, 0, sizeof(dst));
 
-        v8si_subtract_chunk_partly(&ret, &src, &src, 1, 1);
-        check_value_at(ret.v8si_16x1[0][0][0], 0, 0, 0 * 8 + 0);
+        v8si_subtract_chunk_partly(&dst, &src, &src, 1, 1);
+        check_value_at(dst.v8si_16x1[0][0][0], 0, 0, 0 * 8 + 0);
     }
 
     // -- 5x5 chunk -- //
@@ -435,15 +435,15 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
                 {{64, 65, 66, 67, 68, 0, 0, 0}},
             }
         };
-        memset(&ret, 0, sizeof(ret));
+        memset(&dst, 0, sizeof(dst));
 
-        v8si_subtract_chunk_partly(&ret, &src, &src, 5, 5);
+        v8si_subtract_chunk_partly(&dst, &src, &src, 5, 5);
         for (i = 0; i < 5; i += 1) {
-            check_value_at(ret.v8si_16x1[0][0][0], 0, 0, 0 * 8 + 0);
-            check_value_at(ret.v8si_16x1[0][0][1], 0, 0, 0 * 8 + 1);
-            check_value_at(ret.v8si_16x1[0][0][2], 0, 0, 0 * 8 + 2);
-            check_value_at(ret.v8si_16x1[0][0][3], 0, 0, 0 * 8 + 3);
-            check_value_at(ret.v8si_16x1[0][0][4], 0, 0, 0 * 8 + 4);
+            check_value_at(dst.v8si_16x1[0][0][0], 0, 0, 0 * 8 + 0);
+            check_value_at(dst.v8si_16x1[0][0][1], 0, 0, 0 * 8 + 1);
+            check_value_at(dst.v8si_16x1[0][0][2], 0, 0, 0 * 8 + 2);
+            check_value_at(dst.v8si_16x1[0][0][3], 0, 0, 0 * 8 + 3);
+            check_value_at(dst.v8si_16x1[0][0][4], 0, 0, 0 * 8 + 4);
         } // for
     }
 
@@ -461,18 +461,18 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
                 {{112, 113, 114, 115, 116, 117, 118, 119}},
             }
         };
-        memset(&ret, 0, sizeof(ret));
+        memset(&dst, 0, sizeof(dst));
 
-        v8si_subtract_chunk_partly(&ret, &src, &src, 8, 8);
+        v8si_subtract_chunk_partly(&dst, &src, &src, 8, 8);
         for (i = 0; i < 8; i += 1) {
-            check_value_at(ret.v8si_16x1[0][0][0], 0, 0, 0 * 8 + 0);
-            check_value_at(ret.v8si_16x1[0][0][1], 0, 0, 0 * 8 + 1);
-            check_value_at(ret.v8si_16x1[0][0][2], 0, 0, 0 * 8 + 2);
-            check_value_at(ret.v8si_16x1[0][0][3], 0, 0, 0 * 8 + 3);
-            check_value_at(ret.v8si_16x1[0][0][4], 0, 0, 0 * 8 + 4);
-            check_value_at(ret.v8si_16x1[0][0][5], 0, 0, 0 * 8 + 5);
-            check_value_at(ret.v8si_16x1[0][0][6], 0, 0, 0 * 8 + 6);
-            check_value_at(ret.v8si_16x1[0][0][7], 0, 0, 0 * 8 + 7);
+            check_value_at(dst.v8si_16x1[0][0][0], 0, 0, 0 * 8 + 0);
+            check_value_at(dst.v8si_16x1[0][0][1], 0, 0, 0 * 8 + 1);
+            check_value_at(dst.v8si_16x1[0][0][2], 0, 0, 0 * 8 + 2);
+            check_value_at(dst.v8si_16x1[0][0][3], 0, 0, 0 * 8 + 3);
+            check_value_at(dst.v8si_16x1[0][0][4], 0, 0, 0 * 8 + 4);
+            check_value_at(dst.v8si_16x1[0][0][5], 0, 0, 0 * 8 + 5);
+            check_value_at(dst.v8si_16x1[0][0][6], 0, 0, 0 * 8 + 6);
+            check_value_at(dst.v8si_16x1[0][0][7], 0, 0, 0 * 8 + 7);
         } // for
     }
 
@@ -491,20 +491,20 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
                 {{128, 129, 130, 131, 132, 133, 134, 135}, {136, 0, 0, 0, 0, 0, 0, 0}},
             }
         };
-        memset(&ret, 0, sizeof(ret));
+        memset(&dst, 0, sizeof(dst));
 
-        v8si_subtract_chunk_partly(&ret, &src, &src, 9, 9);
+        v8si_subtract_chunk_partly(&dst, &src, &src, 9, 9);
         for (i = 0; i < 9; i += 1) {
-            check_value_at(ret.v8si_16x2[0][0][0], 0, 0, 0 * 8 + 0);
-            check_value_at(ret.v8si_16x2[0][0][1], 0, 0, 0 * 8 + 1);
-            check_value_at(ret.v8si_16x2[0][0][2], 0, 0, 0 * 8 + 2);
-            check_value_at(ret.v8si_16x2[0][0][3], 0, 0, 0 * 8 + 3);
-            check_value_at(ret.v8si_16x2[0][0][4], 0, 0, 0 * 8 + 4);
-            check_value_at(ret.v8si_16x2[0][0][5], 0, 0, 0 * 8 + 5);
-            check_value_at(ret.v8si_16x2[0][0][6], 0, 0, 0 * 8 + 6);
-            check_value_at(ret.v8si_16x2[0][0][7], 0, 0, 0 * 8 + 7);
+            check_value_at(dst.v8si_16x2[0][0][0], 0, 0, 0 * 8 + 0);
+            check_value_at(dst.v8si_16x2[0][0][1], 0, 0, 0 * 8 + 1);
+            check_value_at(dst.v8si_16x2[0][0][2], 0, 0, 0 * 8 + 2);
+            check_value_at(dst.v8si_16x2[0][0][3], 0, 0, 0 * 8 + 3);
+            check_value_at(dst.v8si_16x2[0][0][4], 0, 0, 0 * 8 + 4);
+            check_value_at(dst.v8si_16x2[0][0][5], 0, 0, 0 * 8 + 5);
+            check_value_at(dst.v8si_16x2[0][0][6], 0, 0, 0 * 8 + 6);
+            check_value_at(dst.v8si_16x2[0][0][7], 0, 0, 0 * 8 + 7);
 
-            check_value_at(ret.v8si_16x2[0][1][0], 0, 0, 1 * 8 + 0);
+            check_value_at(dst.v8si_16x2[0][1][0], 0, 0, 1 * 8 + 0);
         } // for
     }
     
@@ -530,19 +530,19 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
                 {{240, 241, 242, 243, 244, 245, 246, 247}, {248, 249, 250, 251, 252, 253, 254, 255}},
             }
         };
-        memset(&ret, 0, sizeof(ret));
+        memset(&dst, 0, sizeof(dst));
 
-        v8si_subtract_chunk_partly(&ret, &src, &src, 16, 16);
+        v8si_subtract_chunk_partly(&dst, &src, &src, 16, 16);
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 2; j += 1) {
-                check_value_at(ret.v8si_16x2[i][j][0], 0, i, j * 8 + 0);
-                check_value_at(ret.v8si_16x2[i][j][1], 0, i, j * 8 + 1);
-                check_value_at(ret.v8si_16x2[i][j][2], 0, i, j * 8 + 2);
-                check_value_at(ret.v8si_16x2[i][j][3], 0, i, j * 8 + 3);
-                check_value_at(ret.v8si_16x2[i][j][4], 0, i, j * 8 + 4);
-                check_value_at(ret.v8si_16x2[i][j][5], 0, i, j * 8 + 5);
-                check_value_at(ret.v8si_16x2[i][j][6], 0, i, j * 8 + 6);
-                check_value_at(ret.v8si_16x2[i][j][7], 0, i, j * 8 + 7);
+                check_value_at(dst.v8si_16x2[i][j][0], 0, i, j * 8 + 0);
+                check_value_at(dst.v8si_16x2[i][j][1], 0, i, j * 8 + 1);
+                check_value_at(dst.v8si_16x2[i][j][2], 0, i, j * 8 + 2);
+                check_value_at(dst.v8si_16x2[i][j][3], 0, i, j * 8 + 3);
+                check_value_at(dst.v8si_16x2[i][j][4], 0, i, j * 8 + 4);
+                check_value_at(dst.v8si_16x2[i][j][5], 0, i, j * 8 + 5);
+                check_value_at(dst.v8si_16x2[i][j][6], 0, i, j * 8 + 6);
+                check_value_at(dst.v8si_16x2[i][j][7], 0, i, j * 8 + 7);
             } // for
         } // for
     }
@@ -554,14 +554,14 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
                 {{ 0,  1,  2,  3,  4, 0, 0, 0}},
             }
         };
-        memset(&ret, 0, sizeof(ret));
+        memset(&dst, 0, sizeof(dst));
 
-        v8si_subtract_chunk_partly(&ret, &src, &src, 1, 5);
-        check_value_at(ret.v8si_16x1[0][0][0], 0, 0, 0 * 8 + 0);
-        check_value_at(ret.v8si_16x1[0][0][1], 0, 0, 0 * 8 + 1);
-        check_value_at(ret.v8si_16x1[0][0][2], 0, 0, 0 * 8 + 2);
-        check_value_at(ret.v8si_16x1[0][0][3], 0, 0, 0 * 8 + 3);
-        check_value_at(ret.v8si_16x1[0][0][4], 0, 0, 0 * 8 + 4);
+        v8si_subtract_chunk_partly(&dst, &src, &src, 1, 5);
+        check_value_at(dst.v8si_16x1[0][0][0], 0, 0, 0 * 8 + 0);
+        check_value_at(dst.v8si_16x1[0][0][1], 0, 0, 0 * 8 + 1);
+        check_value_at(dst.v8si_16x1[0][0][2], 0, 0, 0 * 8 + 2);
+        check_value_at(dst.v8si_16x1[0][0][3], 0, 0, 0 * 8 + 3);
+        check_value_at(dst.v8si_16x1[0][0][4], 0, 0, 0 * 8 + 4);
     }
 
     // -- 1x8 chunk -- //
@@ -571,17 +571,17 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
                 {{0, 1, 2, 3, 4, 5, 6, 7}},
             }
         };
-        memset(&ret, 0, sizeof(ret));
+        memset(&dst, 0, sizeof(dst));
 
-        v8si_subtract_chunk_partly(&ret, &src, &src, 1, 8);
-        check_value_at(ret.v8si_16x1[0][0][0], 0, 0, 0 * 8 + 0);
-        check_value_at(ret.v8si_16x1[0][0][1], 0, 0, 0 * 8 + 1);
-        check_value_at(ret.v8si_16x1[0][0][2], 0, 0, 0 * 8 + 2);
-        check_value_at(ret.v8si_16x1[0][0][3], 0, 0, 0 * 8 + 3);
-        check_value_at(ret.v8si_16x1[0][0][4], 0, 0, 0 * 8 + 4);
-        check_value_at(ret.v8si_16x1[0][0][5], 0, 0, 0 * 8 + 5);
-        check_value_at(ret.v8si_16x1[0][0][6], 0, 0, 0 * 8 + 6);
-        check_value_at(ret.v8si_16x1[0][0][7], 0, 0, 0 * 8 + 7);
+        v8si_subtract_chunk_partly(&dst, &src, &src, 1, 8);
+        check_value_at(dst.v8si_16x1[0][0][0], 0, 0, 0 * 8 + 0);
+        check_value_at(dst.v8si_16x1[0][0][1], 0, 0, 0 * 8 + 1);
+        check_value_at(dst.v8si_16x1[0][0][2], 0, 0, 0 * 8 + 2);
+        check_value_at(dst.v8si_16x1[0][0][3], 0, 0, 0 * 8 + 3);
+        check_value_at(dst.v8si_16x1[0][0][4], 0, 0, 0 * 8 + 4);
+        check_value_at(dst.v8si_16x1[0][0][5], 0, 0, 0 * 8 + 5);
+        check_value_at(dst.v8si_16x1[0][0][6], 0, 0, 0 * 8 + 6);
+        check_value_at(dst.v8si_16x1[0][0][7], 0, 0, 0 * 8 + 7);
     }
 
     // -- 1x9 chunk -- //
@@ -591,19 +591,19 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
                 {{0, 1, 2, 3, 4, 5, 6, 7}, {8, 0, 0, 0, 0, 0, 0, 0}},
             }
         };
-        memset(&ret, 0, sizeof(ret));
+        memset(&dst, 0, sizeof(dst));
 
-        v8si_subtract_chunk_partly(&ret, &src, &src, 1, 9);
-        check_value_at(ret.v8si_16x2[0][0][0], 0, 0, 0 * 8 + 0);
-        check_value_at(ret.v8si_16x2[0][0][1], 0, 0, 0 * 8 + 1);
-        check_value_at(ret.v8si_16x2[0][0][2], 0, 0, 0 * 8 + 2);
-        check_value_at(ret.v8si_16x2[0][0][3], 0, 0, 0 * 8 + 3);
-        check_value_at(ret.v8si_16x2[0][0][4], 0, 0, 0 * 8 + 4);
-        check_value_at(ret.v8si_16x2[0][0][5], 0, 0, 0 * 8 + 5);
-        check_value_at(ret.v8si_16x2[0][0][6], 0, 0, 0 * 8 + 6);
-        check_value_at(ret.v8si_16x2[0][0][7], 0, 0, 0 * 8 + 7);
+        v8si_subtract_chunk_partly(&dst, &src, &src, 1, 9);
+        check_value_at(dst.v8si_16x2[0][0][0], 0, 0, 0 * 8 + 0);
+        check_value_at(dst.v8si_16x2[0][0][1], 0, 0, 0 * 8 + 1);
+        check_value_at(dst.v8si_16x2[0][0][2], 0, 0, 0 * 8 + 2);
+        check_value_at(dst.v8si_16x2[0][0][3], 0, 0, 0 * 8 + 3);
+        check_value_at(dst.v8si_16x2[0][0][4], 0, 0, 0 * 8 + 4);
+        check_value_at(dst.v8si_16x2[0][0][5], 0, 0, 0 * 8 + 5);
+        check_value_at(dst.v8si_16x2[0][0][6], 0, 0, 0 * 8 + 6);
+        check_value_at(dst.v8si_16x2[0][0][7], 0, 0, 0 * 8 + 7);
 
-        check_value_at(ret.v8si_16x2[0][1][0], 0, 0, 1 * 8 + 0);
+        check_value_at(dst.v8si_16x2[0][1][0], 0, 0, 1 * 8 + 0);
     }
 
     // -- 5x1 chunk -- //
@@ -617,14 +617,14 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
                 {{ 64, 0, 0, 0, 0, 0, 0, 0}},
             }
         };
-        memset(&ret, 0, sizeof(ret));
+        memset(&dst, 0, sizeof(dst));
 
-        v8si_subtract_chunk_partly(&ret, &src, &src, 5, 1);
-        check_value_at(ret.v8si_16x1[0][0][0], 0, 0, 0 * 8 + 0);
-        check_value_at(ret.v8si_16x1[1][0][0], 0, 1, 0 * 8 + 1);
-        check_value_at(ret.v8si_16x1[2][0][0], 0, 2, 0 * 8 + 2);
-        check_value_at(ret.v8si_16x1[3][0][0], 0, 3, 0 * 8 + 3);
-        check_value_at(ret.v8si_16x1[4][0][0], 0, 4, 0 * 8 + 4);
+        v8si_subtract_chunk_partly(&dst, &src, &src, 5, 1);
+        check_value_at(dst.v8si_16x1[0][0][0], 0, 0, 0 * 8 + 0);
+        check_value_at(dst.v8si_16x1[1][0][0], 0, 1, 0 * 8 + 1);
+        check_value_at(dst.v8si_16x1[2][0][0], 0, 2, 0 * 8 + 2);
+        check_value_at(dst.v8si_16x1[3][0][0], 0, 3, 0 * 8 + 3);
+        check_value_at(dst.v8si_16x1[4][0][0], 0, 4, 0 * 8 + 4);
     }
 
     // -- 8x1 chunk -- //
@@ -641,17 +641,17 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
                 {{112, 0, 0, 0, 0, 0, 0, 0}},
             }
         };
-        memset(&ret, 0, sizeof(ret));
+        memset(&dst, 0, sizeof(dst));
 
-        v8si_subtract_chunk_partly(&ret, &src, &src, 8, 1);
-        check_value_at(ret.v8si_16x1[0][0][0], 0, 0, 0 * 8 + 0);
-        check_value_at(ret.v8si_16x1[1][0][0], 0, 1, 0 * 8 + 1);
-        check_value_at(ret.v8si_16x1[2][0][0], 0, 2, 0 * 8 + 2);
-        check_value_at(ret.v8si_16x1[3][0][0], 0, 3, 0 * 8 + 3);
-        check_value_at(ret.v8si_16x1[4][0][0], 0, 4, 0 * 8 + 4);
-        check_value_at(ret.v8si_16x1[5][0][0], 0, 5, 0 * 8 + 5);
-        check_value_at(ret.v8si_16x1[6][0][0], 0, 6, 0 * 8 + 6);
-        check_value_at(ret.v8si_16x1[7][0][0], 0, 7, 0 * 8 + 7);
+        v8si_subtract_chunk_partly(&dst, &src, &src, 8, 1);
+        check_value_at(dst.v8si_16x1[0][0][0], 0, 0, 0 * 8 + 0);
+        check_value_at(dst.v8si_16x1[1][0][0], 0, 1, 0 * 8 + 1);
+        check_value_at(dst.v8si_16x1[2][0][0], 0, 2, 0 * 8 + 2);
+        check_value_at(dst.v8si_16x1[3][0][0], 0, 3, 0 * 8 + 3);
+        check_value_at(dst.v8si_16x1[4][0][0], 0, 4, 0 * 8 + 4);
+        check_value_at(dst.v8si_16x1[5][0][0], 0, 5, 0 * 8 + 5);
+        check_value_at(dst.v8si_16x1[6][0][0], 0, 6, 0 * 8 + 6);
+        check_value_at(dst.v8si_16x1[7][0][0], 0, 7, 0 * 8 + 7);
     }
 
     // -- 9x1 chunk -- //
@@ -669,18 +669,18 @@ Test(InternalFunc, v8si_subtract_chunk_partly)
                 {{128, 0, 0, 0, 0, 0, 0, 0}},
             }
         };
-        memset(&ret, 0, sizeof(ret));
+        memset(&dst, 0, sizeof(dst));
 
-        v8si_subtract_chunk_partly(&ret, &src, &src, 9, 1);
-        check_value_at(ret.v8si_16x1[0][0][0], 0, 0, 0 * 8 + 0);
-        check_value_at(ret.v8si_16x1[1][0][0], 0, 1, 0 * 8 + 1);
-        check_value_at(ret.v8si_16x1[2][0][0], 0, 2, 0 * 8 + 2);
-        check_value_at(ret.v8si_16x1[3][0][0], 0, 3, 0 * 8 + 3);
-        check_value_at(ret.v8si_16x1[4][0][0], 0, 4, 0 * 8 + 4);
-        check_value_at(ret.v8si_16x1[5][0][0], 0, 5, 0 * 8 + 5);
-        check_value_at(ret.v8si_16x1[6][0][0], 0, 6, 0 * 8 + 6);
-        check_value_at(ret.v8si_16x1[7][0][0], 0, 7, 0 * 8 + 7);
-        check_value_at(ret.v8si_16x1[8][1][0], 0, 8, 1 * 8 + 0);
+        v8si_subtract_chunk_partly(&dst, &src, &src, 9, 1);
+        check_value_at(dst.v8si_16x1[0][0][0], 0, 0, 0 * 8 + 0);
+        check_value_at(dst.v8si_16x1[1][0][0], 0, 1, 0 * 8 + 1);
+        check_value_at(dst.v8si_16x1[2][0][0], 0, 2, 0 * 8 + 2);
+        check_value_at(dst.v8si_16x1[3][0][0], 0, 3, 0 * 8 + 3);
+        check_value_at(dst.v8si_16x1[4][0][0], 0, 4, 0 * 8 + 4);
+        check_value_at(dst.v8si_16x1[5][0][0], 0, 5, 0 * 8 + 5);
+        check_value_at(dst.v8si_16x1[6][0][0], 0, 6, 0 * 8 + 6);
+        check_value_at(dst.v8si_16x1[7][0][0], 0, 7, 0 * 8 + 7);
+        check_value_at(dst.v8si_16x1[8][1][0], 0, 8, 1 * 8 + 0);
     }
 }
 

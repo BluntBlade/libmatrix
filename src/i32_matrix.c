@@ -128,7 +128,7 @@ void i32m_subtract_and_store(i32_matrix_ptr mx, i32_matrix_ptr lhs, i32_matrix_p
 
 void i32m_multiply_and_store(i32_matrix_ptr mx, i32_matrix_ptr lhs, i32_matrix_ptr rhs)
 {
-    mops_v8si_multiply(&mx->oper, &lhs->stor, &rhs->stor, &mx->stor);
+    mops_v8si_multiply(&mx->stor, &lhs->stor, &rhs->stor);
 } // i32m_multiply_and_store
 
 void i32m_multiply_scalar_and_store(i32_matrix_ptr mx, i32_matrix_ptr src, int32_t val)

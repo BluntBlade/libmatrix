@@ -236,15 +236,177 @@ mx_chunk_ptr mstr_v8si_copy_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t ch
     return chk;
 } // mstr_v8si_copy_chunk
 
-mx_chunk_ptr mstr_v8si_transpose_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr chk, uint32_t * rows_in_chk, uint32_t * cols_in_chk, bool * full)
+mx_chunk_ptr mstr_v8si_transpose_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr dchk, uint32_t * dchk_rows, uint32_t * dchk_cols, bool * dchk_full)
 {
-    void * base = mstr_v8si_locate_chunk(ms, chk_ridx, chk_cidx, rows_in_chk, cols_in_chk, full);
-    mstr_v8si_assemble_chunk(&chk->v8si_16x2[0][0], base, 1, mx_round_to_multiples_of_8(*cols_in_chk), *cols_in_chk, *rows_in_chk);
+    uint32_t schk_rows = 0; 
+    uint32_t schk_cols = 0; 
+    bool schk_full = false; 
+    v8si_t idx[2];
+    v8si_t * mask[2];
+    uint32_t i = 0;
+    int32_t * base = mstr_v8si_locate_chunk(ms, chk_ridx, chk_cidx, &schk_rows, &schk_cols, &schk_full);
+
+    if (schk_rows <= 8) {
+        idx[0] = v8si_idx[0] * mx_round_to_multiples_of_8(schk_cols);
+        mask[0] = &v8si_mask[schk_rows];
+        switch (schk_cols) {
+            default: assert(1); break;
+            case 16:
+                dchk->v8si_16x1[i][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[0], *mask[0], sizeof(int32_t));
+                i += 1;
+                base += 1;
+            case 15:
+                dchk->v8si_16x1[i][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[0], *mask[0], sizeof(int32_t));
+                i += 1;
+                base += 1;
+            case 14:
+                dchk->v8si_16x1[i][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[0], *mask[0], sizeof(int32_t));
+                i += 1;
+                base += 1;
+            case 13:
+                dchk->v8si_16x1[i][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[0], *mask[0], sizeof(int32_t));
+                i += 1;
+                base += 1;
+            case 12:
+                dchk->v8si_16x1[i][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[0], *mask[0], sizeof(int32_t));
+                i += 1;
+                base += 1;
+            case 11:
+                dchk->v8si_16x1[i][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[0], *mask[0], sizeof(int32_t));
+                i += 1;
+                base += 1;
+            case 10:
+                dchk->v8si_16x1[i][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[0], *mask[0], sizeof(int32_t));
+                i += 1;
+                base += 1;
+            case  9:
+                dchk->v8si_16x1[i][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[0], *mask[0], sizeof(int32_t));
+                i += 1;
+                base += 1;
+            case  8:
+                dchk->v8si_16x1[i][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[0], *mask[0], sizeof(int32_t));
+                i += 1;
+                base += 1;
+            case  7:
+                dchk->v8si_16x1[i][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[0], *mask[0], sizeof(int32_t));
+                i += 1;
+                base += 1;
+            case  6:
+                dchk->v8si_16x1[i][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[0], *mask[0], sizeof(int32_t));
+                i += 1;
+                base += 1;
+            case  5:
+                dchk->v8si_16x1[i][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[0], *mask[0], sizeof(int32_t));
+                i += 1;
+                base += 1;
+            case  4:
+                dchk->v8si_16x1[i][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[0], *mask[0], sizeof(int32_t));
+                i += 1;
+                base += 1;
+            case  3:
+                dchk->v8si_16x1[i][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[0], *mask[0], sizeof(int32_t));
+                i += 1;
+                base += 1;
+            case  2:
+                dchk->v8si_16x1[i][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[0], *mask[0], sizeof(int32_t));
+                i += 1;
+                base += 1;
+            case  1:
+                dchk->v8si_16x1[i][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[0], *mask[0], sizeof(int32_t));
+        } // switch
+    } else {
+        idx[0] = v8si_idx[0] * mx_round_to_multiples_of_8(schk_cols);
+        idx[1] = v8si_idx[1] * mx_round_to_multiples_of_8(schk_cols);
+        mask[0] = &v8si_mask[8];
+        mask[1] = &v8si_mask[schk_rows - 8];
+        switch (schk_cols) {
+            default: assert(1); break;
+            case 16:
+                dchk->v8si_16x2[i][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[0], *mask[0], sizeof(int32_t));
+                dchk->v8si_16x2[i][1] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[1], *mask[1], sizeof(int32_t));
+                i += 1;
+                base += 1;
+            case 15:
+                dchk->v8si_16x2[i][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[0], *mask[0], sizeof(int32_t));
+                dchk->v8si_16x2[i][1] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[1], *mask[1], sizeof(int32_t));
+                i += 1;
+                base += 1;
+            case 14:
+                dchk->v8si_16x2[i][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[0], *mask[0], sizeof(int32_t));
+                dchk->v8si_16x2[i][1] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[1], *mask[1], sizeof(int32_t));
+                i += 1;
+                base += 1;
+            case 13:
+                dchk->v8si_16x2[i][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[0], *mask[0], sizeof(int32_t));
+                dchk->v8si_16x2[i][1] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[1], *mask[1], sizeof(int32_t));
+                i += 1;
+                base += 1;
+            case 12:
+                dchk->v8si_16x2[i][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[0], *mask[0], sizeof(int32_t));
+                dchk->v8si_16x2[i][1] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[1], *mask[1], sizeof(int32_t));
+                i += 1;
+                base += 1;
+            case 11:
+                dchk->v8si_16x2[i][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[0], *mask[0], sizeof(int32_t));
+                dchk->v8si_16x2[i][1] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[1], *mask[1], sizeof(int32_t));
+                i += 1;
+                base += 1;
+            case 10:
+                dchk->v8si_16x2[i][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[0], *mask[0], sizeof(int32_t));
+                dchk->v8si_16x2[i][1] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[1], *mask[1], sizeof(int32_t));
+                i += 1;
+                base += 1;
+            case  9:
+                dchk->v8si_16x2[i][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[0], *mask[0], sizeof(int32_t));
+                dchk->v8si_16x2[i][1] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[1], *mask[1], sizeof(int32_t));
+                i += 1;
+                base += 1;
+            case  8:
+                dchk->v8si_16x2[i][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[0], *mask[0], sizeof(int32_t));
+                dchk->v8si_16x2[i][1] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[1], *mask[1], sizeof(int32_t));
+                i += 1;
+                base += 1;
+            case  7:
+                dchk->v8si_16x2[i][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[0], *mask[0], sizeof(int32_t));
+                dchk->v8si_16x2[i][1] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[1], *mask[1], sizeof(int32_t));
+                i += 1;
+                base += 1;
+            case  6:
+                dchk->v8si_16x2[i][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[0], *mask[0], sizeof(int32_t));
+                dchk->v8si_16x2[i][1] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[1], *mask[1], sizeof(int32_t));
+                i += 1;
+                base += 1;
+            case  5:
+                dchk->v8si_16x2[i][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[0], *mask[0], sizeof(int32_t));
+                dchk->v8si_16x2[i][1] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[1], *mask[1], sizeof(int32_t));
+                i += 1;
+                base += 1;
+            case  4:
+                dchk->v8si_16x2[i][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[0], *mask[0], sizeof(int32_t));
+                dchk->v8si_16x2[i][1] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[1], *mask[1], sizeof(int32_t));
+                i += 1;
+                base += 1;
+            case  3:
+                dchk->v8si_16x2[i][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[0], *mask[0], sizeof(int32_t));
+                dchk->v8si_16x2[i][1] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[1], *mask[1], sizeof(int32_t));
+                i += 1;
+                base += 1;
+            case  2:
+                dchk->v8si_16x2[i][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[0], *mask[0], sizeof(int32_t));
+                dchk->v8si_16x2[i][1] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[1], *mask[1], sizeof(int32_t));
+                i += 1;
+                base += 1;
+            case  1:
+                dchk->v8si_16x2[i][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[0], *mask[0], sizeof(int32_t));
+                dchk->v8si_16x2[i][1] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[1], *mask[1], sizeof(int32_t));
+        } // switch
+    } // if
+
     // Swap the number of rows and columns of the target chunk since it is transposed.
-    *rows_in_chk ^= *cols_in_chk;
-    *cols_in_chk ^= *rows_in_chk;
-    *rows_in_chk ^= *cols_in_chk;
-    return chk;
+    *dchk_rows = schk_cols;
+    *dchk_cols = schk_rows;
+    *dchk_full = schk_full;
+    return dchk;
 } // mstr_v8si_transpose_chunk
 
 void mstr_v8si_store_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr chk)

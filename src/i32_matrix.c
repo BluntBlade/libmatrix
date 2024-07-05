@@ -113,7 +113,7 @@ bool i32m_can_multiply(i32_matrix_ptr lhs, i32_matrix_ptr rhs)
 
 void i32m_transpose_and_store(i32_matrix_ptr mx, i32_matrix_ptr src)
 {
-    mops_v8si_transpose(&mx->oper, &src->stor, &mx->stor);
+    mops_v8si_transpose(&mx->stor, &src->stor);
 } // i32m_transpose_and_store
 
 void i32m_add_and_store(i32_matrix_ptr mx, i32_matrix_ptr lhs, i32_matrix_ptr rhs)

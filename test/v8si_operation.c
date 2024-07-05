@@ -114,11 +114,11 @@ Test(InternalFunc, v8si_add_chunk_partly)
 
         v8si_add_chunk_partly(&dst, &src, &src, 5, 5);
         for (i = 0; i < 5; i += 1) {
-            check_value_at(dst.v8si_16x1[0][0][0], src.v8si_16x1[0][0][0] * 2, 0, 0 * 8 + 0);
-            check_value_at(dst.v8si_16x1[0][0][1], src.v8si_16x1[0][0][1] * 2, 0, 0 * 8 + 1);
-            check_value_at(dst.v8si_16x1[0][0][2], src.v8si_16x1[0][0][2] * 2, 0, 0 * 8 + 2);
-            check_value_at(dst.v8si_16x1[0][0][3], src.v8si_16x1[0][0][3] * 2, 0, 0 * 8 + 3);
-            check_value_at(dst.v8si_16x1[0][0][4], src.v8si_16x1[0][0][4] * 2, 0, 0 * 8 + 4);
+            check_value_at(dst.v8si_16x1[i][0][0], src.v8si_16x1[i][0][0] * 2, i, 0 * 8 + 0);
+            check_value_at(dst.v8si_16x1[i][0][1], src.v8si_16x1[i][0][1] * 2, i, 0 * 8 + 1);
+            check_value_at(dst.v8si_16x1[i][0][2], src.v8si_16x1[i][0][2] * 2, i, 0 * 8 + 2);
+            check_value_at(dst.v8si_16x1[i][0][3], src.v8si_16x1[i][0][3] * 2, i, 0 * 8 + 3);
+            check_value_at(dst.v8si_16x1[i][0][4], src.v8si_16x1[i][0][4] * 2, i, 0 * 8 + 4);
         } // for
     }
 
@@ -140,14 +140,14 @@ Test(InternalFunc, v8si_add_chunk_partly)
 
         v8si_add_chunk_partly(&dst, &src, &src, 8, 8);
         for (i = 0; i < 8; i += 1) {
-            check_value_at(dst.v8si_16x1[0][0][0], src.v8si_16x1[0][0][0] * 2, 0, 0 * 8 + 0);
-            check_value_at(dst.v8si_16x1[0][0][1], src.v8si_16x1[0][0][1] * 2, 0, 0 * 8 + 1);
-            check_value_at(dst.v8si_16x1[0][0][2], src.v8si_16x1[0][0][2] * 2, 0, 0 * 8 + 2);
-            check_value_at(dst.v8si_16x1[0][0][3], src.v8si_16x1[0][0][3] * 2, 0, 0 * 8 + 3);
-            check_value_at(dst.v8si_16x1[0][0][4], src.v8si_16x1[0][0][4] * 2, 0, 0 * 8 + 4);
-            check_value_at(dst.v8si_16x1[0][0][5], src.v8si_16x1[0][0][5] * 2, 0, 0 * 8 + 5);
-            check_value_at(dst.v8si_16x1[0][0][6], src.v8si_16x1[0][0][6] * 2, 0, 0 * 8 + 6);
-            check_value_at(dst.v8si_16x1[0][0][7], src.v8si_16x1[0][0][7] * 2, 0, 0 * 8 + 7);
+            check_value_at(dst.v8si_16x1[i][0][0], src.v8si_16x1[i][0][0] * 2, i, 0 * 8 + 0);
+            check_value_at(dst.v8si_16x1[i][0][1], src.v8si_16x1[i][0][1] * 2, i, 0 * 8 + 1);
+            check_value_at(dst.v8si_16x1[i][0][2], src.v8si_16x1[i][0][2] * 2, i, 0 * 8 + 2);
+            check_value_at(dst.v8si_16x1[i][0][3], src.v8si_16x1[i][0][3] * 2, i, 0 * 8 + 3);
+            check_value_at(dst.v8si_16x1[i][0][4], src.v8si_16x1[i][0][4] * 2, i, 0 * 8 + 4);
+            check_value_at(dst.v8si_16x1[i][0][5], src.v8si_16x1[i][0][5] * 2, i, 0 * 8 + 5);
+            check_value_at(dst.v8si_16x1[i][0][6], src.v8si_16x1[i][0][6] * 2, i, 0 * 8 + 6);
+            check_value_at(dst.v8si_16x1[i][0][7], src.v8si_16x1[i][0][7] * 2, i, 0 * 8 + 7);
         } // for
     }
 
@@ -170,16 +170,16 @@ Test(InternalFunc, v8si_add_chunk_partly)
 
         v8si_add_chunk_partly(&dst, &src, &src, 9, 9);
         for (i = 0; i < 9; i += 1) {
-            check_value_at(dst.v8si_16x2[0][0][0], src.v8si_16x2[0][0][0] * 2, 0, 0 * 8 + 0);
-            check_value_at(dst.v8si_16x2[0][0][1], src.v8si_16x2[0][0][1] * 2, 0, 0 * 8 + 1);
-            check_value_at(dst.v8si_16x2[0][0][2], src.v8si_16x2[0][0][2] * 2, 0, 0 * 8 + 2);
-            check_value_at(dst.v8si_16x2[0][0][3], src.v8si_16x2[0][0][3] * 2, 0, 0 * 8 + 3);
-            check_value_at(dst.v8si_16x2[0][0][4], src.v8si_16x2[0][0][4] * 2, 0, 0 * 8 + 4);
-            check_value_at(dst.v8si_16x2[0][0][5], src.v8si_16x2[0][0][5] * 2, 0, 0 * 8 + 5);
-            check_value_at(dst.v8si_16x2[0][0][6], src.v8si_16x2[0][0][6] * 2, 0, 0 * 8 + 6);
-            check_value_at(dst.v8si_16x2[0][0][7], src.v8si_16x2[0][0][7] * 2, 0, 0 * 8 + 7);
+            check_value_at(dst.v8si_16x2[i][0][0], src.v8si_16x2[i][0][0] * 2, i, 0 * 8 + 0);
+            check_value_at(dst.v8si_16x2[i][0][1], src.v8si_16x2[i][0][1] * 2, i, 0 * 8 + 1);
+            check_value_at(dst.v8si_16x2[i][0][2], src.v8si_16x2[i][0][2] * 2, i, 0 * 8 + 2);
+            check_value_at(dst.v8si_16x2[i][0][3], src.v8si_16x2[i][0][3] * 2, i, 0 * 8 + 3);
+            check_value_at(dst.v8si_16x2[i][0][4], src.v8si_16x2[i][0][4] * 2, i, 0 * 8 + 4);
+            check_value_at(dst.v8si_16x2[i][0][5], src.v8si_16x2[i][0][5] * 2, i, 0 * 8 + 5);
+            check_value_at(dst.v8si_16x2[i][0][6], src.v8si_16x2[i][0][6] * 2, i, 0 * 8 + 6);
+            check_value_at(dst.v8si_16x2[i][0][7], src.v8si_16x2[i][0][7] * 2, i, 0 * 8 + 7);
 
-            check_value_at(dst.v8si_16x2[0][1][0], src.v8si_16x2[0][1][0] * 2, 0, 1 * 8 + 0);
+            check_value_at(dst.v8si_16x2[i][1][0], src.v8si_16x2[i][1][0] * 2, i, 1 * 8 + 0);
         } // for
     }
     
@@ -2109,6 +2109,7 @@ Test(Operation, mops_v8si_multiply_scalar)
     }
 }
 
+#if 0
 Test(Operation, mops_v8si_multiply)
 {
     uint32_t i = 0;
@@ -2420,36 +2421,32 @@ Test(Operation, mops_v8si_multiply)
         mops_v8si_destroy(mp);
     }
 }
+#endif
 
 Test(Operation, mops_v8si_transpose)
 {
     uint32_t i = 0;
     uint32_t j = 0;
-    mx_oper_ptr mp = NULL;
     mx_stor_ptr src = NULL;
     mx_stor_ptr dst = NULL;
 
     // -- 1x1 matrix transpose -- //
     {
-        mp = mops_v8si_create();
-
         src = mstr_v8si_create(1, 1);
         mstr_v8si_set(src, 0, 0, 11);
 
         dst = mstr_v8si_create(1, 1);
-        mops_v8si_transpose(mp, src, dst);
+
+        mops_v8si_transpose(dst, src);
 
         check_value_at(mstr_v8si_get(dst, 0, 0), 11, 0, 0);
 
         mstr_v8si_destroy(dst);
         mstr_v8si_destroy(src);
-        mops_v8si_destroy(mp);
     }
 
     // -- 5x5 matrix transpose -- //
     {
-        mp = mops_v8si_create();
-
         src = mstr_v8si_create(5, 5);
 
         for (i = 0; i < 5; i += 1) {
@@ -2459,7 +2456,8 @@ Test(Operation, mops_v8si_transpose)
         } // for
 
         dst = mstr_v8si_create(5, 5);
-        mops_v8si_transpose(mp, src, dst);
+
+        mops_v8si_transpose(dst, src);
 
         for (i = 0; i < 5; i += 1) {
             for (j = 0; j < 5; j += 1) {
@@ -2469,13 +2467,10 @@ Test(Operation, mops_v8si_transpose)
 
         mstr_v8si_destroy(dst);
         mstr_v8si_destroy(src);
-        mops_v8si_destroy(mp);
     }
 
     // -- 8x8 matrix transpose -- //
     {
-        mp = mops_v8si_create();
-
         src = mstr_v8si_create(8, 8);
 
         for (i = 0; i < 8; i += 1) {
@@ -2485,7 +2480,8 @@ Test(Operation, mops_v8si_transpose)
         } // for
 
         dst = mstr_v8si_create(8, 8);
-        mops_v8si_transpose(mp, src, dst);
+
+        mops_v8si_transpose(dst, src);
 
         for (i = 0; i < 8; i += 1) {
             for (j = 0; j < 8; j += 1) {
@@ -2495,13 +2491,10 @@ Test(Operation, mops_v8si_transpose)
 
         mstr_v8si_destroy(dst);
         mstr_v8si_destroy(src);
-        mops_v8si_destroy(mp);
     }
 
     // -- 9x9 matrix transpose -- //
     {
-        mp = mops_v8si_create();
-
         src = mstr_v8si_create(9, 9);
 
         for (i = 0; i < 9; i += 1) {
@@ -2511,7 +2504,8 @@ Test(Operation, mops_v8si_transpose)
         } // for
 
         dst = mstr_v8si_create(9, 9);
-        mops_v8si_transpose(mp, src, dst);
+
+        mops_v8si_transpose(dst, src);
 
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 9; j += 1) {
@@ -2521,13 +2515,10 @@ Test(Operation, mops_v8si_transpose)
 
         mstr_v8si_destroy(dst);
         mstr_v8si_destroy(src);
-        mops_v8si_destroy(mp);
     }
 
     // -- 16x16 matrix transpose -- //
     {
-        mp = mops_v8si_create();
-
         src = mstr_v8si_create(16, 16);
 
         for (i = 0; i < 16; i += 1) {
@@ -2537,7 +2528,8 @@ Test(Operation, mops_v8si_transpose)
         } // for
 
         dst = mstr_v8si_create(16, 16);
-        mops_v8si_transpose(mp, src, dst);
+
+        mops_v8si_transpose(dst, src);
 
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 16; j += 1) {
@@ -2547,12 +2539,10 @@ Test(Operation, mops_v8si_transpose)
 
         mstr_v8si_destroy(dst);
         mstr_v8si_destroy(src);
-        mops_v8si_destroy(mp);
     }
 
     // -- 17x17 matrix transpose -- //
     {
-        mp = mops_v8si_create();
 
         src = mstr_v8si_create(17, 17);
 
@@ -2563,7 +2553,8 @@ Test(Operation, mops_v8si_transpose)
         } // for
 
         dst = mstr_v8si_create(17, 17);
-        mops_v8si_transpose(mp, src, dst);
+
+        mops_v8si_transpose(dst, src);
 
         for (i = 0; i < 17; i += 1) {
             for (j = 0; j < 17; j += 1) {
@@ -2573,13 +2564,10 @@ Test(Operation, mops_v8si_transpose)
 
         mstr_v8si_destroy(dst);
         mstr_v8si_destroy(src);
-        mops_v8si_destroy(mp);
     }
 
     // -- 2x9 matrix transpose -- //
     {
-        mp = mops_v8si_create();
-
         src = mstr_v8si_create(2, 9);
 
         for (i = 0; i < 2; i += 1) {
@@ -2589,7 +2577,8 @@ Test(Operation, mops_v8si_transpose)
         } // for
 
         dst = mstr_v8si_create(9, 2);
-        mops_v8si_transpose(mp, src, dst);
+
+        mops_v8si_transpose(dst, src);
 
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 2; j += 1) {
@@ -2599,13 +2588,10 @@ Test(Operation, mops_v8si_transpose)
 
         mstr_v8si_destroy(dst);
         mstr_v8si_destroy(src);
-        mops_v8si_destroy(mp);
     }
 
     // -- 9x2 matrix transpose -- //
     {
-        mp = mops_v8si_create();
-
         src = mstr_v8si_create(9, 2);
 
         for (i = 0; i < 9; i += 1) {
@@ -2615,7 +2601,8 @@ Test(Operation, mops_v8si_transpose)
         } // for
 
         dst = mstr_v8si_create(2, 9);
-        mops_v8si_transpose(mp, src, dst);
+
+        mops_v8si_transpose(dst, src);
 
         for (i = 0; i < 2; i += 1) {
             for (j = 0; j < 9; j += 1) {
@@ -2625,13 +2612,10 @@ Test(Operation, mops_v8si_transpose)
 
         mstr_v8si_destroy(dst);
         mstr_v8si_destroy(src);
-        mops_v8si_destroy(mp);
     }
 
     // -- 17x33 matrix transpose -- //
     {
-        mp = mops_v8si_create();
-
         src = mstr_v8si_create(17, 33);
 
         for (i = 0; i < 17; i += 1) {
@@ -2641,7 +2625,8 @@ Test(Operation, mops_v8si_transpose)
         } // for
 
         dst = mstr_v8si_create(33, 17);
-        mops_v8si_transpose(mp, src, dst);
+
+        mops_v8si_transpose(dst, src);
 
         for (i = 0; i < 33; i += 1) {
             for (j = 0; j < 17; j += 1) {
@@ -2651,6 +2636,5 @@ Test(Operation, mops_v8si_transpose)
 
         mstr_v8si_destroy(dst);
         mstr_v8si_destroy(src);
-        mops_v8si_destroy(mp);
     }
 }

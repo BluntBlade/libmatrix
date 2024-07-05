@@ -1587,28 +1587,7 @@ Test(Operation, mstr_v8si_transpose_chunk)
     uint32_t cols_in_chk = 0;
     bool full = false;
     mx_stor_ptr ms = NULL;
-    mx_chunk_ptr ret = NULL;
-    mx_chunk_t src = {
-        .i32_16x16 = {
-            {  0,    1,    2,    3,    4,    5,    6,    7,    8,    9,   10,   11,   12,   13,   14,   15},
-            { 16,   17,   18,   19,   20,   21,   22,   23,   24,   25,   26,   27,   28,   29,   30,   31},
-            { 32,   33,   34,   35,   36,   37,   38,   39,   40,   41,   42,   43,   44,   45,   46,   47},
-            { 48,   49,   50,   51,   52,   53,   54,   55,   56,   57,   58,   59,   60,   61,   62,   63},
-            { 64,   65,   66,   67,   68,   69,   70,   71,   72,   73,   74,   75,   76,   77,   78,   79},
-            { 80,   81,   82,   83,   84,   85,   86,   87,   88,   89,   90,   91,   92,   93,   94,   95},
-            { 96,   97,   98,   99,  100,  101,  102,  103,  104,  105,  106,  107,  108,  109,  110,  111},
-            {112,  113,  114,  115,  116,  117,  118,  119,  120,  121,  122,  123,  124,  125,  126,  127},
-            {128,  129,  130,  131,  132,  133,  134,  135,  136,  137,  138,  139,  140,  141,  142,  143},
-            {144,  145,  146,  147,  148,  149,  150,  151,  152,  153,  154,  155,  156,  157,  158,  159},
-            {160,  161,  162,  163,  164,  165,  166,  167,  168,  169,  170,  171,  172,  173,  174,  175},
-            {176,  177,  178,  179,  180,  181,  182,  183,  184,  185,  186,  187,  188,  189,  190,  191},
-            {192,  193,  194,  195,  196,  197,  198,  199,  200,  201,  202,  203,  204,  205,  206,  207},
-            {208,  209,  210,  211,  212,  213,  214,  215,  216,  217,  218,  219,  220,  221,  222,  223},
-            {224,  225,  226,  227,  228,  229,  230,  231,  232,  233,  234,  235,  236,  237,  238,  239},
-            {240,  241,  242,  243,  244,  245,  246,  247,  248,  249,  250,  251,  252,  253,  254,  255}
-        }
-    };
-    mx_chunk_t dst;
+    mx_chunk_t dchk;
 
     // -- 1x1 matrix -- //
     {
@@ -1617,17 +1596,20 @@ Test(Operation, mstr_v8si_transpose_chunk)
         rows_in_chk = 0;
         cols_in_chk = 0;
         full = false;
-        memset(&dst, 0, sizeof(dst));
-        mstr_v8si_fill(ms, 65535);
 
-        mstr_v8si_store_chunk(ms, 0, 0, &src);
-        ret = mstr_v8si_transpose_chunk(ms, 0, 0, &dst, &rows_in_chk, &cols_in_chk, &full);
+        memset(&dchk, 0, sizeof(dchk));
+        for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
+            for (j = 0; j < mstr_v8si_columns(ms); j += 1) {
+                mstr_v8si_set(ms, i, j, (i + 1) * (j + 1));
+            } // for
+        } // for
 
-        check_equal_poitners(ret, &dst);
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
+
         check_rows_in_chunk(rows_in_chk, 1);
         check_columns_in_chunk(cols_in_chk, 1);
         check_full_flag(full, false);
-        check_value_at(dst.i32_16x16[0][0], 0, 0, 0);
+        check_value_at(dchk.v8si_16x1[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
 
         mstr_v8si_destroy(ms);
     }
@@ -1639,21 +1621,26 @@ Test(Operation, mstr_v8si_transpose_chunk)
         rows_in_chk = 0;
         cols_in_chk = 0;
         full = false;
-        memset(&dst, 0, sizeof(dst));
-        mstr_v8si_fill(ms, 65535);
 
-        mstr_v8si_store_chunk(ms, 0, 0, &src);
-        ret = mstr_v8si_transpose_chunk(ms, 0, 0, &dst, &rows_in_chk, &cols_in_chk, &full);
+        memset(&dchk, 0, sizeof(dchk));
+        for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
+            for (j = 0; j < mstr_v8si_columns(ms); j += 1) {
+                mstr_v8si_set(ms, i, j, (i + 1) * (j + 1));
+            } // for
+        } // for
 
-        check_equal_poitners(ret, &dst);
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
+
         check_rows_in_chunk(rows_in_chk, 5);
         check_columns_in_chunk(cols_in_chk, 5);
         check_full_flag(full, false);
 
         for (i = 0; i < 5; i += 1) {
-            for (j = 0; j < 5; j += 1) {
-                check_value_at(dst.i32_16x16[i][j], src.i32_16x16[j][i], i, j);
-            } // for
+            check_value_at(dchk.v8si_16x1[i][0][0], mstr_v8si_get(ms, 0, i), i, 0 * 8 + 0);
+            check_value_at(dchk.v8si_16x1[i][0][1], mstr_v8si_get(ms, 1, i), i, 0 * 8 + 1);
+            check_value_at(dchk.v8si_16x1[i][0][2], mstr_v8si_get(ms, 2, i), i, 0 * 8 + 2);
+            check_value_at(dchk.v8si_16x1[i][0][3], mstr_v8si_get(ms, 3, i), i, 0 * 8 + 3);
+            check_value_at(dchk.v8si_16x1[i][0][4], mstr_v8si_get(ms, 4, i), i, 0 * 8 + 4);
         } // for
 
         mstr_v8si_destroy(ms);
@@ -1666,21 +1653,29 @@ Test(Operation, mstr_v8si_transpose_chunk)
         rows_in_chk = 0;
         cols_in_chk = 0;
         full = false;
-        memset(&dst, 0, sizeof(dst));
-        mstr_v8si_fill(ms, 65535);
 
-        mstr_v8si_store_chunk(ms, 0, 0, &src);
-        ret = mstr_v8si_transpose_chunk(ms, 0, 0, &dst, &rows_in_chk, &cols_in_chk, &full);
+        memset(&dchk, 0, sizeof(dchk));
+        for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
+            for (j = 0; j < mstr_v8si_columns(ms); j += 1) {
+                mstr_v8si_set(ms, i, j, (i + 1) * (j + 1));
+            } // for
+        } // for
 
-        check_equal_poitners(ret, &dst);
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
+
         check_rows_in_chunk(rows_in_chk, 8);
         check_columns_in_chunk(cols_in_chk, 8);
         check_full_flag(full, false);
 
         for (i = 0; i < 8; i += 1) {
-            for (j = 0; j < 8; j += 1) {
-                check_value_at(dst.i32_16x16[i][j], src.i32_16x16[j][i], i, j);
-            } // for
+            check_value_at(dchk.v8si_16x1[i][0][0], mstr_v8si_get(ms, 0, i), i, 0 * 8 + 0);
+            check_value_at(dchk.v8si_16x1[i][0][1], mstr_v8si_get(ms, 1, i), i, 0 * 8 + 1);
+            check_value_at(dchk.v8si_16x1[i][0][2], mstr_v8si_get(ms, 2, i), i, 0 * 8 + 2);
+            check_value_at(dchk.v8si_16x1[i][0][3], mstr_v8si_get(ms, 3, i), i, 0 * 8 + 3);
+            check_value_at(dchk.v8si_16x1[i][0][4], mstr_v8si_get(ms, 4, i), i, 0 * 8 + 4);
+            check_value_at(dchk.v8si_16x1[i][0][5], mstr_v8si_get(ms, 5, i), i, 0 * 8 + 5);
+            check_value_at(dchk.v8si_16x1[i][0][6], mstr_v8si_get(ms, 6, i), i, 0 * 8 + 6);
+            check_value_at(dchk.v8si_16x1[i][0][7], mstr_v8si_get(ms, 7, i), i, 0 * 8 + 7);
         } // for
 
         mstr_v8si_destroy(ms);
@@ -1693,21 +1688,31 @@ Test(Operation, mstr_v8si_transpose_chunk)
         rows_in_chk = 0;
         cols_in_chk = 0;
         full = false;
-        memset(&dst, 0, sizeof(dst));
-        mstr_v8si_fill(ms, 65535);
 
-        mstr_v8si_store_chunk(ms, 0, 0, &src);
-        ret = mstr_v8si_transpose_chunk(ms, 0, 0, &dst, &rows_in_chk, &cols_in_chk, &full);
+        memset(&dchk, 0, sizeof(dchk));
+        for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
+            for (j = 0; j < mstr_v8si_columns(ms); j += 1) {
+                mstr_v8si_set(ms, i, j, (i + 1) * (j + 1));
+            } // for
+        } // for
 
-        check_equal_poitners(ret, &dst);
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
+
         check_rows_in_chunk(rows_in_chk, 9);
         check_columns_in_chunk(cols_in_chk, 9);
         check_full_flag(full, false);
 
         for (i = 0; i < 9; i += 1) {
-            for (j = 0; j < 9; j += 1) {
-                check_value_at(dst.i32_16x16[i][j], src.i32_16x16[j][i], i, j);
-            } // for
+            check_value_at(dchk.v8si_16x2[i][0][0], mstr_v8si_get(ms, 0, i), i, 0 * 8 + 0);
+            check_value_at(dchk.v8si_16x2[i][0][1], mstr_v8si_get(ms, 1, i), i, 0 * 8 + 1);
+            check_value_at(dchk.v8si_16x2[i][0][2], mstr_v8si_get(ms, 2, i), i, 0 * 8 + 2);
+            check_value_at(dchk.v8si_16x2[i][0][3], mstr_v8si_get(ms, 3, i), i, 0 * 8 + 3);
+            check_value_at(dchk.v8si_16x2[i][0][4], mstr_v8si_get(ms, 4, i), i, 0 * 8 + 4);
+            check_value_at(dchk.v8si_16x2[i][0][5], mstr_v8si_get(ms, 5, i), i, 0 * 8 + 5);
+            check_value_at(dchk.v8si_16x2[i][0][6], mstr_v8si_get(ms, 6, i), i, 0 * 8 + 6);
+            check_value_at(dchk.v8si_16x2[i][0][7], mstr_v8si_get(ms, 7, i), i, 0 * 8 + 7);
+
+            check_value_at(dchk.v8si_16x2[i][1][0], mstr_v8si_get(ms, 8, i), i, 1 * 8 + 0);
         } // for
 
         mstr_v8si_destroy(ms);
@@ -1720,83 +1725,69 @@ Test(Operation, mstr_v8si_transpose_chunk)
         rows_in_chk = 0;
         cols_in_chk = 0;
         full = false;
-        memset(&dst, 0, sizeof(dst));
-        mstr_v8si_fill(ms, 65535);
 
-        mstr_v8si_store_chunk(ms, 0, 0, &src);
-        ret = mstr_v8si_transpose_chunk(ms, 0, 0, &dst, &rows_in_chk, &cols_in_chk, &full);
+        memset(&dchk, 0, sizeof(dchk));
+        for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
+            for (j = 0; j < mstr_v8si_columns(ms); j += 1) {
+                mstr_v8si_set(ms, i, j, (i + 1) * (j + 1));
+            } // for
+        } // for
 
-        check_equal_poitners(ret, &dst);
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
+
         check_rows_in_chunk(rows_in_chk, 16);
         check_columns_in_chunk(cols_in_chk, 16);
         check_full_flag(full, true);
 
         for (i = 0; i < 16; i += 1) {
-            for (j = 0; j < 16; j += 1) {
-                check_value_at(dst.i32_16x16[i][j], src.i32_16x16[j][i], i, j);
-            } // for
+            check_value_at(dchk.v8si_16x2[i][0][0], mstr_v8si_get(ms,  0, i), i, 0 * 8 + 0);
+            check_value_at(dchk.v8si_16x2[i][0][1], mstr_v8si_get(ms,  1, i), i, 0 * 8 + 1);
+            check_value_at(dchk.v8si_16x2[i][0][2], mstr_v8si_get(ms,  2, i), i, 0 * 8 + 2);
+            check_value_at(dchk.v8si_16x2[i][0][3], mstr_v8si_get(ms,  3, i), i, 0 * 8 + 3);
+            check_value_at(dchk.v8si_16x2[i][0][4], mstr_v8si_get(ms,  4, i), i, 0 * 8 + 4);
+            check_value_at(dchk.v8si_16x2[i][0][5], mstr_v8si_get(ms,  5, i), i, 0 * 8 + 5);
+            check_value_at(dchk.v8si_16x2[i][0][6], mstr_v8si_get(ms,  6, i), i, 0 * 8 + 6);
+            check_value_at(dchk.v8si_16x2[i][0][7], mstr_v8si_get(ms,  7, i), i, 0 * 8 + 7);
+
+            check_value_at(dchk.v8si_16x2[i][1][0], mstr_v8si_get(ms,  8, i), i, 1 * 8 + 0);
+            check_value_at(dchk.v8si_16x2[i][1][1], mstr_v8si_get(ms,  9, i), i, 1 * 8 + 1);
+            check_value_at(dchk.v8si_16x2[i][1][2], mstr_v8si_get(ms, 10, i), i, 1 * 8 + 2);
+            check_value_at(dchk.v8si_16x2[i][1][3], mstr_v8si_get(ms, 11, i), i, 1 * 8 + 3);
+            check_value_at(dchk.v8si_16x2[i][1][4], mstr_v8si_get(ms, 12, i), i, 1 * 8 + 4);
+            check_value_at(dchk.v8si_16x2[i][1][5], mstr_v8si_get(ms, 13, i), i, 1 * 8 + 5);
+            check_value_at(dchk.v8si_16x2[i][1][6], mstr_v8si_get(ms, 14, i), i, 1 * 8 + 6);
+            check_value_at(dchk.v8si_16x2[i][1][7], mstr_v8si_get(ms, 15, i), i, 1 * 8 + 7);
         } // for
 
         mstr_v8si_destroy(ms);
     }
 
-    // -- 17x17 matrix -- //
+    // -- 1x5 matrix -- //
     {
-        ms = mstr_v8si_create(17, 17);
+        ms = mstr_v8si_create(1, 5);
 
         rows_in_chk = 0;
         cols_in_chk = 0;
         full = false;
-        memset(&dst, 0, sizeof(dst));
-        mstr_v8si_fill(ms, 4321);
 
-        mstr_v8si_store_chunk(ms, 0, 0, &src);
-        ret = mstr_v8si_transpose_chunk(ms, 0, 0, &dst, &rows_in_chk, &cols_in_chk, &full);
-
-        check_equal_poitners(ret, &dst);
-        check_rows_in_chunk(rows_in_chk, 16);
-        check_columns_in_chunk(cols_in_chk, 16);
-        check_full_flag(full, true);
-
-        for (i = 0; i < 16; i += 1) {
-            for (j = 0; j < 16; j += 1) {
-                check_value_at(dst.i32_16x16[i][j], src.i32_16x16[j][i], i, j);
+        memset(&dchk, 0, sizeof(dchk));
+        for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
+            for (j = 0; j < mstr_v8si_columns(ms); j += 1) {
+                mstr_v8si_set(ms, i, j, (i + 1) * (j + 1));
             } // for
         } // for
 
-        ret = mstr_v8si_transpose_chunk(ms, 0, 1, &dst, &rows_in_chk, &cols_in_chk, &full);
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
 
-        check_equal_poitners(ret, &dst);
-        check_rows_in_chunk(rows_in_chk, 1);
-        check_columns_in_chunk(cols_in_chk, 16);
-        check_full_flag(full, false);
-
-        for (i = 0; i < 1; i += 1) {
-            for (j = 0; j < 16; j += 1) {
-                check_value_at(dst.i32_16x16[i][j], 4321, i, j);
-            } // for
-        } // for
-
-        ret = mstr_v8si_transpose_chunk(ms, 1, 0, &dst, &rows_in_chk, &cols_in_chk, &full);
-
-        check_equal_poitners(ret, &dst);
-        check_rows_in_chunk(rows_in_chk, 16);
+        check_rows_in_chunk(rows_in_chk, 5);
         check_columns_in_chunk(cols_in_chk, 1);
         check_full_flag(full, false);
 
-        for (i = 0; i < 16; i += 1) {
-            for (j = 0; j < 1; j += 1) {
-                check_value_at(dst.i32_16x16[i][j], 4321, i, j);
-            } // for
-        } // for
-
-        ret = mstr_v8si_transpose_chunk(ms, 1, 1, &dst, &rows_in_chk, &cols_in_chk, &full);
-
-        check_equal_poitners(ret, &dst);
-        check_rows_in_chunk(rows_in_chk, 1);
-        check_columns_in_chunk(cols_in_chk, 1);
-        check_full_flag(full, false);
-        check_value_at(dst.i32_16x16[0][0], 4321, 0, 0);
+        check_value_at(dchk.v8si_16x1[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
+        check_value_at(dchk.v8si_16x1[1][0][0], mstr_v8si_get(ms, 0, 1), 1, 0);
+        check_value_at(dchk.v8si_16x1[2][0][0], mstr_v8si_get(ms, 0, 2), 2, 0);
+        check_value_at(dchk.v8si_16x1[3][0][0], mstr_v8si_get(ms, 0, 3), 3, 0);
+        check_value_at(dchk.v8si_16x1[4][0][0], mstr_v8si_get(ms, 0, 4), 4, 0);
 
         mstr_v8si_destroy(ms);
     }
@@ -1808,22 +1799,211 @@ Test(Operation, mstr_v8si_transpose_chunk)
         rows_in_chk = 0;
         cols_in_chk = 0;
         full = false;
-        memset(&dst, 0, sizeof(dst));
-        mstr_v8si_fill(ms, 65535);
 
-        mstr_v8si_store_chunk(ms, 0, 0, &src);
-        ret = mstr_v8si_transpose_chunk(ms, 0, 0, &dst, &rows_in_chk, &cols_in_chk, &full);
+        memset(&dchk, 0, sizeof(dchk));
+        for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
+            for (j = 0; j < mstr_v8si_columns(ms); j += 1) {
+                mstr_v8si_set(ms, i, j, (i + 1) * (j + 1));
+            } // for
+        } // for
 
-        check_equal_poitners(ret, &dst);
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
+
         check_rows_in_chunk(rows_in_chk, 5);
         check_columns_in_chunk(cols_in_chk, 2);
         check_full_flag(full, false);
 
-        for (i = 0; i < 5; i += 1) {
-            for (j = 0; j < 2; j += 1) {
-                check_value_at(dst.i32_16x16[i][j], src.i32_16x16[j][i], i, j);
+        check_value_at(dchk.v8si_16x1[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
+        check_value_at(dchk.v8si_16x1[1][0][0], mstr_v8si_get(ms, 0, 1), 1, 0);
+        check_value_at(dchk.v8si_16x1[2][0][0], mstr_v8si_get(ms, 0, 2), 2, 0);
+        check_value_at(dchk.v8si_16x1[3][0][0], mstr_v8si_get(ms, 0, 3), 3, 0);
+        check_value_at(dchk.v8si_16x1[4][0][0], mstr_v8si_get(ms, 0, 4), 4, 0);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 1x8 matrix -- //
+    {
+        ms = mstr_v8si_create(1, 8);
+
+        rows_in_chk = 0;
+        cols_in_chk = 0;
+        full = false;
+
+        memset(&dchk, 0, sizeof(dchk));
+        for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
+            for (j = 0; j < mstr_v8si_columns(ms); j += 1) {
+                mstr_v8si_set(ms, i, j, (i + 1) * (j + 1));
             } // for
         } // for
+
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
+
+        check_rows_in_chunk(rows_in_chk, 8);
+        check_columns_in_chunk(cols_in_chk, 1);
+        check_full_flag(full, false);
+
+        check_value_at(dchk.v8si_16x1[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
+        check_value_at(dchk.v8si_16x1[1][0][0], mstr_v8si_get(ms, 0, 1), 1, 0);
+        check_value_at(dchk.v8si_16x1[2][0][0], mstr_v8si_get(ms, 0, 2), 2, 0);
+        check_value_at(dchk.v8si_16x1[3][0][0], mstr_v8si_get(ms, 0, 3), 3, 0);
+        check_value_at(dchk.v8si_16x1[4][0][0], mstr_v8si_get(ms, 0, 4), 4, 0);
+        check_value_at(dchk.v8si_16x1[5][0][0], mstr_v8si_get(ms, 0, 5), 5, 0);
+        check_value_at(dchk.v8si_16x1[6][0][0], mstr_v8si_get(ms, 0, 6), 6, 0);
+        check_value_at(dchk.v8si_16x1[7][0][0], mstr_v8si_get(ms, 0, 7), 7, 0);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 2x8 matrix -- //
+    {
+        ms = mstr_v8si_create(2, 8);
+
+        rows_in_chk = 0;
+        cols_in_chk = 0;
+        full = false;
+
+        memset(&dchk, 0, sizeof(dchk));
+        for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
+            for (j = 0; j < mstr_v8si_columns(ms); j += 1) {
+                mstr_v8si_set(ms, i, j, (i + 1) * (j + 1));
+            } // for
+        } // for
+
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
+
+        check_rows_in_chunk(rows_in_chk, 8);
+        check_columns_in_chunk(cols_in_chk, 2);
+        check_full_flag(full, false);
+
+        check_value_at(dchk.v8si_16x1[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
+        check_value_at(dchk.v8si_16x1[1][0][0], mstr_v8si_get(ms, 0, 1), 1, 0);
+        check_value_at(dchk.v8si_16x1[2][0][0], mstr_v8si_get(ms, 0, 2), 2, 0);
+        check_value_at(dchk.v8si_16x1[3][0][0], mstr_v8si_get(ms, 0, 3), 3, 0);
+        check_value_at(dchk.v8si_16x1[4][0][0], mstr_v8si_get(ms, 0, 4), 4, 0);
+        check_value_at(dchk.v8si_16x1[5][0][0], mstr_v8si_get(ms, 0, 5), 5, 0);
+        check_value_at(dchk.v8si_16x1[6][0][0], mstr_v8si_get(ms, 0, 6), 6, 0);
+        check_value_at(dchk.v8si_16x1[7][0][0], mstr_v8si_get(ms, 0, 7), 7, 0);
+
+        check_value_at(dchk.v8si_16x1[0][0][1], mstr_v8si_get(ms, 1, 0), 0, 1);
+        check_value_at(dchk.v8si_16x1[1][0][1], mstr_v8si_get(ms, 1, 1), 1, 1);
+        check_value_at(dchk.v8si_16x1[2][0][1], mstr_v8si_get(ms, 1, 2), 2, 1);
+        check_value_at(dchk.v8si_16x1[3][0][1], mstr_v8si_get(ms, 1, 3), 3, 1);
+        check_value_at(dchk.v8si_16x1[4][0][1], mstr_v8si_get(ms, 1, 4), 4, 1);
+        check_value_at(dchk.v8si_16x1[5][0][1], mstr_v8si_get(ms, 1, 5), 5, 1);
+        check_value_at(dchk.v8si_16x1[6][0][1], mstr_v8si_get(ms, 1, 6), 6, 1);
+        check_value_at(dchk.v8si_16x1[7][0][1], mstr_v8si_get(ms, 1, 7), 7, 1);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 1x9 matrix -- //
+    {
+        ms = mstr_v8si_create(1, 9);
+
+        rows_in_chk = 0;
+        cols_in_chk = 0;
+        full = false;
+
+        memset(&dchk, 0, sizeof(dchk));
+        for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
+            for (j = 0; j < mstr_v8si_columns(ms); j += 1) {
+                mstr_v8si_set(ms, i, j, (i + 1) * (j + 1));
+            } // for
+        } // for
+
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
+
+        check_rows_in_chunk(rows_in_chk, 9);
+        check_columns_in_chunk(cols_in_chk, 1);
+        check_full_flag(full, false);
+
+        check_value_at(dchk.v8si_16x1[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
+        check_value_at(dchk.v8si_16x1[1][0][0], mstr_v8si_get(ms, 0, 1), 1, 0);
+        check_value_at(dchk.v8si_16x1[2][0][0], mstr_v8si_get(ms, 0, 2), 2, 0);
+        check_value_at(dchk.v8si_16x1[3][0][0], mstr_v8si_get(ms, 0, 3), 3, 0);
+        check_value_at(dchk.v8si_16x1[4][0][0], mstr_v8si_get(ms, 0, 4), 4, 0);
+        check_value_at(dchk.v8si_16x1[5][0][0], mstr_v8si_get(ms, 0, 5), 5, 0);
+        check_value_at(dchk.v8si_16x1[6][0][0], mstr_v8si_get(ms, 0, 6), 6, 0);
+        check_value_at(dchk.v8si_16x1[7][0][0], mstr_v8si_get(ms, 0, 7), 7, 0);
+
+        check_value_at(dchk.v8si_16x1[8][0][0], mstr_v8si_get(ms, 0, 8), 8, 0);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 2x9 matrix -- //
+    {
+        ms = mstr_v8si_create(2, 9);
+
+        rows_in_chk = 0;
+        cols_in_chk = 0;
+        full = false;
+
+        memset(&dchk, 0, sizeof(dchk));
+        for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
+            for (j = 0; j < mstr_v8si_columns(ms); j += 1) {
+                mstr_v8si_set(ms, i, j, (i + 1) * (j + 1));
+            } // for
+        } // for
+
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
+
+        check_rows_in_chunk(rows_in_chk, 9);
+        check_columns_in_chunk(cols_in_chk, 2);
+        check_full_flag(full, false);
+
+        check_value_at(dchk.v8si_16x1[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
+        check_value_at(dchk.v8si_16x1[1][0][0], mstr_v8si_get(ms, 0, 1), 1, 0);
+        check_value_at(dchk.v8si_16x1[2][0][0], mstr_v8si_get(ms, 0, 2), 2, 0);
+        check_value_at(dchk.v8si_16x1[3][0][0], mstr_v8si_get(ms, 0, 3), 3, 0);
+        check_value_at(dchk.v8si_16x1[4][0][0], mstr_v8si_get(ms, 0, 4), 4, 0);
+        check_value_at(dchk.v8si_16x1[5][0][0], mstr_v8si_get(ms, 0, 5), 5, 0);
+        check_value_at(dchk.v8si_16x1[6][0][0], mstr_v8si_get(ms, 0, 6), 6, 0);
+        check_value_at(dchk.v8si_16x1[7][0][0], mstr_v8si_get(ms, 0, 7), 7, 0);
+
+        check_value_at(dchk.v8si_16x1[8][0][0], mstr_v8si_get(ms, 0, 8), 8, 0);
+
+        check_value_at(dchk.v8si_16x1[0][0][1], mstr_v8si_get(ms, 1, 0), 0, 1);
+        check_value_at(dchk.v8si_16x1[1][0][1], mstr_v8si_get(ms, 1, 1), 1, 1);
+        check_value_at(dchk.v8si_16x1[2][0][1], mstr_v8si_get(ms, 1, 2), 2, 1);
+        check_value_at(dchk.v8si_16x1[3][0][1], mstr_v8si_get(ms, 1, 3), 3, 1);
+        check_value_at(dchk.v8si_16x1[4][0][1], mstr_v8si_get(ms, 1, 4), 4, 1);
+        check_value_at(dchk.v8si_16x1[5][0][1], mstr_v8si_get(ms, 1, 5), 5, 1);
+        check_value_at(dchk.v8si_16x1[6][0][1], mstr_v8si_get(ms, 1, 6), 6, 1);
+        check_value_at(dchk.v8si_16x1[7][0][1], mstr_v8si_get(ms, 1, 7), 7, 1);
+
+        check_value_at(dchk.v8si_16x1[8][0][1], mstr_v8si_get(ms, 1, 8), 8, 1);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 5x1 matrix -- //
+    {
+        ms = mstr_v8si_create(5, 1);
+
+        rows_in_chk = 0;
+        cols_in_chk = 0;
+        full = false;
+
+        memset(&dchk, 0, sizeof(dchk));
+        for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
+            for (j = 0; j < mstr_v8si_columns(ms); j += 1) {
+                mstr_v8si_set(ms, i, j, (i + 1) * (j + 1));
+            } // for
+        } // for
+
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
+
+        check_rows_in_chunk(rows_in_chk, 1);
+        check_columns_in_chunk(cols_in_chk, 5);
+        check_full_flag(full, false);
+
+        check_value_at(dchk.v8si_16x1[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
+        check_value_at(dchk.v8si_16x1[0][0][1], mstr_v8si_get(ms, 1, 0), 0, 1);
+        check_value_at(dchk.v8si_16x1[0][0][2], mstr_v8si_get(ms, 2, 0), 0, 2);
+        check_value_at(dchk.v8si_16x1[0][0][3], mstr_v8si_get(ms, 3, 0), 0, 3);
+        check_value_at(dchk.v8si_16x1[0][0][4], mstr_v8si_get(ms, 4, 0), 0, 4);
 
         mstr_v8si_destroy(ms);
     }
@@ -1835,22 +2015,187 @@ Test(Operation, mstr_v8si_transpose_chunk)
         rows_in_chk = 0;
         cols_in_chk = 0;
         full = false;
-        memset(&dst, 0, sizeof(dst));
-        mstr_v8si_fill(ms, 65535);
 
-        mstr_v8si_store_chunk(ms, 0, 0, &src);
-        ret = mstr_v8si_transpose_chunk(ms, 0, 0, &dst, &rows_in_chk, &cols_in_chk, &full);
+        memset(&dchk, 0, sizeof(dchk));
+        for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
+            for (j = 0; j < mstr_v8si_columns(ms); j += 1) {
+                mstr_v8si_set(ms, i, j, (i + 1) * (j + 1));
+            } // for
+        } // for
 
-        check_equal_poitners(ret, &dst);
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
+
         check_rows_in_chunk(rows_in_chk, 2);
         check_columns_in_chunk(cols_in_chk, 5);
         check_full_flag(full, false);
 
-        for (i = 0; i < 2; i += 1) {
-            for (j = 0; j < 5; j += 1) {
-                check_value_at(dst.i32_16x16[i][j], src.i32_16x16[j][i], i, j);
+        check_value_at(dchk.v8si_16x1[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
+        check_value_at(dchk.v8si_16x1[0][0][1], mstr_v8si_get(ms, 1, 0), 0, 1);
+        check_value_at(dchk.v8si_16x1[0][0][2], mstr_v8si_get(ms, 2, 0), 0, 2);
+        check_value_at(dchk.v8si_16x1[0][0][3], mstr_v8si_get(ms, 3, 0), 0, 3);
+        check_value_at(dchk.v8si_16x1[0][0][4], mstr_v8si_get(ms, 4, 0), 0, 4);
+
+        check_value_at(dchk.v8si_16x1[1][0][0], mstr_v8si_get(ms, 0, 1), 1, 0);
+        check_value_at(dchk.v8si_16x1[1][0][1], mstr_v8si_get(ms, 1, 1), 1, 1);
+        check_value_at(dchk.v8si_16x1[1][0][2], mstr_v8si_get(ms, 2, 1), 1, 2);
+        check_value_at(dchk.v8si_16x1[1][0][3], mstr_v8si_get(ms, 3, 1), 1, 3);
+        check_value_at(dchk.v8si_16x1[1][0][4], mstr_v8si_get(ms, 4, 1), 1, 4);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 8x1 matrix -- //
+    {
+        ms = mstr_v8si_create(8, 1);
+
+        rows_in_chk = 0;
+        cols_in_chk = 0;
+        full = false;
+
+        memset(&dchk, 0, sizeof(dchk));
+        for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
+            for (j = 0; j < mstr_v8si_columns(ms); j += 1) {
+                mstr_v8si_set(ms, i, j, (i + 1) * (j + 1));
             } // for
         } // for
+
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
+
+        check_rows_in_chunk(rows_in_chk, 1);
+        check_columns_in_chunk(cols_in_chk, 8);
+        check_full_flag(full, false);
+
+        check_value_at(dchk.v8si_16x1[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
+        check_value_at(dchk.v8si_16x1[0][0][1], mstr_v8si_get(ms, 1, 0), 0, 1);
+        check_value_at(dchk.v8si_16x1[0][0][2], mstr_v8si_get(ms, 2, 0), 0, 2);
+        check_value_at(dchk.v8si_16x1[0][0][3], mstr_v8si_get(ms, 3, 0), 0, 3);
+        check_value_at(dchk.v8si_16x1[0][0][4], mstr_v8si_get(ms, 4, 0), 0, 4);
+        check_value_at(dchk.v8si_16x1[0][0][5], mstr_v8si_get(ms, 5, 0), 0, 5);
+        check_value_at(dchk.v8si_16x1[0][0][6], mstr_v8si_get(ms, 6, 0), 0, 6);
+        check_value_at(dchk.v8si_16x1[0][0][7], mstr_v8si_get(ms, 7, 0), 0, 7);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 8x2 matrix -- //
+    {
+        ms = mstr_v8si_create(8, 2);
+
+        rows_in_chk = 0;
+        cols_in_chk = 0;
+        full = false;
+
+        memset(&dchk, 0, sizeof(dchk));
+        for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
+            for (j = 0; j < mstr_v8si_columns(ms); j += 1) {
+                mstr_v8si_set(ms, i, j, (i + 1) * (j + 1));
+            } // for
+        } // for
+
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
+
+        check_rows_in_chunk(rows_in_chk, 2);
+        check_columns_in_chunk(cols_in_chk, 8);
+        check_full_flag(full, false);
+
+        check_value_at(dchk.v8si_16x1[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
+        check_value_at(dchk.v8si_16x1[0][0][1], mstr_v8si_get(ms, 1, 0), 0, 1);
+        check_value_at(dchk.v8si_16x1[0][0][2], mstr_v8si_get(ms, 2, 0), 0, 2);
+        check_value_at(dchk.v8si_16x1[0][0][3], mstr_v8si_get(ms, 3, 0), 0, 3);
+        check_value_at(dchk.v8si_16x1[0][0][4], mstr_v8si_get(ms, 4, 0), 0, 4);
+        check_value_at(dchk.v8si_16x1[0][0][5], mstr_v8si_get(ms, 5, 0), 0, 5);
+        check_value_at(dchk.v8si_16x1[0][0][6], mstr_v8si_get(ms, 6, 0), 0, 6);
+        check_value_at(dchk.v8si_16x1[0][0][7], mstr_v8si_get(ms, 7, 0), 0, 7);
+
+        check_value_at(dchk.v8si_16x1[1][0][0], mstr_v8si_get(ms, 0, 1), 1, 0);
+        check_value_at(dchk.v8si_16x1[1][0][1], mstr_v8si_get(ms, 1, 1), 1, 1);
+        check_value_at(dchk.v8si_16x1[1][0][2], mstr_v8si_get(ms, 2, 1), 1, 2);
+        check_value_at(dchk.v8si_16x1[1][0][3], mstr_v8si_get(ms, 3, 1), 1, 3);
+        check_value_at(dchk.v8si_16x1[1][0][4], mstr_v8si_get(ms, 4, 1), 1, 4);
+        check_value_at(dchk.v8si_16x1[1][0][5], mstr_v8si_get(ms, 5, 1), 1, 5);
+        check_value_at(dchk.v8si_16x1[1][0][6], mstr_v8si_get(ms, 6, 1), 1, 6);
+        check_value_at(dchk.v8si_16x1[1][0][7], mstr_v8si_get(ms, 7, 1), 1, 7);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 9x1 matrix -- //
+    {
+        ms = mstr_v8si_create(9, 1);
+
+        rows_in_chk = 0;
+        cols_in_chk = 0;
+        full = false;
+
+        memset(&dchk, 0, sizeof(dchk));
+        for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
+            for (j = 0; j < mstr_v8si_columns(ms); j += 1) {
+                mstr_v8si_set(ms, i, j, (i + 1) * (j + 1));
+            } // for
+        } // for
+
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
+
+        check_rows_in_chunk(rows_in_chk, 1);
+        check_columns_in_chunk(cols_in_chk, 9);
+        check_full_flag(full, false);
+
+        check_value_at(dchk.v8si_16x2[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
+        check_value_at(dchk.v8si_16x2[0][0][1], mstr_v8si_get(ms, 1, 0), 0, 1);
+        check_value_at(dchk.v8si_16x2[0][0][2], mstr_v8si_get(ms, 2, 0), 0, 2);
+        check_value_at(dchk.v8si_16x2[0][0][3], mstr_v8si_get(ms, 3, 0), 0, 3);
+        check_value_at(dchk.v8si_16x2[0][0][4], mstr_v8si_get(ms, 4, 0), 0, 4);
+        check_value_at(dchk.v8si_16x2[0][0][5], mstr_v8si_get(ms, 5, 0), 0, 5);
+        check_value_at(dchk.v8si_16x2[0][0][6], mstr_v8si_get(ms, 6, 0), 0, 6);
+        check_value_at(dchk.v8si_16x2[0][0][7], mstr_v8si_get(ms, 7, 0), 0, 7);
+
+        check_value_at(dchk.v8si_16x2[0][1][0], mstr_v8si_get(ms, 8, 0), 0, 8);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // -- 9x2 matrix -- //
+    {
+        ms = mstr_v8si_create(9, 2);
+
+        rows_in_chk = 0;
+        cols_in_chk = 0;
+        full = false;
+
+        memset(&dchk, 0, sizeof(dchk));
+        for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
+            for (j = 0; j < mstr_v8si_columns(ms); j += 1) {
+                mstr_v8si_set(ms, i, j, (i + 1) * (j + 1));
+            } // for
+        } // for
+
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
+
+        check_rows_in_chunk(rows_in_chk, 2);
+        check_columns_in_chunk(cols_in_chk, 9);
+        check_full_flag(full, false);
+
+        check_value_at(dchk.v8si_16x2[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
+        check_value_at(dchk.v8si_16x2[0][0][1], mstr_v8si_get(ms, 1, 0), 0, 1);
+        check_value_at(dchk.v8si_16x2[0][0][2], mstr_v8si_get(ms, 2, 0), 0, 2);
+        check_value_at(dchk.v8si_16x2[0][0][3], mstr_v8si_get(ms, 3, 0), 0, 3);
+        check_value_at(dchk.v8si_16x2[0][0][4], mstr_v8si_get(ms, 4, 0), 0, 4);
+        check_value_at(dchk.v8si_16x2[0][0][5], mstr_v8si_get(ms, 5, 0), 0, 5);
+        check_value_at(dchk.v8si_16x2[0][0][6], mstr_v8si_get(ms, 6, 0), 0, 6);
+        check_value_at(dchk.v8si_16x2[0][0][7], mstr_v8si_get(ms, 7, 0), 0, 7);
+
+        check_value_at(dchk.v8si_16x2[0][1][0], mstr_v8si_get(ms, 8, 0), 0, 8);
+
+        check_value_at(dchk.v8si_16x2[1][0][0], mstr_v8si_get(ms, 0, 1), 1, 0);
+        check_value_at(dchk.v8si_16x2[1][0][1], mstr_v8si_get(ms, 1, 1), 1, 1);
+        check_value_at(dchk.v8si_16x2[1][0][2], mstr_v8si_get(ms, 2, 1), 1, 2);
+        check_value_at(dchk.v8si_16x2[1][0][3], mstr_v8si_get(ms, 3, 1), 1, 3);
+        check_value_at(dchk.v8si_16x2[1][0][4], mstr_v8si_get(ms, 4, 1), 1, 4);
+        check_value_at(dchk.v8si_16x2[1][0][5], mstr_v8si_get(ms, 5, 1), 1, 5);
+        check_value_at(dchk.v8si_16x2[1][0][6], mstr_v8si_get(ms, 6, 1), 1, 6);
+        check_value_at(dchk.v8si_16x2[1][0][7], mstr_v8si_get(ms, 7, 1), 1, 7);
+
+        check_value_at(dchk.v8si_16x2[1][1][0], mstr_v8si_get(ms, 8, 1), 1, 8);
 
         mstr_v8si_destroy(ms);
     }

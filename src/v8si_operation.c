@@ -484,37 +484,24 @@ void mops_v8si_multiply_scalar(mx_stor_ptr dst, mx_stor_ptr src, int32_t val)
     } // for
 } // mops_v8si_multiply_scalar
 
-void mops_v8si_transpose(mx_oper_ptr mp, mx_stor_ptr src, mx_stor_ptr dst)
+void mops_v8si_transpose(mx_stor_ptr dst, mx_stor_ptr src)
 {
     uint32_t i = 0;
     uint32_t j = 0;
+    uint32_t schk_rows = 0;
+    uint32_t schk_cols = 0;
+    uint32_t dchk_rows = 0;
+    uint32_t dchk_cols = 0;
+    bool schk_full = false;
+    bool dchk_full = false;
     void * base = NULL;
-    mx_chunk_ptr ret = NULL;
+    mx_chunk_ptr dchk = NULL;
 
-    // Transpose full chunks.
-    for (i = 0; i < mstr_v8si_chunks_in_height(src) - 1; i += 1) {
-        for (j = 0; j < mstr_v8si_chunks_in_width(src) - 1; j += 1) {
-            base = mstr_v8si_locate_chunk(src, i, j, &mp->lchk_rows, &mp->lchk_cols, &mp->lchk_full);
-            ret = mstr_v8si_locate_chunk(dst, j, i, &mp->rchk_rows, &mp->rchk_cols, &mp->rchk_full);
-            mstr_v8si_assemble_chunk(&ret->v8si_16x2[0][0], base, 1, mx_round_to_multiples_of_8(mp->lchk_cols), mp->lchk_cols, mp->lchk_rows);
+    for (i = 0; i < mstr_v8si_chunks_in_height(src); i += 1) {
+        for (j = 0; j < mstr_v8si_chunks_in_width(src); j += 1) {
+            base = mstr_v8si_locate_chunk(src, i, j, &schk_rows, &schk_cols, &schk_full);
+            dchk = mstr_v8si_locate_chunk(dst, j, i, &dchk_rows, &dchk_cols, &dchk_full);
+            mstr_v8si_transpose_chunk(src, i, j, dchk, &dchk_rows, &dchk_cols, &dchk_full);
         } // for
     } // for
-
-    // Transpose edge chunks on the right-most column.
-    j = mstr_v8si_chunks_in_width(src) - 1;
-    for (i = 0; i < mstr_v8si_chunks_in_height(src) - 1; i += 1) {
-        ret = mstr_v8si_transpose_chunk(src, i, j, &mp->lchk, &mp->lchk_rows, &mp->lchk_cols, &mp->lchk_full);
-        mstr_v8si_store_chunk(dst, j, i, ret);
-    } // for
-
-    // Transpose edge chunks on the bottom-most row.
-    i = mstr_v8si_chunks_in_height(src) - 1;
-    for (j = 0; j < mstr_v8si_chunks_in_width(src) - 1; j += 1) {
-        ret = mstr_v8si_transpose_chunk(src, i, j, &mp->lchk, &mp->lchk_rows, &mp->lchk_cols, &mp->lchk_full);
-        mstr_v8si_store_chunk(dst, j, i, ret);
-    } // for
-
-    // Transpose the right-bottom chunk.
-    ret = mstr_v8si_transpose_chunk(src, i, j, &mp->lchk, &mp->lchk_rows, &mp->lchk_cols, &mp->lchk_full);
-    mstr_v8si_store_chunk(dst, j, i, ret);
 } // mops_v8si_transpose

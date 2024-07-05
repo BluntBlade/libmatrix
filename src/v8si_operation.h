@@ -30,7 +30,7 @@ extern void mops_v8si_subtract(mx_stor_ptr dst, mx_stor_ptr lhs, mx_stor_ptr rhs
 extern void mops_v8si_multiply(mx_oper_ptr mp, mx_stor_ptr lhs, mx_stor_ptr rhs, mx_stor_ptr dst);
 extern void mops_v8si_multiply_scalar(mx_stor_ptr dst, mx_stor_ptr src, int32_t val);
 
-extern void mops_v8si_transpose(mx_oper_ptr mp, mx_stor_ptr src, mx_stor_ptr dst);
+extern void mops_v8si_transpose(mx_stor_ptr dst, mx_stor_ptr src);
 
 #endif // MX_OPERATION_H
 

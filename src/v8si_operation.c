@@ -101,24 +101,24 @@ void mops_v8si_add(mx_stor_ptr ms, mx_stor_ptr lhs, mx_stor_ptr rhs)
     uint32_t lchk_cols = 0;
     uint32_t rchk_rows = 0;
     uint32_t rchk_cols = 0;
-    uint32_t mchk_rows = 0;
-    uint32_t mchk_cols = 0;
+    uint32_t dchk_rows = 0;
+    uint32_t dchk_cols = 0;
     bool lchk_full = false;
     bool rchk_full = false;
-    bool mchk_full = false;
+    bool dchk_full = false;
     mx_chunk_ptr lchk = NULL;
     mx_chunk_ptr rchk = NULL;
-    mx_chunk_ptr mchk = NULL;
+    mx_chunk_ptr dchk = NULL;
 
     for (i = 0; i < mstr_v8si_chunks_in_height(lhs); i += 1) {
         for (j = 0; j < mstr_v8si_chunks_in_width(lhs); j += 1) {
             lchk = mstr_v8si_locate_chunk(lhs, i, j, &lchk_rows, &lchk_cols, &lchk_full);
             rchk = mstr_v8si_locate_chunk(rhs, i, j, &rchk_rows, &rchk_cols, &rchk_full);
-            mchk = mstr_v8si_locate_chunk(ms, i, j, &mchk_rows, &mchk_cols, &mchk_full);
+            dchk = mstr_v8si_locate_chunk(ms, i, j, &dchk_rows, &dchk_cols, &dchk_full);
             if (lchk_full && rchk_full) {
-                v8si_add_chunk_fully(mchk, lchk, rchk);
+                v8si_add_chunk_fully(dchk, lchk, rchk);
             } else {
-                v8si_add_chunk_partly(mchk, lchk, rchk, lchk_rows, lchk_cols);
+                v8si_add_chunk_partly(dchk, lchk, rchk, lchk_rows, lchk_cols);
             } // if
         } // for
     } // for
@@ -210,24 +210,24 @@ void mops_v8si_subtract(mx_stor_ptr dst, mx_stor_ptr lhs, mx_stor_ptr rhs)
     uint32_t lchk_cols = 0;
     uint32_t rchk_rows = 0;
     uint32_t rchk_cols = 0;
-    uint32_t mchk_rows = 0;
-    uint32_t mchk_cols = 0;
+    uint32_t dchk_rows = 0;
+    uint32_t dchk_cols = 0;
     bool lchk_full = false;
     bool rchk_full = false;
-    bool mchk_full = false;
+    bool dchk_full = false;
     mx_chunk_ptr lchk = NULL;
     mx_chunk_ptr rchk = NULL;
-    mx_chunk_ptr mchk = NULL;
+    mx_chunk_ptr dchk = NULL;
 
     for (i = 0; i < mstr_v8si_chunks_in_height(lhs); i += 1) {
         for (j = 0; j < mstr_v8si_chunks_in_width(lhs); j += 1) {
             lchk = mstr_v8si_locate_chunk(lhs, i, j, &lchk_rows, &lchk_cols, &lchk_full);
             rchk = mstr_v8si_locate_chunk(rhs, i, j, &rchk_rows, &rchk_cols, &rchk_full);
-            mchk = mstr_v8si_locate_chunk(dst, i, j, &mchk_rows, &mchk_cols, &mchk_full);
+            dchk = mstr_v8si_locate_chunk(dst, i, j, &dchk_rows, &dchk_cols, &dchk_full);
             if (lchk_full && rchk_full) {
-                v8si_subtract_chunk_fully(mchk, lchk, rchk);
+                v8si_subtract_chunk_fully(dchk, lchk, rchk);
             } else {
-                v8si_subtract_chunk_partly(mchk, lchk, rchk, lchk_rows, lchk_cols);
+                v8si_subtract_chunk_partly(dchk, lchk, rchk, lchk_rows, lchk_cols);
             } // if
         } // for
     } // for
@@ -569,21 +569,21 @@ void mops_v8si_multiply_scalar(mx_stor_ptr dst, mx_stor_ptr src, int32_t val)
     uint32_t j = 0;
     uint32_t schk_rows = 0;
     uint32_t schk_cols = 0;
-    uint32_t mchk_rows = 0;
-    uint32_t mchk_cols = 0;
+    uint32_t dchk_rows = 0;
+    uint32_t dchk_cols = 0;
     bool schk_full = false;
-    bool mchk_full = false;
+    bool dchk_full = false;
     mx_chunk_ptr schk = NULL;
-    mx_chunk_ptr mchk = NULL;
+    mx_chunk_ptr dchk = NULL;
 
     for (i = 0; i < mstr_v8si_chunks_in_height(src); i += 1) {
         for (j = 0; j < mstr_v8si_chunks_in_width(src); j += 1) {
             schk = mstr_v8si_locate_chunk(src, i, j, &schk_rows, &schk_cols, &schk_full);
-            mchk = mstr_v8si_locate_chunk(dst, i, j, &mchk_rows, &mchk_cols, &mchk_full);
+            dchk = mstr_v8si_locate_chunk(dst, i, j, &dchk_rows, &dchk_cols, &dchk_full);
             if (schk_full) {
-                v8si_multiply_scalar_chunk_fully(mchk, schk, &vals);
+                v8si_multiply_scalar_chunk_fully(dchk, schk, &vals);
             } else {
-                v8si_multiply_scalar_chunk_partly(mchk, schk, &vals, schk_rows, schk_cols);
+                v8si_multiply_scalar_chunk_partly(dchk, schk, &vals, schk_rows, schk_cols);
             } // if
         } // for
     } // for

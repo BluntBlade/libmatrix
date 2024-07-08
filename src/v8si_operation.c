@@ -290,14 +290,6 @@ static void v8si_multiply_chunk_half_to_half(mx_chunk_ptr dchk, mx_chunk_ptr lhs
     for (i = 0; i < dchk_rows; i += 1, j = 0) {
         switch (dchk_cols) {
             default: assert(1); break;
-            case 16: v8si_multiply_chunk_op(i, j); j += 1;
-            case 15: v8si_multiply_chunk_op(i, j); j += 1;
-            case 14: v8si_multiply_chunk_op(i, j); j += 1;
-            case 13: v8si_multiply_chunk_op(i, j); j += 1;
-            case 12: v8si_multiply_chunk_op(i, j); j += 1;
-            case 11: v8si_multiply_chunk_op(i, j); j += 1;
-            case 10: v8si_multiply_chunk_op(i, j); j += 1;
-            case  9: v8si_multiply_chunk_op(i, j); j += 1;
             case  8: v8si_multiply_chunk_op(i, j); j += 1;
             case  7: v8si_multiply_chunk_op(i, j); j += 1;
             case  6: v8si_multiply_chunk_op(i, j); j += 1;
@@ -376,14 +368,6 @@ static void v8si_multiply_chunk_full_to_half(mx_chunk_ptr dchk, mx_chunk_ptr lhs
     for (i = 0; i < dchk_rows; i += 1, j = 0) {
         switch (dchk_cols) {
             default: assert(1); break;
-            case 16: v8si_multiply_chunk_op(i, j); j += 1;
-            case 15: v8si_multiply_chunk_op(i, j); j += 1;
-            case 14: v8si_multiply_chunk_op(i, j); j += 1;
-            case 13: v8si_multiply_chunk_op(i, j); j += 1;
-            case 12: v8si_multiply_chunk_op(i, j); j += 1;
-            case 11: v8si_multiply_chunk_op(i, j); j += 1;
-            case 10: v8si_multiply_chunk_op(i, j); j += 1;
-            case  9: v8si_multiply_chunk_op(i, j); j += 1;
             case  8: v8si_multiply_chunk_op(i, j); j += 1;
             case  7: v8si_multiply_chunk_op(i, j); j += 1;
             case  6: v8si_multiply_chunk_op(i, j); j += 1;

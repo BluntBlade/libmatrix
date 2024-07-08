@@ -119,7 +119,7 @@ void mops_v8si_add(mx_stor_ptr ms, mx_stor_ptr lhs, mx_stor_ptr rhs)
 
 #define v8si_subtract_chunk_half(row) \
     { \
-        chk->v8si_16x1[row][0] = __builtin_ia32_psubd256(lhs->v8si_8x1[row][0], rhs->v8si_16x1[row][0]); \
+        chk->v8si_16x1[row][0] = __builtin_ia32_psubd256(lhs->v8si_16x1[row][0], rhs->v8si_16x1[row][0]); \
     }
 
 static void v8si_subtract_chunk_fully(mx_chunk_ptr chk, mx_chunk_ptr lhs, mx_chunk_ptr rhs)

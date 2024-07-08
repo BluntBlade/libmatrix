@@ -222,11 +222,11 @@ void mstr_v8si_assemble_chunk(v8si_t * chk_pck, int32_t * src, uint32_t src_span
     } // switch
 } // mstr_v8si_assemble_chunk
 
-mx_chunk_ptr mstr_v8si_copy_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr chk, uint32_t * rows_in_chk, uint32_t * cols_in_chk, bool * full)
+mx_chunk_ptr mstr_v8si_copy_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr chk, uint32_t * rows_in_chk, uint32_t * cols_in_chk)
 {
-    void * base = mstr_v8si_locate_chunk(ms, chk_ridx, chk_cidx, rows_in_chk, cols_in_chk, full);
+    void * base = mstr_v8si_locate_chunk(ms, chk_ridx, chk_cidx, rows_in_chk, cols_in_chk);
 
-    if (*full) {
+    if (*rows_in_chk == I32_VALS_IN_CACHE_LINE && *cols_in_chk == I32_VALS_IN_CACHE_LINE) {
         // If the source chunk is full of 16x16 values, return the pointer to it directly.
         return base;
     } // if
@@ -236,7 +236,7 @@ mx_chunk_ptr mstr_v8si_copy_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t ch
     return chk;
 } // mstr_v8si_copy_chunk
 
-mx_chunk_ptr mstr_v8si_transpose_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr dchk, uint32_t * dchk_rows, uint32_t * dchk_cols, bool * dchk_full)
+mx_chunk_ptr mstr_v8si_transpose_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr dchk, uint32_t * dchk_rows, uint32_t * dchk_cols)
 {
 #define v8si_transpose_chunk_half(row) \
     { \
@@ -255,11 +255,10 @@ mx_chunk_ptr mstr_v8si_transpose_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32
     };
     uint32_t schk_rows = 0; 
     uint32_t schk_cols = 0; 
-    bool schk_full = false; 
     uint32_t i = 0;
     uint32_t sel = 0;
     v8si_t * mask[2];
-    int32_t * base = mstr_v8si_locate_chunk(ms, chk_ridx, chk_cidx, &schk_rows, &schk_cols, &schk_full);
+    int32_t * base = mstr_v8si_locate_chunk(ms, chk_ridx, chk_cidx, &schk_rows, &schk_cols);
 
     sel = mx_round_to_multiples_of_8(schk_cols) / 8 - 1;
     if (schk_rows <= 8) {
@@ -310,7 +309,6 @@ mx_chunk_ptr mstr_v8si_transpose_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32
     // Swap the number of rows and columns of the target chunk since it is transposed.
     *dchk_rows = schk_cols;
     *dchk_cols = schk_rows;
-    *dchk_full = schk_full;
     return dchk;
 
 #undef v8si_transpose_chunk_full
@@ -323,8 +321,7 @@ void mstr_v8si_store_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx,
     uint32_t bytes = 0;
     uint32_t rows_in_chk = 0;
     uint32_t cols_in_chk = 0;
-    bool full = false;
-    void * base = mstr_v8si_locate_chunk(ms, chk_ridx, chk_cidx, &rows_in_chk, &cols_in_chk, &full);
+    void * base = mstr_v8si_locate_chunk(ms, chk_ridx, chk_cidx, &rows_in_chk, &cols_in_chk);
 
     if (base == chk) {
         return;

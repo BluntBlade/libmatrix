@@ -50,9 +50,6 @@
 #define check_columns_in_chunk(cols_in_chk, expect) \
     cr_expect(cols_in_chk == expect, "Wrong number of columns in the chunk - Expect %d, got %d.", expect, cols_in_chk)
 
-#define check_full_flag(full, expect) \
-    cr_expect(full == expect, "Wrong full flag of the chunk - Expect %d, got %d.", expect, full)
-
 #define check_value(val, expect) \
     cr_expect(val == expect, "Wrong value - Expect %d, got %d.", expect, val)
 
@@ -553,18 +550,16 @@ Test(Locate, mstr_v8si_locate_chunk)
     mx_stor_ptr ms = NULL;
     uint32_t rows_in_chk = 0;
     uint32_t cols_in_chk = 0;;
-    bool full = false;
     void * chk = NULL;
 
     // -- 1x1 matrix -- //
     {
         ms = mstr_v8si_create(1, 1);
 
-        chk = mstr_v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk, &full);
+        chk = mstr_v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk);
         check_base(ms, chk, 0);
         check_rows_in_chunk(rows_in_chk, 1);
         check_columns_in_chunk(cols_in_chk, 1);
-        check_full_flag(full, false);
 
         mstr_v8si_destroy(ms);
     }
@@ -573,11 +568,10 @@ Test(Locate, mstr_v8si_locate_chunk)
     {
         ms = mstr_v8si_create(8, 8);
 
-        chk = mstr_v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk, &full);
+        chk = mstr_v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk);
         check_base(ms, chk, 0);
         check_rows_in_chunk(rows_in_chk, 8);
         check_columns_in_chunk(cols_in_chk, 8);
-        check_full_flag(full, false);
 
         mstr_v8si_destroy(ms);
     }
@@ -586,11 +580,10 @@ Test(Locate, mstr_v8si_locate_chunk)
     {
         ms = mstr_v8si_create(15, 15);
 
-        chk = mstr_v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk, &full);
+        chk = mstr_v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk);
         check_base(ms, chk, 0);
         check_rows_in_chunk(rows_in_chk, 15);
         check_columns_in_chunk(cols_in_chk, 15);
-        check_full_flag(full, false);
 
         mstr_v8si_destroy(ms);
     }
@@ -599,11 +592,10 @@ Test(Locate, mstr_v8si_locate_chunk)
     {
         ms = mstr_v8si_create(16, 16);
 
-        chk = mstr_v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk, &full);
+        chk = mstr_v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk);
         check_base(ms, chk, 0);
         check_rows_in_chunk(rows_in_chk, 16);
         check_columns_in_chunk(cols_in_chk, 16);
-        check_full_flag(full, true);
 
         mstr_v8si_destroy(ms);
     }
@@ -612,29 +604,25 @@ Test(Locate, mstr_v8si_locate_chunk)
     {
         ms = mstr_v8si_create(17, 17);
 
-        chk = mstr_v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk, &full);
+        chk = mstr_v8si_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk);
         check_base(ms, chk, 0);
         check_rows_in_chunk(rows_in_chk, 16);
         check_columns_in_chunk(cols_in_chk, 16);
-        check_full_flag(full, true);
 
-        chk = mstr_v8si_locate_chunk(ms, 0, 1, &rows_in_chk, &cols_in_chk, &full);
+        chk = mstr_v8si_locate_chunk(ms, 0, 1, &rows_in_chk, &cols_in_chk);
         check_base(ms, chk, 4 * 16 * 16);
         check_rows_in_chunk(rows_in_chk, 16);
         check_columns_in_chunk(cols_in_chk, 1);
-        check_full_flag(full, false);
 
-        chk = mstr_v8si_locate_chunk(ms, 1, 0, &rows_in_chk, &cols_in_chk, &full);
+        chk = mstr_v8si_locate_chunk(ms, 1, 0, &rows_in_chk, &cols_in_chk);
         check_base(ms, chk, 4 * 16 * 16 + 4 * 16 * 8);
         check_rows_in_chunk(rows_in_chk, 1);
         check_columns_in_chunk(cols_in_chk, 16);
-        check_full_flag(full, false);
 
-        chk = mstr_v8si_locate_chunk(ms, 1, 1, &rows_in_chk, &cols_in_chk, &full);
+        chk = mstr_v8si_locate_chunk(ms, 1, 1, &rows_in_chk, &cols_in_chk);
         check_base(ms, chk, 4 * 16 * 16 + 4 * 16 * 8 + 4 * 1 * 16);
         check_rows_in_chunk(rows_in_chk, 1);
         check_columns_in_chunk(cols_in_chk, 1);
-        check_full_flag(full, false);
 
         mstr_v8si_destroy(ms);
     }
@@ -1318,7 +1306,6 @@ Test(Operation, mstr_v8si_copy_chunk)
     uint32_t j = 0;
     uint32_t rows_in_chk = 0;
     uint32_t cols_in_chk = 0;
-    bool full = false;
     mx_stor_ptr ms = NULL;
     mx_chunk_ptr ret = NULL;
     mx_chunk_t src = {
@@ -1349,17 +1336,15 @@ Test(Operation, mstr_v8si_copy_chunk)
 
         rows_in_chk = 0;
         cols_in_chk = 0;
-        full = false;
         memset(&dst, 0, sizeof(dst));
         mstr_v8si_fill(ms, 65535);
 
         mstr_v8si_store_chunk(ms, 0, 0, &src);
-        ret = mstr_v8si_copy_chunk(ms, 0, 0, &dst, &rows_in_chk, &cols_in_chk, &full);
+        ret = mstr_v8si_copy_chunk(ms, 0, 0, &dst, &rows_in_chk, &cols_in_chk);
 
         check_equal_poitners(ret, &dst);
         check_rows_in_chunk(rows_in_chk, 1);
         check_columns_in_chunk(cols_in_chk, 1);
-        check_full_flag(full, false);
         check_value_at(dst.i32_16x16[0][0], 0, 0, 0);
 
         mstr_v8si_destroy(ms);
@@ -1371,17 +1356,15 @@ Test(Operation, mstr_v8si_copy_chunk)
 
         rows_in_chk = 0;
         cols_in_chk = 0;
-        full = false;
         memset(&dst, 0, sizeof(dst));
         mstr_v8si_fill(ms, 65535);
 
         mstr_v8si_store_chunk(ms, 0, 0, &src);
-        ret = mstr_v8si_copy_chunk(ms, 0, 0, &dst, &rows_in_chk, &cols_in_chk, &full);
+        ret = mstr_v8si_copy_chunk(ms, 0, 0, &dst, &rows_in_chk, &cols_in_chk);
 
         check_equal_poitners(ret, &dst);
         check_rows_in_chunk(rows_in_chk, 5);
         check_columns_in_chunk(cols_in_chk, 5);
-        check_full_flag(full, false);
 
         for (i = 0; i < 5; i += 1) {
             for (j = 0; j < 5; j += 1) {
@@ -1398,17 +1381,15 @@ Test(Operation, mstr_v8si_copy_chunk)
 
         rows_in_chk = 0;
         cols_in_chk = 0;
-        full = false;
         memset(&dst, 0, sizeof(dst));
         mstr_v8si_fill(ms, 65535);
 
         mstr_v8si_store_chunk(ms, 0, 0, &src);
-        ret = mstr_v8si_copy_chunk(ms, 0, 0, &dst, &rows_in_chk, &cols_in_chk, &full);
+        ret = mstr_v8si_copy_chunk(ms, 0, 0, &dst, &rows_in_chk, &cols_in_chk);
 
         check_equal_poitners(ret, &dst);
         check_rows_in_chunk(rows_in_chk, 8);
         check_columns_in_chunk(cols_in_chk, 8);
-        check_full_flag(full, false);
 
         for (i = 0; i < 8; i += 1) {
             for (j = 0; j < 8; j += 1) {
@@ -1425,17 +1406,15 @@ Test(Operation, mstr_v8si_copy_chunk)
 
         rows_in_chk = 0;
         cols_in_chk = 0;
-        full = false;
         memset(&dst, 0, sizeof(dst));
         mstr_v8si_fill(ms, 65535);
 
         mstr_v8si_store_chunk(ms, 0, 0, &src);
-        ret = mstr_v8si_copy_chunk(ms, 0, 0, &dst, &rows_in_chk, &cols_in_chk, &full);
+        ret = mstr_v8si_copy_chunk(ms, 0, 0, &dst, &rows_in_chk, &cols_in_chk);
 
         check_equal_poitners(ret, &dst);
         check_rows_in_chunk(rows_in_chk, 9);
         check_columns_in_chunk(cols_in_chk, 9);
-        check_full_flag(full, false);
 
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 9; j += 1) {
@@ -1452,18 +1431,16 @@ Test(Operation, mstr_v8si_copy_chunk)
 
         rows_in_chk = 0;
         cols_in_chk = 0;
-        full = false;
         memset(&dst, 0, sizeof(dst));
         mstr_v8si_fill(ms, 65535);
 
         mstr_v8si_store_chunk(ms, 0, 0, &src);
-        ret = mstr_v8si_copy_chunk(ms, 0, 0, &dst, &rows_in_chk, &cols_in_chk, &full);
+        ret = mstr_v8si_copy_chunk(ms, 0, 0, &dst, &rows_in_chk, &cols_in_chk);
 
         check_equal_poitners(ret, mstr_v8si_calc_base(ms, 0, 0, 16));
         check_not_equal_poitners(ret, &dst);
         check_rows_in_chunk(rows_in_chk, 16);
         check_columns_in_chunk(cols_in_chk, 16);
-        check_full_flag(full, true);
 
         mstr_v8si_destroy(ms);
     }
@@ -1474,25 +1451,22 @@ Test(Operation, mstr_v8si_copy_chunk)
 
         rows_in_chk = 0;
         cols_in_chk = 0;
-        full = false;
         memset(&dst, 0, sizeof(dst));
         mstr_v8si_fill(ms, 4321);
 
         mstr_v8si_store_chunk(ms, 0, 0, &src);
-        ret = mstr_v8si_copy_chunk(ms, 0, 0, &dst, &rows_in_chk, &cols_in_chk, &full);
+        ret = mstr_v8si_copy_chunk(ms, 0, 0, &dst, &rows_in_chk, &cols_in_chk);
 
         check_equal_poitners(ret, mstr_v8si_calc_base(ms, 0, 0, 16));
         check_not_equal_poitners(ret, &dst);
         check_rows_in_chunk(rows_in_chk, 16);
         check_columns_in_chunk(cols_in_chk, 16);
-        check_full_flag(full, true);
 
-        ret = mstr_v8si_copy_chunk(ms, 0, 1, &dst, &rows_in_chk, &cols_in_chk, &full);
+        ret = mstr_v8si_copy_chunk(ms, 0, 1, &dst, &rows_in_chk, &cols_in_chk);
 
         check_equal_poitners(ret, &dst);
         check_rows_in_chunk(rows_in_chk, 16);
         check_columns_in_chunk(cols_in_chk, 1);
-        check_full_flag(full, false);
 
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 1; j += 1) {
@@ -1500,12 +1474,11 @@ Test(Operation, mstr_v8si_copy_chunk)
             } // for
         } // for
 
-        ret = mstr_v8si_copy_chunk(ms, 1, 0, &dst, &rows_in_chk, &cols_in_chk, &full);
+        ret = mstr_v8si_copy_chunk(ms, 1, 0, &dst, &rows_in_chk, &cols_in_chk);
 
         check_equal_poitners(ret, &dst);
         check_rows_in_chunk(rows_in_chk, 1);
         check_columns_in_chunk(cols_in_chk, 16);
-        check_full_flag(full, false);
 
         for (i = 0; i < 1; i += 1) {
             for (j = 0; j < 16; j += 1) {
@@ -1513,12 +1486,11 @@ Test(Operation, mstr_v8si_copy_chunk)
             } // for
         } // for
 
-        ret = mstr_v8si_copy_chunk(ms, 1, 1, &dst, &rows_in_chk, &cols_in_chk, &full);
+        ret = mstr_v8si_copy_chunk(ms, 1, 1, &dst, &rows_in_chk, &cols_in_chk);
 
         check_equal_poitners(ret, &dst);
         check_rows_in_chunk(rows_in_chk, 1);
         check_columns_in_chunk(cols_in_chk, 1);
-        check_full_flag(full, false);
         check_value_at(dst.i32_16x16[0][0], 4321, 0, 0);
 
         mstr_v8si_destroy(ms);
@@ -1530,17 +1502,15 @@ Test(Operation, mstr_v8si_copy_chunk)
 
         rows_in_chk = 0;
         cols_in_chk = 0;
-        full = false;
         memset(&dst, 0, sizeof(dst));
         mstr_v8si_fill(ms, 65535);
 
         mstr_v8si_store_chunk(ms, 0, 0, &src);
-        ret = mstr_v8si_copy_chunk(ms, 0, 0, &dst, &rows_in_chk, &cols_in_chk, &full);
+        ret = mstr_v8si_copy_chunk(ms, 0, 0, &dst, &rows_in_chk, &cols_in_chk);
 
         check_equal_poitners(ret, &dst);
         check_rows_in_chunk(rows_in_chk, 2);
         check_columns_in_chunk(cols_in_chk, 5);
-        check_full_flag(full, false);
 
         for (i = 0; i < 2; i += 1) {
             for (j = 0; j < 5; j += 1) {
@@ -1557,17 +1527,15 @@ Test(Operation, mstr_v8si_copy_chunk)
 
         rows_in_chk = 0;
         cols_in_chk = 0;
-        full = false;
         memset(&dst, 0, sizeof(dst));
         mstr_v8si_fill(ms, 65535);
 
         mstr_v8si_store_chunk(ms, 0, 0, &src);
-        ret = mstr_v8si_copy_chunk(ms, 0, 0, &dst, &rows_in_chk, &cols_in_chk, &full);
+        ret = mstr_v8si_copy_chunk(ms, 0, 0, &dst, &rows_in_chk, &cols_in_chk);
 
         check_equal_poitners(ret, &dst);
         check_rows_in_chunk(rows_in_chk, 5);
         check_columns_in_chunk(cols_in_chk, 2);
-        check_full_flag(full, false);
 
         for (i = 0; i < 5; i += 1) {
             for (j = 0; j < 2; j += 1) {
@@ -1585,7 +1553,6 @@ Test(Operation, mstr_v8si_transpose_chunk)
     uint32_t j = 0;
     uint32_t rows_in_chk = 0;
     uint32_t cols_in_chk = 0;
-    bool full = false;
     mx_stor_ptr ms = NULL;
     mx_chunk_t dchk;
 
@@ -1595,7 +1562,6 @@ Test(Operation, mstr_v8si_transpose_chunk)
 
         rows_in_chk = 0;
         cols_in_chk = 0;
-        full = false;
 
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
@@ -1604,11 +1570,10 @@ Test(Operation, mstr_v8si_transpose_chunk)
             } // for
         } // for
 
-        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk);
 
         check_rows_in_chunk(rows_in_chk, 1);
         check_columns_in_chunk(cols_in_chk, 1);
-        check_full_flag(full, false);
         check_value_at(dchk.v8si_16x1[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
 
         mstr_v8si_destroy(ms);
@@ -1620,7 +1585,6 @@ Test(Operation, mstr_v8si_transpose_chunk)
 
         rows_in_chk = 0;
         cols_in_chk = 0;
-        full = false;
 
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
@@ -1629,11 +1593,10 @@ Test(Operation, mstr_v8si_transpose_chunk)
             } // for
         } // for
 
-        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk);
 
         check_rows_in_chunk(rows_in_chk, 5);
         check_columns_in_chunk(cols_in_chk, 5);
-        check_full_flag(full, false);
 
         for (i = 0; i < 5; i += 1) {
             check_value_at(dchk.v8si_16x1[i][0][0], mstr_v8si_get(ms, 0, i), i, 0 * 8 + 0);
@@ -1652,7 +1615,6 @@ Test(Operation, mstr_v8si_transpose_chunk)
 
         rows_in_chk = 0;
         cols_in_chk = 0;
-        full = false;
 
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
@@ -1661,11 +1623,10 @@ Test(Operation, mstr_v8si_transpose_chunk)
             } // for
         } // for
 
-        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk);
 
         check_rows_in_chunk(rows_in_chk, 8);
         check_columns_in_chunk(cols_in_chk, 8);
-        check_full_flag(full, false);
 
         for (i = 0; i < 8; i += 1) {
             check_value_at(dchk.v8si_16x1[i][0][0], mstr_v8si_get(ms, 0, i), i, 0 * 8 + 0);
@@ -1687,7 +1648,6 @@ Test(Operation, mstr_v8si_transpose_chunk)
 
         rows_in_chk = 0;
         cols_in_chk = 0;
-        full = false;
 
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
@@ -1696,11 +1656,10 @@ Test(Operation, mstr_v8si_transpose_chunk)
             } // for
         } // for
 
-        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk);
 
         check_rows_in_chunk(rows_in_chk, 9);
         check_columns_in_chunk(cols_in_chk, 9);
-        check_full_flag(full, false);
 
         for (i = 0; i < 9; i += 1) {
             check_value_at(dchk.v8si_16x2[i][0][0], mstr_v8si_get(ms, 0, i), i, 0 * 8 + 0);
@@ -1724,7 +1683,6 @@ Test(Operation, mstr_v8si_transpose_chunk)
 
         rows_in_chk = 0;
         cols_in_chk = 0;
-        full = false;
 
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
@@ -1733,11 +1691,10 @@ Test(Operation, mstr_v8si_transpose_chunk)
             } // for
         } // for
 
-        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk);
 
         check_rows_in_chunk(rows_in_chk, 16);
         check_columns_in_chunk(cols_in_chk, 16);
-        check_full_flag(full, true);
 
         for (i = 0; i < 16; i += 1) {
             check_value_at(dchk.v8si_16x2[i][0][0], mstr_v8si_get(ms,  0, i), i, 0 * 8 + 0);
@@ -1768,7 +1725,6 @@ Test(Operation, mstr_v8si_transpose_chunk)
 
         rows_in_chk = 0;
         cols_in_chk = 0;
-        full = false;
 
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
@@ -1777,11 +1733,10 @@ Test(Operation, mstr_v8si_transpose_chunk)
             } // for
         } // for
 
-        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk);
 
         check_rows_in_chunk(rows_in_chk, 5);
         check_columns_in_chunk(cols_in_chk, 1);
-        check_full_flag(full, false);
 
         check_value_at(dchk.v8si_16x1[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
         check_value_at(dchk.v8si_16x1[1][0][0], mstr_v8si_get(ms, 0, 1), 1, 0);
@@ -1798,7 +1753,6 @@ Test(Operation, mstr_v8si_transpose_chunk)
 
         rows_in_chk = 0;
         cols_in_chk = 0;
-        full = false;
 
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
@@ -1807,11 +1761,10 @@ Test(Operation, mstr_v8si_transpose_chunk)
             } // for
         } // for
 
-        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk);
 
         check_rows_in_chunk(rows_in_chk, 5);
         check_columns_in_chunk(cols_in_chk, 2);
-        check_full_flag(full, false);
 
         check_value_at(dchk.v8si_16x1[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
         check_value_at(dchk.v8si_16x1[1][0][0], mstr_v8si_get(ms, 0, 1), 1, 0);
@@ -1828,7 +1781,6 @@ Test(Operation, mstr_v8si_transpose_chunk)
 
         rows_in_chk = 0;
         cols_in_chk = 0;
-        full = false;
 
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
@@ -1837,11 +1789,10 @@ Test(Operation, mstr_v8si_transpose_chunk)
             } // for
         } // for
 
-        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk);
 
         check_rows_in_chunk(rows_in_chk, 8);
         check_columns_in_chunk(cols_in_chk, 1);
-        check_full_flag(full, false);
 
         check_value_at(dchk.v8si_16x1[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
         check_value_at(dchk.v8si_16x1[1][0][0], mstr_v8si_get(ms, 0, 1), 1, 0);
@@ -1861,7 +1812,6 @@ Test(Operation, mstr_v8si_transpose_chunk)
 
         rows_in_chk = 0;
         cols_in_chk = 0;
-        full = false;
 
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
@@ -1870,11 +1820,10 @@ Test(Operation, mstr_v8si_transpose_chunk)
             } // for
         } // for
 
-        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk);
 
         check_rows_in_chunk(rows_in_chk, 8);
         check_columns_in_chunk(cols_in_chk, 2);
-        check_full_flag(full, false);
 
         check_value_at(dchk.v8si_16x1[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
         check_value_at(dchk.v8si_16x1[1][0][0], mstr_v8si_get(ms, 0, 1), 1, 0);
@@ -1903,7 +1852,6 @@ Test(Operation, mstr_v8si_transpose_chunk)
 
         rows_in_chk = 0;
         cols_in_chk = 0;
-        full = false;
 
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
@@ -1912,11 +1860,10 @@ Test(Operation, mstr_v8si_transpose_chunk)
             } // for
         } // for
 
-        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk);
 
         check_rows_in_chunk(rows_in_chk, 9);
         check_columns_in_chunk(cols_in_chk, 1);
-        check_full_flag(full, false);
 
         check_value_at(dchk.v8si_16x1[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
         check_value_at(dchk.v8si_16x1[1][0][0], mstr_v8si_get(ms, 0, 1), 1, 0);
@@ -1938,7 +1885,6 @@ Test(Operation, mstr_v8si_transpose_chunk)
 
         rows_in_chk = 0;
         cols_in_chk = 0;
-        full = false;
 
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
@@ -1947,11 +1893,10 @@ Test(Operation, mstr_v8si_transpose_chunk)
             } // for
         } // for
 
-        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk);
 
         check_rows_in_chunk(rows_in_chk, 9);
         check_columns_in_chunk(cols_in_chk, 2);
-        check_full_flag(full, false);
 
         check_value_at(dchk.v8si_16x1[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
         check_value_at(dchk.v8si_16x1[1][0][0], mstr_v8si_get(ms, 0, 1), 1, 0);
@@ -1984,7 +1929,6 @@ Test(Operation, mstr_v8si_transpose_chunk)
 
         rows_in_chk = 0;
         cols_in_chk = 0;
-        full = false;
 
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
@@ -1993,11 +1937,10 @@ Test(Operation, mstr_v8si_transpose_chunk)
             } // for
         } // for
 
-        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk);
 
         check_rows_in_chunk(rows_in_chk, 1);
         check_columns_in_chunk(cols_in_chk, 5);
-        check_full_flag(full, false);
 
         check_value_at(dchk.v8si_16x1[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
         check_value_at(dchk.v8si_16x1[0][0][1], mstr_v8si_get(ms, 1, 0), 0, 1);
@@ -2014,7 +1957,6 @@ Test(Operation, mstr_v8si_transpose_chunk)
 
         rows_in_chk = 0;
         cols_in_chk = 0;
-        full = false;
 
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
@@ -2023,11 +1965,10 @@ Test(Operation, mstr_v8si_transpose_chunk)
             } // for
         } // for
 
-        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk);
 
         check_rows_in_chunk(rows_in_chk, 2);
         check_columns_in_chunk(cols_in_chk, 5);
-        check_full_flag(full, false);
 
         check_value_at(dchk.v8si_16x1[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
         check_value_at(dchk.v8si_16x1[0][0][1], mstr_v8si_get(ms, 1, 0), 0, 1);
@@ -2050,7 +1991,6 @@ Test(Operation, mstr_v8si_transpose_chunk)
 
         rows_in_chk = 0;
         cols_in_chk = 0;
-        full = false;
 
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
@@ -2059,11 +1999,10 @@ Test(Operation, mstr_v8si_transpose_chunk)
             } // for
         } // for
 
-        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk);
 
         check_rows_in_chunk(rows_in_chk, 1);
         check_columns_in_chunk(cols_in_chk, 8);
-        check_full_flag(full, false);
 
         check_value_at(dchk.v8si_16x1[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
         check_value_at(dchk.v8si_16x1[0][0][1], mstr_v8si_get(ms, 1, 0), 0, 1);
@@ -2083,7 +2022,6 @@ Test(Operation, mstr_v8si_transpose_chunk)
 
         rows_in_chk = 0;
         cols_in_chk = 0;
-        full = false;
 
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
@@ -2092,11 +2030,10 @@ Test(Operation, mstr_v8si_transpose_chunk)
             } // for
         } // for
 
-        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk);
 
         check_rows_in_chunk(rows_in_chk, 2);
         check_columns_in_chunk(cols_in_chk, 8);
-        check_full_flag(full, false);
 
         check_value_at(dchk.v8si_16x1[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
         check_value_at(dchk.v8si_16x1[0][0][1], mstr_v8si_get(ms, 1, 0), 0, 1);
@@ -2125,7 +2062,6 @@ Test(Operation, mstr_v8si_transpose_chunk)
 
         rows_in_chk = 0;
         cols_in_chk = 0;
-        full = false;
 
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
@@ -2134,11 +2070,10 @@ Test(Operation, mstr_v8si_transpose_chunk)
             } // for
         } // for
 
-        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk);
 
         check_rows_in_chunk(rows_in_chk, 1);
         check_columns_in_chunk(cols_in_chk, 9);
-        check_full_flag(full, false);
 
         check_value_at(dchk.v8si_16x2[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
         check_value_at(dchk.v8si_16x2[0][0][1], mstr_v8si_get(ms, 1, 0), 0, 1);
@@ -2160,7 +2095,6 @@ Test(Operation, mstr_v8si_transpose_chunk)
 
         rows_in_chk = 0;
         cols_in_chk = 0;
-        full = false;
 
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
@@ -2169,11 +2103,10 @@ Test(Operation, mstr_v8si_transpose_chunk)
             } // for
         } // for
 
-        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk, &full);
+        mstr_v8si_transpose_chunk(ms, 0, 0, &dchk, &rows_in_chk, &cols_in_chk);
 
         check_rows_in_chunk(rows_in_chk, 2);
         check_columns_in_chunk(cols_in_chk, 9);
-        check_full_flag(full, false);
 
         check_value_at(dchk.v8si_16x2[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
         check_value_at(dchk.v8si_16x2[0][0][1], mstr_v8si_get(ms, 1, 0), 0, 1);

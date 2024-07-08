@@ -25,8 +25,8 @@ extern void mstr_v8si_fill(mx_stor_ptr ms, int32_t src);
 
 extern void mstr_v8si_assemble_chunk(v8si_t * chk_pck, int32_t * src, uint32_t src_span, uint32_t idx_span, uint32_t itrs, uint32_t msks);
 
-extern mx_chunk_ptr mstr_v8si_copy_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr chk, uint32_t * rows_in_chk, uint32_t * cols_in_chk, bool * full);
-extern mx_chunk_ptr mstr_v8si_transpose_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr dchk, uint32_t * dchk_rows, uint32_t * dchk_cols, bool * dchk_full);
+extern mx_chunk_ptr mstr_v8si_copy_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr chk, uint32_t * rows_in_chk, uint32_t * cols_in_chk);
+extern mx_chunk_ptr mstr_v8si_transpose_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr dchk, uint32_t * dchk_rows, uint32_t * dchk_cols);
 
 extern void mstr_v8si_store_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr chk);
 
@@ -90,15 +90,12 @@ inline static void * mstr_v8si_calc_base(mx_stor_ptr ms, uint32_t base_ridx, uin
     return ms->data + (base_ridx * ms->cols_padded + rows_in_chk * base_cidx) * sizeof(int32_t);
 } // mstr_v8si_calc_base
 
-inline static void * mstr_v8si_locate_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, uint32_t * rows_in_chk, uint32_t * cols_in_chk, bool * full)
+inline static void * mstr_v8si_locate_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, uint32_t * rows_in_chk, uint32_t * cols_in_chk)
 {
     uint32_t base_ridx = chk_ridx * I32_VALS_IN_CACHE_LINE; // Refer to values.
     uint32_t base_cidx = chk_cidx * I32_VALS_IN_CACHE_LINE; // Refer to values.
-
     *rows_in_chk = mx_ceil_to_or_less_than_16(ms->rows - base_ridx);
     *cols_in_chk = mx_ceil_to_or_less_than_16(ms->cols - base_cidx);
-
-    *full = (*rows_in_chk == I32_VALS_IN_CACHE_LINE) && (*cols_in_chk == I32_VALS_IN_CACHE_LINE);
     return mstr_v8si_calc_base(ms, base_ridx, base_cidx, *rows_in_chk);
 } // mstr_v8si_locate_chunk
 

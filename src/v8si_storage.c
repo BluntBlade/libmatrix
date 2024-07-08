@@ -97,7 +97,7 @@ void mstr_v8si_fill(mx_stor_ptr ms, int32_t src)
     // NOTE: No need to zero out any padded int32_t values.
 } // mstr_v8si_fill
 
-mx_chunk_ptr mstr_v8si_transpose_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr dchk, uint32_t * dchk_rows, uint32_t * dchk_cols)
+void mstr_v8si_transpose_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr dchk, uint32_t * dchk_rows, uint32_t * dchk_cols)
 {
 #define v8si_transpose_chunk_half(row) \
     { \
@@ -170,7 +170,6 @@ mx_chunk_ptr mstr_v8si_transpose_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32
     // Swap the number of rows and columns of the target chunk since it is transposed.
     *dchk_rows = schk_cols;
     *dchk_cols = schk_rows;
-    return dchk;
 
 #undef v8si_transpose_chunk_full
 #undef v8si_transpose_chunk_half

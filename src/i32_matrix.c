@@ -10,7 +10,6 @@
 typedef struct I32_MATRIX
 {
     mx_stor_t stor;
-    mx_oper_t oper;
 } i32_matrix_t;
 
 i32_matrix_ptr i32m_allocate(uint32_t rows, uint32_t cols)

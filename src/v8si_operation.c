@@ -5,16 +5,6 @@
 #include "src/v8si_storage.h"
 #include "src/v8si_operation.h"
 
-mx_oper_ptr mops_v8si_create(void)
-{
-    return calloc(sizeof(mx_oper_t), 1);
-} // mops_v8si_create 
-
-void mops_v8si_destroy(mx_oper_ptr mp)
-{
-    free(mp);
-} // mops_v8si_destroy
-
 #define v8si_add_chunk_full(row) \
     { \
         chk->v8si_16x2[row][0] = __builtin_ia32_paddd256(lhs->v8si_16x2[row][0], rhs->v8si_16x2[row][0]); \

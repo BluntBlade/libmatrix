@@ -15,6 +15,87 @@ void mstr_v8si_init_zeros(mx_stor_ptr ms)
     memset(ms->data, 0, ms->bytes);
 } // mstr_v8si_init_zeros
 
+void mstr_v8si_load_row_vector(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, int32_t col_off, int32_t def_val, v8si_t * dst)
+{
+    uint32_t row = 0;
+    uint32_t col = 0;
+    uint32_t off = 0;
+    uint32_t cnt = 0;
+    uint32_t base_ridx = 0;
+    uint32_t base_cidx = 0;
+    uint32_t rows_in_chk = 0;
+    uint32_t cols_in_chk = 0;
+    uint32_t rmd = 0;
+    int32_t * base = NULL;
+
+    (*dst)[0] = def_val;
+    (*dst)[1] = def_val;
+    (*dst)[2] = def_val;
+    (*dst)[3] = def_val;
+    (*dst)[4] = def_val;
+    (*dst)[5] = def_val;
+    (*dst)[6] = def_val;
+    (*dst)[7] = def_val;
+    if (val_ridx >= ms->rows || ms->rows == 0) {
+        return;
+    } // if
+
+    row = val_ridx;
+    col = val_cidx;
+    off = abs(col_off);
+
+    // Calibrate the column index.
+    if (col_off < 0) {
+        if (col < off) {
+            // The actual column index is beyond the LEFT boundary.
+            off -= col;
+            col = 0;
+            if (off >= I32_VALS_IN_V8SI) {
+                // There is not enough values to load.
+                return;
+            } // if
+        } else {
+            col -= off;
+            off = 0;
+        } // if
+    } else if (col_off > 0) {
+        col += col_off;
+        off = 0;
+    } // if
+
+    if (col >= ms->cols) {
+        // The actual column index is beyond the RIGHT boundary.
+        return;
+    } // if
+
+    cnt = I32_VALS_IN_V8SI - off;
+
+    base_ridx = row & (~(I32_VALS_IN_CACHE_LINE - 1)); // Refer to values.
+    base_cidx = col & (~(I32_VALS_IN_CACHE_LINE - 1)); // Refer to values.
+    rows_in_chk = mx_ceil_to_or_less_than_16(ms->rows - base_ridx);
+    cols_in_chk = mx_ceil_to_or_less_than_16(ms->cols - base_cidx);
+
+    base = mstr_v8si_calc_base(ms, base_ridx, base_cidx, rows_in_chk);
+    rmd = cols_in_chk - (col - base_cidx);
+
+    if (rmd >= cnt) {
+        memcpy((int32_t *)dst + off, base + (row - base_ridx) * mx_round_to_multiples_of_8(cols_in_chk) + (col - base_cidx), sizeof(int32_t) * cnt);
+        return;
+    } // if
+    
+    memcpy((int32_t *)dst + off, base + (row - base_ridx) * mx_round_to_multiples_of_8(cols_in_chk) + (col - base_cidx), sizeof(int32_t) * rmd);
+    if ((col += rmd) >= ms->cols) {
+        return;
+    } // if
+
+    cnt -= rmd;
+    off += rmd;
+
+    base += rows_in_chk * cols_in_chk;
+    cols_in_chk = mx_ceil_to_or_less_than_16(ms->cols - col); // col must be equal to the base_cidx of the right adjacent chunk.
+    memcpy((int32_t *)dst + off, base + (row - base_ridx) * mx_round_to_multiples_of_8(cols_in_chk), sizeof(int32_t) * cnt);
+} // mstr_v8si_load_row_vector
+
 void mstr_v8si_init_identity(mx_stor_ptr ms)
 {
     uint32_t i = ms->chks_in_width;

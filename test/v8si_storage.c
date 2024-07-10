@@ -1743,3 +1743,225 @@ Test(Operation, mstr_v8si_transpose_chunk)
         mstr_v8si_destroy(ms);
     }
 }
+
+Test(Operation, mstr_v8si_load_row_vector)
+{
+    v8si_t dst = {0};
+    mx_stor_ptr ms = NULL;
+    uint32_t i = 0;
+    uint32_t j = 0;
+
+    // Corner case: Beyond the bottom boundary of the matrix.
+    {
+        ms = mstr_v8si_create(8, 8);
+        for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
+            for (j = 0; j < mstr_v8si_columns(ms); j += 1) {
+                mstr_v8si_set(ms, i, j, i * 100 + j);
+            } // for
+        } // for
+
+        mstr_v8si_load_row_vector(ms, 0, 9, 0, 1, &dst);
+        check_value(dst[0], 1);
+        check_value(dst[1], 1);
+        check_value(dst[2], 1);
+        check_value(dst[3], 1);
+        check_value(dst[4], 1);
+        check_value(dst[5], 1);
+        check_value(dst[6], 1);
+        check_value(dst[7], 1);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // Corner case: Beyond the left boundary of the matrix and no enough values to load.
+    {
+        ms = mstr_v8si_create(8, 8);
+        for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
+            for (j = 0; j < mstr_v8si_columns(ms); j += 1) {
+                mstr_v8si_set(ms, i, j, i * 100 + j);
+            } // for
+        } // for
+
+        mstr_v8si_load_row_vector(ms, 0, 0, -8, 2, &dst);
+        check_value(dst[0], 2);
+        check_value(dst[1], 2);
+        check_value(dst[2], 2);
+        check_value(dst[3], 2);
+        check_value(dst[4], 2);
+        check_value(dst[5], 2);
+        check_value(dst[6], 2);
+        check_value(dst[7], 2);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // Corner case: Beyond the right boundary of the matrix and no enough values to load.
+    {
+        ms = mstr_v8si_create(8, 8);
+        for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
+            for (j = 0; j < mstr_v8si_columns(ms); j += 1) {
+                mstr_v8si_set(ms, i, j, i * 100 + j);
+            } // for
+        } // for
+
+        mstr_v8si_load_row_vector(ms, 0, 10, 0, 3, &dst);
+        check_value(dst[0], 3);
+        check_value(dst[1], 3);
+        check_value(dst[2], 3);
+        check_value(dst[3], 3);
+        check_value(dst[4], 3);
+        check_value(dst[5], 3);
+        check_value(dst[6], 3);
+        check_value(dst[7], 3);
+
+        mstr_v8si_load_row_vector(ms, 0, 0, 8, 4, &dst);
+        check_value(dst[0], 4);
+        check_value(dst[1], 4);
+        check_value(dst[2], 4);
+        check_value(dst[3], 4);
+        check_value(dst[4], 4);
+        check_value(dst[5], 4);
+        check_value(dst[6], 4);
+        check_value(dst[7], 4);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // Normal case: Copy some values.
+    {
+        ms = mstr_v8si_create(8, 8);
+        for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
+            for (j = 0; j < mstr_v8si_columns(ms); j += 1) {
+                mstr_v8si_set(ms, i, j, i * 100 + j);
+            } // for
+        } // for
+
+        mstr_v8si_load_row_vector(ms, 0, 0, -1, 5, &dst);
+        check_value(dst[0], 5);
+        check_value(dst[1], 0);
+        check_value(dst[2], 1);
+        check_value(dst[3], 2);
+        check_value(dst[4], 3);
+        check_value(dst[5], 4);
+        check_value(dst[6], 5);
+        check_value(dst[7], 6);
+
+        mstr_v8si_load_row_vector(ms, 7, 0, -7, 6, &dst);
+        check_value(dst[0], 6);
+        check_value(dst[1], 6);
+        check_value(dst[2], 6);
+        check_value(dst[3], 6);
+        check_value(dst[4], 6);
+        check_value(dst[5], 6);
+        check_value(dst[6], 6);
+        check_value(dst[7], 700);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // Normal case: Copy some values but no enough values to copy.
+    {
+        ms = mstr_v8si_create(4, 4);
+        for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
+            for (j = 0; j < mstr_v8si_columns(ms); j += 1) {
+                mstr_v8si_set(ms, i, j, i * 100 + j);
+            } // for
+        } // for
+
+        mstr_v8si_load_row_vector(ms, 0, 0, -1, 7, &dst);
+        check_value(dst[0], 7);
+        check_value(dst[1], 0);
+        check_value(dst[2], 1);
+        check_value(dst[3], 2);
+        check_value(dst[4], 3);
+        check_value(dst[5], 7);
+        check_value(dst[6], 7);
+        check_value(dst[7], 7);
+
+        mstr_v8si_load_row_vector(ms, 1, 0, 0, 8, &dst);
+        check_value(dst[0], 100);
+        check_value(dst[1], 101);
+        check_value(dst[2], 102);
+        check_value(dst[3], 103);
+        check_value(dst[4], 8);
+        check_value(dst[5], 8);
+        check_value(dst[6], 8);
+        check_value(dst[7], 8);
+
+        mstr_v8si_load_row_vector(ms, 2, 0, 2, 9, &dst);
+        check_value(dst[0], 202);
+        check_value(dst[1], 203);
+        check_value(dst[2], 9);
+        check_value(dst[3], 9);
+        check_value(dst[4], 9);
+        check_value(dst[5], 9);
+        check_value(dst[6], 9);
+        check_value(dst[7], 9);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // Normal case: Copy enough values.
+    {
+        ms = mstr_v8si_create(16, 16);
+        for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
+            for (j = 0; j < mstr_v8si_columns(ms); j += 1) {
+                mstr_v8si_set(ms, i, j, i * 100 + j);
+            } // for
+        } // for
+
+        mstr_v8si_load_row_vector(ms, 15, 0, 0, 10, &dst);
+        check_value(dst[0], 1500);
+        check_value(dst[1], 1501);
+        check_value(dst[2], 1502);
+        check_value(dst[3], 1503);
+        check_value(dst[4], 1504);
+        check_value(dst[5], 1505);
+        check_value(dst[6], 1506);
+        check_value(dst[7], 1507);
+
+        mstr_v8si_load_row_vector(ms, 1, 0, 10, 11, &dst);
+        check_value(dst[0], 110);
+        check_value(dst[1], 111);
+        check_value(dst[2], 112);
+        check_value(dst[3], 113);
+        check_value(dst[4], 114);
+        check_value(dst[5], 115);
+        check_value(dst[6], 11);
+        check_value(dst[7], 11);
+
+        mstr_v8si_load_row_vector(ms, 2, 0, 14, 12, &dst);
+        check_value(dst[0], 214);
+        check_value(dst[1], 215);
+        check_value(dst[2], 12);
+        check_value(dst[3], 12);
+        check_value(dst[4], 12);
+        check_value(dst[5], 12);
+        check_value(dst[6], 12);
+        check_value(dst[7], 12);
+
+        mstr_v8si_destroy(ms);
+    }
+
+    // Normal case: Copy enough values crossing the boundary.
+    {
+        ms = mstr_v8si_create(16, 32);
+        for (i = 0; i < mstr_v8si_rows(ms); i += 1) {
+            for (j = 0; j < mstr_v8si_columns(ms); j += 1) {
+                mstr_v8si_set(ms, i, j, i * 100 + j);
+            } // for
+        } // for
+
+        mstr_v8si_load_row_vector(ms, 13, 0, 12, 13, &dst);
+        check_value(dst[0], 1312);
+        check_value(dst[1], 1313);
+        check_value(dst[2], 1314);
+        check_value(dst[3], 1315);
+        check_value(dst[4], 1316);
+        check_value(dst[5], 1317);
+        check_value(dst[6], 1318);
+        check_value(dst[7], 1319);
+
+        mstr_v8si_destroy(ms);
+    }
+}

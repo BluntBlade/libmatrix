@@ -15,6 +15,9 @@
 
 // ==== Storage Module ==== //
 
+extern v8si_t v8si_zero;
+extern v8si_t v8si_mask[9];
+
 extern void mstr_v8si_init_zeros(mx_stor_ptr ms);
 extern void mstr_v8si_init_identity(mx_stor_ptr ms);
 

@@ -28,7 +28,6 @@ void mstr_v8sf_init_zeros(mx_stor_ptr ms)
 
 void mstr_v8sf_load_row_vector(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, int32_t col_off, float def_val, v8sf_t * dst)
 {
-    v4sf_t tmp = { .val = {def_val} };
     uint32_t row = 0;
     uint32_t col = 0;
     uint32_t off = 0;
@@ -40,7 +39,7 @@ void mstr_v8sf_load_row_vector(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_c
     uint32_t rmd = 0;
     float * base = NULL;
 
-    mx_type_reg(*dst) = _mm256_broadcast_ps(&mx_type_reg(tmp));
+    mx_type_reg(*dst) = _mm256_broadcast_ss(&def_val);
 
     if (val_ridx >= ms->rows || ms->rows == 0) {
         return;
@@ -85,11 +84,11 @@ void mstr_v8sf_load_row_vector(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_c
     rmd = cols_in_chk - (col - base_cidx);
 
     if (rmd >= cnt) {
-        memcpy((float *)dst + off, base + (row - base_ridx) * mx_round_to_multiples_of_8(cols_in_chk) + (col - base_cidx), sizeof(float) * cnt);
+        memcpy(mx_type_val(*dst) + off, base + (row - base_ridx) * mx_round_to_multiples_of_8(cols_in_chk) + (col - base_cidx), sizeof(float) * cnt);
         return;
     } // if
     
-    memcpy((float *)dst + off, base + (row - base_ridx) * mx_round_to_multiples_of_8(cols_in_chk) + (col - base_cidx), sizeof(float) * rmd);
+    memcpy(mx_type_val(*dst) + off, base + (row - base_ridx) * mx_round_to_multiples_of_8(cols_in_chk) + (col - base_cidx), sizeof(float) * rmd);
     if ((col += rmd) >= ms->cols) {
         return;
     } // if
@@ -99,7 +98,7 @@ void mstr_v8sf_load_row_vector(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_c
 
     base += rows_in_chk * cols_in_chk;
     cols_in_chk = mx_ceil_to_or_less_than_16(ms->cols - col); // col must be equal to the base_cidx of the right adjacent chunk.
-    memcpy((float *)dst + off, base + (row - base_ridx) * mx_round_to_multiples_of_8(cols_in_chk), sizeof(float) * cnt);
+    memcpy(mx_type_val(*dst) + off, base + (row - base_ridx) * mx_round_to_multiples_of_8(cols_in_chk), sizeof(float) * cnt);
 } // mstr_v8sf_load_row_vector
 
 void mstr_v8sf_init_identity(mx_stor_ptr ms)
@@ -119,22 +118,22 @@ void mstr_v8sf_init_identity(mx_stor_ptr ms)
     switch (last_rows) {
         default: assert(1); break;
         case 16:
-            do { *base = 1; base += cols_padded + 1;   // 0
-        case 15: *base = 1; base += cols_padded + 1;   // 1
-        case 14: *base = 1; base += cols_padded + 1;   // 2
-        case 13: *base = 1; base += cols_padded + 1;   // 3
-        case 12: *base = 1; base += cols_padded + 1;   // 4
-        case 11: *base = 1; base += cols_padded + 1;   // 5
-        case 10: *base = 1; base += cols_padded + 1;   // 6
-        case  9: *base = 1; base += cols_padded + 1;   // 7
-        case  8: *base = 1; base += cols_padded + 1;   // 8
-        case  7: *base = 1; base += cols_padded + 1;   // 9
-        case  6: *base = 1; base += cols_padded + 1;   // 10
-        case  5: *base = 1; base += cols_padded + 1;   // 11
-        case  4: *base = 1; base += cols_padded + 1;   // 12
-        case  3: *base = 1; base += cols_padded + 1;   // 13
-        case  2: *base = 1; base += cols_padded + 1;   // 14
-        case  1: *base = 1;                            // 15
+            do { *base = 1.0; base += cols_padded + 1;   // 0
+        case 15: *base = 1.0; base += cols_padded + 1;   // 1
+        case 14: *base = 1.0; base += cols_padded + 1;   // 2
+        case 13: *base = 1.0; base += cols_padded + 1;   // 3
+        case 12: *base = 1.0; base += cols_padded + 1;   // 4
+        case 11: *base = 1.0; base += cols_padded + 1;   // 5
+        case 10: *base = 1.0; base += cols_padded + 1;   // 6
+        case  9: *base = 1.0; base += cols_padded + 1;   // 7
+        case  8: *base = 1.0; base += cols_padded + 1;   // 8
+        case  7: *base = 1.0; base += cols_padded + 1;   // 9
+        case  6: *base = 1.0; base += cols_padded + 1;   // 10
+        case  5: *base = 1.0; base += cols_padded + 1;   // 11
+        case  4: *base = 1.0; base += cols_padded + 1;   // 12
+        case  3: *base = 1.0; base += cols_padded + 1;   // 13
+        case  2: *base = 1.0; base += cols_padded + 1;   // 14
+        case  1: *base = 1.0;                            // 15
                 if (--i == 0) {
                     break;
                 } // if
@@ -197,7 +196,7 @@ void mstr_v8sf_transpose_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_c
         mx_type_reg(dchk->v8sf_16x2[row][1]) = _mm256_mask_i32gather_ps(mx_type_reg(v8sf_zero), base, mx_type_reg(idx[sel][1]), mx_type_reg(*mask[1]), sizeof(float)); \
     }
 
-    static v8sf_t idx[2][2] = {
+    static v8si_t idx[2][2] = {
         {
             { .val = {  0,   8,  16,  24,  32,  40,  48,  56 } },
             { .val = { 64,  72,  80,  88,  96, 104, 112, 120 } },

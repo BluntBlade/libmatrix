@@ -23,7 +23,9 @@ TEST_LDFLAGS = -g
 SRC = src/mx_storage.c \
       src/v8si_storage.c \
       src/v8si_operation.c \
-      src/i32_matrix.c
+      src/i32_matrix.c \
+      src/v8sf_storage.c \
+      src/v8sf_operation.c
 OBJ = $(SRC:.c=.o)
 TARGET = bin/libmatrix.dylib
 

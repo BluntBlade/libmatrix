@@ -545,7 +545,8 @@ static void v8si_multiply_scalar_chunk_partly(mx_chunk_ptr dchk, mx_chunk_ptr sc
 
 void mops_v8si_multiply_scalar(mx_stor_ptr dst, mx_stor_ptr src, int32_t val)
 {
-    v8si_t vals = { .val = {val, val, val, val, val, val, val, val} };
+    v4si_t tmp = { .val = {val} };
+    v8si_t vals;
     uint32_t i = 0;
     uint32_t j = 0;
     uint32_t schk_rows = 0;
@@ -554,6 +555,8 @@ void mops_v8si_multiply_scalar(mx_stor_ptr dst, mx_stor_ptr src, int32_t val)
     uint32_t dchk_cols = 0;
     mx_chunk_ptr schk = NULL;
     mx_chunk_ptr dchk = NULL;
+
+    mx_type_reg(vals) = _mm256_broadcastd_epi32(mx_type_reg(tmp));
 
     for (i = 0; i < mstr_v8si_chunks_in_height(src); i += 1) {
         for (j = 0; j < mstr_v8si_chunks_in_width(src); j += 1) {

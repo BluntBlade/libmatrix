@@ -15,6 +15,7 @@ void mstr_v8si_init_zeros(mx_stor_ptr ms)
 
 void mstr_v8si_load_row_vector(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, int32_t col_off, int32_t def_val, v8si_t * dst)
 {
+    v4si_t tmp = { .val = {def_val} };
     uint32_t row = 0;
     uint32_t col = 0;
     uint32_t off = 0;
@@ -26,14 +27,8 @@ void mstr_v8si_load_row_vector(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_c
     uint32_t rmd = 0;
     int32_t * base = NULL;
 
-    mx_type_val(*dst)[0] = def_val;
-    mx_type_val(*dst)[1] = def_val;
-    mx_type_val(*dst)[2] = def_val;
-    mx_type_val(*dst)[3] = def_val;
-    mx_type_val(*dst)[4] = def_val;
-    mx_type_val(*dst)[5] = def_val;
-    mx_type_val(*dst)[6] = def_val;
-    mx_type_val(*dst)[7] = def_val;
+    mx_type_reg(*dst) = _mm256_broadcastd_epi32(mx_type_reg(tmp));
+
     if (val_ridx >= ms->rows || ms->rows == 0) {
         return;
     } // if

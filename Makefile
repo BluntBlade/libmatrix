@@ -34,10 +34,12 @@ TARGET = bin/libmatrix.dylib
 #TEST_TARGET = test/matrix
 
 TEST_STOR_SRC = test/v8si_storage.c \
+                test/v8sf_storage.c \
                 src/mx_storage.c \
-                src/v8si_storage.c
+                src/v8si_storage.c \
+                src/v8sf_storage.c
 TEST_STOR_OBJ = $(TEST_STOR_SRC:.c=.o)
-TEST_STOR_TARGET = test/storage
+TEST_STOR_TARGET = test/storage.out
 
 TEST_OPER_SRC = test/v8si_operation.c \
                 src/mx_storage.c \

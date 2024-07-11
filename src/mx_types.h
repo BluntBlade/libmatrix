@@ -3,20 +3,62 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <immintrin.h>
 
 #include "config.h"
 
 // ==== Vector Types ====
 
-typedef int32_t v4si_t __attribute__ ((vector_size (16)));
-typedef int64_t v2di_t __attribute__ ((vector_size (16)));
-typedef float v4sf_t __attribute__ ((vector_size (16)));
-typedef double v2df_t __attribute__ ((vector_size (16)));
+typedef union
+{
+    __m128i reg;
+    int32_t val[4];
+} v4si_t __attribute__ ((aligned (16)));
 
-typedef int32_t v8si_t __attribute__ ((vector_size (32)));
-typedef int64_t v4di_t __attribute__ ((vector_size (32)));
-typedef float v8sf_t __attribute__ ((vector_size (32)));
-typedef double v4df_t __attribute__ ((vector_size (32)));
+typedef union
+{
+    __m128i reg;
+    int64_t val[2];
+} v2di_t __attribute__ ((aligned (16)));
+
+typedef union
+{
+    __m128 reg;
+    float  val[4];
+} v4sf_t __attribute__ ((aligned (16)));
+
+typedef union
+{
+    __m128d reg;
+    double  val[2];
+} v2df_t __attribute__ ((aligned (16)));
+
+typedef union
+{
+    __m256i reg;
+    int32_t val[8];
+} v8si_t __attribute__ ((aligned (32)));
+
+typedef union
+{
+    __m256i reg;
+    int64_t val[4];
+} v4di_t __attribute__ ((aligned (32)));
+
+typedef union
+{
+    __m256 reg;
+    float  val[8];
+} v8sf_t __attribute__ ((aligned (32)));
+
+typedef union
+{
+    __m256d reg;
+    double  val[4];
+} v4df_t __attribute__ ((aligned (32)));
+
+#define mx_type_reg(u) ((u).reg)
+#define mx_type_val(u) ((u).val)
 
 enum {
     I32_VALS_IN_V4SI = sizeof(v4si_t) / sizeof(int32_t),               // 4 values in pack.

@@ -7,16 +7,16 @@
 
 #define v8si_add_chunk_full(row) \
     { \
-        chk->v8si_16x2[row][0] = __builtin_ia32_paddd256(lhs->v8si_16x2[row][0], rhs->v8si_16x2[row][0]); \
-        chk->v8si_16x2[row][1] = __builtin_ia32_paddd256(lhs->v8si_16x2[row][1], rhs->v8si_16x2[row][1]); \
+        mx_type_reg(dchk->v8si_16x2[row][0]) = _mm256_add_epi32(mx_type_reg(lchk->v8si_16x2[row][0]), mx_type_reg(rchk->v8si_16x2[row][0])); \
+        mx_type_reg(dchk->v8si_16x2[row][1]) = _mm256_add_epi32(mx_type_reg(lchk->v8si_16x2[row][1]), mx_type_reg(rchk->v8si_16x2[row][1])); \
     }
 
 #define v8si_add_chunk_half(row) \
     { \
-        chk->v8si_16x1[row][0] = __builtin_ia32_paddd256(lhs->v8si_16x1[row][0], rhs->v8si_16x1[row][0]); \
+        mx_type_reg(dchk->v8si_16x1[row][0]) = _mm256_add_epi32(mx_type_reg(lchk->v8si_16x1[row][0]), mx_type_reg(rchk->v8si_16x1[row][0])); \
     }
 
-static void v8si_add_chunk_fully(mx_chunk_ptr chk, mx_chunk_ptr lhs, mx_chunk_ptr rhs)
+static void v8si_add_chunk_fully(mx_chunk_ptr dchk, mx_chunk_ptr lchk, mx_chunk_ptr rchk)
 {
     v8si_add_chunk_full( 0);
     v8si_add_chunk_full( 1);
@@ -36,7 +36,7 @@ static void v8si_add_chunk_fully(mx_chunk_ptr chk, mx_chunk_ptr lhs, mx_chunk_pt
     v8si_add_chunk_full(15);
 } // v8si_add_chunk_full
 
-static void v8si_add_chunk_partly(mx_chunk_ptr chk, mx_chunk_ptr lhs, mx_chunk_ptr rhs, uint32_t lchk_rows, uint32_t lchk_cols)
+static void v8si_add_chunk_partly(mx_chunk_ptr dchk, mx_chunk_ptr lchk, mx_chunk_ptr rchk, uint32_t lchk_rows, uint32_t lchk_cols)
 {
     uint32_t i = 0;
 
@@ -113,16 +113,16 @@ void mops_v8si_add(mx_stor_ptr ms, mx_stor_ptr lhs, mx_stor_ptr rhs)
 
 #define v8si_subtract_chunk_full(row) \
     { \
-        chk->v8si_16x2[row][0] = __builtin_ia32_psubd256(lhs->v8si_16x2[row][0], rhs->v8si_16x2[row][0]); \
-        chk->v8si_16x2[row][1] = __builtin_ia32_psubd256(lhs->v8si_16x2[row][1], rhs->v8si_16x2[row][1]); \
+        mx_type_reg(dchk->v8si_16x2[row][0]) = _mm256_sub_epi32(mx_type_reg(lchk->v8si_16x2[row][0]), mx_type_reg(rchk->v8si_16x2[row][0])); \
+        mx_type_reg(dchk->v8si_16x2[row][1]) = _mm256_sub_epi32(mx_type_reg(lchk->v8si_16x2[row][1]), mx_type_reg(rchk->v8si_16x2[row][1])); \
     }
 
 #define v8si_subtract_chunk_half(row) \
     { \
-        chk->v8si_16x1[row][0] = __builtin_ia32_psubd256(lhs->v8si_16x1[row][0], rhs->v8si_16x1[row][0]); \
+        mx_type_reg(dchk->v8si_16x1[row][0]) = _mm256_sub_epi32(mx_type_reg(lchk->v8si_16x1[row][0]), mx_type_reg(rchk->v8si_16x1[row][0])); \
     }
 
-static void v8si_subtract_chunk_fully(mx_chunk_ptr chk, mx_chunk_ptr lhs, mx_chunk_ptr rhs)
+static void v8si_subtract_chunk_fully(mx_chunk_ptr dchk, mx_chunk_ptr lchk, mx_chunk_ptr rchk)
 {
     v8si_subtract_chunk_full( 0);
     v8si_subtract_chunk_full( 1);
@@ -142,7 +142,7 @@ static void v8si_subtract_chunk_fully(mx_chunk_ptr chk, mx_chunk_ptr lhs, mx_chu
     v8si_subtract_chunk_full(15);
 } // v8si_subtract_chunk_fully
 
-static void v8si_subtract_chunk_partly(mx_chunk_ptr chk, mx_chunk_ptr lhs, mx_chunk_ptr rhs, uint32_t lchk_rows, uint32_t lchk_cols)
+static void v8si_subtract_chunk_partly(mx_chunk_ptr dchk, mx_chunk_ptr lchk, mx_chunk_ptr rchk, uint32_t lchk_rows, uint32_t lchk_cols)
 {
     uint32_t i = 0;
 
@@ -217,16 +217,16 @@ void mops_v8si_subtract(mx_stor_ptr dst, mx_stor_ptr lhs, mx_stor_ptr rhs)
     } // for
 } // mops_v8si_subtract
 
-static void v8si_multiply_chunk_fully(mx_chunk_ptr dchk, mx_chunk_ptr lhs, mx_chunk_ptr rhs, uint32_t dchk_rows, uint32_t dchk_cols, uint32_t msks)
+static void v8si_multiply_chunk_fully(mx_chunk_ptr dchk, mx_chunk_ptr lchk, mx_chunk_ptr rchk, uint32_t dchk_rows, uint32_t dchk_cols, uint32_t msks)
 {
 #define v8si_multiply_chunk_full(row, col) \
     { \
-        ltmp = __builtin_ia32_pmulld256(lhs->v8si_16x2[row][0], rhs->v8si_16x2[col][0]); \
-        rtmp = __builtin_ia32_pmulld256(lhs->v8si_16x2[row][1], rhs->v8si_16x2[col][1]); \
-        ltmp = __builtin_ia32_phaddd256(ltmp, rtmp); \
-        ltmp = __builtin_ia32_phaddd256(ltmp, v8si_zero); \
-        ltmp = __builtin_ia32_phaddd256(ltmp, v8si_zero); \
-        dchk->i32_16x16[row][col] += ltmp[0] + ltmp[4]; \
+        mx_type_reg(ltmp) = _mm256_mullo_epi32(mx_type_reg(lchk->v8si_16x2[row][0]), mx_type_reg(rchk->v8si_16x2[col][0])); \
+        mx_type_reg(rtmp) = _mm256_mullo_epi32(mx_type_reg(lchk->v8si_16x2[row][1]), mx_type_reg(rchk->v8si_16x2[col][1])); \
+        mx_type_reg(ltmp) = _mm256_hadd_epi32(mx_type_reg(ltmp), mx_type_reg(rtmp)); \
+        mx_type_reg(ltmp) = _mm256_hadd_epi32(mx_type_reg(ltmp), mx_type_reg(v8si_zero)); \
+        mx_type_reg(ltmp) = _mm256_hadd_epi32(mx_type_reg(ltmp), mx_type_reg(v8si_zero)); \
+        dchk->i32_16x16[row][col] += mx_type_val(ltmp)[0] + mx_type_val(ltmp)[4]; \
     }
 
     v8si_t ltmp;
@@ -255,15 +255,15 @@ static void v8si_multiply_chunk_fully(mx_chunk_ptr dchk, mx_chunk_ptr lhs, mx_ch
 #undef v8si_multiply_chunk_full
 } // v8si_multiply_chunk_fully
 
-static void v8si_multiply_chunk_half_to_half(mx_chunk_ptr dchk, mx_chunk_ptr lhs, mx_chunk_ptr rhs, uint32_t dchk_rows, uint32_t dchk_cols, uint32_t msks)
+static void v8si_multiply_chunk_half_to_half(mx_chunk_ptr dchk, mx_chunk_ptr lchk, mx_chunk_ptr rchk, uint32_t dchk_rows, uint32_t dchk_cols, uint32_t msks)
 {
 #define v8si_multiply_chunk_op(row, col) \
     { \
-        tmp = __builtin_ia32_pmulld256(lhs->v8si_16x1[row][0], rhs->v8si_16x1[col][0]); \
-        tmp &= *mask; \
-        tmp = __builtin_ia32_phaddd256(tmp, v8si_zero); \
-        tmp = __builtin_ia32_phaddd256(tmp, v8si_zero); \
-        dchk->i32_16x8[row][col] += tmp[0] + tmp[4]; \
+        mx_type_reg(tmp) = _mm256_mullo_epi32(mx_type_reg(lchk->v8si_16x1[row][0]), mx_type_reg(rchk->v8si_16x1[col][0])); \
+        mx_type_reg(tmp) &= mx_type_reg(*mask); \
+        mx_type_reg(tmp) = _mm256_hadd_epi32(mx_type_reg(tmp), mx_type_reg(v8si_zero)); \
+        mx_type_reg(tmp) = _mm256_hadd_epi32(mx_type_reg(tmp), mx_type_reg(v8si_zero)); \
+        dchk->i32_16x8[row][col] += mx_type_val(tmp)[0] + mx_type_val(tmp)[4]; \
     }
 
     v8si_t tmp;
@@ -288,15 +288,15 @@ static void v8si_multiply_chunk_half_to_half(mx_chunk_ptr dchk, mx_chunk_ptr lhs
 #undef v8si_multiply_chunk_op
 } // v8si_multiply_chunk_half_to_half
 
-static void v8si_multiply_chunk_half_to_full(mx_chunk_ptr dchk, mx_chunk_ptr lhs, mx_chunk_ptr rhs, uint32_t dchk_rows, uint32_t dchk_cols, uint32_t msks)
+static void v8si_multiply_chunk_half_to_full(mx_chunk_ptr dchk, mx_chunk_ptr lchk, mx_chunk_ptr rchk, uint32_t dchk_rows, uint32_t dchk_cols, uint32_t msks)
 {
 #define v8si_multiply_chunk_op(row, col) \
     { \
-        tmp = __builtin_ia32_pmulld256(lhs->v8si_16x1[row][0], rhs->v8si_16x1[col][0]); \
-        tmp &= *mask; \
-        tmp = __builtin_ia32_phaddd256(tmp, v8si_zero); \
-        tmp = __builtin_ia32_phaddd256(tmp, v8si_zero); \
-        dchk->i32_16x16[row][col] += tmp[0] + tmp[4]; \
+        mx_type_reg(tmp) = _mm256_mullo_epi32(mx_type_reg(lchk->v8si_16x1[row][0]), mx_type_reg(rchk->v8si_16x1[col][0])); \
+        mx_type_reg(tmp) &= mx_type_reg(*mask); \
+        mx_type_reg(tmp) = _mm256_hadd_epi32(mx_type_reg(tmp), mx_type_reg(v8si_zero)); \
+        mx_type_reg(tmp) = _mm256_hadd_epi32(mx_type_reg(tmp), mx_type_reg(v8si_zero)); \
+        dchk->i32_16x16[row][col] += mx_type_val(tmp)[0] + mx_type_val(tmp)[4]; \
     }
 
     v8si_t tmp;
@@ -329,18 +329,18 @@ static void v8si_multiply_chunk_half_to_full(mx_chunk_ptr dchk, mx_chunk_ptr lhs
 #undef v8si_multiply_chunk_op
 } // v8si_multiply_chunk_half_to_full
 
-static void v8si_multiply_chunk_full_to_half(mx_chunk_ptr dchk, mx_chunk_ptr lhs, mx_chunk_ptr rhs, uint32_t dchk_rows, uint32_t dchk_cols, uint32_t msks)
+static void v8si_multiply_chunk_full_to_half(mx_chunk_ptr dchk, mx_chunk_ptr lchk, mx_chunk_ptr rchk, uint32_t dchk_rows, uint32_t dchk_cols, uint32_t msks)
 {
 #define v8si_multiply_chunk_op(row, col) \
     { \
-        ltmp = __builtin_ia32_pmulld256(lhs->v8si_16x2[row][0], rhs->v8si_16x2[col][0]); \
-        rtmp = __builtin_ia32_pmulld256(lhs->v8si_16x2[row][1], rhs->v8si_16x2[col][1]); \
-        ltmp &= *mask[0]; \
-        rtmp &= *mask[1]; \
-        ltmp = __builtin_ia32_phaddd256(ltmp, rtmp); \
-        ltmp = __builtin_ia32_phaddd256(ltmp, v8si_zero); \
-        ltmp = __builtin_ia32_phaddd256(ltmp, v8si_zero); \
-        dchk->i32_16x8[row][col] += ltmp[0] + ltmp[4]; \
+        mx_type_reg(ltmp) = _mm256_mullo_epi32(mx_type_reg(lchk->v8si_16x2[row][0]), mx_type_reg(rchk->v8si_16x2[col][0])); \
+        mx_type_reg(rtmp) = _mm256_mullo_epi32(mx_type_reg(lchk->v8si_16x2[row][1]), mx_type_reg(rchk->v8si_16x2[col][1])); \
+        mx_type_reg(ltmp) &= mx_type_reg(*mask[0]); \
+        mx_type_reg(rtmp) &= mx_type_reg(*mask[1]); \
+        mx_type_reg(ltmp) = _mm256_hadd_epi32(mx_type_reg(ltmp), mx_type_reg(rtmp)); \
+        mx_type_reg(ltmp) = _mm256_hadd_epi32(mx_type_reg(ltmp), mx_type_reg(v8si_zero)); \
+        mx_type_reg(ltmp) = _mm256_hadd_epi32(mx_type_reg(ltmp), mx_type_reg(v8si_zero)); \
+        dchk->i32_16x8[row][col] += mx_type_val(ltmp)[0] + mx_type_val(ltmp)[4]; \
     }
 
     v8si_t ltmp;
@@ -366,18 +366,18 @@ static void v8si_multiply_chunk_full_to_half(mx_chunk_ptr dchk, mx_chunk_ptr lhs
 #undef v8si_multiply_chunk_op
 } // v8si_multiply_chunk_full_to_half
 
-static void v8si_multiply_chunk_full_to_full(mx_chunk_ptr dchk, mx_chunk_ptr lhs, mx_chunk_ptr rhs, uint32_t dchk_rows, uint32_t dchk_cols, uint32_t msks)
+static void v8si_multiply_chunk_full_to_full(mx_chunk_ptr dchk, mx_chunk_ptr lchk, mx_chunk_ptr rchk, uint32_t dchk_rows, uint32_t dchk_cols, uint32_t msks)
 {
 #define v8si_multiply_chunk_op(row, col) \
     { \
-        ltmp = __builtin_ia32_pmulld256(lhs->v8si_16x2[row][0], rhs->v8si_16x2[col][0]); \
-        rtmp = __builtin_ia32_pmulld256(lhs->v8si_16x2[row][1], rhs->v8si_16x2[col][1]); \
-        ltmp &= *mask[0]; \
-        rtmp &= *mask[1]; \
-        ltmp = __builtin_ia32_phaddd256(ltmp, rtmp); \
-        ltmp = __builtin_ia32_phaddd256(ltmp, v8si_zero); \
-        ltmp = __builtin_ia32_phaddd256(ltmp, v8si_zero); \
-        dchk->i32_16x16[row][col] += ltmp[0] + ltmp[4]; \
+        mx_type_reg(ltmp) = _mm256_mullo_epi32(mx_type_reg(lchk->v8si_16x2[row][0]), mx_type_reg(rchk->v8si_16x2[col][0])); \
+        mx_type_reg(rtmp) = _mm256_mullo_epi32(mx_type_reg(lchk->v8si_16x2[row][1]), mx_type_reg(rchk->v8si_16x2[col][1])); \
+        mx_type_reg(ltmp) &= mx_type_reg(*mask[0]); \
+        mx_type_reg(rtmp) &= mx_type_reg(*mask[1]); \
+        mx_type_reg(ltmp) = _mm256_hadd_epi32(mx_type_reg(ltmp), mx_type_reg(rtmp)); \
+        mx_type_reg(ltmp) = _mm256_hadd_epi32(mx_type_reg(ltmp), mx_type_reg(v8si_zero)); \
+        mx_type_reg(ltmp) = _mm256_hadd_epi32(mx_type_reg(ltmp), mx_type_reg(v8si_zero)); \
+        dchk->i32_16x16[row][col] += mx_type_val(ltmp)[0] + mx_type_val(ltmp)[4]; \
     }
 
     v8si_t ltmp;
@@ -411,7 +411,7 @@ static void v8si_multiply_chunk_full_to_full(mx_chunk_ptr dchk, mx_chunk_ptr lhs
 #undef v8si_multiply_chunk_op
 } // v8si_multiply_chunk_full_to_full
 
-typedef void (*v8si_multiply_chunk_fn)(mx_chunk_ptr dchk, mx_chunk_ptr lhs, mx_chunk_ptr rhs, uint32_t dchk_rows, uint32_t dchk_cols, uint32_t msks);
+typedef void (*v8si_multiply_chunk_fn)(mx_chunk_ptr dchk, mx_chunk_ptr lchk, mx_chunk_ptr rchk, uint32_t dchk_rows, uint32_t dchk_cols, uint32_t msks);
 
 void mops_v8si_multiply(mx_stor_ptr dst, mx_stor_ptr lhs, mx_stor_ptr rhs)
 {
@@ -467,16 +467,16 @@ void mops_v8si_multiply(mx_stor_ptr dst, mx_stor_ptr lhs, mx_stor_ptr rhs)
 
 #define v8si_scalar_multiply_chunk_full(row) \
     { \
-        dst->v8si_16x2[row][0] = __builtin_ia32_pmulld256(*vals, src->v8si_16x2[row][0]); \
-        dst->v8si_16x2[row][1] = __builtin_ia32_pmulld256(*vals, src->v8si_16x2[row][1]); \
+        mx_type_reg(dchk->v8si_16x2[row][0]) = _mm256_mullo_epi32(mx_type_reg(*vals), mx_type_reg(schk->v8si_16x2[row][0])); \
+        mx_type_reg(dchk->v8si_16x2[row][1]) = _mm256_mullo_epi32(mx_type_reg(*vals), mx_type_reg(schk->v8si_16x2[row][1])); \
     }
 
 #define v8si_scalar_multiply_chunk_half(row) \
     { \
-        dst->v8si_16x1[row][0] = __builtin_ia32_pmulld256(*vals, src->v8si_16x1[row][0]); \
+        mx_type_reg(dchk->v8si_16x1[row][0]) = _mm256_mullo_epi32(mx_type_reg(*vals), mx_type_reg(schk->v8si_16x1[row][0])); \
     }
 
-static void v8si_multiply_scalar_chunk_fully(mx_chunk_ptr dst, mx_chunk_ptr src, v8si_t * vals)
+static void v8si_multiply_scalar_chunk_fully(mx_chunk_ptr dchk, mx_chunk_ptr schk, v8si_t * vals)
 {
     v8si_scalar_multiply_chunk_full( 0);
     v8si_scalar_multiply_chunk_full( 1);
@@ -496,7 +496,7 @@ static void v8si_multiply_scalar_chunk_fully(mx_chunk_ptr dst, mx_chunk_ptr src,
     v8si_scalar_multiply_chunk_full(15);
 } // v8si_multiply_scalar_chunk_fully
 
-static void v8si_multiply_scalar_chunk_partly(mx_chunk_ptr dst, mx_chunk_ptr src, v8si_t * vals, uint32_t src_rows, uint32_t src_cols)
+static void v8si_multiply_scalar_chunk_partly(mx_chunk_ptr dchk, mx_chunk_ptr schk, v8si_t * vals, uint32_t src_rows, uint32_t src_cols)
 {
     uint32_t i = 0;
 
@@ -545,7 +545,7 @@ static void v8si_multiply_scalar_chunk_partly(mx_chunk_ptr dst, mx_chunk_ptr src
 
 void mops_v8si_multiply_scalar(mx_stor_ptr dst, mx_stor_ptr src, int32_t val)
 {
-    v8si_t vals = {val, val, val, val, val, val, val, val};
+    v8si_t vals = { .val = {val, val, val, val, val, val, val, val} };
     uint32_t i = 0;
     uint32_t j = 0;
     uint32_t schk_rows = 0;

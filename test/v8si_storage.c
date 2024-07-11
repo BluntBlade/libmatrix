@@ -1184,7 +1184,7 @@ Test(Operation, mstr_v8si_transpose_chunk)
 
         check_rows_in_chunk(rows_in_chk, 1);
         check_columns_in_chunk(cols_in_chk, 1);
-        check_value_at(dchk.v8si_16x1[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[0], mstr_v8si_get(ms, 0, 0), 0, 0);
 
         mstr_v8si_destroy(ms);
     }
@@ -1209,11 +1209,11 @@ Test(Operation, mstr_v8si_transpose_chunk)
         check_columns_in_chunk(cols_in_chk, 5);
 
         for (i = 0; i < 5; i += 1) {
-            check_value_at(dchk.v8si_16x1[i][0][0], mstr_v8si_get(ms, 0, i), i, 0 * 8 + 0);
-            check_value_at(dchk.v8si_16x1[i][0][1], mstr_v8si_get(ms, 1, i), i, 0 * 8 + 1);
-            check_value_at(dchk.v8si_16x1[i][0][2], mstr_v8si_get(ms, 2, i), i, 0 * 8 + 2);
-            check_value_at(dchk.v8si_16x1[i][0][3], mstr_v8si_get(ms, 3, i), i, 0 * 8 + 3);
-            check_value_at(dchk.v8si_16x1[i][0][4], mstr_v8si_get(ms, 4, i), i, 0 * 8 + 4);
+            check_value_at(mx_type_val(dchk.v8si_16x1[i][0])[0], mstr_v8si_get(ms, 0, i), i, 0 * 8 + 0);
+            check_value_at(mx_type_val(dchk.v8si_16x1[i][0])[1], mstr_v8si_get(ms, 1, i), i, 0 * 8 + 1);
+            check_value_at(mx_type_val(dchk.v8si_16x1[i][0])[2], mstr_v8si_get(ms, 2, i), i, 0 * 8 + 2);
+            check_value_at(mx_type_val(dchk.v8si_16x1[i][0])[3], mstr_v8si_get(ms, 3, i), i, 0 * 8 + 3);
+            check_value_at(mx_type_val(dchk.v8si_16x1[i][0])[4], mstr_v8si_get(ms, 4, i), i, 0 * 8 + 4);
         } // for
 
         mstr_v8si_destroy(ms);
@@ -1239,14 +1239,14 @@ Test(Operation, mstr_v8si_transpose_chunk)
         check_columns_in_chunk(cols_in_chk, 8);
 
         for (i = 0; i < 8; i += 1) {
-            check_value_at(dchk.v8si_16x1[i][0][0], mstr_v8si_get(ms, 0, i), i, 0 * 8 + 0);
-            check_value_at(dchk.v8si_16x1[i][0][1], mstr_v8si_get(ms, 1, i), i, 0 * 8 + 1);
-            check_value_at(dchk.v8si_16x1[i][0][2], mstr_v8si_get(ms, 2, i), i, 0 * 8 + 2);
-            check_value_at(dchk.v8si_16x1[i][0][3], mstr_v8si_get(ms, 3, i), i, 0 * 8 + 3);
-            check_value_at(dchk.v8si_16x1[i][0][4], mstr_v8si_get(ms, 4, i), i, 0 * 8 + 4);
-            check_value_at(dchk.v8si_16x1[i][0][5], mstr_v8si_get(ms, 5, i), i, 0 * 8 + 5);
-            check_value_at(dchk.v8si_16x1[i][0][6], mstr_v8si_get(ms, 6, i), i, 0 * 8 + 6);
-            check_value_at(dchk.v8si_16x1[i][0][7], mstr_v8si_get(ms, 7, i), i, 0 * 8 + 7);
+            check_value_at(mx_type_val(dchk.v8si_16x1[i][0])[0], mstr_v8si_get(ms, 0, i), i, 0 * 8 + 0);
+            check_value_at(mx_type_val(dchk.v8si_16x1[i][0])[1], mstr_v8si_get(ms, 1, i), i, 0 * 8 + 1);
+            check_value_at(mx_type_val(dchk.v8si_16x1[i][0])[2], mstr_v8si_get(ms, 2, i), i, 0 * 8 + 2);
+            check_value_at(mx_type_val(dchk.v8si_16x1[i][0])[3], mstr_v8si_get(ms, 3, i), i, 0 * 8 + 3);
+            check_value_at(mx_type_val(dchk.v8si_16x1[i][0])[4], mstr_v8si_get(ms, 4, i), i, 0 * 8 + 4);
+            check_value_at(mx_type_val(dchk.v8si_16x1[i][0])[5], mstr_v8si_get(ms, 5, i), i, 0 * 8 + 5);
+            check_value_at(mx_type_val(dchk.v8si_16x1[i][0])[6], mstr_v8si_get(ms, 6, i), i, 0 * 8 + 6);
+            check_value_at(mx_type_val(dchk.v8si_16x1[i][0])[7], mstr_v8si_get(ms, 7, i), i, 0 * 8 + 7);
         } // for
 
         mstr_v8si_destroy(ms);
@@ -1272,16 +1272,16 @@ Test(Operation, mstr_v8si_transpose_chunk)
         check_columns_in_chunk(cols_in_chk, 9);
 
         for (i = 0; i < 9; i += 1) {
-            check_value_at(dchk.v8si_16x2[i][0][0], mstr_v8si_get(ms, 0, i), i, 0 * 8 + 0);
-            check_value_at(dchk.v8si_16x2[i][0][1], mstr_v8si_get(ms, 1, i), i, 0 * 8 + 1);
-            check_value_at(dchk.v8si_16x2[i][0][2], mstr_v8si_get(ms, 2, i), i, 0 * 8 + 2);
-            check_value_at(dchk.v8si_16x2[i][0][3], mstr_v8si_get(ms, 3, i), i, 0 * 8 + 3);
-            check_value_at(dchk.v8si_16x2[i][0][4], mstr_v8si_get(ms, 4, i), i, 0 * 8 + 4);
-            check_value_at(dchk.v8si_16x2[i][0][5], mstr_v8si_get(ms, 5, i), i, 0 * 8 + 5);
-            check_value_at(dchk.v8si_16x2[i][0][6], mstr_v8si_get(ms, 6, i), i, 0 * 8 + 6);
-            check_value_at(dchk.v8si_16x2[i][0][7], mstr_v8si_get(ms, 7, i), i, 0 * 8 + 7);
+            check_value_at(mx_type_val(dchk.v8si_16x2[i][0])[0], mstr_v8si_get(ms, 0, i), i, 0 * 8 + 0);
+            check_value_at(mx_type_val(dchk.v8si_16x2[i][0])[1], mstr_v8si_get(ms, 1, i), i, 0 * 8 + 1);
+            check_value_at(mx_type_val(dchk.v8si_16x2[i][0])[2], mstr_v8si_get(ms, 2, i), i, 0 * 8 + 2);
+            check_value_at(mx_type_val(dchk.v8si_16x2[i][0])[3], mstr_v8si_get(ms, 3, i), i, 0 * 8 + 3);
+            check_value_at(mx_type_val(dchk.v8si_16x2[i][0])[4], mstr_v8si_get(ms, 4, i), i, 0 * 8 + 4);
+            check_value_at(mx_type_val(dchk.v8si_16x2[i][0])[5], mstr_v8si_get(ms, 5, i), i, 0 * 8 + 5);
+            check_value_at(mx_type_val(dchk.v8si_16x2[i][0])[6], mstr_v8si_get(ms, 6, i), i, 0 * 8 + 6);
+            check_value_at(mx_type_val(dchk.v8si_16x2[i][0])[7], mstr_v8si_get(ms, 7, i), i, 0 * 8 + 7);
 
-            check_value_at(dchk.v8si_16x2[i][1][0], mstr_v8si_get(ms, 8, i), i, 1 * 8 + 0);
+            check_value_at(mx_type_val(dchk.v8si_16x2[i][1])[0], mstr_v8si_get(ms, 8, i), i, 1 * 8 + 0);
         } // for
 
         mstr_v8si_destroy(ms);
@@ -1307,23 +1307,23 @@ Test(Operation, mstr_v8si_transpose_chunk)
         check_columns_in_chunk(cols_in_chk, 16);
 
         for (i = 0; i < 16; i += 1) {
-            check_value_at(dchk.v8si_16x2[i][0][0], mstr_v8si_get(ms,  0, i), i, 0 * 8 + 0);
-            check_value_at(dchk.v8si_16x2[i][0][1], mstr_v8si_get(ms,  1, i), i, 0 * 8 + 1);
-            check_value_at(dchk.v8si_16x2[i][0][2], mstr_v8si_get(ms,  2, i), i, 0 * 8 + 2);
-            check_value_at(dchk.v8si_16x2[i][0][3], mstr_v8si_get(ms,  3, i), i, 0 * 8 + 3);
-            check_value_at(dchk.v8si_16x2[i][0][4], mstr_v8si_get(ms,  4, i), i, 0 * 8 + 4);
-            check_value_at(dchk.v8si_16x2[i][0][5], mstr_v8si_get(ms,  5, i), i, 0 * 8 + 5);
-            check_value_at(dchk.v8si_16x2[i][0][6], mstr_v8si_get(ms,  6, i), i, 0 * 8 + 6);
-            check_value_at(dchk.v8si_16x2[i][0][7], mstr_v8si_get(ms,  7, i), i, 0 * 8 + 7);
+            check_value_at(mx_type_val(dchk.v8si_16x2[i][0])[0], mstr_v8si_get(ms,  0, i), i, 0 * 8 + 0);
+            check_value_at(mx_type_val(dchk.v8si_16x2[i][0])[1], mstr_v8si_get(ms,  1, i), i, 0 * 8 + 1);
+            check_value_at(mx_type_val(dchk.v8si_16x2[i][0])[2], mstr_v8si_get(ms,  2, i), i, 0 * 8 + 2);
+            check_value_at(mx_type_val(dchk.v8si_16x2[i][0])[3], mstr_v8si_get(ms,  3, i), i, 0 * 8 + 3);
+            check_value_at(mx_type_val(dchk.v8si_16x2[i][0])[4], mstr_v8si_get(ms,  4, i), i, 0 * 8 + 4);
+            check_value_at(mx_type_val(dchk.v8si_16x2[i][0])[5], mstr_v8si_get(ms,  5, i), i, 0 * 8 + 5);
+            check_value_at(mx_type_val(dchk.v8si_16x2[i][0])[6], mstr_v8si_get(ms,  6, i), i, 0 * 8 + 6);
+            check_value_at(mx_type_val(dchk.v8si_16x2[i][0])[7], mstr_v8si_get(ms,  7, i), i, 0 * 8 + 7);
 
-            check_value_at(dchk.v8si_16x2[i][1][0], mstr_v8si_get(ms,  8, i), i, 1 * 8 + 0);
-            check_value_at(dchk.v8si_16x2[i][1][1], mstr_v8si_get(ms,  9, i), i, 1 * 8 + 1);
-            check_value_at(dchk.v8si_16x2[i][1][2], mstr_v8si_get(ms, 10, i), i, 1 * 8 + 2);
-            check_value_at(dchk.v8si_16x2[i][1][3], mstr_v8si_get(ms, 11, i), i, 1 * 8 + 3);
-            check_value_at(dchk.v8si_16x2[i][1][4], mstr_v8si_get(ms, 12, i), i, 1 * 8 + 4);
-            check_value_at(dchk.v8si_16x2[i][1][5], mstr_v8si_get(ms, 13, i), i, 1 * 8 + 5);
-            check_value_at(dchk.v8si_16x2[i][1][6], mstr_v8si_get(ms, 14, i), i, 1 * 8 + 6);
-            check_value_at(dchk.v8si_16x2[i][1][7], mstr_v8si_get(ms, 15, i), i, 1 * 8 + 7);
+            check_value_at(mx_type_val(dchk.v8si_16x2[i][1])[0], mstr_v8si_get(ms,  8, i), i, 1 * 8 + 0);
+            check_value_at(mx_type_val(dchk.v8si_16x2[i][1])[1], mstr_v8si_get(ms,  9, i), i, 1 * 8 + 1);
+            check_value_at(mx_type_val(dchk.v8si_16x2[i][1])[2], mstr_v8si_get(ms, 10, i), i, 1 * 8 + 2);
+            check_value_at(mx_type_val(dchk.v8si_16x2[i][1])[3], mstr_v8si_get(ms, 11, i), i, 1 * 8 + 3);
+            check_value_at(mx_type_val(dchk.v8si_16x2[i][1])[4], mstr_v8si_get(ms, 12, i), i, 1 * 8 + 4);
+            check_value_at(mx_type_val(dchk.v8si_16x2[i][1])[5], mstr_v8si_get(ms, 13, i), i, 1 * 8 + 5);
+            check_value_at(mx_type_val(dchk.v8si_16x2[i][1])[6], mstr_v8si_get(ms, 14, i), i, 1 * 8 + 6);
+            check_value_at(mx_type_val(dchk.v8si_16x2[i][1])[7], mstr_v8si_get(ms, 15, i), i, 1 * 8 + 7);
         } // for
 
         mstr_v8si_destroy(ms);
@@ -1348,11 +1348,11 @@ Test(Operation, mstr_v8si_transpose_chunk)
         check_rows_in_chunk(rows_in_chk, 5);
         check_columns_in_chunk(cols_in_chk, 1);
 
-        check_value_at(dchk.v8si_16x1[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
-        check_value_at(dchk.v8si_16x1[1][0][0], mstr_v8si_get(ms, 0, 1), 1, 0);
-        check_value_at(dchk.v8si_16x1[2][0][0], mstr_v8si_get(ms, 0, 2), 2, 0);
-        check_value_at(dchk.v8si_16x1[3][0][0], mstr_v8si_get(ms, 0, 3), 3, 0);
-        check_value_at(dchk.v8si_16x1[4][0][0], mstr_v8si_get(ms, 0, 4), 4, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[0], mstr_v8si_get(ms, 0, 0), 0, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[1][0])[0], mstr_v8si_get(ms, 0, 1), 1, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[2][0])[0], mstr_v8si_get(ms, 0, 2), 2, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[3][0])[0], mstr_v8si_get(ms, 0, 3), 3, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[4][0])[0], mstr_v8si_get(ms, 0, 4), 4, 0);
 
         mstr_v8si_destroy(ms);
     }
@@ -1376,11 +1376,11 @@ Test(Operation, mstr_v8si_transpose_chunk)
         check_rows_in_chunk(rows_in_chk, 5);
         check_columns_in_chunk(cols_in_chk, 2);
 
-        check_value_at(dchk.v8si_16x1[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
-        check_value_at(dchk.v8si_16x1[1][0][0], mstr_v8si_get(ms, 0, 1), 1, 0);
-        check_value_at(dchk.v8si_16x1[2][0][0], mstr_v8si_get(ms, 0, 2), 2, 0);
-        check_value_at(dchk.v8si_16x1[3][0][0], mstr_v8si_get(ms, 0, 3), 3, 0);
-        check_value_at(dchk.v8si_16x1[4][0][0], mstr_v8si_get(ms, 0, 4), 4, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[0], mstr_v8si_get(ms, 0, 0), 0, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[1][0])[0], mstr_v8si_get(ms, 0, 1), 1, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[2][0])[0], mstr_v8si_get(ms, 0, 2), 2, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[3][0])[0], mstr_v8si_get(ms, 0, 3), 3, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[4][0])[0], mstr_v8si_get(ms, 0, 4), 4, 0);
 
         mstr_v8si_destroy(ms);
     }
@@ -1404,14 +1404,14 @@ Test(Operation, mstr_v8si_transpose_chunk)
         check_rows_in_chunk(rows_in_chk, 8);
         check_columns_in_chunk(cols_in_chk, 1);
 
-        check_value_at(dchk.v8si_16x1[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
-        check_value_at(dchk.v8si_16x1[1][0][0], mstr_v8si_get(ms, 0, 1), 1, 0);
-        check_value_at(dchk.v8si_16x1[2][0][0], mstr_v8si_get(ms, 0, 2), 2, 0);
-        check_value_at(dchk.v8si_16x1[3][0][0], mstr_v8si_get(ms, 0, 3), 3, 0);
-        check_value_at(dchk.v8si_16x1[4][0][0], mstr_v8si_get(ms, 0, 4), 4, 0);
-        check_value_at(dchk.v8si_16x1[5][0][0], mstr_v8si_get(ms, 0, 5), 5, 0);
-        check_value_at(dchk.v8si_16x1[6][0][0], mstr_v8si_get(ms, 0, 6), 6, 0);
-        check_value_at(dchk.v8si_16x1[7][0][0], mstr_v8si_get(ms, 0, 7), 7, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[0], mstr_v8si_get(ms, 0, 0), 0, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[1][0])[0], mstr_v8si_get(ms, 0, 1), 1, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[2][0])[0], mstr_v8si_get(ms, 0, 2), 2, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[3][0])[0], mstr_v8si_get(ms, 0, 3), 3, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[4][0])[0], mstr_v8si_get(ms, 0, 4), 4, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[5][0])[0], mstr_v8si_get(ms, 0, 5), 5, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[6][0])[0], mstr_v8si_get(ms, 0, 6), 6, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[7][0])[0], mstr_v8si_get(ms, 0, 7), 7, 0);
 
         mstr_v8si_destroy(ms);
     }
@@ -1435,23 +1435,23 @@ Test(Operation, mstr_v8si_transpose_chunk)
         check_rows_in_chunk(rows_in_chk, 8);
         check_columns_in_chunk(cols_in_chk, 2);
 
-        check_value_at(dchk.v8si_16x1[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
-        check_value_at(dchk.v8si_16x1[1][0][0], mstr_v8si_get(ms, 0, 1), 1, 0);
-        check_value_at(dchk.v8si_16x1[2][0][0], mstr_v8si_get(ms, 0, 2), 2, 0);
-        check_value_at(dchk.v8si_16x1[3][0][0], mstr_v8si_get(ms, 0, 3), 3, 0);
-        check_value_at(dchk.v8si_16x1[4][0][0], mstr_v8si_get(ms, 0, 4), 4, 0);
-        check_value_at(dchk.v8si_16x1[5][0][0], mstr_v8si_get(ms, 0, 5), 5, 0);
-        check_value_at(dchk.v8si_16x1[6][0][0], mstr_v8si_get(ms, 0, 6), 6, 0);
-        check_value_at(dchk.v8si_16x1[7][0][0], mstr_v8si_get(ms, 0, 7), 7, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[0], mstr_v8si_get(ms, 0, 0), 0, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[1][0])[0], mstr_v8si_get(ms, 0, 1), 1, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[2][0])[0], mstr_v8si_get(ms, 0, 2), 2, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[3][0])[0], mstr_v8si_get(ms, 0, 3), 3, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[4][0])[0], mstr_v8si_get(ms, 0, 4), 4, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[5][0])[0], mstr_v8si_get(ms, 0, 5), 5, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[6][0])[0], mstr_v8si_get(ms, 0, 6), 6, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[7][0])[0], mstr_v8si_get(ms, 0, 7), 7, 0);
 
-        check_value_at(dchk.v8si_16x1[0][0][1], mstr_v8si_get(ms, 1, 0), 0, 1);
-        check_value_at(dchk.v8si_16x1[1][0][1], mstr_v8si_get(ms, 1, 1), 1, 1);
-        check_value_at(dchk.v8si_16x1[2][0][1], mstr_v8si_get(ms, 1, 2), 2, 1);
-        check_value_at(dchk.v8si_16x1[3][0][1], mstr_v8si_get(ms, 1, 3), 3, 1);
-        check_value_at(dchk.v8si_16x1[4][0][1], mstr_v8si_get(ms, 1, 4), 4, 1);
-        check_value_at(dchk.v8si_16x1[5][0][1], mstr_v8si_get(ms, 1, 5), 5, 1);
-        check_value_at(dchk.v8si_16x1[6][0][1], mstr_v8si_get(ms, 1, 6), 6, 1);
-        check_value_at(dchk.v8si_16x1[7][0][1], mstr_v8si_get(ms, 1, 7), 7, 1);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[1], mstr_v8si_get(ms, 1, 0), 0, 1);
+        check_value_at(mx_type_val(dchk.v8si_16x1[1][0])[1], mstr_v8si_get(ms, 1, 1), 1, 1);
+        check_value_at(mx_type_val(dchk.v8si_16x1[2][0])[1], mstr_v8si_get(ms, 1, 2), 2, 1);
+        check_value_at(mx_type_val(dchk.v8si_16x1[3][0])[1], mstr_v8si_get(ms, 1, 3), 3, 1);
+        check_value_at(mx_type_val(dchk.v8si_16x1[4][0])[1], mstr_v8si_get(ms, 1, 4), 4, 1);
+        check_value_at(mx_type_val(dchk.v8si_16x1[5][0])[1], mstr_v8si_get(ms, 1, 5), 5, 1);
+        check_value_at(mx_type_val(dchk.v8si_16x1[6][0])[1], mstr_v8si_get(ms, 1, 6), 6, 1);
+        check_value_at(mx_type_val(dchk.v8si_16x1[7][0])[1], mstr_v8si_get(ms, 1, 7), 7, 1);
 
         mstr_v8si_destroy(ms);
     }
@@ -1475,16 +1475,16 @@ Test(Operation, mstr_v8si_transpose_chunk)
         check_rows_in_chunk(rows_in_chk, 9);
         check_columns_in_chunk(cols_in_chk, 1);
 
-        check_value_at(dchk.v8si_16x1[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
-        check_value_at(dchk.v8si_16x1[1][0][0], mstr_v8si_get(ms, 0, 1), 1, 0);
-        check_value_at(dchk.v8si_16x1[2][0][0], mstr_v8si_get(ms, 0, 2), 2, 0);
-        check_value_at(dchk.v8si_16x1[3][0][0], mstr_v8si_get(ms, 0, 3), 3, 0);
-        check_value_at(dchk.v8si_16x1[4][0][0], mstr_v8si_get(ms, 0, 4), 4, 0);
-        check_value_at(dchk.v8si_16x1[5][0][0], mstr_v8si_get(ms, 0, 5), 5, 0);
-        check_value_at(dchk.v8si_16x1[6][0][0], mstr_v8si_get(ms, 0, 6), 6, 0);
-        check_value_at(dchk.v8si_16x1[7][0][0], mstr_v8si_get(ms, 0, 7), 7, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[0], mstr_v8si_get(ms, 0, 0), 0, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[1][0])[0], mstr_v8si_get(ms, 0, 1), 1, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[2][0])[0], mstr_v8si_get(ms, 0, 2), 2, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[3][0])[0], mstr_v8si_get(ms, 0, 3), 3, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[4][0])[0], mstr_v8si_get(ms, 0, 4), 4, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[5][0])[0], mstr_v8si_get(ms, 0, 5), 5, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[6][0])[0], mstr_v8si_get(ms, 0, 6), 6, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[7][0])[0], mstr_v8si_get(ms, 0, 7), 7, 0);
 
-        check_value_at(dchk.v8si_16x1[8][0][0], mstr_v8si_get(ms, 0, 8), 8, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[8][0])[0], mstr_v8si_get(ms, 0, 8), 8, 0);
 
         mstr_v8si_destroy(ms);
     }
@@ -1508,27 +1508,27 @@ Test(Operation, mstr_v8si_transpose_chunk)
         check_rows_in_chunk(rows_in_chk, 9);
         check_columns_in_chunk(cols_in_chk, 2);
 
-        check_value_at(dchk.v8si_16x1[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
-        check_value_at(dchk.v8si_16x1[1][0][0], mstr_v8si_get(ms, 0, 1), 1, 0);
-        check_value_at(dchk.v8si_16x1[2][0][0], mstr_v8si_get(ms, 0, 2), 2, 0);
-        check_value_at(dchk.v8si_16x1[3][0][0], mstr_v8si_get(ms, 0, 3), 3, 0);
-        check_value_at(dchk.v8si_16x1[4][0][0], mstr_v8si_get(ms, 0, 4), 4, 0);
-        check_value_at(dchk.v8si_16x1[5][0][0], mstr_v8si_get(ms, 0, 5), 5, 0);
-        check_value_at(dchk.v8si_16x1[6][0][0], mstr_v8si_get(ms, 0, 6), 6, 0);
-        check_value_at(dchk.v8si_16x1[7][0][0], mstr_v8si_get(ms, 0, 7), 7, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[0], mstr_v8si_get(ms, 0, 0), 0, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[1][0])[0], mstr_v8si_get(ms, 0, 1), 1, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[2][0])[0], mstr_v8si_get(ms, 0, 2), 2, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[3][0])[0], mstr_v8si_get(ms, 0, 3), 3, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[4][0])[0], mstr_v8si_get(ms, 0, 4), 4, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[5][0])[0], mstr_v8si_get(ms, 0, 5), 5, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[6][0])[0], mstr_v8si_get(ms, 0, 6), 6, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[7][0])[0], mstr_v8si_get(ms, 0, 7), 7, 0);
 
-        check_value_at(dchk.v8si_16x1[8][0][0], mstr_v8si_get(ms, 0, 8), 8, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[8][0])[0], mstr_v8si_get(ms, 0, 8), 8, 0);
 
-        check_value_at(dchk.v8si_16x1[0][0][1], mstr_v8si_get(ms, 1, 0), 0, 1);
-        check_value_at(dchk.v8si_16x1[1][0][1], mstr_v8si_get(ms, 1, 1), 1, 1);
-        check_value_at(dchk.v8si_16x1[2][0][1], mstr_v8si_get(ms, 1, 2), 2, 1);
-        check_value_at(dchk.v8si_16x1[3][0][1], mstr_v8si_get(ms, 1, 3), 3, 1);
-        check_value_at(dchk.v8si_16x1[4][0][1], mstr_v8si_get(ms, 1, 4), 4, 1);
-        check_value_at(dchk.v8si_16x1[5][0][1], mstr_v8si_get(ms, 1, 5), 5, 1);
-        check_value_at(dchk.v8si_16x1[6][0][1], mstr_v8si_get(ms, 1, 6), 6, 1);
-        check_value_at(dchk.v8si_16x1[7][0][1], mstr_v8si_get(ms, 1, 7), 7, 1);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[1], mstr_v8si_get(ms, 1, 0), 0, 1);
+        check_value_at(mx_type_val(dchk.v8si_16x1[1][0])[1], mstr_v8si_get(ms, 1, 1), 1, 1);
+        check_value_at(mx_type_val(dchk.v8si_16x1[2][0])[1], mstr_v8si_get(ms, 1, 2), 2, 1);
+        check_value_at(mx_type_val(dchk.v8si_16x1[3][0])[1], mstr_v8si_get(ms, 1, 3), 3, 1);
+        check_value_at(mx_type_val(dchk.v8si_16x1[4][0])[1], mstr_v8si_get(ms, 1, 4), 4, 1);
+        check_value_at(mx_type_val(dchk.v8si_16x1[5][0])[1], mstr_v8si_get(ms, 1, 5), 5, 1);
+        check_value_at(mx_type_val(dchk.v8si_16x1[6][0])[1], mstr_v8si_get(ms, 1, 6), 6, 1);
+        check_value_at(mx_type_val(dchk.v8si_16x1[7][0])[1], mstr_v8si_get(ms, 1, 7), 7, 1);
 
-        check_value_at(dchk.v8si_16x1[8][0][1], mstr_v8si_get(ms, 1, 8), 8, 1);
+        check_value_at(mx_type_val(dchk.v8si_16x1[8][0])[1], mstr_v8si_get(ms, 1, 8), 8, 1);
 
         mstr_v8si_destroy(ms);
     }
@@ -1552,11 +1552,11 @@ Test(Operation, mstr_v8si_transpose_chunk)
         check_rows_in_chunk(rows_in_chk, 1);
         check_columns_in_chunk(cols_in_chk, 5);
 
-        check_value_at(dchk.v8si_16x1[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
-        check_value_at(dchk.v8si_16x1[0][0][1], mstr_v8si_get(ms, 1, 0), 0, 1);
-        check_value_at(dchk.v8si_16x1[0][0][2], mstr_v8si_get(ms, 2, 0), 0, 2);
-        check_value_at(dchk.v8si_16x1[0][0][3], mstr_v8si_get(ms, 3, 0), 0, 3);
-        check_value_at(dchk.v8si_16x1[0][0][4], mstr_v8si_get(ms, 4, 0), 0, 4);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[0], mstr_v8si_get(ms, 0, 0), 0, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[1], mstr_v8si_get(ms, 1, 0), 0, 1);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[2], mstr_v8si_get(ms, 2, 0), 0, 2);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[3], mstr_v8si_get(ms, 3, 0), 0, 3);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[4], mstr_v8si_get(ms, 4, 0), 0, 4);
 
         mstr_v8si_destroy(ms);
     }
@@ -1580,17 +1580,17 @@ Test(Operation, mstr_v8si_transpose_chunk)
         check_rows_in_chunk(rows_in_chk, 2);
         check_columns_in_chunk(cols_in_chk, 5);
 
-        check_value_at(dchk.v8si_16x1[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
-        check_value_at(dchk.v8si_16x1[0][0][1], mstr_v8si_get(ms, 1, 0), 0, 1);
-        check_value_at(dchk.v8si_16x1[0][0][2], mstr_v8si_get(ms, 2, 0), 0, 2);
-        check_value_at(dchk.v8si_16x1[0][0][3], mstr_v8si_get(ms, 3, 0), 0, 3);
-        check_value_at(dchk.v8si_16x1[0][0][4], mstr_v8si_get(ms, 4, 0), 0, 4);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[0], mstr_v8si_get(ms, 0, 0), 0, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[1], mstr_v8si_get(ms, 1, 0), 0, 1);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[2], mstr_v8si_get(ms, 2, 0), 0, 2);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[3], mstr_v8si_get(ms, 3, 0), 0, 3);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[4], mstr_v8si_get(ms, 4, 0), 0, 4);
 
-        check_value_at(dchk.v8si_16x1[1][0][0], mstr_v8si_get(ms, 0, 1), 1, 0);
-        check_value_at(dchk.v8si_16x1[1][0][1], mstr_v8si_get(ms, 1, 1), 1, 1);
-        check_value_at(dchk.v8si_16x1[1][0][2], mstr_v8si_get(ms, 2, 1), 1, 2);
-        check_value_at(dchk.v8si_16x1[1][0][3], mstr_v8si_get(ms, 3, 1), 1, 3);
-        check_value_at(dchk.v8si_16x1[1][0][4], mstr_v8si_get(ms, 4, 1), 1, 4);
+        check_value_at(mx_type_val(dchk.v8si_16x1[1][0])[0], mstr_v8si_get(ms, 0, 1), 1, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[1][0])[1], mstr_v8si_get(ms, 1, 1), 1, 1);
+        check_value_at(mx_type_val(dchk.v8si_16x1[1][0])[2], mstr_v8si_get(ms, 2, 1), 1, 2);
+        check_value_at(mx_type_val(dchk.v8si_16x1[1][0])[3], mstr_v8si_get(ms, 3, 1), 1, 3);
+        check_value_at(mx_type_val(dchk.v8si_16x1[1][0])[4], mstr_v8si_get(ms, 4, 1), 1, 4);
 
         mstr_v8si_destroy(ms);
     }
@@ -1614,14 +1614,14 @@ Test(Operation, mstr_v8si_transpose_chunk)
         check_rows_in_chunk(rows_in_chk, 1);
         check_columns_in_chunk(cols_in_chk, 8);
 
-        check_value_at(dchk.v8si_16x1[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
-        check_value_at(dchk.v8si_16x1[0][0][1], mstr_v8si_get(ms, 1, 0), 0, 1);
-        check_value_at(dchk.v8si_16x1[0][0][2], mstr_v8si_get(ms, 2, 0), 0, 2);
-        check_value_at(dchk.v8si_16x1[0][0][3], mstr_v8si_get(ms, 3, 0), 0, 3);
-        check_value_at(dchk.v8si_16x1[0][0][4], mstr_v8si_get(ms, 4, 0), 0, 4);
-        check_value_at(dchk.v8si_16x1[0][0][5], mstr_v8si_get(ms, 5, 0), 0, 5);
-        check_value_at(dchk.v8si_16x1[0][0][6], mstr_v8si_get(ms, 6, 0), 0, 6);
-        check_value_at(dchk.v8si_16x1[0][0][7], mstr_v8si_get(ms, 7, 0), 0, 7);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[0], mstr_v8si_get(ms, 0, 0), 0, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[1], mstr_v8si_get(ms, 1, 0), 0, 1);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[2], mstr_v8si_get(ms, 2, 0), 0, 2);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[3], mstr_v8si_get(ms, 3, 0), 0, 3);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[4], mstr_v8si_get(ms, 4, 0), 0, 4);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[5], mstr_v8si_get(ms, 5, 0), 0, 5);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[6], mstr_v8si_get(ms, 6, 0), 0, 6);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[7], mstr_v8si_get(ms, 7, 0), 0, 7);
 
         mstr_v8si_destroy(ms);
     }
@@ -1645,23 +1645,23 @@ Test(Operation, mstr_v8si_transpose_chunk)
         check_rows_in_chunk(rows_in_chk, 2);
         check_columns_in_chunk(cols_in_chk, 8);
 
-        check_value_at(dchk.v8si_16x1[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
-        check_value_at(dchk.v8si_16x1[0][0][1], mstr_v8si_get(ms, 1, 0), 0, 1);
-        check_value_at(dchk.v8si_16x1[0][0][2], mstr_v8si_get(ms, 2, 0), 0, 2);
-        check_value_at(dchk.v8si_16x1[0][0][3], mstr_v8si_get(ms, 3, 0), 0, 3);
-        check_value_at(dchk.v8si_16x1[0][0][4], mstr_v8si_get(ms, 4, 0), 0, 4);
-        check_value_at(dchk.v8si_16x1[0][0][5], mstr_v8si_get(ms, 5, 0), 0, 5);
-        check_value_at(dchk.v8si_16x1[0][0][6], mstr_v8si_get(ms, 6, 0), 0, 6);
-        check_value_at(dchk.v8si_16x1[0][0][7], mstr_v8si_get(ms, 7, 0), 0, 7);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[0], mstr_v8si_get(ms, 0, 0), 0, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[1], mstr_v8si_get(ms, 1, 0), 0, 1);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[2], mstr_v8si_get(ms, 2, 0), 0, 2);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[3], mstr_v8si_get(ms, 3, 0), 0, 3);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[4], mstr_v8si_get(ms, 4, 0), 0, 4);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[5], mstr_v8si_get(ms, 5, 0), 0, 5);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[6], mstr_v8si_get(ms, 6, 0), 0, 6);
+        check_value_at(mx_type_val(dchk.v8si_16x1[0][0])[7], mstr_v8si_get(ms, 7, 0), 0, 7);
 
-        check_value_at(dchk.v8si_16x1[1][0][0], mstr_v8si_get(ms, 0, 1), 1, 0);
-        check_value_at(dchk.v8si_16x1[1][0][1], mstr_v8si_get(ms, 1, 1), 1, 1);
-        check_value_at(dchk.v8si_16x1[1][0][2], mstr_v8si_get(ms, 2, 1), 1, 2);
-        check_value_at(dchk.v8si_16x1[1][0][3], mstr_v8si_get(ms, 3, 1), 1, 3);
-        check_value_at(dchk.v8si_16x1[1][0][4], mstr_v8si_get(ms, 4, 1), 1, 4);
-        check_value_at(dchk.v8si_16x1[1][0][5], mstr_v8si_get(ms, 5, 1), 1, 5);
-        check_value_at(dchk.v8si_16x1[1][0][6], mstr_v8si_get(ms, 6, 1), 1, 6);
-        check_value_at(dchk.v8si_16x1[1][0][7], mstr_v8si_get(ms, 7, 1), 1, 7);
+        check_value_at(mx_type_val(dchk.v8si_16x1[1][0])[0], mstr_v8si_get(ms, 0, 1), 1, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x1[1][0])[1], mstr_v8si_get(ms, 1, 1), 1, 1);
+        check_value_at(mx_type_val(dchk.v8si_16x1[1][0])[2], mstr_v8si_get(ms, 2, 1), 1, 2);
+        check_value_at(mx_type_val(dchk.v8si_16x1[1][0])[3], mstr_v8si_get(ms, 3, 1), 1, 3);
+        check_value_at(mx_type_val(dchk.v8si_16x1[1][0])[4], mstr_v8si_get(ms, 4, 1), 1, 4);
+        check_value_at(mx_type_val(dchk.v8si_16x1[1][0])[5], mstr_v8si_get(ms, 5, 1), 1, 5);
+        check_value_at(mx_type_val(dchk.v8si_16x1[1][0])[6], mstr_v8si_get(ms, 6, 1), 1, 6);
+        check_value_at(mx_type_val(dchk.v8si_16x1[1][0])[7], mstr_v8si_get(ms, 7, 1), 1, 7);
 
         mstr_v8si_destroy(ms);
     }
@@ -1685,16 +1685,16 @@ Test(Operation, mstr_v8si_transpose_chunk)
         check_rows_in_chunk(rows_in_chk, 1);
         check_columns_in_chunk(cols_in_chk, 9);
 
-        check_value_at(dchk.v8si_16x2[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
-        check_value_at(dchk.v8si_16x2[0][0][1], mstr_v8si_get(ms, 1, 0), 0, 1);
-        check_value_at(dchk.v8si_16x2[0][0][2], mstr_v8si_get(ms, 2, 0), 0, 2);
-        check_value_at(dchk.v8si_16x2[0][0][3], mstr_v8si_get(ms, 3, 0), 0, 3);
-        check_value_at(dchk.v8si_16x2[0][0][4], mstr_v8si_get(ms, 4, 0), 0, 4);
-        check_value_at(dchk.v8si_16x2[0][0][5], mstr_v8si_get(ms, 5, 0), 0, 5);
-        check_value_at(dchk.v8si_16x2[0][0][6], mstr_v8si_get(ms, 6, 0), 0, 6);
-        check_value_at(dchk.v8si_16x2[0][0][7], mstr_v8si_get(ms, 7, 0), 0, 7);
+        check_value_at(mx_type_val(dchk.v8si_16x2[0][0])[0], mstr_v8si_get(ms, 0, 0), 0, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x2[0][0])[1], mstr_v8si_get(ms, 1, 0), 0, 1);
+        check_value_at(mx_type_val(dchk.v8si_16x2[0][0])[2], mstr_v8si_get(ms, 2, 0), 0, 2);
+        check_value_at(mx_type_val(dchk.v8si_16x2[0][0])[3], mstr_v8si_get(ms, 3, 0), 0, 3);
+        check_value_at(mx_type_val(dchk.v8si_16x2[0][0])[4], mstr_v8si_get(ms, 4, 0), 0, 4);
+        check_value_at(mx_type_val(dchk.v8si_16x2[0][0])[5], mstr_v8si_get(ms, 5, 0), 0, 5);
+        check_value_at(mx_type_val(dchk.v8si_16x2[0][0])[6], mstr_v8si_get(ms, 6, 0), 0, 6);
+        check_value_at(mx_type_val(dchk.v8si_16x2[0][0])[7], mstr_v8si_get(ms, 7, 0), 0, 7);
 
-        check_value_at(dchk.v8si_16x2[0][1][0], mstr_v8si_get(ms, 8, 0), 0, 8);
+        check_value_at(mx_type_val(dchk.v8si_16x2[0][1])[0], mstr_v8si_get(ms, 8, 0), 0, 8);
 
         mstr_v8si_destroy(ms);
     }
@@ -1718,27 +1718,27 @@ Test(Operation, mstr_v8si_transpose_chunk)
         check_rows_in_chunk(rows_in_chk, 2);
         check_columns_in_chunk(cols_in_chk, 9);
 
-        check_value_at(dchk.v8si_16x2[0][0][0], mstr_v8si_get(ms, 0, 0), 0, 0);
-        check_value_at(dchk.v8si_16x2[0][0][1], mstr_v8si_get(ms, 1, 0), 0, 1);
-        check_value_at(dchk.v8si_16x2[0][0][2], mstr_v8si_get(ms, 2, 0), 0, 2);
-        check_value_at(dchk.v8si_16x2[0][0][3], mstr_v8si_get(ms, 3, 0), 0, 3);
-        check_value_at(dchk.v8si_16x2[0][0][4], mstr_v8si_get(ms, 4, 0), 0, 4);
-        check_value_at(dchk.v8si_16x2[0][0][5], mstr_v8si_get(ms, 5, 0), 0, 5);
-        check_value_at(dchk.v8si_16x2[0][0][6], mstr_v8si_get(ms, 6, 0), 0, 6);
-        check_value_at(dchk.v8si_16x2[0][0][7], mstr_v8si_get(ms, 7, 0), 0, 7);
+        check_value_at(mx_type_val(dchk.v8si_16x2[0][0])[0], mstr_v8si_get(ms, 0, 0), 0, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x2[0][0])[1], mstr_v8si_get(ms, 1, 0), 0, 1);
+        check_value_at(mx_type_val(dchk.v8si_16x2[0][0])[2], mstr_v8si_get(ms, 2, 0), 0, 2);
+        check_value_at(mx_type_val(dchk.v8si_16x2[0][0])[3], mstr_v8si_get(ms, 3, 0), 0, 3);
+        check_value_at(mx_type_val(dchk.v8si_16x2[0][0])[4], mstr_v8si_get(ms, 4, 0), 0, 4);
+        check_value_at(mx_type_val(dchk.v8si_16x2[0][0])[5], mstr_v8si_get(ms, 5, 0), 0, 5);
+        check_value_at(mx_type_val(dchk.v8si_16x2[0][0])[6], mstr_v8si_get(ms, 6, 0), 0, 6);
+        check_value_at(mx_type_val(dchk.v8si_16x2[0][0])[7], mstr_v8si_get(ms, 7, 0), 0, 7);
 
-        check_value_at(dchk.v8si_16x2[0][1][0], mstr_v8si_get(ms, 8, 0), 0, 8);
+        check_value_at(mx_type_val(dchk.v8si_16x2[0][1])[0], mstr_v8si_get(ms, 8, 0), 0, 8);
 
-        check_value_at(dchk.v8si_16x2[1][0][0], mstr_v8si_get(ms, 0, 1), 1, 0);
-        check_value_at(dchk.v8si_16x2[1][0][1], mstr_v8si_get(ms, 1, 1), 1, 1);
-        check_value_at(dchk.v8si_16x2[1][0][2], mstr_v8si_get(ms, 2, 1), 1, 2);
-        check_value_at(dchk.v8si_16x2[1][0][3], mstr_v8si_get(ms, 3, 1), 1, 3);
-        check_value_at(dchk.v8si_16x2[1][0][4], mstr_v8si_get(ms, 4, 1), 1, 4);
-        check_value_at(dchk.v8si_16x2[1][0][5], mstr_v8si_get(ms, 5, 1), 1, 5);
-        check_value_at(dchk.v8si_16x2[1][0][6], mstr_v8si_get(ms, 6, 1), 1, 6);
-        check_value_at(dchk.v8si_16x2[1][0][7], mstr_v8si_get(ms, 7, 1), 1, 7);
+        check_value_at(mx_type_val(dchk.v8si_16x2[1][0])[0], mstr_v8si_get(ms, 0, 1), 1, 0);
+        check_value_at(mx_type_val(dchk.v8si_16x2[1][0])[1], mstr_v8si_get(ms, 1, 1), 1, 1);
+        check_value_at(mx_type_val(dchk.v8si_16x2[1][0])[2], mstr_v8si_get(ms, 2, 1), 1, 2);
+        check_value_at(mx_type_val(dchk.v8si_16x2[1][0])[3], mstr_v8si_get(ms, 3, 1), 1, 3);
+        check_value_at(mx_type_val(dchk.v8si_16x2[1][0])[4], mstr_v8si_get(ms, 4, 1), 1, 4);
+        check_value_at(mx_type_val(dchk.v8si_16x2[1][0])[5], mstr_v8si_get(ms, 5, 1), 1, 5);
+        check_value_at(mx_type_val(dchk.v8si_16x2[1][0])[6], mstr_v8si_get(ms, 6, 1), 1, 6);
+        check_value_at(mx_type_val(dchk.v8si_16x2[1][0])[7], mstr_v8si_get(ms, 7, 1), 1, 7);
 
-        check_value_at(dchk.v8si_16x2[1][1][0], mstr_v8si_get(ms, 8, 1), 1, 8);
+        check_value_at(mx_type_val(dchk.v8si_16x2[1][1])[0], mstr_v8si_get(ms, 8, 1), 1, 8);
 
         mstr_v8si_destroy(ms);
     }
@@ -1746,7 +1746,7 @@ Test(Operation, mstr_v8si_transpose_chunk)
 
 Test(Operation, mstr_v8si_load_row_vector)
 {
-    v8si_t dst = {0};
+    v8si_t dst = { .val = {0} };
     mx_stor_ptr ms = NULL;
     uint32_t i = 0;
     uint32_t j = 0;
@@ -1761,14 +1761,14 @@ Test(Operation, mstr_v8si_load_row_vector)
         } // for
 
         mstr_v8si_load_row_vector(ms, 0, 9, 0, 1, &dst);
-        check_value(dst[0], 1);
-        check_value(dst[1], 1);
-        check_value(dst[2], 1);
-        check_value(dst[3], 1);
-        check_value(dst[4], 1);
-        check_value(dst[5], 1);
-        check_value(dst[6], 1);
-        check_value(dst[7], 1);
+        check_value(mx_type_val(dst)[0], 1);
+        check_value(mx_type_val(dst)[1], 1);
+        check_value(mx_type_val(dst)[2], 1);
+        check_value(mx_type_val(dst)[3], 1);
+        check_value(mx_type_val(dst)[4], 1);
+        check_value(mx_type_val(dst)[5], 1);
+        check_value(mx_type_val(dst)[6], 1);
+        check_value(mx_type_val(dst)[7], 1);
 
         mstr_v8si_destroy(ms);
     }
@@ -1783,14 +1783,14 @@ Test(Operation, mstr_v8si_load_row_vector)
         } // for
 
         mstr_v8si_load_row_vector(ms, 0, 0, -8, 2, &dst);
-        check_value(dst[0], 2);
-        check_value(dst[1], 2);
-        check_value(dst[2], 2);
-        check_value(dst[3], 2);
-        check_value(dst[4], 2);
-        check_value(dst[5], 2);
-        check_value(dst[6], 2);
-        check_value(dst[7], 2);
+        check_value(mx_type_val(dst)[0], 2);
+        check_value(mx_type_val(dst)[1], 2);
+        check_value(mx_type_val(dst)[2], 2);
+        check_value(mx_type_val(dst)[3], 2);
+        check_value(mx_type_val(dst)[4], 2);
+        check_value(mx_type_val(dst)[5], 2);
+        check_value(mx_type_val(dst)[6], 2);
+        check_value(mx_type_val(dst)[7], 2);
 
         mstr_v8si_destroy(ms);
     }
@@ -1805,24 +1805,24 @@ Test(Operation, mstr_v8si_load_row_vector)
         } // for
 
         mstr_v8si_load_row_vector(ms, 0, 10, 0, 3, &dst);
-        check_value(dst[0], 3);
-        check_value(dst[1], 3);
-        check_value(dst[2], 3);
-        check_value(dst[3], 3);
-        check_value(dst[4], 3);
-        check_value(dst[5], 3);
-        check_value(dst[6], 3);
-        check_value(dst[7], 3);
+        check_value(mx_type_val(dst)[0], 3);
+        check_value(mx_type_val(dst)[1], 3);
+        check_value(mx_type_val(dst)[2], 3);
+        check_value(mx_type_val(dst)[3], 3);
+        check_value(mx_type_val(dst)[4], 3);
+        check_value(mx_type_val(dst)[5], 3);
+        check_value(mx_type_val(dst)[6], 3);
+        check_value(mx_type_val(dst)[7], 3);
 
         mstr_v8si_load_row_vector(ms, 0, 0, 8, 4, &dst);
-        check_value(dst[0], 4);
-        check_value(dst[1], 4);
-        check_value(dst[2], 4);
-        check_value(dst[3], 4);
-        check_value(dst[4], 4);
-        check_value(dst[5], 4);
-        check_value(dst[6], 4);
-        check_value(dst[7], 4);
+        check_value(mx_type_val(dst)[0], 4);
+        check_value(mx_type_val(dst)[1], 4);
+        check_value(mx_type_val(dst)[2], 4);
+        check_value(mx_type_val(dst)[3], 4);
+        check_value(mx_type_val(dst)[4], 4);
+        check_value(mx_type_val(dst)[5], 4);
+        check_value(mx_type_val(dst)[6], 4);
+        check_value(mx_type_val(dst)[7], 4);
 
         mstr_v8si_destroy(ms);
     }
@@ -1837,24 +1837,24 @@ Test(Operation, mstr_v8si_load_row_vector)
         } // for
 
         mstr_v8si_load_row_vector(ms, 0, 0, -1, 5, &dst);
-        check_value(dst[0], 5);
-        check_value(dst[1], 0);
-        check_value(dst[2], 1);
-        check_value(dst[3], 2);
-        check_value(dst[4], 3);
-        check_value(dst[5], 4);
-        check_value(dst[6], 5);
-        check_value(dst[7], 6);
+        check_value(mx_type_val(dst)[0], 5);
+        check_value(mx_type_val(dst)[1], 0);
+        check_value(mx_type_val(dst)[2], 1);
+        check_value(mx_type_val(dst)[3], 2);
+        check_value(mx_type_val(dst)[4], 3);
+        check_value(mx_type_val(dst)[5], 4);
+        check_value(mx_type_val(dst)[6], 5);
+        check_value(mx_type_val(dst)[7], 6);
 
         mstr_v8si_load_row_vector(ms, 7, 0, -7, 6, &dst);
-        check_value(dst[0], 6);
-        check_value(dst[1], 6);
-        check_value(dst[2], 6);
-        check_value(dst[3], 6);
-        check_value(dst[4], 6);
-        check_value(dst[5], 6);
-        check_value(dst[6], 6);
-        check_value(dst[7], 700);
+        check_value(mx_type_val(dst)[0], 6);
+        check_value(mx_type_val(dst)[1], 6);
+        check_value(mx_type_val(dst)[2], 6);
+        check_value(mx_type_val(dst)[3], 6);
+        check_value(mx_type_val(dst)[4], 6);
+        check_value(mx_type_val(dst)[5], 6);
+        check_value(mx_type_val(dst)[6], 6);
+        check_value(mx_type_val(dst)[7], 700);
 
         mstr_v8si_destroy(ms);
     }
@@ -1869,34 +1869,34 @@ Test(Operation, mstr_v8si_load_row_vector)
         } // for
 
         mstr_v8si_load_row_vector(ms, 0, 0, -1, 7, &dst);
-        check_value(dst[0], 7);
-        check_value(dst[1], 0);
-        check_value(dst[2], 1);
-        check_value(dst[3], 2);
-        check_value(dst[4], 3);
-        check_value(dst[5], 7);
-        check_value(dst[6], 7);
-        check_value(dst[7], 7);
+        check_value(mx_type_val(dst)[0], 7);
+        check_value(mx_type_val(dst)[1], 0);
+        check_value(mx_type_val(dst)[2], 1);
+        check_value(mx_type_val(dst)[3], 2);
+        check_value(mx_type_val(dst)[4], 3);
+        check_value(mx_type_val(dst)[5], 7);
+        check_value(mx_type_val(dst)[6], 7);
+        check_value(mx_type_val(dst)[7], 7);
 
         mstr_v8si_load_row_vector(ms, 1, 0, 0, 8, &dst);
-        check_value(dst[0], 100);
-        check_value(dst[1], 101);
-        check_value(dst[2], 102);
-        check_value(dst[3], 103);
-        check_value(dst[4], 8);
-        check_value(dst[5], 8);
-        check_value(dst[6], 8);
-        check_value(dst[7], 8);
+        check_value(mx_type_val(dst)[0], 100);
+        check_value(mx_type_val(dst)[1], 101);
+        check_value(mx_type_val(dst)[2], 102);
+        check_value(mx_type_val(dst)[3], 103);
+        check_value(mx_type_val(dst)[4], 8);
+        check_value(mx_type_val(dst)[5], 8);
+        check_value(mx_type_val(dst)[6], 8);
+        check_value(mx_type_val(dst)[7], 8);
 
         mstr_v8si_load_row_vector(ms, 2, 0, 2, 9, &dst);
-        check_value(dst[0], 202);
-        check_value(dst[1], 203);
-        check_value(dst[2], 9);
-        check_value(dst[3], 9);
-        check_value(dst[4], 9);
-        check_value(dst[5], 9);
-        check_value(dst[6], 9);
-        check_value(dst[7], 9);
+        check_value(mx_type_val(dst)[0], 202);
+        check_value(mx_type_val(dst)[1], 203);
+        check_value(mx_type_val(dst)[2], 9);
+        check_value(mx_type_val(dst)[3], 9);
+        check_value(mx_type_val(dst)[4], 9);
+        check_value(mx_type_val(dst)[5], 9);
+        check_value(mx_type_val(dst)[6], 9);
+        check_value(mx_type_val(dst)[7], 9);
 
         mstr_v8si_destroy(ms);
     }
@@ -1911,34 +1911,34 @@ Test(Operation, mstr_v8si_load_row_vector)
         } // for
 
         mstr_v8si_load_row_vector(ms, 15, 0, 0, 10, &dst);
-        check_value(dst[0], 1500);
-        check_value(dst[1], 1501);
-        check_value(dst[2], 1502);
-        check_value(dst[3], 1503);
-        check_value(dst[4], 1504);
-        check_value(dst[5], 1505);
-        check_value(dst[6], 1506);
-        check_value(dst[7], 1507);
+        check_value(mx_type_val(dst)[0], 1500);
+        check_value(mx_type_val(dst)[1], 1501);
+        check_value(mx_type_val(dst)[2], 1502);
+        check_value(mx_type_val(dst)[3], 1503);
+        check_value(mx_type_val(dst)[4], 1504);
+        check_value(mx_type_val(dst)[5], 1505);
+        check_value(mx_type_val(dst)[6], 1506);
+        check_value(mx_type_val(dst)[7], 1507);
 
         mstr_v8si_load_row_vector(ms, 1, 0, 10, 11, &dst);
-        check_value(dst[0], 110);
-        check_value(dst[1], 111);
-        check_value(dst[2], 112);
-        check_value(dst[3], 113);
-        check_value(dst[4], 114);
-        check_value(dst[5], 115);
-        check_value(dst[6], 11);
-        check_value(dst[7], 11);
+        check_value(mx_type_val(dst)[0], 110);
+        check_value(mx_type_val(dst)[1], 111);
+        check_value(mx_type_val(dst)[2], 112);
+        check_value(mx_type_val(dst)[3], 113);
+        check_value(mx_type_val(dst)[4], 114);
+        check_value(mx_type_val(dst)[5], 115);
+        check_value(mx_type_val(dst)[6], 11);
+        check_value(mx_type_val(dst)[7], 11);
 
         mstr_v8si_load_row_vector(ms, 2, 0, 14, 12, &dst);
-        check_value(dst[0], 214);
-        check_value(dst[1], 215);
-        check_value(dst[2], 12);
-        check_value(dst[3], 12);
-        check_value(dst[4], 12);
-        check_value(dst[5], 12);
-        check_value(dst[6], 12);
-        check_value(dst[7], 12);
+        check_value(mx_type_val(dst)[0], 214);
+        check_value(mx_type_val(dst)[1], 215);
+        check_value(mx_type_val(dst)[2], 12);
+        check_value(mx_type_val(dst)[3], 12);
+        check_value(mx_type_val(dst)[4], 12);
+        check_value(mx_type_val(dst)[5], 12);
+        check_value(mx_type_val(dst)[6], 12);
+        check_value(mx_type_val(dst)[7], 12);
 
         mstr_v8si_destroy(ms);
     }
@@ -1953,14 +1953,14 @@ Test(Operation, mstr_v8si_load_row_vector)
         } // for
 
         mstr_v8si_load_row_vector(ms, 13, 0, 12, 13, &dst);
-        check_value(dst[0], 1312);
-        check_value(dst[1], 1313);
-        check_value(dst[2], 1314);
-        check_value(dst[3], 1315);
-        check_value(dst[4], 1316);
-        check_value(dst[5], 1317);
-        check_value(dst[6], 1318);
-        check_value(dst[7], 1319);
+        check_value(mx_type_val(dst)[0], 1312);
+        check_value(mx_type_val(dst)[1], 1313);
+        check_value(mx_type_val(dst)[2], 1314);
+        check_value(mx_type_val(dst)[3], 1315);
+        check_value(mx_type_val(dst)[4], 1316);
+        check_value(mx_type_val(dst)[5], 1317);
+        check_value(mx_type_val(dst)[6], 1318);
+        check_value(mx_type_val(dst)[7], 1319);
 
         mstr_v8si_destroy(ms);
     }

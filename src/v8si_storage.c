@@ -8,8 +8,6 @@
 
 // ---- V8SI related definitions ----
 
-static v8si_t v8si_idx[2] = {{0, 1, 2, 3, 4, 5, 6, 7}, {8, 9, 10, 11, 12, 13, 14, 15}};
-
 void mstr_v8si_init_zeros(mx_stor_ptr ms)
 {
     memset(ms->data, 0, ms->bytes);
@@ -28,14 +26,14 @@ void mstr_v8si_load_row_vector(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_c
     uint32_t rmd = 0;
     int32_t * base = NULL;
 
-    (*dst)[0] = def_val;
-    (*dst)[1] = def_val;
-    (*dst)[2] = def_val;
-    (*dst)[3] = def_val;
-    (*dst)[4] = def_val;
-    (*dst)[5] = def_val;
-    (*dst)[6] = def_val;
-    (*dst)[7] = def_val;
+    mx_type_val(*dst)[0] = def_val;
+    mx_type_val(*dst)[1] = def_val;
+    mx_type_val(*dst)[2] = def_val;
+    mx_type_val(*dst)[3] = def_val;
+    mx_type_val(*dst)[4] = def_val;
+    mx_type_val(*dst)[5] = def_val;
+    mx_type_val(*dst)[6] = def_val;
+    mx_type_val(*dst)[7] = def_val;
     if (val_ridx >= ms->rows || ms->rows == 0) {
         return;
     } // if
@@ -163,7 +161,7 @@ void mstr_v8si_set(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, int32_t
 
 void mstr_v8si_fill(mx_stor_ptr ms, int32_t src)
 {
-    v8si_t vals = {src, src, src, src, src, src, src, src};
+    v8si_t vals = { .val = {src, src, src, src, src, src, src, src} };
     uint32_t i = 0;
     v8si_t * base = NULL;
 
@@ -182,18 +180,24 @@ void mstr_v8si_transpose_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_c
 {
 #define v8si_transpose_chunk_half(row) \
     { \
-        dchk->v8si_16x1[row][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[sel][0], *mask[0], sizeof(int32_t)); \
+        mx_type_reg(dchk->v8si_16x1[row][0]) = _mm256_mask_i32gather_epi32(mx_type_reg(v8si_zero), base, mx_type_reg(idx[sel][0]), mx_type_reg(*mask[0]), sizeof(int32_t)); \
     }
 
 #define v8si_transpose_chunk_full(row) \
     { \
-        dchk->v8si_16x2[row][0] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[sel][0], *mask[0], sizeof(int32_t)); \
-        dchk->v8si_16x2[row][1] = __builtin_ia32_gathersiv8si(v8si_zero, base, idx[sel][1], *mask[1], sizeof(int32_t)); \
+        mx_type_reg(dchk->v8si_16x2[row][0]) = _mm256_mask_i32gather_epi32(mx_type_reg(v8si_zero), base, mx_type_reg(idx[sel][0]), mx_type_reg(*mask[0]), sizeof(int32_t)); \
+        mx_type_reg(dchk->v8si_16x2[row][1]) = _mm256_mask_i32gather_epi32(mx_type_reg(v8si_zero), base, mx_type_reg(idx[sel][1]), mx_type_reg(*mask[1]), sizeof(int32_t)); \
     }
 
     static v8si_t idx[2][2] = {
-        {{0,  8, 16, 24, 32, 40, 48,  56}, { 64,  72,  80,  88,  96, 104, 112, 120}},
-        {{0, 16, 32, 48, 64, 80, 96, 112}, {128, 144, 160, 176, 192, 208, 224, 240}},
+        {
+            { .val = {  0,   8,  16,  24,  32,  40,  48,  56 } },
+            { .val = { 64,  72,  80,  88,  96, 104, 112, 120 } },
+        },
+        {
+            { .val = {  0,  16,  32,  48,  64,  80,  96, 112} },
+            { .val = {128, 144, 160, 176, 192, 208, 224, 240} },
+        },
     };
     uint32_t schk_rows = 0; 
     uint32_t schk_cols = 0; 

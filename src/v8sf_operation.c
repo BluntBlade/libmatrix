@@ -103,7 +103,7 @@ void mops_v8sf_add(mx_stor_ptr ms, mx_stor_ptr lhs, mx_stor_ptr rhs)
             lchk = mstr_v8sf_locate_chunk(lhs, i, j, &lchk_rows, &lchk_cols);
             rchk = mstr_v8sf_locate_chunk(rhs, i, j, &rchk_rows, &rchk_cols);
             dchk = mstr_v8sf_locate_chunk(ms, i, j, &dchk_rows, &dchk_cols);
-            if (lchk_rows == I32_VALS_IN_CACHE_LINE && lchk_cols == I32_VALS_IN_CACHE_LINE) {
+            if (lchk_rows == F32_VALS_IN_CACHE_LINE && lchk_cols == F32_VALS_IN_CACHE_LINE) {
                 v8sf_add_chunk_fully(dchk, lchk, rchk);
             } else {
                 v8sf_add_chunk_partly(dchk, lchk, rchk, lchk_rows, lchk_cols);
@@ -209,7 +209,7 @@ void mops_v8sf_subtract(mx_stor_ptr dst, mx_stor_ptr lhs, mx_stor_ptr rhs)
             lchk = mstr_v8sf_locate_chunk(lhs, i, j, &lchk_rows, &lchk_cols);
             rchk = mstr_v8sf_locate_chunk(rhs, i, j, &rchk_rows, &rchk_cols);
             dchk = mstr_v8sf_locate_chunk(dst, i, j, &dchk_rows, &dchk_cols);
-            if (lchk_rows == I32_VALS_IN_CACHE_LINE && lchk_cols == I32_VALS_IN_CACHE_LINE) {
+            if (lchk_rows == F32_VALS_IN_CACHE_LINE && lchk_cols == F32_VALS_IN_CACHE_LINE) {
                 v8sf_subtract_chunk_fully(dchk, lchk, rchk);
             } else {
                 v8sf_subtract_chunk_partly(dchk, lchk, rchk, lchk_rows, lchk_cols);
@@ -227,14 +227,14 @@ static void v8sf_multiply_chunk_fully(mx_chunk_ptr dchk, mx_chunk_ptr lchk, mx_c
         mx_type_reg(ltmp) = _mm256_hadd_ps(mx_type_reg(ltmp), mx_type_reg(rtmp)); \
         mx_type_reg(ltmp) = _mm256_hadd_ps(mx_type_reg(ltmp), mx_type_reg(v8sf_zero)); \
         mx_type_reg(ltmp) = _mm256_hadd_ps(mx_type_reg(ltmp), mx_type_reg(v8sf_zero)); \
-        dchk->i32_16x16[row][col] += mx_type_val(ltmp)[0] + mx_type_val(ltmp)[4]; \
+        dchk->f32_16x16[row][col] += mx_type_val(ltmp)[0] + mx_type_val(ltmp)[4]; \
     }
 
     v8sf_t ltmp;
     v8sf_t rtmp;
     uint32_t i = 0;
 
-    for (i = 0; i < I32_VALS_IN_CACHE_LINE; i += 1) {
+    for (i = 0; i < F32_VALS_IN_CACHE_LINE; i += 1) {
         v8sf_multiply_chunk_full(i,  0);
         v8sf_multiply_chunk_full(i,  1);
         v8sf_multiply_chunk_full(i,  2);
@@ -264,7 +264,7 @@ static void v8sf_multiply_chunk_half_to_half(mx_chunk_ptr dchk, mx_chunk_ptr lch
         mx_type_reg(tmp) = _mm256_maskload_ps(mx_type_val(tmp), mx_type_reg(*mask)); \
         mx_type_reg(tmp) = _mm256_hadd_ps(mx_type_reg(tmp), mx_type_reg(v8sf_zero)); \
         mx_type_reg(tmp) = _mm256_hadd_ps(mx_type_reg(tmp), mx_type_reg(v8sf_zero)); \
-        dchk->i32_16x8[row][col] += mx_type_val(tmp)[0] + mx_type_val(tmp)[4]; \
+        dchk->f32_16x8[row][col] += mx_type_val(tmp)[0] + mx_type_val(tmp)[4]; \
     }
 
     v8sf_t tmp;
@@ -297,7 +297,7 @@ static void v8sf_multiply_chunk_half_to_full(mx_chunk_ptr dchk, mx_chunk_ptr lch
         mx_type_reg(tmp) = _mm256_maskload_ps(mx_type_val(tmp), mx_type_reg(*mask)); \
         mx_type_reg(tmp) = _mm256_hadd_ps(mx_type_reg(tmp), mx_type_reg(v8sf_zero)); \
         mx_type_reg(tmp) = _mm256_hadd_ps(mx_type_reg(tmp), mx_type_reg(v8sf_zero)); \
-        dchk->i32_16x16[row][col] += mx_type_val(tmp)[0] + mx_type_val(tmp)[4]; \
+        dchk->f32_16x16[row][col] += mx_type_val(tmp)[0] + mx_type_val(tmp)[4]; \
     }
 
     v8sf_t tmp;
@@ -341,7 +341,7 @@ static void v8sf_multiply_chunk_full_to_half(mx_chunk_ptr dchk, mx_chunk_ptr lch
         mx_type_reg(ltmp) = _mm256_hadd_ps(mx_type_reg(ltmp), mx_type_reg(rtmp)); \
         mx_type_reg(ltmp) = _mm256_hadd_ps(mx_type_reg(ltmp), mx_type_reg(v8sf_zero)); \
         mx_type_reg(ltmp) = _mm256_hadd_ps(mx_type_reg(ltmp), mx_type_reg(v8sf_zero)); \
-        dchk->i32_16x8[row][col] += mx_type_val(ltmp)[0] + mx_type_val(ltmp)[4]; \
+        dchk->f32_16x8[row][col] += mx_type_val(ltmp)[0] + mx_type_val(ltmp)[4]; \
     }
 
     v8sf_t ltmp;
@@ -378,7 +378,7 @@ static void v8sf_multiply_chunk_full_to_full(mx_chunk_ptr dchk, mx_chunk_ptr lch
         mx_type_reg(ltmp) = _mm256_hadd_ps(mx_type_reg(ltmp), mx_type_reg(rtmp)); \
         mx_type_reg(ltmp) = _mm256_hadd_ps(mx_type_reg(ltmp), mx_type_reg(v8sf_zero)); \
         mx_type_reg(ltmp) = _mm256_hadd_ps(mx_type_reg(ltmp), mx_type_reg(v8sf_zero)); \
-        dchk->i32_16x16[row][col] += mx_type_val(ltmp)[0] + mx_type_val(ltmp)[4]; \
+        dchk->f32_16x16[row][col] += mx_type_val(ltmp)[0] + mx_type_val(ltmp)[4]; \
     }
 
     v8sf_t ltmp;
@@ -458,8 +458,8 @@ void mops_v8sf_multiply(mx_stor_ptr dst, mx_stor_ptr lhs, mx_stor_ptr rhs)
                 lchk = mstr_v8sf_locate_chunk(lhs, i, k, &lchk_rows, &lchk_cols);
                 dchk = mstr_v8sf_locate_chunk(dst, i, j, &dchk_rows, &dchk_cols);
 
-                ssel = mx_round_to_multiples_of_8(rchk_cols) / 8 - 1 + (uint32_t)(lchk_cols == I32_VALS_IN_CACHE_LINE);
-                dsel = mx_round_to_multiples_of_8(dchk_cols) / 8 - 1 + (uint32_t)(dchk_cols == I32_VALS_IN_CACHE_LINE);
+                ssel = mx_round_to_multiples_of_8(rchk_cols) / 8 - 1 + (uint32_t)(lchk_cols == F32_VALS_IN_CACHE_LINE);
+                dsel = mx_round_to_multiples_of_8(dchk_cols) / 8 - 1 + (uint32_t)(dchk_cols == F32_VALS_IN_CACHE_LINE);
                 (*ops[ssel][dsel])(dchk, lchk, &rchk, dchk_rows, dchk_cols, lchk_cols);
             } // for
         } // for
@@ -546,7 +546,6 @@ static void v8sf_multiply_scalar_chunk_partly(mx_chunk_ptr dchk, mx_chunk_ptr sc
 
 void mops_v8sf_multiply_scalar(mx_stor_ptr dst, mx_stor_ptr src, float val)
 {
-    v4sf_t tmp = { .val = {val} };
     v8sf_t vals;
     uint32_t i = 0;
     uint32_t j = 0;
@@ -557,13 +556,13 @@ void mops_v8sf_multiply_scalar(mx_stor_ptr dst, mx_stor_ptr src, float val)
     mx_chunk_ptr schk = NULL;
     mx_chunk_ptr dchk = NULL;
 
-    mx_type_reg(vals) = _mm256_broadcast_ps(&mx_type_reg(tmp));
+    mx_type_reg(vals) = _mm256_broadcast_ss(&val);
 
     for (i = 0; i < mstr_v8sf_chunks_in_height(src); i += 1) {
         for (j = 0; j < mstr_v8sf_chunks_in_width(src); j += 1) {
             schk = mstr_v8sf_locate_chunk(src, i, j, &schk_rows, &schk_cols);
             dchk = mstr_v8sf_locate_chunk(dst, i, j, &dchk_rows, &dchk_cols);
-            if (schk_rows == I32_VALS_IN_CACHE_LINE && schk_cols == I32_VALS_IN_CACHE_LINE) {
+            if (schk_rows == F32_VALS_IN_CACHE_LINE && schk_cols == F32_VALS_IN_CACHE_LINE) {
                 v8sf_multiply_scalar_chunk_fully(dchk, schk, &vals);
             } else {
                 v8sf_multiply_scalar_chunk_partly(dchk, schk, &vals, schk_rows, schk_cols);

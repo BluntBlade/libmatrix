@@ -42,14 +42,16 @@ TEST_STOR_OBJ = $(TEST_STOR_SRC:.c=.o)
 TEST_STOR_TARGET = test/storage.out
 
 TEST_OPER_SRC = test/v8si_operation.c \
+                test/v8sf_operation.c \
                 src/mx_storage.c \
-                src/v8si_storage.c
+                src/v8si_storage.c \
+                src/v8sf_storage.c
 TEST_OPER_OBJ = $(TEST_OPER_SRC:.c=.o)
-TEST_OPER_TARGET = test/operation
+TEST_OPER_TARGET = test/operation.out
 
 BM_MATRIX_MULTIPLY_SRC = benchmark/matrix_multiply.c $(SRC)
 BM_MATRIX_MULTIPLY_OBJ = $(BM_MATRIX_MULTIPLY_SRC:.c=.o)
-BM_MATRIX_MULTIPLY = benchmark/matrix_multiply
+BM_MATRIX_MULTIPLY = benchmark/matrix_multiply.out
 
 .PHONY : all test clean
 

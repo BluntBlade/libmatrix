@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-// ==== Declarations of the i32m_t type ====
+// ==== Declarations of the i32_matrix_t type ====
 
 struct I32_MATRIX;
 typedef struct I32_MATRIX * i32_matrix_ptr;

@@ -1,7 +1,5 @@
-#include <omp.h>
-#include <memory.h>
-#include <smmintrin.h>
-#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "src/v8si_storage.h"
 #include "src/v8si_operation.h"

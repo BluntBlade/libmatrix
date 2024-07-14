@@ -83,13 +83,8 @@ void mstr_v8sf_load_row_vector(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_c
     base = mstr_v8sf_calc_base(ms, base_ridx, base_cidx, rows_in_chk);
     rmd = cols_in_chk - (col - base_cidx);
 
-    if (rmd >= cnt) {
-        memcpy(mx_type_val(*dst) + off, base + (row - base_ridx) * mx_round_to_multiples_of_8(cols_in_chk) + (col - base_cidx), sizeof(float) * cnt);
-        return;
-    } // if
-    
-    memcpy(mx_type_val(*dst) + off, base + (row - base_ridx) * mx_round_to_multiples_of_8(cols_in_chk) + (col - base_cidx), sizeof(float) * rmd);
-    if ((col += rmd) >= ms->cols) {
+    memcpy((float *)dst + off, base + (row - base_ridx) * mx_round_to_multiples_of_8(cols_in_chk) + (col - base_cidx), sizeof(float) * (rmd < cnt ? rmd : cnt));
+    if ((rmd >= cnt) || (col += rmd) >= ms->cols) {
         return;
     } // if
 
@@ -98,8 +93,76 @@ void mstr_v8sf_load_row_vector(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_c
 
     base += rows_in_chk * cols_in_chk;
     cols_in_chk = mx_ceil_to_or_less_than_16(ms->cols - col); // col must be equal to the base_cidx of the right adjacent chunk.
-    memcpy(mx_type_val(*dst) + off, base + (row - base_ridx) * mx_round_to_multiples_of_8(cols_in_chk), sizeof(float) * cnt);
+    memcpy((float *)dst + off, base + (row - base_ridx) * mx_round_to_multiples_of_8(cols_in_chk), sizeof(float) * cnt);
 } // mstr_v8sf_load_row_vector
+
+void mstr_v8sf_store_row_vector(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, int32_t col_off, v8sf_t * src)
+{
+    uint32_t row = 0;
+    uint32_t col = 0;
+    uint32_t off = 0;
+    uint32_t cnt = 0;
+    uint32_t base_ridx = 0;
+    uint32_t base_cidx = 0;
+    uint32_t rows_in_chk = 0;
+    uint32_t cols_in_chk = 0;
+    uint32_t rmd = 0;
+    int32_t * base = NULL;
+
+    if (val_ridx >= ms->rows || ms->rows == 0) {
+        return;
+    } // if
+
+    row = val_ridx;
+    col = val_cidx;
+    off = abs(col_off);
+
+    // Calibrate the column index.
+    if (col_off < 0) {
+        if (col < off) {
+            // The actual column index is beyond the LEFT boundary.
+            off -= col;
+            col = 0;
+            if (off >= I32_VALS_IN_V8SI) {
+                // There is not enough values to load.
+                return;
+            } // if
+        } else {
+            col -= off;
+            off = 0;
+        } // if
+    } else if (col_off > 0) {
+        col += col_off;
+        off = 0;
+    } // if
+
+    if (col >= ms->cols) {
+        // The actual column index is beyond the RIGHT boundary.
+        return;
+    } // if
+
+    cnt = I32_VALS_IN_V8SI - off;
+
+    base_ridx = row & (~(I32_VALS_IN_CACHE_LINE - 1)); // Refer to values.
+    base_cidx = col & (~(I32_VALS_IN_CACHE_LINE - 1)); // Refer to values.
+    rows_in_chk = mx_ceil_to_or_less_than_16(ms->rows - base_ridx);
+    cols_in_chk = mx_ceil_to_or_less_than_16(ms->cols - base_cidx);
+
+    base = mstr_v8sf_calc_base(ms, base_ridx, base_cidx, rows_in_chk);
+    rmd = cols_in_chk - (col - base_cidx);
+
+    memcpy(base + (row - base_ridx) * mx_round_to_multiples_of_8(cols_in_chk) + (col - base_cidx), (float *)src + off, sizeof(float) * (rmd < cnt ? rmd : cnt));
+    if ((rmd >= cnt) || (col += rmd) >= ms->cols) {
+        return;
+    } // if
+
+    cnt -= rmd;
+    off += rmd;
+
+    base += rows_in_chk * cols_in_chk;
+    cols_in_chk = mx_ceil_to_or_less_than_16(ms->cols - col); // col must be equal to the base_cidx of the right adjacent chunk.
+    memcpy(base + (row - base_ridx) * mx_round_to_multiples_of_8(cols_in_chk), (float *)src + off, sizeof(float) * cnt);
+} // mstr_v8sf_store_row_vector
 
 void mstr_v8sf_init_identity(mx_stor_ptr ms)
 {

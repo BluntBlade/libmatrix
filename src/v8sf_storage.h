@@ -14,7 +14,9 @@ extern void mstr_v8sf_init_zeros(mx_stor_ptr ms);
 extern void mstr_v8sf_init_identity(mx_stor_ptr ms);
 
 extern void mstr_v8sf_load_row_vector(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, int32_t col_off, float def_val, v8sf_t * dst);
-// TODO: extern void mstr_v8sf_load_column_vector(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, int32_t row_off, float def_val, v8sf_t * dst);
+extern void mstr_v8sf_store_row_vector(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, int32_t col_off, v8sf_t * src);
+// TODO: extern void mstr_v8sf_load_column_vector(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, int32_t row_off, int32_t def_val, v8sf_t * dst);
+// TODO: extern void mstr_v8sf_store_column_vector(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, int32_t row_off, v8sf_t * src);
 
 extern float mstr_v8sf_get(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx);
 extern void mstr_v8sf_set(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, float src);

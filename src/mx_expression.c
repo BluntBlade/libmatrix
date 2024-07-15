@@ -536,12 +536,24 @@ bool mexp_v8sf_mat_store_row_vec(mx_expr_ptr me, void * dst, void * row, void * 
 void mexp_evaluate(mx_expr_ptr me)
 {
     uint32_t i = 0;
+    uint32_t n = 0;
+    uint32_t r = 0;
     mexp_ins_ptr ins = NULL;
 
-    for (i = 1; i < me->ins_len; i += 1) {
-        ins = &me->ins[i];
-        (ins->op)(ins);
-    } // for
+    r = (me->ins_len - 1) % 8;
+    n = (me->ins_len - 1) / 8 + 1;
+    switch (r) {
+        case 8: do { ins = &me->ins[++i]; (ins->op)(ins);
+        case 7:      ins = &me->ins[++i]; (ins->op)(ins);
+        case 6:      ins = &me->ins[++i]; (ins->op)(ins);
+        case 5:      ins = &me->ins[++i]; (ins->op)(ins);
+        case 4:      ins = &me->ins[++i]; (ins->op)(ins);
+        case 3:      ins = &me->ins[++i]; (ins->op)(ins);
+        case 2:      ins = &me->ins[++i]; (ins->op)(ins);
+        case 1:      ins = &me->ins[++i]; (ins->op)(ins);
+                } while (--n > 0);
+        default: break;
+    } // switch
 } // mexp_evaluate
 
 void mexp_v8si_filter(mx_expr_ptr me, void * row, void * col, void * src)

@@ -25,14 +25,14 @@ void pure_v8si_filter(mx_stor_ptr dst, mx_stor_ptr src)
 
             for (row = I32_VALS_IN_CACHE_LINE * i; row < I32_VALS_IN_CACHE_LINE * i + row_in_chk; row += 1) {
                 for (col = I32_VALS_IN_CACHE_LINE * j; col < I32_VALS_IN_CACHE_LINE * j + col_in_chk; col += 8) {
-                    mstr_v8si_load_row_vector(src, row, col, -1, 0, &left);
-                    mstr_v8si_load_row_vector(src, row, col, 1, 0, &right);
-                    mstr_v8si_load_row_vector(src, row, col, 0, 0, &vec);
+                    mstr_v8si_load_row_vector(src, row, col, 0, -1, 0, &left);
+                    mstr_v8si_load_row_vector(src, row, col, 0, 1, 0, &right);
+                    mstr_v8si_load_row_vector(src, row, col, 0, 0, 0, &vec);
                    
                     mx_type_reg(vec) = _mm256_add_epi32(mx_type_reg(vec), mx_type_reg(left));
                     mx_type_reg(vec) = _mm256_add_epi32(mx_type_reg(vec), mx_type_reg(right));
 
-                    mstr_v8si_store_row_vector(dst, row, col, 0, &vec);
+                    mstr_v8si_store_row_vector(dst, row, col, 0, 0, &vec);
                 } // for
             } // for
         } // for

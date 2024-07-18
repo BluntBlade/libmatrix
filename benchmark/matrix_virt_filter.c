@@ -48,6 +48,7 @@ int main(int argc, const char * argv[])
     uint32_t dval = 0;
     uint32_t row = 0;
     uint32_t col = 0;
+    uint32_t row_off = 0;
     uint32_t vec_off = 0;
     uint32_t up_off = 0;
     uint32_t down_off = 0;
@@ -58,12 +59,12 @@ int main(int argc, const char * argv[])
 
     me = mexp_create(20);
 
-    mexp_v8si_mat_load_row_vec(me, &vec, &row, &col, &vec_off, &dval, src);
-    mexp_v8si_mat_load_row_vec(me, &left, &row, &col, &left_off, &dval, src);
-    mexp_v8si_mat_load_row_vec(me, &right, &row, &col, &right_off, &dval, src);
+    mexp_v8si_mat_load_row_vec(me, &vec, &row, &col, &row_off, &vec_off, &dval, src);
+    mexp_v8si_mat_load_row_vec(me, &left, &row, &col, &row_off, &left_off, &dval, src);
+    mexp_v8si_mat_load_row_vec(me, &right, &row, &col, &row_off, &right_off, &dval, src);
     mexp_v8si_add(me, &vec, &vec, &left);
     mexp_v8si_add(me, &vec, &vec, &right);
-    mexp_v8si_mat_store_row_vec(me, dst, &row, &col, &vec_off, &vec);
+    mexp_v8si_mat_store_row_vec(me, dst, &row, &col, &row_off, &vec_off, &vec);
 
     printf("Calculating using simd code.\n");
     gettimeofday(&begin, NULL);

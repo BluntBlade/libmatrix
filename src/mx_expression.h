@@ -70,16 +70,16 @@ extern bool mexp_v8si_mat_sub(mx_expr_ptr me, void * dst, void * src1, void * sr
 extern bool mexp_v8si_mat_mul(mx_expr_ptr me, void * dst, void * src1, void * src2);
 extern bool mexp_v8si_mat_mul_by_scr(mx_expr_ptr me, void * dst, void * mat, void * i32);
 
-extern bool mexp_v8si_mat_load_row_vec(mx_expr_ptr me, void * dst, void * row, void * col, void * off, void * dval, void * src);
-extern bool mexp_v8si_mat_store_row_vec(mx_expr_ptr me, void * dst, void * row, void * col, void * off, void * src);
+extern bool mexp_v8si_mat_load_row_vec(mx_expr_ptr me, void * dst, void * row, void * col, void * row_off, void * col_off, void * dval, void * src);
+extern bool mexp_v8si_mat_store_row_vec(mx_expr_ptr me, void * dst, void * row, void * col, void * row_off, void * col_off, void * src);
 
 extern bool mexp_v8sf_mat_add(mx_expr_ptr me, void * dst, void * src1, void * src2);
 extern bool mexp_v8sf_mat_sub(mx_expr_ptr me, void * dst, void * src1, void * src2);
 extern bool mexp_v8sf_mat_mul(mx_expr_ptr me, void * dst, void * src1, void * src2);
 extern bool mexp_v8sf_mat_mul_by_scr(mx_expr_ptr me, void * dst, void * mat, void * f32);
 
-extern bool mexp_v8sf_mat_load_row_vec(mx_expr_ptr me, void * dst, void * row, void * col, void * off, void * dval, void * src);
-extern bool mexp_v8sf_mat_store_row_vec(mx_expr_ptr me, void * dst, void * row, void * col, void * off, void * src);
+extern bool mexp_v8sf_mat_load_row_vec(mx_expr_ptr me, void * dst, void * row, void * col, void * row_off, void * col_off, void * dval, void * src);
+extern bool mexp_v8sf_mat_store_row_vec(mx_expr_ptr me, void * dst, void * row, void * col, void * row_off, void * col_off, void * src);
 
 // ---- Evaluation functions ---- //
 

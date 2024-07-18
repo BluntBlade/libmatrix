@@ -3,6 +3,11 @@
 
 #include "src/mx_types.h"
 
+enum {
+    MSTR_LOAD_VECTOR    = 0,
+    MSTR_STORE_VECTOR   = 1,
+};
+
 typedef struct MX_STORAGE {
     uint16_t    val_sz;             // The size of one value, in bytes.
     uint16_t    alignment;          // The byte boundary to align with.
@@ -26,6 +31,14 @@ extern void mstr_clean(mx_stor_ptr ms);
 
 extern mx_stor_ptr mstr_create(uint32_t rows, uint32_t cols, uint32_t val_sz, uint32_t pck_len, uint32_t chk_len);
 extern void mstr_destroy(mx_stor_ptr ms);
+
+extern void mstr_calibrate_index(mx_stor_ptr ms, uint32_t * row, uint32_t * col, int32_t * row_off, int32_t * col_off);
+extern void mstr_transfer_row_vector(mx_stor_ptr ms, uint32_t row, uint32_t col, uint32_t off, uint32_t dir, void * vec);
+
+inline static void * mstr_calc_base(mx_stor_ptr ms, uint32_t base_ridx, uint32_t base_cidx, uint32_t rows_in_chk)
+{
+    return ms->data + ms->val_sz * (base_ridx * ms->cols_padded + rows_in_chk * base_cidx);
+} // mstr_calc_base
 
 #endif // MX_STORAGE_H
 

@@ -1759,7 +1759,7 @@ Test(Operation, mstr_v8sf_load_row_vector)
             } // for
         } // for
 
-        mstr_v8sf_load_row_vector(ms, 0, 9, 0, 1.0, &dst);
+        mstr_v8sf_load_row_vector(ms, 0, 9, 0, 0, 1.0, &dst);
         check_value(mx_type_val(dst)[0], 1.0);
         check_value(mx_type_val(dst)[1], 1.0);
         check_value(mx_type_val(dst)[2], 1.0);
@@ -1781,7 +1781,7 @@ Test(Operation, mstr_v8sf_load_row_vector)
             } // for
         } // for
 
-        mstr_v8sf_load_row_vector(ms, 0, 0, -8, 2.0, &dst);
+        mstr_v8sf_load_row_vector(ms, 0, 0, 0, -8, 2.0, &dst);
         check_value(mx_type_val(dst)[0], 2.0);
         check_value(mx_type_val(dst)[1], 2.0);
         check_value(mx_type_val(dst)[2], 2.0);
@@ -1803,7 +1803,7 @@ Test(Operation, mstr_v8sf_load_row_vector)
             } // for
         } // for
 
-        mstr_v8sf_load_row_vector(ms, 0, 10, 0, 3.0, &dst);
+        mstr_v8sf_load_row_vector(ms, 0, 10, 0, 0, 3.0, &dst);
         check_value(mx_type_val(dst)[0], 3.0);
         check_value(mx_type_val(dst)[1], 3.0);
         check_value(mx_type_val(dst)[2], 3.0);
@@ -1813,7 +1813,7 @@ Test(Operation, mstr_v8sf_load_row_vector)
         check_value(mx_type_val(dst)[6], 3.0);
         check_value(mx_type_val(dst)[7], 3.0);
 
-        mstr_v8sf_load_row_vector(ms, 0, 0, 8, 4.0, &dst);
+        mstr_v8sf_load_row_vector(ms, 0, 0, 0, 8, 4.0, &dst);
         check_value(mx_type_val(dst)[0], 4.0);
         check_value(mx_type_val(dst)[1], 4.0);
         check_value(mx_type_val(dst)[2], 4.0);
@@ -1835,7 +1835,7 @@ Test(Operation, mstr_v8sf_load_row_vector)
             } // for
         } // for
 
-        mstr_v8sf_load_row_vector(ms, 0, 0, -1, 5.0, &dst);
+        mstr_v8sf_load_row_vector(ms, 0, 0, 0, -1, 5.0, &dst);
         check_value(mx_type_val(dst)[0], 5.0);
         check_value(mx_type_val(dst)[1], 0.0);
         check_value(mx_type_val(dst)[2], 1.0);
@@ -1845,7 +1845,7 @@ Test(Operation, mstr_v8sf_load_row_vector)
         check_value(mx_type_val(dst)[6], 5.0);
         check_value(mx_type_val(dst)[7], 6.0);
 
-        mstr_v8sf_load_row_vector(ms, 7, 0, -7, 6.0, &dst);
+        mstr_v8sf_load_row_vector(ms, 7, 0, 0, -7, 6.0, &dst);
         check_value(mx_type_val(dst)[0], 6.0);
         check_value(mx_type_val(dst)[1], 6.0);
         check_value(mx_type_val(dst)[2], 6.0);
@@ -1867,7 +1867,7 @@ Test(Operation, mstr_v8sf_load_row_vector)
             } // for
         } // for
 
-        mstr_v8sf_load_row_vector(ms, 0, 0, -1, 7.0, &dst);
+        mstr_v8sf_load_row_vector(ms, 0, 0, 0, -1, 7.0, &dst);
         check_value(mx_type_val(dst)[0], 7.0);
         check_value(mx_type_val(dst)[1], 0.0);
         check_value(mx_type_val(dst)[2], 1.0);
@@ -1877,7 +1877,7 @@ Test(Operation, mstr_v8sf_load_row_vector)
         check_value(mx_type_val(dst)[6], 7.0);
         check_value(mx_type_val(dst)[7], 7.0);
 
-        mstr_v8sf_load_row_vector(ms, 1, 0, 0, 8.0, &dst);
+        mstr_v8sf_load_row_vector(ms, 1, 0, 0, 0, 8.0, &dst);
         check_value(mx_type_val(dst)[0], 100.0);
         check_value(mx_type_val(dst)[1], 101.0);
         check_value(mx_type_val(dst)[2], 102.0);
@@ -1887,7 +1887,7 @@ Test(Operation, mstr_v8sf_load_row_vector)
         check_value(mx_type_val(dst)[6], 8.0);
         check_value(mx_type_val(dst)[7], 8.0);
 
-        mstr_v8sf_load_row_vector(ms, 2, 0, 2, 9.0, &dst);
+        mstr_v8sf_load_row_vector(ms, 2, 0, 0, 2, 9.0, &dst);
         check_value(mx_type_val(dst)[0], 202.0);
         check_value(mx_type_val(dst)[1], 203.0);
         check_value(mx_type_val(dst)[2], 9.0);
@@ -1909,7 +1909,7 @@ Test(Operation, mstr_v8sf_load_row_vector)
             } // for
         } // for
 
-        mstr_v8sf_load_row_vector(ms, 15, 0, 0, 10.0, &dst);
+        mstr_v8sf_load_row_vector(ms, 15, 0, 0, 0, 10.0, &dst);
         check_value(mx_type_val(dst)[0], 1500.0);
         check_value(mx_type_val(dst)[1], 1501.0);
         check_value(mx_type_val(dst)[2], 1502.0);
@@ -1919,7 +1919,7 @@ Test(Operation, mstr_v8sf_load_row_vector)
         check_value(mx_type_val(dst)[6], 1506.0);
         check_value(mx_type_val(dst)[7], 1507.0);
 
-        mstr_v8sf_load_row_vector(ms, 1, 0, 10, 11.0, &dst);
+        mstr_v8sf_load_row_vector(ms, 1, 0, 0, 10, 11.0, &dst);
         check_value(mx_type_val(dst)[0], 110.0);
         check_value(mx_type_val(dst)[1], 111.0);
         check_value(mx_type_val(dst)[2], 112.0);
@@ -1929,7 +1929,7 @@ Test(Operation, mstr_v8sf_load_row_vector)
         check_value(mx_type_val(dst)[6], 11.0);
         check_value(mx_type_val(dst)[7], 11.0);
 
-        mstr_v8sf_load_row_vector(ms, 2, 0, 14, 12.0, &dst);
+        mstr_v8sf_load_row_vector(ms, 2, 0, 0, 14, 12.0, &dst);
         check_value(mx_type_val(dst)[0], 214.0);
         check_value(mx_type_val(dst)[1], 215.0);
         check_value(mx_type_val(dst)[2], 12.0);
@@ -1951,7 +1951,7 @@ Test(Operation, mstr_v8sf_load_row_vector)
             } // for
         } // for
 
-        mstr_v8sf_load_row_vector(ms, 13, 0, 12, 13.0, &dst);
+        mstr_v8sf_load_row_vector(ms, 13, 0, 0, 12, 13.0, &dst);
         check_value(mx_type_val(dst)[0], 1312.0);
         check_value(mx_type_val(dst)[1], 1313.0);
         check_value(mx_type_val(dst)[2], 1314.0);
@@ -1977,7 +1977,7 @@ Test(Operation, mstr_v8sf_store_row_vector)
         ms = mstr_v8sf_create(8, 8);
 
         mstr_v8sf_init_zeros(ms);
-        mstr_v8sf_store_row_vector(ms, 9, 0, 0, &src);
+        mstr_v8sf_store_row_vector(ms, 9, 0, 0, 0, &src);
         for (i = 0; i < mstr_v8sf_rows(ms); i += 1) {
             for (j = 0; j < mstr_v8sf_columns(ms); j += 1) {
                 check_value(mstr_v8sf_get(ms, i, j), 0.0);
@@ -1992,7 +1992,7 @@ Test(Operation, mstr_v8sf_store_row_vector)
         ms = mstr_v8sf_create(8, 8);
 
         mstr_v8sf_init_zeros(ms);
-        mstr_v8sf_store_row_vector(ms, 0, 0, -8, &src);
+        mstr_v8sf_store_row_vector(ms, 0, 0, 0, -8, &src);
         for (i = 0; i < mstr_v8sf_rows(ms); i += 1) {
             for (j = 0; j < mstr_v8sf_columns(ms); j += 1) {
                 check_value(mstr_v8sf_get(ms, i, j), 0.0);
@@ -2007,7 +2007,7 @@ Test(Operation, mstr_v8sf_store_row_vector)
         ms = mstr_v8sf_create(8, 8);
 
         mstr_v8sf_init_zeros(ms);
-        mstr_v8sf_store_row_vector(ms, 0, 10, 0, &src);
+        mstr_v8sf_store_row_vector(ms, 0, 10, 0, 0, &src);
         for (i = 0; i < mstr_v8sf_rows(ms); i += 1) {
             for (j = 0; j < mstr_v8sf_columns(ms); j += 1) {
                 check_value(mstr_v8sf_get(ms, i, j), 0.0);
@@ -2015,7 +2015,7 @@ Test(Operation, mstr_v8sf_store_row_vector)
         } // for
 
         mstr_v8sf_init_zeros(ms);
-        mstr_v8sf_store_row_vector(ms, 0, 0, 8, &src);
+        mstr_v8sf_store_row_vector(ms, 0, 0, 0, 8, &src);
         for (i = 0; i < mstr_v8sf_rows(ms); i += 1) {
             for (j = 0; j < mstr_v8sf_columns(ms); j += 1) {
                 check_value(mstr_v8sf_get(ms, i, j), 0.0);
@@ -2030,7 +2030,7 @@ Test(Operation, mstr_v8sf_store_row_vector)
         ms = mstr_v8sf_create(8, 8);
 
         mstr_v8sf_init_zeros(ms);
-        mstr_v8sf_store_row_vector(ms, 0, 0, -1, &src);
+        mstr_v8sf_store_row_vector(ms, 0, 0, 0, -1, &src);
         check_value(mstr_v8sf_get(ms, 0, 0), 15.0);
         check_value(mstr_v8sf_get(ms, 0, 1), 14.0);
         check_value(mstr_v8sf_get(ms, 0, 2), 13.0);
@@ -2041,7 +2041,7 @@ Test(Operation, mstr_v8sf_store_row_vector)
         check_value(mstr_v8sf_get(ms, 0, 7),  0.0);
 
         mstr_v8sf_init_zeros(ms);
-        mstr_v8sf_store_row_vector(ms, 7, 0, -7, &src);
+        mstr_v8sf_store_row_vector(ms, 7, 0, 0, -7, &src);
         check_value(mstr_v8sf_get(ms, 7, 0), 9.0);
         check_value(mstr_v8sf_get(ms, 7, 1), 0.0);
         check_value(mstr_v8sf_get(ms, 7, 2), 0.0);
@@ -2059,21 +2059,21 @@ Test(Operation, mstr_v8sf_store_row_vector)
         ms = mstr_v8sf_create(4, 4);
 
         mstr_v8sf_init_zeros(ms);
-        mstr_v8sf_store_row_vector(ms, 0, 0, -1, &src);
+        mstr_v8sf_store_row_vector(ms, 0, 0, 0, -1, &src);
         check_value(mstr_v8sf_get(ms, 0, 0), 15.0);
         check_value(mstr_v8sf_get(ms, 0, 1), 14.0);
         check_value(mstr_v8sf_get(ms, 0, 2), 13.0);
         check_value(mstr_v8sf_get(ms, 0, 3), 12.0);
 
         mstr_v8sf_init_zeros(ms);
-        mstr_v8sf_store_row_vector(ms, 1, 0, 0, &src);
+        mstr_v8sf_store_row_vector(ms, 1, 0, 0, 0, &src);
         check_value(mstr_v8sf_get(ms, 1, 0), 16.0);
         check_value(mstr_v8sf_get(ms, 1, 1), 15.0);
         check_value(mstr_v8sf_get(ms, 1, 2), 14.0);
         check_value(mstr_v8sf_get(ms, 1, 3), 13.0);
 
         mstr_v8sf_init_zeros(ms);
-        mstr_v8sf_store_row_vector(ms, 2, 0, 2, &src);
+        mstr_v8sf_store_row_vector(ms, 2, 0, 0, 2, &src);
         check_value(mstr_v8sf_get(ms, 2, 0), 0.0);
         check_value(mstr_v8sf_get(ms, 2, 1), 0.0);
         check_value(mstr_v8sf_get(ms, 2, 2), 16.0);
@@ -2087,7 +2087,7 @@ Test(Operation, mstr_v8sf_store_row_vector)
         ms = mstr_v8sf_create(16, 16);
 
         mstr_v8sf_init_zeros(ms);
-        mstr_v8sf_store_row_vector(ms, 15, 0, 0, &src);
+        mstr_v8sf_store_row_vector(ms, 15, 0, 0, 0, &src);
         check_value(mstr_v8sf_get(ms, 15, 0), 16.0);
         check_value(mstr_v8sf_get(ms, 15, 1), 15.0);
         check_value(mstr_v8sf_get(ms, 15, 2), 14.0);
@@ -2098,7 +2098,7 @@ Test(Operation, mstr_v8sf_store_row_vector)
         check_value(mstr_v8sf_get(ms, 15, 7),  9.0);
 
         mstr_v8sf_init_zeros(ms);
-        mstr_v8sf_store_row_vector(ms, 1, 0, 10, &src);
+        mstr_v8sf_store_row_vector(ms, 1, 0, 0, 10, &src);
         check_value(mstr_v8sf_get(ms, 1,  0),  0.0);
         check_value(mstr_v8sf_get(ms, 1,  1),  0.0);
         check_value(mstr_v8sf_get(ms, 1,  2),  0.0);
@@ -2117,7 +2117,7 @@ Test(Operation, mstr_v8sf_store_row_vector)
         check_value(mstr_v8sf_get(ms, 1, 15), 11.0);
 
         mstr_v8sf_init_zeros(ms);
-        mstr_v8sf_store_row_vector(ms, 2, 0, 14, &src);
+        mstr_v8sf_store_row_vector(ms, 2, 0, 0, 14, &src);
         check_value(mstr_v8sf_get(ms, 2,  0),  0.0);
         check_value(mstr_v8sf_get(ms, 2,  1),  0.0);
         check_value(mstr_v8sf_get(ms, 2,  2),  0.0);
@@ -2143,7 +2143,7 @@ Test(Operation, mstr_v8sf_store_row_vector)
         ms = mstr_v8sf_create(16, 32);
 
         mstr_v8sf_init_zeros(ms);
-        mstr_v8sf_store_row_vector(ms, 13, 0, 12, &src);
+        mstr_v8sf_store_row_vector(ms, 13, 0, 0, 12, &src);
         check_value(mstr_v8sf_get(ms, 13,  0),  0.0);
         check_value(mstr_v8sf_get(ms, 13,  1),  0.0);
         check_value(mstr_v8sf_get(ms, 13,  2),  0.0);

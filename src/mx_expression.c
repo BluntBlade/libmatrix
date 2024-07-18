@@ -64,6 +64,23 @@
         return true; \
     }
 
+#define push_ins_with_7_args(me, fn, a0, a1, a2, a3, a4, a5, a6) \
+    { \
+        uint32_t iidx = ins_new_index(me); \
+        if (iidx == 0) { \
+            return false; \
+        } \
+        me->ins[iidx].op = fn; \
+        me->ins[iidx].arg[0] = a0; \
+        me->ins[iidx].arg[1] = a1; \
+        me->ins[iidx].arg[2] = a2; \
+        me->ins[iidx].arg[3] = a3; \
+        me->ins[iidx].arg[4] = a4; \
+        me->ins[iidx].arg[5] = a5; \
+        me->ins[iidx].arg[6] = a6; \
+        return true; \
+    }
+
 static uint32_t ins_new_index(mx_expr_ptr me)
 {
     mexp_ins_ptr ins = NULL; 
@@ -428,16 +445,17 @@ static void v8si_mat_load_row_vec(mexp_ins_ptr ins)
     v8si_t * dst = ins->arg[0];
     uint32_t val_ridx = *((uint32_t *)ins->arg[1]);
     uint32_t val_cidx = *((uint32_t *)ins->arg[2]);
-    int32_t col_off = *((int32_t *)ins->arg[3]);
-    int32_t def_val = *((int32_t *)ins->arg[4]);
-    mx_stor_ptr src = ins->arg[5];
+    int32_t row_off = *((int32_t *)ins->arg[3]);
+    int32_t col_off = *((int32_t *)ins->arg[4]);
+    int32_t def_val = *((int32_t *)ins->arg[5]);
+    mx_stor_ptr src = ins->arg[6];
 
-    mstr_v8si_load_row_vector(src, val_ridx, val_cidx, col_off, def_val, dst);
+    mstr_v8si_load_row_vector(src, val_ridx, val_cidx, row_off, col_off, def_val, dst);
 } // v8si_mat_load_row_vec
 
-bool mexp_v8si_mat_load_row_vec(mx_expr_ptr me, void * dst, void * row, void * col, void * off, void * dval, void * src)
+bool mexp_v8si_mat_load_row_vec(mx_expr_ptr me, void * dst, void * row, void * col, void * row_off, void * col_off, void * dval, void * src)
 {
-    push_ins_with_6_args(me, &v8si_mat_load_row_vec, dst, row, col, off, dval, src);
+    push_ins_with_7_args(me, &v8si_mat_load_row_vec, dst, row, col, row_off, col_off, dval, src);
 } // mexp_v8si_mat_load_row_vec
 
 static void v8si_mat_store_row_vec(mexp_ins_ptr ins)
@@ -445,15 +463,16 @@ static void v8si_mat_store_row_vec(mexp_ins_ptr ins)
     mx_stor_ptr dst = ins->arg[0];
     uint32_t val_ridx = *((uint32_t *)ins->arg[1]);
     uint32_t val_cidx = *((uint32_t *)ins->arg[2]);
-    int32_t col_off = *((int32_t *)ins->arg[3]);
-    v8si_t * src = ins->arg[4];
+    int32_t row_off = *((int32_t *)ins->arg[3]);
+    int32_t col_off = *((int32_t *)ins->arg[4]);
+    v8si_t * src = ins->arg[5];
 
-    mstr_v8si_store_row_vector(dst, val_ridx, val_cidx, col_off, src);
+    mstr_v8si_store_row_vector(dst, val_ridx, val_cidx, row_off, col_off, src);
 } // v8si_mat_store_row_vec
 
-bool mexp_v8si_mat_store_row_vec(mx_expr_ptr me, void * dst, void * row, void * col, void * off, void * src)
+bool mexp_v8si_mat_store_row_vec(mx_expr_ptr me, void * dst, void * row, void * col, void * row_off, void * col_off, void * src)
 {
-    push_ins_with_5_args(me, &v8si_mat_store_row_vec, dst, row, col, off, src);
+    push_ins_with_6_args(me, &v8si_mat_store_row_vec, dst, row, col, row_off, col_off, src);
 } // mexp_v8si_mat_store_row_vec
 
 // ---- //
@@ -503,16 +522,17 @@ static void v8sf_mat_load_row_vec(mexp_ins_ptr ins)
     v8sf_t * dst = ins->arg[0];
     uint32_t val_ridx = *((uint32_t *)ins->arg[1]);
     uint32_t val_cidx = *((uint32_t *)ins->arg[2]);
-    int32_t col_off = *((int32_t *)ins->arg[3]);
-    float def_val = *((float *)ins->arg[4]);
-    mx_stor_ptr src = ins->arg[5];
+    int32_t row_off = *((int32_t *)ins->arg[3]);
+    int32_t col_off = *((int32_t *)ins->arg[4]);
+    float def_val = *((float *)ins->arg[5]);
+    mx_stor_ptr src = ins->arg[6];
 
-    mstr_v8sf_load_row_vector(src, val_ridx, val_cidx, col_off, def_val, dst);
+    mstr_v8sf_load_row_vector(src, val_ridx, val_cidx, row_off, col_off, def_val, dst);
 } // v8sf_mat_load_row_vec
 
-bool mexp_v8sf_mat_load_row_vec(mx_expr_ptr me, void * dst, void * row, void * col, void * off, void * dval, void * src)
+bool mexp_v8sf_mat_load_row_vec(mx_expr_ptr me, void * dst, void * row, void * col, void * row_off, void * col_off, void * dval, void * src)
 {
-    push_ins_with_6_args(me, &v8sf_mat_load_row_vec, dst, row, col, off, dval, src);
+    push_ins_with_7_args(me, &v8sf_mat_load_row_vec, dst, row, col, row_off, col_off, dval, src);
 } // mexp_v8sf_mat_load_row_vec
 
 static void v8sf_mat_store_row_vec(mexp_ins_ptr ins)
@@ -520,15 +540,16 @@ static void v8sf_mat_store_row_vec(mexp_ins_ptr ins)
     mx_stor_ptr dst = ins->arg[0];
     uint32_t val_ridx = *((uint32_t *)ins->arg[1]);
     uint32_t val_cidx = *((uint32_t *)ins->arg[2]);
-    int32_t col_off = *((int32_t *)ins->arg[3]);
-    v8sf_t * src = ins->arg[4];
+    int32_t row_off = *((int32_t *)ins->arg[3]);
+    int32_t col_off = *((int32_t *)ins->arg[4]);
+    v8sf_t * src = ins->arg[5];
 
-    mstr_v8sf_store_row_vector(dst, val_ridx, val_cidx, col_off, src);
+    mstr_v8sf_store_row_vector(dst, val_ridx, val_cidx, row_off, col_off, src);
 } // v8sf_mat_store_row_vec
 
-bool mexp_v8sf_mat_store_row_vec(mx_expr_ptr me, void * dst, void * row, void * col, void * off, void * src)
+bool mexp_v8sf_mat_store_row_vec(mx_expr_ptr me, void * dst, void * row, void * col, void * row_off, void * col_off, void * src)
 {
-    push_ins_with_5_args(me, &v8sf_mat_store_row_vec, dst, row, col, off, src);
+    push_ins_with_6_args(me, &v8sf_mat_store_row_vec, dst, row, col, row_off, col_off, src);
 } // mexp_v8sf_mat_store_row_vec
 
 // ---- Evaluation functions ---- //

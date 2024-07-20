@@ -1,6 +1,14 @@
 #ifndef MX_STORAGE_H
 #define MX_STORAGE_H 1
 
+// =============================================================================
+// MODULE: Matrix Storage
+// DESIGN GOAL:
+//   1. Cope with the allocation, alignment, and fast access to memory;
+//   2. Optimize memory access by using proper instructions, depends on CPU
+//      model and features.
+// =============================================================================
+
 #include <string.h>
 
 #include "src/mx_types.h"

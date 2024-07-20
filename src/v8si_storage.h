@@ -1,19 +1,9 @@
-#ifndef V8SI_STORAGE_H
-#define V8SI_STORAGE_H 1
-
-// =============================================================================
-// MODULE: Matrix Storage
-// DESIGN GOAL:
-//   1. Cope with the allocation, alignment, and fast access to memory;
-//   2. Optimize memory access by using proper instructions, depends on CPU
-//      model and features.
-// =============================================================================
+#ifndef MX_V8SI_STORAGE_H
+#define MX_V8SI_STORAGE_H 1
 
 #include "mx_types.h"
 #include "mx_common.h"
 #include "mx_storage.h"
-
-// ==== Storage Module ==== //
 
 extern v8si_t v8si_zero;
 extern v8si_t v8si_mask[9];
@@ -54,5 +44,5 @@ inline static void mstr_v8si_init_ones(mx_stor_ptr ms)
     return mstr_v8si_fill(ms, 1);
 } // mstr_v8si_init_ones
 
-#endif // V8SI_STORAGE_H
+#endif // MX_V8SI_STORAGE_H
 

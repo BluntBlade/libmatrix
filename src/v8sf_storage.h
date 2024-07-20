@@ -1,11 +1,9 @@
-#ifndef V8SF_STORAGE_H
-#define V8SF_STORAGE_H 1
+#ifndef MX_V8SF_STORAGE_H
+#define MX_V8SF_STORAGE_H 1
 
 #include "mx_types.h"
 #include "mx_common.h"
 #include "mx_storage.h"
-
-// ==== V8SF Storage Module ==== //
 
 extern v8sf_t v8sf_zero;
 extern v8sf_t v8sf_mask[9];
@@ -46,5 +44,5 @@ inline static void mstr_v8sf_init_ones(mx_stor_ptr ms)
     return mstr_v8sf_fill(ms, 1);
 } // mstr_v8sf_init_ones
 
-#endif // V8SF_STORAGE_H
+#endif // MX_V8SF_STORAGE_H
 

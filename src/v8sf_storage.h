@@ -80,19 +80,5 @@ inline static void mstr_v8sf_init_ones(mx_stor_ptr ms)
     return mstr_v8sf_fill(ms, 1);
 } // mstr_v8sf_init_ones
 
-inline static void * mstr_v8sf_calc_base(mx_stor_ptr ms, uint32_t base_ridx, uint32_t base_cidx, uint32_t rows_in_chk)
-{
-    return ms->data + (base_ridx * ms->cols_padded + rows_in_chk * base_cidx) * sizeof(float);
-} // mstr_v8sf_calc_base
-
-inline static void * mstr_v8sf_locate_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, uint32_t * rows_in_chk, uint32_t * cols_in_chk)
-{
-    uint32_t base_ridx = chk_ridx * F32_VALS_IN_CACHE_LINE; // Refer to values.
-    uint32_t base_cidx = chk_cidx * F32_VALS_IN_CACHE_LINE; // Refer to values.
-    *rows_in_chk = mx_ceil_to_or_less_than_16(ms->rows - base_ridx);
-    *cols_in_chk = mx_ceil_to_or_less_than_16(ms->cols - base_cidx);
-    return mstr_v8sf_calc_base(ms, base_ridx, base_cidx, *rows_in_chk);
-} // mstr_v8sf_locate_chunk
-
 #endif // V8SF_STORAGE_H
 

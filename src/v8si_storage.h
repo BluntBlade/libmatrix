@@ -48,59 +48,10 @@ inline static void mstr_v8si_destroy(mx_stor_ptr ms)
     return mstr_destroy(ms);
 } // mstr_v8si_destroy
 
-inline static uint32_t mstr_v8si_rows(mx_stor_ptr ms)
-{
-    return ms->rows;
-} // mstr_v8si_rows
-
-inline static uint32_t mstr_v8si_columns(mx_stor_ptr ms)
-{
-    return ms->cols;
-} // mstr_v8si_columns
-
-inline static uint32_t mstr_v8si_values(mx_stor_ptr ms)
-{
-    return ms->rows * ms->cols;
-} // mstr_v8si_values
-
-inline static uint32_t mstr_v8si_value_size(mx_stor_ptr ms)
-{
-    return ms->val_sz;
-} // mstr_v8si_value_size
-
-inline static uint32_t mstr_v8si_chunks_in_height(mx_stor_ptr ms)
-{
-    return ms->chks_in_height;
-} // mstr_chunks_in_height
-
-inline static uint32_t mstr_v8si_chunks_in_width(mx_stor_ptr ms)
-{
-    return ms->chks_in_width;
-} // mstr_chunks_in_width
-
-inline static uint32_t mstr_v8si_chunks(mx_stor_ptr ms)
-{
-    return ms->chks_in_height * ms->chks_in_width;
-} // mstr_v8si_chunks
-
 inline static void mstr_v8si_init_ones(mx_stor_ptr ms)
 {
     return mstr_v8si_fill(ms, 1);
 } // mstr_v8si_init_ones
-
-inline static void * mstr_v8si_calc_base(mx_stor_ptr ms, uint32_t base_ridx, uint32_t base_cidx, uint32_t rows_in_chk)
-{
-    return ms->data + (base_ridx * ms->cols_padded + rows_in_chk * base_cidx) * sizeof(int32_t);
-} // mstr_v8si_calc_base
-
-inline static void * mstr_v8si_locate_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, uint32_t * rows_in_chk, uint32_t * cols_in_chk)
-{
-    uint32_t base_ridx = chk_ridx * I32_VALS_IN_CACHE_LINE; // Refer to values.
-    uint32_t base_cidx = chk_cidx * I32_VALS_IN_CACHE_LINE; // Refer to values.
-    *rows_in_chk = mx_ceil_to_or_less_than_16(ms->rows - base_ridx);
-    *cols_in_chk = mx_ceil_to_or_less_than_16(ms->cols - base_cidx);
-    return mstr_v8si_calc_base(ms, base_ridx, base_cidx, *rows_in_chk);
-} // mstr_v8si_locate_chunk
 
 #endif // V8SI_STORAGE_H
 

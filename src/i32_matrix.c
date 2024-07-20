@@ -70,17 +70,17 @@ void i32m_init_ones(i32_matrix_ptr mx)
 
 uint32_t i32m_rows(i32_matrix_ptr mx)
 {
-    return mstr_v8si_rows(&mx->stor);
+    return mstr_rows(&mx->stor);
 } // i32m_rows
 
 uint32_t i32m_columns(i32_matrix_ptr mx)
 {
-    return mstr_v8si_columns(&mx->stor);
+    return mstr_columns(&mx->stor);
 } // i32m_columns
 
 uint32_t i32m_values(i32_matrix_ptr mx)
 {
-    return mstr_v8si_values(&mx->stor);
+    return mstr_values(&mx->stor);
 } // i32m_values
 
 int32_t i32m_get(i32_matrix_ptr mx, uint32_t row, uint32_t col)
@@ -100,12 +100,12 @@ void i32m_fill(i32_matrix_ptr mx, int32_t src)
 
 bool i32m_can_add(i32_matrix_ptr lhs, i32_matrix_ptr rhs)
 {
-    return (mstr_v8si_rows(&lhs->stor) == mstr_v8si_rows(&rhs->stor)) && (mstr_v8si_columns(&lhs->stor) == mstr_v8si_columns(&rhs->stor));
+    return (mstr_rows(&lhs->stor) == mstr_rows(&rhs->stor)) && (mstr_columns(&lhs->stor) == mstr_columns(&rhs->stor));
 } // i32m_can_add
 
 bool i32m_can_multiply(i32_matrix_ptr lhs, i32_matrix_ptr rhs)
 {
-    return (mstr_v8si_columns(&lhs->stor) == mstr_v8si_rows(&rhs->stor));
+    return (mstr_columns(&lhs->stor) == mstr_rows(&rhs->stor));
 } // i32m_can_multiply
 
 void i32m_transpose_and_store(i32_matrix_ptr mx, i32_matrix_ptr src)

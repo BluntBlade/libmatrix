@@ -75,10 +75,10 @@ void mstr_v8si_init_identity(mx_stor_ptr ms)
 
     mstr_v8si_init_zeros(ms);
 
-    last_rows = ms->last_chk_height;
+    last_rows = ms->rows - (mx_round_to_multiples(ms->rows, ms->chk_len) - ms->chk_len);
     cols_padded = mx_round_to_multiples_of_8(last_rows);
     val_idx = (i - 1) * I32_VALS_IN_CACHE_LINE;
-    base = mstr_v8si_calc_base(ms, val_idx, val_idx, last_rows);
+    base = mstr_calc_base(ms, val_idx, val_idx, last_rows);
     switch (last_rows) {
         default: assert(1); break;
         case 16:
@@ -102,7 +102,7 @@ void mstr_v8si_init_identity(mx_stor_ptr ms)
                     break;
                 } // if
                 val_idx = (i - 1) * I32_VALS_IN_CACHE_LINE;
-                base = mstr_v8si_calc_base(ms, val_idx, val_idx, 16);
+                base = mstr_calc_base(ms, val_idx, val_idx, 16);
                 cols_padded = 16;
             } while (1);
             break;
@@ -116,7 +116,7 @@ inline static int32_t * v8si_locate_value(mx_stor_ptr ms, uint32_t val_ridx, uin
     // NOTE: In the case that val's index is equal to base's index, then the difference between them will be zero.
     uint32_t rows_in_chk = mx_ceil_to_or_less_than_16(ms->rows - base_ridx);
     uint32_t cols_in_chk = mx_ceil_to_or_less_than_16(ms->cols - base_cidx);
-    int32_t * base = mstr_v8si_calc_base(ms, base_ridx, base_cidx, rows_in_chk);
+    int32_t * base = mstr_calc_base(ms, base_ridx, base_cidx, rows_in_chk);
     return base + (val_ridx - base_ridx) * mx_round_to_multiples_of_8(cols_in_chk) + (val_cidx - base_cidx);
 } // v8si_locate_value
 
@@ -175,7 +175,7 @@ void mstr_v8si_transpose_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_c
     uint32_t i = 0;
     uint32_t sel = 0;
     v8si_t * mask[2];
-    int32_t * base = mstr_v8si_locate_chunk(ms, chk_ridx, chk_cidx, &schk_rows, &schk_cols);
+    int32_t * base = mstr_locate_chunk(ms, chk_ridx, chk_cidx, &schk_rows, &schk_cols);
 
     sel = mx_round_to_multiples_of_8(schk_cols) / 8 - 1;
     if (schk_rows <= 8) {

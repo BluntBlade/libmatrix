@@ -97,11 +97,11 @@ void mops_v8si_add(mx_stor_ptr ms, mx_stor_ptr lhs, mx_stor_ptr rhs)
     mx_chunk_ptr rchk = NULL;
     mx_chunk_ptr dchk = NULL;
 
-    for (i = 0; i < mstr_v8si_chunks_in_height(lhs); i += 1) {
-        for (j = 0; j < mstr_v8si_chunks_in_width(lhs); j += 1) {
-            lchk = mstr_v8si_locate_chunk(lhs, i, j, &lchk_rows, &lchk_cols);
-            rchk = mstr_v8si_locate_chunk(rhs, i, j, &rchk_rows, &rchk_cols);
-            dchk = mstr_v8si_locate_chunk(ms, i, j, &dchk_rows, &dchk_cols);
+    for (i = 0; i < mstr_chunks_in_height(lhs); i += 1) {
+        for (j = 0; j < mstr_chunks_in_width(lhs); j += 1) {
+            lchk = mstr_locate_chunk(lhs, i, j, &lchk_rows, &lchk_cols);
+            rchk = mstr_locate_chunk(rhs, i, j, &rchk_rows, &rchk_cols);
+            dchk = mstr_locate_chunk(ms, i, j, &dchk_rows, &dchk_cols);
             if (lchk_rows == I32_VALS_IN_CACHE_LINE && lchk_cols == I32_VALS_IN_CACHE_LINE) {
                 v8si_add_chunk_fully(dchk, lchk, rchk);
             } else {
@@ -203,11 +203,11 @@ void mops_v8si_subtract(mx_stor_ptr dst, mx_stor_ptr lhs, mx_stor_ptr rhs)
     mx_chunk_ptr rchk = NULL;
     mx_chunk_ptr dchk = NULL;
 
-    for (i = 0; i < mstr_v8si_chunks_in_height(lhs); i += 1) {
-        for (j = 0; j < mstr_v8si_chunks_in_width(lhs); j += 1) {
-            lchk = mstr_v8si_locate_chunk(lhs, i, j, &lchk_rows, &lchk_cols);
-            rchk = mstr_v8si_locate_chunk(rhs, i, j, &rchk_rows, &rchk_cols);
-            dchk = mstr_v8si_locate_chunk(dst, i, j, &dchk_rows, &dchk_cols);
+    for (i = 0; i < mstr_chunks_in_height(lhs); i += 1) {
+        for (j = 0; j < mstr_chunks_in_width(lhs); j += 1) {
+            lchk = mstr_locate_chunk(lhs, i, j, &lchk_rows, &lchk_cols);
+            rchk = mstr_locate_chunk(rhs, i, j, &rchk_rows, &rchk_cols);
+            dchk = mstr_locate_chunk(dst, i, j, &dchk_rows, &dchk_cols);
             if (lchk_rows == I32_VALS_IN_CACHE_LINE && lchk_cols == I32_VALS_IN_CACHE_LINE) {
                 v8si_subtract_chunk_fully(dchk, lchk, rchk);
             } else {
@@ -449,13 +449,13 @@ void mops_v8si_multiply(mx_stor_ptr dst, mx_stor_ptr lhs, mx_stor_ptr rhs)
     mx_chunk_ptr dchk = NULL;
 
     mstr_v8si_init_zeros(dst);
-    for (k = 0; k < mstr_v8si_chunks_in_height(rhs); k += 1) {
-        for (j = 0; j < mstr_v8si_chunks_in_width(rhs); j += 1) {
+    for (k = 0; k < mstr_chunks_in_height(rhs); k += 1) {
+        for (j = 0; j < mstr_chunks_in_width(rhs); j += 1) {
             mstr_v8si_transpose_chunk(rhs, k, j, &rchk, &rchk_rows, &rchk_cols);
 
-            for (i = 0; i < mstr_v8si_chunks_in_height(lhs); i += 1) {
-                lchk = mstr_v8si_locate_chunk(lhs, i, k, &lchk_rows, &lchk_cols);
-                dchk = mstr_v8si_locate_chunk(dst, i, j, &dchk_rows, &dchk_cols);
+            for (i = 0; i < mstr_chunks_in_height(lhs); i += 1) {
+                lchk = mstr_locate_chunk(lhs, i, k, &lchk_rows, &lchk_cols);
+                dchk = mstr_locate_chunk(dst, i, j, &dchk_rows, &dchk_cols);
 
                 ssel = mx_round_to_multiples_of_8(rchk_cols) / 8 - 1 + (uint32_t)(lchk_cols == I32_VALS_IN_CACHE_LINE);
                 dsel = mx_round_to_multiples_of_8(dchk_cols) / 8 - 1 + (uint32_t)(dchk_cols == I32_VALS_IN_CACHE_LINE);
@@ -558,10 +558,10 @@ void mops_v8si_multiply_scalar(mx_stor_ptr dst, mx_stor_ptr src, int32_t val)
 
     mx_type_reg(vals) = _mm256_broadcastd_epi32(mx_type_reg(tmp));
 
-    for (i = 0; i < mstr_v8si_chunks_in_height(src); i += 1) {
-        for (j = 0; j < mstr_v8si_chunks_in_width(src); j += 1) {
-            schk = mstr_v8si_locate_chunk(src, i, j, &schk_rows, &schk_cols);
-            dchk = mstr_v8si_locate_chunk(dst, i, j, &dchk_rows, &dchk_cols);
+    for (i = 0; i < mstr_chunks_in_height(src); i += 1) {
+        for (j = 0; j < mstr_chunks_in_width(src); j += 1) {
+            schk = mstr_locate_chunk(src, i, j, &schk_rows, &schk_cols);
+            dchk = mstr_locate_chunk(dst, i, j, &dchk_rows, &dchk_cols);
             if (schk_rows == I32_VALS_IN_CACHE_LINE && schk_cols == I32_VALS_IN_CACHE_LINE) {
                 v8si_multiply_scalar_chunk_fully(dchk, schk, &vals);
             } else {
@@ -582,10 +582,10 @@ void mops_v8si_transpose(mx_stor_ptr dst, mx_stor_ptr src)
     void * base = NULL;
     mx_chunk_ptr dchk = NULL;
 
-    for (i = 0; i < mstr_v8si_chunks_in_height(src); i += 1) {
-        for (j = 0; j < mstr_v8si_chunks_in_width(src); j += 1) {
-            base = mstr_v8si_locate_chunk(src, i, j, &schk_rows, &schk_cols);
-            dchk = mstr_v8si_locate_chunk(dst, j, i, &dchk_rows, &dchk_cols);
+    for (i = 0; i < mstr_chunks_in_height(src); i += 1) {
+        for (j = 0; j < mstr_chunks_in_width(src); j += 1) {
+            base = mstr_locate_chunk(src, i, j, &schk_rows, &schk_cols);
+            dchk = mstr_locate_chunk(dst, j, i, &dchk_rows, &dchk_cols);
             mstr_v8si_transpose_chunk(src, i, j, dchk, &dchk_rows, &dchk_cols);
         } // for
     } // for

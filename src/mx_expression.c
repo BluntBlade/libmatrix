@@ -1,10 +1,8 @@
 #include <string.h>
 
 #include "src/mx_expression.h"
-#include "src/v8si_storage.h"
-#include "src/v8si_operation.h"
-#include "src/v8sf_storage.h"
-#include "src/v8sf_operation.h"
+#include "src/mx_v8si.h"
+#include "src/mx_v8sf.h"
 
 #define push_ins_with_3_args(me, fn, a0, a1, a2) \
     { \
@@ -402,7 +400,7 @@ bool mexp_v8sf_store_f32(mx_expr_ptr me, void * dst, void * off, void * src)
 
 static void v8si_mat_add(mexp_ins_ptr ins)
 {
-    mops_v8si_add(ins->arg[0], ins->arg[1], ins->arg[2]);
+    mstr_v8si_add(ins->arg[0], ins->arg[1], ins->arg[2]);
 } // v8si_mat_add
 
 bool mexp_v8si_mat_add(mx_expr_ptr me, void * dst, void * src1, void * src2)
@@ -412,7 +410,7 @@ bool mexp_v8si_mat_add(mx_expr_ptr me, void * dst, void * src1, void * src2)
 
 static void v8si_mat_sub(mexp_ins_ptr ins)
 {
-    mops_v8si_subtract(ins->arg[0], ins->arg[1], ins->arg[2]);
+    mstr_v8si_subtract(ins->arg[0], ins->arg[1], ins->arg[2]);
 } // v8si_mat_sub
 
 bool mexp_v8si_mat_sub(mx_expr_ptr me, void * dst, void * src1, void * src2)
@@ -422,7 +420,7 @@ bool mexp_v8si_mat_sub(mx_expr_ptr me, void * dst, void * src1, void * src2)
 
 static void v8si_mat_mul(mexp_ins_ptr ins)
 {
-    mops_v8si_multiply(ins->arg[0], ins->arg[1], ins->arg[2]);
+    mstr_v8si_multiply(ins->arg[0], ins->arg[1], ins->arg[2]);
 } // v8si_mat_mul
 
 bool mexp_v8si_mat_mul(mx_expr_ptr me, void * dst, void * src1, void * src2)
@@ -432,7 +430,7 @@ bool mexp_v8si_mat_mul(mx_expr_ptr me, void * dst, void * src1, void * src2)
 
 static void v8si_mat_mul_by_scr(mexp_ins_ptr ins)
 {
-    mops_v8si_multiply_scalar(ins->arg[0], ins->arg[1], *((int32_t *)ins->arg[2]));
+    mstr_v8si_multiply_scalar(ins->arg[0], ins->arg[1], *((int32_t *)ins->arg[2]));
 } // v8si_mat_mul_by_scr
 
 bool mexp_v8si_mat_mul_by_scr(mx_expr_ptr me, void * dst, void * mat, void * i32)
@@ -479,7 +477,7 @@ bool mexp_v8si_mat_store_row_vec(mx_expr_ptr me, void * dst, void * row, void * 
 
 static void v8sf_mat_add(mexp_ins_ptr ins)
 {
-    mops_v8sf_add(ins->arg[0], ins->arg[1], ins->arg[2]);
+    mstr_v8sf_add(ins->arg[0], ins->arg[1], ins->arg[2]);
 } // v8sf_mat_add
 
 bool mexp_v8sf_mat_add(mx_expr_ptr me, void * dst, void * src1, void * src2)
@@ -489,7 +487,7 @@ bool mexp_v8sf_mat_add(mx_expr_ptr me, void * dst, void * src1, void * src2)
 
 static void v8sf_mat_sub(mexp_ins_ptr ins)
 {
-    mops_v8sf_subtract(ins->arg[0], ins->arg[1], ins->arg[2]);
+    mstr_v8sf_subtract(ins->arg[0], ins->arg[1], ins->arg[2]);
 } // v8sf_mat_sub
 
 bool mexp_v8sf_mat_sub(mx_expr_ptr me, void * dst, void * src1, void * src2)
@@ -499,7 +497,7 @@ bool mexp_v8sf_mat_sub(mx_expr_ptr me, void * dst, void * src1, void * src2)
 
 static void v8sf_mat_mul(mexp_ins_ptr ins)
 {
-    mops_v8sf_multiply(ins->arg[0], ins->arg[1], ins->arg[2]);
+    mstr_v8sf_multiply(ins->arg[0], ins->arg[1], ins->arg[2]);
 } // v8sf_mat_mul
 
 bool mexp_v8sf_mat_mul(mx_expr_ptr me, void * dst, void * src1, void * src2)
@@ -509,7 +507,7 @@ bool mexp_v8sf_mat_mul(mx_expr_ptr me, void * dst, void * src1, void * src2)
 
 static void v8sf_mat_mul_by_scr(mexp_ins_ptr ins)
 {
-    mops_v8sf_multiply_scalar(ins->arg[0], ins->arg[1], *((float *)ins->arg[2]));
+    mstr_v8sf_multiply_scalar(ins->arg[0], ins->arg[1], *((float *)ins->arg[2]));
 } // v8sf_mat_mul_by_scr
 
 bool mexp_v8sf_mat_mul_by_scr(mx_expr_ptr me, void * dst, void * mat, void * f32)

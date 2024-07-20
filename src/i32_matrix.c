@@ -1,8 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "src/v8si_storage.h"
-#include "src/v8si_operation.h"
+#include "src/mx_v8si.h"
 #include "src/i32_matrix.h"
 
 typedef struct I32_MATRIX
@@ -110,25 +109,25 @@ bool i32m_can_multiply(i32_matrix_ptr lhs, i32_matrix_ptr rhs)
 
 void i32m_transpose_and_store(i32_matrix_ptr mx, i32_matrix_ptr src)
 {
-    mops_v8si_transpose(&mx->stor, &src->stor);
+    mstr_v8si_transpose(&mx->stor, &src->stor);
 } // i32m_transpose_and_store
 
 void i32m_add_and_store(i32_matrix_ptr mx, i32_matrix_ptr lhs, i32_matrix_ptr rhs)
 {
-    mops_v8si_add(&mx->stor, &lhs->stor, &rhs->stor);
+    mstr_v8si_add(&mx->stor, &lhs->stor, &rhs->stor);
 } // i32m_add_and_store
 
 void i32m_subtract_and_store(i32_matrix_ptr mx, i32_matrix_ptr lhs, i32_matrix_ptr rhs)
 {
-    mops_v8si_subtract(&mx->stor, &lhs->stor, &rhs->stor);
+    mstr_v8si_subtract(&mx->stor, &lhs->stor, &rhs->stor);
 } // i32m_subtract_and_store
 
 void i32m_multiply_and_store(i32_matrix_ptr mx, i32_matrix_ptr lhs, i32_matrix_ptr rhs)
 {
-    mops_v8si_multiply(&mx->stor, &lhs->stor, &rhs->stor);
+    mstr_v8si_multiply(&mx->stor, &lhs->stor, &rhs->stor);
 } // i32m_multiply_and_store
 
 void i32m_multiply_scalar_and_store(i32_matrix_ptr mx, i32_matrix_ptr src, int32_t val)
 {
-    mops_v8si_multiply_scalar(&mx->stor, &src->stor, val);
+    mstr_v8si_multiply_scalar(&mx->stor, &src->stor, val);
 } // i32m_multiply_scalar_and_store

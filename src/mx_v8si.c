@@ -1,9 +1,207 @@
 #include <assert.h>
-#include <stdlib.h>
+#include <string.h>
+#include <immintrin.h>
 
+#include "src/config.h"
 #include "src/mx_common.h"
-#include "src/v8si_storage.h"
-#include "src/v8si_operation.h"
+#include "src/mx_v8si.h"
+
+v8si_t v8si_zero = { .val = {0, 0, 0, 0, 0, 0, 0, 0} };
+v8si_t v8si_mask[9] = {
+    { .val = { 0,  0,  0,  0,  0,  0,  0,  0} },
+    { .val = {~0,  0,  0,  0,  0,  0,  0,  0} },
+    { .val = {~0, ~0,  0,  0,  0,  0,  0,  0} },
+    { .val = {~0, ~0, ~0,  0,  0,  0,  0,  0} },
+    { .val = {~0, ~0, ~0, ~0,  0,  0,  0,  0} },
+    { .val = {~0, ~0, ~0, ~0, ~0,  0,  0,  0} },
+    { .val = {~0, ~0, ~0, ~0, ~0, ~0,  0,  0} },
+    { .val = {~0, ~0, ~0, ~0, ~0, ~0, ~0,  0} },
+    { .val = {~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0} },
+};
+
+void mstr_v8si_load_row_vector(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, int32_t row_off, int32_t col_off, int32_t def_val, v8si_t * dst)
+{
+    v4si_t tmp = { .val = {def_val} };
+    uint32_t row = 0;
+    uint32_t col = 0;
+    uint32_t off = 0;
+
+    mx_type_reg(*dst) = _mm256_broadcastd_epi32(mx_type_reg(tmp));
+
+    row = val_ridx;
+    col = val_cidx;
+    mstr_calibrate_index(ms, &row, &col, &row_off, &col_off);
+    off = abs(col_off);
+    if (row_off < 0 || off >= ms->pck_len || row >= ms->rows || col >= ms->cols) {
+        // Out of range, no need to transfer.
+        return;
+    } // if
+    
+    mstr_transfer_row_vector(ms, row, col, off, MSTR_LOAD_VECTOR, dst);
+} // mstr_v8si_load_row_vector
+
+void mstr_v8si_store_row_vector(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, int32_t row_off, int32_t col_off, v8si_t * src)
+{
+    uint32_t row = 0;
+    uint32_t col = 0;
+    uint32_t off = 0;
+
+    row = val_ridx;
+    col = val_cidx;
+    mstr_calibrate_index(ms, &row, &col, &row_off, &col_off);
+    off = abs(col_off);
+    if (row_off < 0 || off >= ms->pck_len || row >= ms->rows || col >= ms->cols) {
+        // Out of range, no need to transfer.
+        return;
+    } // if
+    
+    mstr_transfer_row_vector(ms, row, col, off, MSTR_STORE_VECTOR, src);
+} // mstr_v8si_store_row_vector
+
+void mstr_v8si_init_identity(mx_stor_ptr ms)
+{
+    uint32_t i = ms->chks_in_width;
+    uint32_t last_rows = 0;
+    uint32_t cols_padded = 0;
+    uint32_t val_idx = 0;
+    int32_t * base = NULL;
+
+    mstr_v8si_init_zeros(ms);
+
+    last_rows = ms->rows - (mx_round_to_multiples(ms->rows, ms->chk_len) - ms->chk_len);
+    cols_padded = mx_round_to_multiples_of_8(last_rows);
+    val_idx = (i - 1) * I32_VALS_IN_CACHE_LINE;
+    base = mstr_calc_base(ms, val_idx, val_idx, last_rows);
+    switch (last_rows) {
+        default: assert(1); break;
+        case 16:
+            do { *base = 1; base += cols_padded + 1;   // 0
+        case 15: *base = 1; base += cols_padded + 1;   // 1
+        case 14: *base = 1; base += cols_padded + 1;   // 2
+        case 13: *base = 1; base += cols_padded + 1;   // 3
+        case 12: *base = 1; base += cols_padded + 1;   // 4
+        case 11: *base = 1; base += cols_padded + 1;   // 5
+        case 10: *base = 1; base += cols_padded + 1;   // 6
+        case  9: *base = 1; base += cols_padded + 1;   // 7
+        case  8: *base = 1; base += cols_padded + 1;   // 8
+        case  7: *base = 1; base += cols_padded + 1;   // 9
+        case  6: *base = 1; base += cols_padded + 1;   // 10
+        case  5: *base = 1; base += cols_padded + 1;   // 11
+        case  4: *base = 1; base += cols_padded + 1;   // 12
+        case  3: *base = 1; base += cols_padded + 1;   // 13
+        case  2: *base = 1; base += cols_padded + 1;   // 14
+        case  1: *base = 1;                            // 15
+                if (--i == 0) {
+                    break;
+                } // if
+                val_idx = (i - 1) * I32_VALS_IN_CACHE_LINE;
+                base = mstr_calc_base(ms, val_idx, val_idx, 16);
+                cols_padded = 16;
+            } while (1);
+            break;
+    } // switch
+} // mstr_v8si_init_identity
+
+void mstr_v8si_fill(mx_stor_ptr ms, int32_t src)
+{
+    v8si_t vals = { .val = {src, src, src, src, src, src, src, src} };
+    uint32_t i = 0;
+    v8si_t * base = NULL;
+
+    base = ms->data;
+    for (i = 0; i < ms->cols_padded / I32_VALS_IN_V8SI; i += 1) {
+        base[i] = vals;
+    } // for
+    for (i = 1; i < ms->rows; i += 1) {
+        base += ms->cols_padded / I32_VALS_IN_V8SI;
+        memcpy(base, ms->data, sizeof(int32_t) * ms->cols_padded);
+    } // for
+    // NOTE: No need to zero out any padded int32_t values.
+} // mstr_v8si_fill
+
+void mstr_v8si_transpose_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr dchk, uint32_t * dchk_rows, uint32_t * dchk_cols)
+{
+#define v8si_transpose_chunk_half(row) \
+    { \
+        mx_type_reg(dchk->v8si_16x1[row][0]) = _mm256_mask_i32gather_epi32(mx_type_reg(v8si_zero), base, mx_type_reg(idx[sel][0]), mx_type_reg(*mask[0]), sizeof(int32_t)); \
+    }
+
+#define v8si_transpose_chunk_full(row) \
+    { \
+        mx_type_reg(dchk->v8si_16x2[row][0]) = _mm256_mask_i32gather_epi32(mx_type_reg(v8si_zero), base, mx_type_reg(idx[sel][0]), mx_type_reg(*mask[0]), sizeof(int32_t)); \
+        mx_type_reg(dchk->v8si_16x2[row][1]) = _mm256_mask_i32gather_epi32(mx_type_reg(v8si_zero), base, mx_type_reg(idx[sel][1]), mx_type_reg(*mask[1]), sizeof(int32_t)); \
+    }
+
+    static v8si_t idx[2][2] = {
+        {
+            { .val = {  0,   8,  16,  24,  32,  40,  48,  56 } },
+            { .val = { 64,  72,  80,  88,  96, 104, 112, 120 } },
+        },
+        {
+            { .val = {  0,  16,  32,  48,  64,  80,  96, 112} },
+            { .val = {128, 144, 160, 176, 192, 208, 224, 240} },
+        },
+    };
+    uint32_t schk_rows = 0; 
+    uint32_t schk_cols = 0; 
+    uint32_t i = 0;
+    uint32_t sel = 0;
+    v8si_t * mask[2];
+    int32_t * base = mstr_locate_chunk(ms, chk_ridx, chk_cidx, &schk_rows, &schk_cols);
+
+    sel = mx_round_to_multiples_of_8(schk_cols) / 8 - 1;
+    if (schk_rows <= 8) {
+        mask[0] = &v8si_mask[schk_rows];
+        switch (schk_cols) {
+            default: assert(1); break;
+            case 16: v8si_transpose_chunk_half(i); i += 1; base += 1;
+            case 15: v8si_transpose_chunk_half(i); i += 1; base += 1;
+            case 14: v8si_transpose_chunk_half(i); i += 1; base += 1;
+            case 13: v8si_transpose_chunk_half(i); i += 1; base += 1;
+            case 12: v8si_transpose_chunk_half(i); i += 1; base += 1;
+            case 11: v8si_transpose_chunk_half(i); i += 1; base += 1;
+            case 10: v8si_transpose_chunk_half(i); i += 1; base += 1;
+            case  9: v8si_transpose_chunk_half(i); i += 1; base += 1;
+            case  8: v8si_transpose_chunk_half(i); i += 1; base += 1;
+            case  7: v8si_transpose_chunk_half(i); i += 1; base += 1;
+            case  6: v8si_transpose_chunk_half(i); i += 1; base += 1;
+            case  5: v8si_transpose_chunk_half(i); i += 1; base += 1;
+            case  4: v8si_transpose_chunk_half(i); i += 1; base += 1;
+            case  3: v8si_transpose_chunk_half(i); i += 1; base += 1;
+            case  2: v8si_transpose_chunk_half(i); i += 1; base += 1;
+            case  1: v8si_transpose_chunk_half(i);
+        } // switch
+    } else {
+        mask[0] = &v8si_mask[8];
+        mask[1] = &v8si_mask[schk_rows - 8];
+        switch (schk_cols) {
+            default: assert(1); break;
+            case 16: v8si_transpose_chunk_full(i); i += 1; base += 1;
+            case 15: v8si_transpose_chunk_full(i); i += 1; base += 1;
+            case 14: v8si_transpose_chunk_full(i); i += 1; base += 1;
+            case 13: v8si_transpose_chunk_full(i); i += 1; base += 1;
+            case 12: v8si_transpose_chunk_full(i); i += 1; base += 1;
+            case 11: v8si_transpose_chunk_full(i); i += 1; base += 1;
+            case 10: v8si_transpose_chunk_full(i); i += 1; base += 1;
+            case  9: v8si_transpose_chunk_full(i); i += 1; base += 1;
+            case  8: v8si_transpose_chunk_full(i); i += 1; base += 1;
+            case  7: v8si_transpose_chunk_full(i); i += 1; base += 1;
+            case  6: v8si_transpose_chunk_full(i); i += 1; base += 1;
+            case  5: v8si_transpose_chunk_full(i); i += 1; base += 1;
+            case  4: v8si_transpose_chunk_full(i); i += 1; base += 1;
+            case  3: v8si_transpose_chunk_full(i); i += 1; base += 1;
+            case  2: v8si_transpose_chunk_full(i); i += 1; base += 1;
+            case  1: v8si_transpose_chunk_full(i);
+        } // switch
+    } // if
+
+    // Swap the number of rows and columns of the target chunk since it is transposed.
+    *dchk_rows = schk_cols;
+    *dchk_cols = schk_rows;
+
+#undef v8si_transpose_chunk_full
+#undef v8si_transpose_chunk_half
+} // mstr_v8si_transpose_chunk
 
 #define v8si_add_chunk_full(row) \
     { \
@@ -83,7 +281,10 @@ static void v8si_add_chunk_partly(mx_chunk_ptr dchk, mx_chunk_ptr lchk, mx_chunk
     } // if
 } // v8si_add_chunk_partly
 
-void mops_v8si_add(mx_stor_ptr ms, mx_stor_ptr lhs, mx_stor_ptr rhs)
+#undef v8si_add_chunk_half
+#undef v8si_add_chunk_full
+
+void mstr_v8si_add(mx_stor_ptr ms, mx_stor_ptr lhs, mx_stor_ptr rhs)
 {
     uint32_t i = 0;
     uint32_t j = 0;
@@ -109,7 +310,7 @@ void mops_v8si_add(mx_stor_ptr ms, mx_stor_ptr lhs, mx_stor_ptr rhs)
             } // if
         } // for
     } // for
-} // mops_v8si_add
+} // mstr_v8si_add
 
 #define v8si_subtract_chunk_full(row) \
     { \
@@ -189,7 +390,10 @@ static void v8si_subtract_chunk_partly(mx_chunk_ptr dchk, mx_chunk_ptr lchk, mx_
     } // if
 } // v8si_subtract_chunk_partly
 
-void mops_v8si_subtract(mx_stor_ptr dst, mx_stor_ptr lhs, mx_stor_ptr rhs)
+#undef v8si_subtract_chunk_half
+#undef v8si_subtract_chunk_full
+
+void mstr_v8si_subtract(mx_stor_ptr dst, mx_stor_ptr lhs, mx_stor_ptr rhs)
 {
     uint32_t i = 0;
     uint32_t j = 0;
@@ -215,7 +419,7 @@ void mops_v8si_subtract(mx_stor_ptr dst, mx_stor_ptr lhs, mx_stor_ptr rhs)
             } // if
         } // for
     } // for
-} // mops_v8si_subtract
+} // mstr_v8si_subtract
 
 static void v8si_multiply_chunk_fully(mx_chunk_ptr dchk, mx_chunk_ptr lchk, mx_chunk_ptr rchk, uint32_t dchk_rows, uint32_t dchk_cols, uint32_t msks)
 {
@@ -413,7 +617,7 @@ static void v8si_multiply_chunk_full_to_full(mx_chunk_ptr dchk, mx_chunk_ptr lch
 
 typedef void (*v8si_multiply_chunk_fn)(mx_chunk_ptr dchk, mx_chunk_ptr lchk, mx_chunk_ptr rchk, uint32_t dchk_rows, uint32_t dchk_cols, uint32_t msks);
 
-void mops_v8si_multiply(mx_stor_ptr dst, mx_stor_ptr lhs, mx_stor_ptr rhs)
+void mstr_v8si_multiply(mx_stor_ptr dst, mx_stor_ptr lhs, mx_stor_ptr rhs)
 {
     static v8si_multiply_chunk_fn ops[3][3] = {
         {
@@ -463,7 +667,7 @@ void mops_v8si_multiply(mx_stor_ptr dst, mx_stor_ptr lhs, mx_stor_ptr rhs)
             } // for
         } // for
     } // for
-} // mops_v8si_multiply
+} // mstr_v8si_multiply
 
 #define v8si_scalar_multiply_chunk_full(row) \
     { \
@@ -543,7 +747,7 @@ static void v8si_multiply_scalar_chunk_partly(mx_chunk_ptr dchk, mx_chunk_ptr sc
     } // if
 } // v8si_multiply_scalar_chunk_partly
 
-void mops_v8si_multiply_scalar(mx_stor_ptr dst, mx_stor_ptr src, int32_t val)
+void mstr_v8si_multiply_scalar(mx_stor_ptr dst, mx_stor_ptr src, int32_t val)
 {
     v4si_t tmp = { .val = {val} };
     v8si_t vals;
@@ -569,9 +773,9 @@ void mops_v8si_multiply_scalar(mx_stor_ptr dst, mx_stor_ptr src, int32_t val)
             } // if
         } // for
     } // for
-} // mops_v8si_multiply_scalar
+} // mstr_v8si_multiply_scalar
 
-void mops_v8si_transpose(mx_stor_ptr dst, mx_stor_ptr src)
+void mstr_v8si_transpose(mx_stor_ptr dst, mx_stor_ptr src)
 {
     uint32_t i = 0;
     uint32_t j = 0;
@@ -589,4 +793,4 @@ void mops_v8si_transpose(mx_stor_ptr dst, mx_stor_ptr src)
             mstr_v8si_transpose_chunk(src, i, j, dchk, &dchk_rows, &dchk_cols);
         } // for
     } // for
-} // mops_v8si_transpose
+} // mstr_v8si_transpose

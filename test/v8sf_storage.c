@@ -1,6 +1,6 @@
 #include <criterion/criterion.h>
 
-#include "src/v8sf_storage.h"
+#include "src/mx_v8sf.h"
 
 #define check_vals_sz(ms, expect) \
     cr_expect(ms->val_sz == expect, "Wrong value size - Expect %d, got %d.", expect, ms->val_sz)

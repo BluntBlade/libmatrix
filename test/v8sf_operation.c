@@ -1,8 +1,8 @@
 #include <criterion/criterion.h>
 
-#ifndef V8SI_OPER_C
-#define V8SI_OPER_C
-#include "src/v8sf_operation.c"
+#ifndef C_SOURCE
+#define C_SOURCE
+#include "src/mx_v8sf.c"
 #endif
 
 // ==== TESTS FOR THE OPERATION MODULE OF MATRIX ==== //
@@ -2373,7 +2373,7 @@ Test(InternalFunc, v8sf_multiply_scalar_chunk_partly)
     }
 }
 
-Test(Operation, mops_v8sf_add)
+Test(Operation, mstr_v8sf_add)
 {
     uint32_t i = 0;
     uint32_t j = 0;
@@ -2391,7 +2391,7 @@ Test(Operation, mops_v8sf_add)
 
         mx = mstr_v8sf_create(1, 1);
 
-        mops_v8sf_add(mx, lhs, rhs);
+        mstr_v8sf_add(mx, lhs, rhs);
 
         check_value_at(mstr_get_f32(mx, 0, 0), 100.0, 0, 0);
 
@@ -2418,7 +2418,7 @@ Test(Operation, mops_v8sf_add)
 
         mx = mstr_v8sf_create(5, 5);
 
-        mops_v8sf_add(mx, lhs, rhs);
+        mstr_v8sf_add(mx, lhs, rhs);
 
         for (i = 0; i < 5; i += 1) {
             for (j = 0; j < 5; j += 1) {
@@ -2449,7 +2449,7 @@ Test(Operation, mops_v8sf_add)
 
         mx = mstr_v8sf_create(8, 8);
 
-        mops_v8sf_add(mx, lhs, rhs);
+        mstr_v8sf_add(mx, lhs, rhs);
 
         for (i = 0; i < 8; i += 1) {
             for (j = 0; j < 8; j += 1) {
@@ -2480,7 +2480,7 @@ Test(Operation, mops_v8sf_add)
 
         mx = mstr_v8sf_create(9, 9);
 
-        mops_v8sf_add(mx, lhs, rhs);
+        mstr_v8sf_add(mx, lhs, rhs);
 
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 9; j += 1) {
@@ -2511,7 +2511,7 @@ Test(Operation, mops_v8sf_add)
 
         mx = mstr_v8sf_create(16, 16);
 
-        mops_v8sf_add(mx, lhs, rhs);
+        mstr_v8sf_add(mx, lhs, rhs);
 
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 16; j += 1) {
@@ -2542,7 +2542,7 @@ Test(Operation, mops_v8sf_add)
 
         mx = mstr_v8sf_create(17, 17);
 
-        mops_v8sf_add(mx, lhs, rhs);
+        mstr_v8sf_add(mx, lhs, rhs);
 
         for (i = 0; i < 17; i += 1) {
             for (j = 0; j < 17; j += 1) {
@@ -2573,7 +2573,7 @@ Test(Operation, mops_v8sf_add)
 
         mx = mstr_v8sf_create(2, 33);
 
-        mops_v8sf_add(mx, lhs, rhs);
+        mstr_v8sf_add(mx, lhs, rhs);
 
         for (i = 0; i < 2; i += 1) {
             for (j = 0; j < 33; j += 1) {
@@ -2604,7 +2604,7 @@ Test(Operation, mops_v8sf_add)
 
         mx = mstr_v8sf_create(33, 17);
 
-        mops_v8sf_add(mx, lhs, rhs);
+        mstr_v8sf_add(mx, lhs, rhs);
 
         for (i = 0; i < 33; i += 1) {
             for (j = 0; j < 17; j += 1) {
@@ -2618,7 +2618,7 @@ Test(Operation, mops_v8sf_add)
     }
 }
 
-Test(Operation, mops_v8sf_subtract)
+Test(Operation, mstr_v8sf_subtract)
 {
     uint32_t i = 0;
     uint32_t j = 0;
@@ -2636,7 +2636,7 @@ Test(Operation, mops_v8sf_subtract)
 
         mx = mstr_v8sf_create(1, 1);
 
-        mops_v8sf_subtract(mx, lhs, rhs);
+        mstr_v8sf_subtract(mx, lhs, rhs);
 
         check_value_at(mstr_get_f32(mx, 0, 0), -98.0, 0, 0);
 
@@ -2663,7 +2663,7 @@ Test(Operation, mops_v8sf_subtract)
 
         mx = mstr_v8sf_create(5, 5);
 
-        mops_v8sf_subtract(mx, lhs, rhs);
+        mstr_v8sf_subtract(mx, lhs, rhs);
 
         for (i = 0; i < 5; i += 1) {
             for (j = 0; j < 5; j += 1) {
@@ -2694,7 +2694,7 @@ Test(Operation, mops_v8sf_subtract)
 
         mx = mstr_v8sf_create(8, 8);
 
-        mops_v8sf_subtract(mx, lhs, rhs);
+        mstr_v8sf_subtract(mx, lhs, rhs);
 
         for (i = 0; i < 8; i += 1) {
             for (j = 0; j < 8; j += 1) {
@@ -2725,7 +2725,7 @@ Test(Operation, mops_v8sf_subtract)
 
         mx = mstr_v8sf_create(9, 9);
 
-        mops_v8sf_subtract(mx, lhs, rhs);
+        mstr_v8sf_subtract(mx, lhs, rhs);
 
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 9; j += 1) {
@@ -2756,7 +2756,7 @@ Test(Operation, mops_v8sf_subtract)
 
         mx = mstr_v8sf_create(16, 16);
 
-        mops_v8sf_subtract(mx, lhs, rhs);
+        mstr_v8sf_subtract(mx, lhs, rhs);
 
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 16; j += 1) {
@@ -2787,7 +2787,7 @@ Test(Operation, mops_v8sf_subtract)
 
         mx = mstr_v8sf_create(17, 17);
 
-        mops_v8sf_subtract(mx, lhs, rhs);
+        mstr_v8sf_subtract(mx, lhs, rhs);
 
         for (i = 0; i < 17; i += 1) {
             for (j = 0; j < 17; j += 1) {
@@ -2818,7 +2818,7 @@ Test(Operation, mops_v8sf_subtract)
 
         mx = mstr_v8sf_create(2, 33);
 
-        mops_v8sf_subtract(mx, lhs, rhs);
+        mstr_v8sf_subtract(mx, lhs, rhs);
 
         for (i = 0; i < 2; i += 1) {
             for (j = 0; j < 33; j += 1) {
@@ -2849,7 +2849,7 @@ Test(Operation, mops_v8sf_subtract)
 
         mx = mstr_v8sf_create(33, 17);
 
-        mops_v8sf_subtract(mx, lhs, rhs);
+        mstr_v8sf_subtract(mx, lhs, rhs);
 
         for (i = 0; i < 33; i += 1) {
             for (j = 0; j < 17; j += 1) {
@@ -2863,7 +2863,7 @@ Test(Operation, mops_v8sf_subtract)
     }
 }
 
-Test(Operation, mops_v8sf_multiply_scalar)
+Test(Operation, mstr_v8sf_multiply_scalar)
 {
     uint32_t i = 0;
     uint32_t j = 0;
@@ -2877,7 +2877,7 @@ Test(Operation, mops_v8sf_multiply_scalar)
 
         mx = mstr_v8sf_create(1, 1);
 
-        mops_v8sf_multiply_scalar(mx, src, 2.0);
+        mstr_v8sf_multiply_scalar(mx, src, 2.0);
 
         check_value_at(mstr_get_f32(mx, 0, 0), 198.0, 0, 0);
 
@@ -2896,7 +2896,7 @@ Test(Operation, mops_v8sf_multiply_scalar)
 
         mx = mstr_v8sf_create(5, 5);
 
-        mops_v8sf_multiply_scalar(mx, src, 3.0);
+        mstr_v8sf_multiply_scalar(mx, src, 3.0);
 
         for (i = 0; i < 5; i += 1) {
             for (j = 0; j < 5; j += 1) {
@@ -2919,7 +2919,7 @@ Test(Operation, mops_v8sf_multiply_scalar)
 
         mx = mstr_v8sf_create(8, 8);
 
-        mops_v8sf_multiply_scalar(mx, src, 14.0);
+        mstr_v8sf_multiply_scalar(mx, src, 14.0);
 
         for (i = 0; i < 8; i += 1) {
             for (j = 0; j < 8; j += 1) {
@@ -2942,7 +2942,7 @@ Test(Operation, mops_v8sf_multiply_scalar)
 
         mx = mstr_v8sf_create(9, 9);
 
-        mops_v8sf_multiply_scalar(mx, src, 7.0);
+        mstr_v8sf_multiply_scalar(mx, src, 7.0);
 
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 9; j += 1) {
@@ -2965,7 +2965,7 @@ Test(Operation, mops_v8sf_multiply_scalar)
 
         mx = mstr_v8sf_create(16, 16);
 
-        mops_v8sf_multiply_scalar(mx, src, 25.0);
+        mstr_v8sf_multiply_scalar(mx, src, 25.0);
 
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 16; j += 1) {
@@ -2988,7 +2988,7 @@ Test(Operation, mops_v8sf_multiply_scalar)
 
         mx = mstr_v8sf_create(17, 17);
 
-        mops_v8sf_multiply_scalar(mx, src, 99.0);
+        mstr_v8sf_multiply_scalar(mx, src, 99.0);
 
         for (i = 0; i < 17; i += 1) {
             for (j = 0; j < 17; j += 1) {
@@ -3011,7 +3011,7 @@ Test(Operation, mops_v8sf_multiply_scalar)
 
         mx = mstr_v8sf_create(2, 33);
 
-        mops_v8sf_multiply_scalar(mx, src, 13.0);
+        mstr_v8sf_multiply_scalar(mx, src, 13.0);
 
         for (i = 0; i < 2; i += 1) {
             for (j = 0; j < 33; j += 1) {
@@ -3034,7 +3034,7 @@ Test(Operation, mops_v8sf_multiply_scalar)
 
         mx = mstr_v8sf_create(33, 17);
 
-        mops_v8sf_multiply_scalar(mx, src, 77.0);
+        mstr_v8sf_multiply_scalar(mx, src, 77.0);
 
         for (i = 0; i < 33; i += 1) {
             for (j = 0; j < 17; j += 1) {
@@ -3047,7 +3047,7 @@ Test(Operation, mops_v8sf_multiply_scalar)
     }
 }
 
-Test(Operation, mops_v8sf_multiply)
+Test(Operation, mstr_v8sf_multiply)
 {
     uint32_t i = 0;
     uint32_t j = 0;
@@ -3065,7 +3065,7 @@ Test(Operation, mops_v8sf_multiply)
 
         dst = mstr_v8sf_create(1, 1);
 
-        mops_v8sf_multiply(dst, lhs, rhs);
+        mstr_v8sf_multiply(dst, lhs, rhs);
 
         check_value_at(mstr_get_f32(dst, 0, 0), 22.0, 0, 0);
 
@@ -3100,7 +3100,7 @@ Test(Operation, mops_v8sf_multiply)
 
         dst = mstr_v8sf_create(5, 5);
 
-        mops_v8sf_multiply(dst, lhs, rhs);
+        mstr_v8sf_multiply(dst, lhs, rhs);
 
         for (i = 0; i < 5; i += 1) {
             for (j = 0; j < 5; j += 1) {
@@ -3142,7 +3142,7 @@ Test(Operation, mops_v8sf_multiply)
 
         dst = mstr_v8sf_create(8, 8);
 
-        mops_v8sf_multiply(dst, lhs, rhs);
+        mstr_v8sf_multiply(dst, lhs, rhs);
 
         for (i = 0; i < 8; i += 1) {
             for (j = 0; j < 8; j += 1) {
@@ -3185,7 +3185,7 @@ Test(Operation, mops_v8sf_multiply)
 
         dst = mstr_v8sf_create(9, 9);
 
-        mops_v8sf_multiply(dst, lhs, rhs);
+        mstr_v8sf_multiply(dst, lhs, rhs);
 
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 9; j += 1) {
@@ -3235,7 +3235,7 @@ Test(Operation, mops_v8sf_multiply)
 
         dst = mstr_v8sf_create(16, 16);
 
-        mops_v8sf_multiply(dst, lhs, rhs);
+        mstr_v8sf_multiply(dst, lhs, rhs);
 
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 16; j += 1) {
@@ -3286,7 +3286,7 @@ Test(Operation, mops_v8sf_multiply)
 
         dst = mstr_v8sf_create(17, 17);
 
-        mops_v8sf_multiply(dst, lhs, rhs);
+        mstr_v8sf_multiply(dst, lhs, rhs);
 
         for (i = 0; i < 17; i += 1) {
             for (j = 0; j < 17; j += 1) {
@@ -3329,7 +3329,7 @@ Test(Operation, mops_v8sf_multiply)
 
         dst = mstr_v8sf_create(9, 9);
 
-        mops_v8sf_multiply(dst, lhs, rhs);
+        mstr_v8sf_multiply(dst, lhs, rhs);
 
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 9; j += 1) {
@@ -3343,7 +3343,7 @@ Test(Operation, mops_v8sf_multiply)
     }
 }
 
-Test(Operation, mops_v8sf_transpose)
+Test(Operation, mstr_v8sf_transpose)
 {
     uint32_t i = 0;
     uint32_t j = 0;
@@ -3357,7 +3357,7 @@ Test(Operation, mops_v8sf_transpose)
 
         dst = mstr_v8sf_create(1, 1);
 
-        mops_v8sf_transpose(dst, src);
+        mstr_v8sf_transpose(dst, src);
 
         check_value_at(mstr_get_f32(dst, 0, 0), 11.0, 0, 0);
 
@@ -3377,7 +3377,7 @@ Test(Operation, mops_v8sf_transpose)
 
         dst = mstr_v8sf_create(5, 5);
 
-        mops_v8sf_transpose(dst, src);
+        mstr_v8sf_transpose(dst, src);
 
         for (i = 0; i < 5; i += 1) {
             for (j = 0; j < 5; j += 1) {
@@ -3401,7 +3401,7 @@ Test(Operation, mops_v8sf_transpose)
 
         dst = mstr_v8sf_create(8, 8);
 
-        mops_v8sf_transpose(dst, src);
+        mstr_v8sf_transpose(dst, src);
 
         for (i = 0; i < 8; i += 1) {
             for (j = 0; j < 8; j += 1) {
@@ -3425,7 +3425,7 @@ Test(Operation, mops_v8sf_transpose)
 
         dst = mstr_v8sf_create(9, 9);
 
-        mops_v8sf_transpose(dst, src);
+        mstr_v8sf_transpose(dst, src);
 
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 9; j += 1) {
@@ -3449,7 +3449,7 @@ Test(Operation, mops_v8sf_transpose)
 
         dst = mstr_v8sf_create(16, 16);
 
-        mops_v8sf_transpose(dst, src);
+        mstr_v8sf_transpose(dst, src);
 
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 16; j += 1) {
@@ -3474,7 +3474,7 @@ Test(Operation, mops_v8sf_transpose)
 
         dst = mstr_v8sf_create(17, 17);
 
-        mops_v8sf_transpose(dst, src);
+        mstr_v8sf_transpose(dst, src);
 
         for (i = 0; i < 17; i += 1) {
             for (j = 0; j < 17; j += 1) {
@@ -3498,7 +3498,7 @@ Test(Operation, mops_v8sf_transpose)
 
         dst = mstr_v8sf_create(9, 2);
 
-        mops_v8sf_transpose(dst, src);
+        mstr_v8sf_transpose(dst, src);
 
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 2; j += 1) {
@@ -3522,7 +3522,7 @@ Test(Operation, mops_v8sf_transpose)
 
         dst = mstr_v8sf_create(2, 9);
 
-        mops_v8sf_transpose(dst, src);
+        mstr_v8sf_transpose(dst, src);
 
         for (i = 0; i < 2; i += 1) {
             for (j = 0; j < 9; j += 1) {
@@ -3546,7 +3546,7 @@ Test(Operation, mops_v8sf_transpose)
 
         dst = mstr_v8sf_create(33, 17);
 
-        mops_v8sf_transpose(dst, src);
+        mstr_v8sf_transpose(dst, src);
 
         for (i = 0; i < 33; i += 1) {
             for (j = 0; j < 17; j += 1) {

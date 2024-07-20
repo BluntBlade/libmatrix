@@ -1,5 +1,5 @@
-#ifndef MX_V8SF_STORAGE_H
-#define MX_V8SF_STORAGE_H 1
+#ifndef MX_V8SF_H
+#define MX_V8SF_H 1
 
 #include "mx_types.h"
 #include "mx_common.h"
@@ -18,6 +18,13 @@ extern void mstr_v8sf_store_row_vector(mx_stor_ptr ms, uint32_t val_ridx, uint32
 extern void mstr_v8sf_fill(mx_stor_ptr ms, float src);
 
 extern void mstr_v8sf_transpose_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr dchk, uint32_t * dchk_rows, uint32_t * dchk_cols);
+
+extern void mstr_v8sf_add(mx_stor_ptr dst, mx_stor_ptr lhs, mx_stor_ptr rhs);
+extern void mstr_v8sf_subtract(mx_stor_ptr dst, mx_stor_ptr lhs, mx_stor_ptr rhs);
+extern void mstr_v8sf_multiply(mx_stor_ptr dst, mx_stor_ptr lhs, mx_stor_ptr rhs);
+extern void mstr_v8sf_multiply_scalar(mx_stor_ptr dst, mx_stor_ptr src, float val);
+
+extern void mstr_v8sf_transpose(mx_stor_ptr dst, mx_stor_ptr src);
 
 inline static void mstr_v8sf_init(mx_stor_ptr ms, uint32_t rows, uint32_t cols)
 {
@@ -44,5 +51,5 @@ inline static void mstr_v8sf_init_ones(mx_stor_ptr ms)
     return mstr_v8sf_fill(ms, 1);
 } // mstr_v8sf_init_ones
 
-#endif // MX_V8SF_STORAGE_H
+#endif // MX_V8SF_H
 

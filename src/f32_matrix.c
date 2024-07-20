@@ -1,8 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "src/v8sf_storage.h"
-#include "src/v8sf_operation.h"
+#include "src/mx_v8sf.h"
 #include "src/f32_matrix.h"
 
 typedef struct F32_MATRIX
@@ -110,25 +109,25 @@ bool f32m_can_multiply(f32_matrix_ptr lhs, f32_matrix_ptr rhs)
 
 void f32m_transpose_and_store(f32_matrix_ptr mx, f32_matrix_ptr src)
 {
-    mops_v8sf_transpose(&mx->stor, &src->stor);
+    mstr_v8sf_transpose(&mx->stor, &src->stor);
 } // f32m_transpose_and_store
 
 void f32m_add_and_store(f32_matrix_ptr mx, f32_matrix_ptr lhs, f32_matrix_ptr rhs)
 {
-    mops_v8sf_add(&mx->stor, &lhs->stor, &rhs->stor);
+    mstr_v8sf_add(&mx->stor, &lhs->stor, &rhs->stor);
 } // f32m_add_and_store
 
 void f32m_subtract_and_store(f32_matrix_ptr mx, f32_matrix_ptr lhs, f32_matrix_ptr rhs)
 {
-    mops_v8sf_subtract(&mx->stor, &lhs->stor, &rhs->stor);
+    mstr_v8sf_subtract(&mx->stor, &lhs->stor, &rhs->stor);
 } // f32m_subtract_and_store
 
 void f32m_multiply_and_store(f32_matrix_ptr mx, f32_matrix_ptr lhs, f32_matrix_ptr rhs)
 {
-    mops_v8sf_multiply(&mx->stor, &lhs->stor, &rhs->stor);
+    mstr_v8sf_multiply(&mx->stor, &lhs->stor, &rhs->stor);
 } // f32m_multiply_and_store
 
 void f32m_multiply_scalar_and_store(f32_matrix_ptr mx, f32_matrix_ptr src, float val)
 {
-    mops_v8sf_multiply_scalar(&mx->stor, &src->stor, val);
+    mstr_v8sf_multiply_scalar(&mx->stor, &src->stor, val);
 } // f32m_multiply_scalar_and_store

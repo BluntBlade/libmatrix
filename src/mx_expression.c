@@ -589,8 +589,8 @@ void mexp_v8si_filter(mx_expr_ptr me, void * row, void * col, void * src)
         for (j = 0; j < mstr_chunks_in_width(src); j += 1) {
             base = mstr_locate_chunk(src, i, j, &row_in_chk, &col_in_chk);
 
-            for (k = I32_VALS_IN_CACHE_LINE * i; k < I32_VALS_IN_CACHE_LINE * i + row_in_chk; k += 1) {
-                for (l = I32_VALS_IN_CACHE_LINE * j; l < I32_VALS_IN_CACHE_LINE * j + col_in_chk; l += 8) {
+            for (k = I32S_IN_CACHE_LINE * i; k < I32S_IN_CACHE_LINE * i + row_in_chk; k += 1) {
+                for (l = I32S_IN_CACHE_LINE * j; l < I32S_IN_CACHE_LINE * j + col_in_chk; l += 8) {
                     *((uint32_t *)row) = k;
                     *((uint32_t *)col) = l;
                     mexp_evaluate(me);

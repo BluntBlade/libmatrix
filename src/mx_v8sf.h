@@ -28,12 +28,12 @@ extern void mstr_v8sf_transpose(mx_stor_ptr dst, mx_stor_ptr src);
 
 inline static void mstr_v8sf_init(mx_stor_ptr ms, uint32_t rows, uint32_t cols)
 {
-    mstr_init(ms, rows, cols, sizeof(float), F32_VALS_IN_V8SF, F32_VALS_IN_CACHE_LINE);
+    mstr_init(ms, rows, cols, F32_SIZE, F32S_IN_V8SF, F32S_IN_CACHE_LINE);
 } // mstr_v8sf_init
 
 inline static mx_stor_ptr mstr_v8sf_create(uint32_t rows, uint32_t cols)
 {
-    return mstr_create(rows, cols, sizeof(float), F32_VALS_IN_V8SF, F32_VALS_IN_CACHE_LINE);
+    return mstr_create(rows, cols, F32_SIZE, F32S_IN_V8SF, F32S_IN_CACHE_LINE);
 } // mstr_v8sf_create
 
 inline static void mstr_v8sf_destroy(mx_stor_ptr ms)

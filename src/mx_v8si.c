@@ -68,9 +68,10 @@ void mstr_v8si_init_identity(mx_stor_ptr ms)
 
     mstr_v8si_init_zeros(ms);
 
+    // NOTE: ms->rows maybe equal to mx_round_to_multiples(ms->rows, ms->chk_len).
     last_rows = ms->rows - (mx_round_to_multiples(ms->rows, ms->chk_len) - ms->chk_len);
     cols_padded = mx_round_to_multiples_of_8(last_rows);
-    val_idx = (i - 1) * I32_VALS_IN_CACHE_LINE;
+    val_idx = (i - 1) * I32S_IN_CACHE_LINE;
     base = mstr_calc_base(ms, val_idx, val_idx, last_rows);
     switch (last_rows) {
         default: assert(1); break;
@@ -94,9 +95,9 @@ void mstr_v8si_init_identity(mx_stor_ptr ms)
                 if (--i == 0) {
                     break;
                 } // if
-                val_idx = (i - 1) * I32_VALS_IN_CACHE_LINE;
-                base = mstr_calc_base(ms, val_idx, val_idx, 16);
-                cols_padded = 16;
+                val_idx = (i - 1) * I32S_IN_CACHE_LINE;
+                base = mstr_calc_base(ms, val_idx, val_idx, I32S_IN_CACHE_LINE);
+                cols_padded = I32S_IN_CACHE_LINE;
             } while (1);
             break;
     } // switch
@@ -109,12 +110,12 @@ void mstr_v8si_fill(mx_stor_ptr ms, int32_t src)
     v8si_t * base = NULL;
 
     base = ms->data;
-    for (i = 0; i < ms->cols_padded / I32_VALS_IN_V8SI; i += 1) {
+    for (i = 0; i < ms->cols_padded / I32S_IN_V8SI; i += 1) {
         base[i] = vals;
     } // for
     for (i = 1; i < ms->rows; i += 1) {
-        base += ms->cols_padded / I32_VALS_IN_V8SI;
-        memcpy(base, ms->data, sizeof(int32_t) * ms->cols_padded);
+        base += ms->cols_padded / I32S_IN_V8SI;
+        memcpy(base, ms->data, I32_SIZE * ms->cols_padded);
     } // for
     // NOTE: No need to zero out any padded int32_t values.
 } // mstr_v8si_fill
@@ -123,13 +124,13 @@ void mstr_v8si_transpose_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_c
 {
 #define v8si_transpose_chunk_half(row) \
     { \
-        mx_type_reg(dchk->v8si_16x1[row][0]) = _mm256_mask_i32gather_epi32(mx_type_reg(v8si_zero), base, mx_type_reg(idx[sel][0]), mx_type_reg(*mask[0]), sizeof(int32_t)); \
+        mx_type_reg(dchk->v8si_16x1[row][0]) = _mm256_mask_i32gather_epi32(mx_type_reg(v8si_zero), base, mx_type_reg(idx[sel][0]), mx_type_reg(*mask[0]), I32_SIZE); \
     }
 
 #define v8si_transpose_chunk_full(row) \
     { \
-        mx_type_reg(dchk->v8si_16x2[row][0]) = _mm256_mask_i32gather_epi32(mx_type_reg(v8si_zero), base, mx_type_reg(idx[sel][0]), mx_type_reg(*mask[0]), sizeof(int32_t)); \
-        mx_type_reg(dchk->v8si_16x2[row][1]) = _mm256_mask_i32gather_epi32(mx_type_reg(v8si_zero), base, mx_type_reg(idx[sel][1]), mx_type_reg(*mask[1]), sizeof(int32_t)); \
+        mx_type_reg(dchk->v8si_16x2[row][0]) = _mm256_mask_i32gather_epi32(mx_type_reg(v8si_zero), base, mx_type_reg(idx[sel][0]), mx_type_reg(*mask[0]), I32_SIZE); \
+        mx_type_reg(dchk->v8si_16x2[row][1]) = _mm256_mask_i32gather_epi32(mx_type_reg(v8si_zero), base, mx_type_reg(idx[sel][1]), mx_type_reg(*mask[1]), I32_SIZE); \
     }
 
     static v8si_t idx[2][2] = {
@@ -303,7 +304,7 @@ void mstr_v8si_add(mx_stor_ptr ms, mx_stor_ptr lhs, mx_stor_ptr rhs)
             lchk = mstr_locate_chunk(lhs, i, j, &lchk_rows, &lchk_cols);
             rchk = mstr_locate_chunk(rhs, i, j, &rchk_rows, &rchk_cols);
             dchk = mstr_locate_chunk(ms, i, j, &dchk_rows, &dchk_cols);
-            if (lchk_rows == I32_VALS_IN_CACHE_LINE && lchk_cols == I32_VALS_IN_CACHE_LINE) {
+            if (lchk_rows == I32S_IN_CACHE_LINE && lchk_cols == I32S_IN_CACHE_LINE) {
                 v8si_add_chunk_fully(dchk, lchk, rchk);
             } else {
                 v8si_add_chunk_partly(dchk, lchk, rchk, lchk_rows, lchk_cols);
@@ -412,7 +413,7 @@ void mstr_v8si_subtract(mx_stor_ptr dst, mx_stor_ptr lhs, mx_stor_ptr rhs)
             lchk = mstr_locate_chunk(lhs, i, j, &lchk_rows, &lchk_cols);
             rchk = mstr_locate_chunk(rhs, i, j, &rchk_rows, &rchk_cols);
             dchk = mstr_locate_chunk(dst, i, j, &dchk_rows, &dchk_cols);
-            if (lchk_rows == I32_VALS_IN_CACHE_LINE && lchk_cols == I32_VALS_IN_CACHE_LINE) {
+            if (lchk_rows == I32S_IN_CACHE_LINE && lchk_cols == I32S_IN_CACHE_LINE) {
                 v8si_subtract_chunk_fully(dchk, lchk, rchk);
             } else {
                 v8si_subtract_chunk_partly(dchk, lchk, rchk, lchk_rows, lchk_cols);
@@ -437,7 +438,7 @@ static void v8si_multiply_chunk_fully(mx_chunk_ptr dchk, mx_chunk_ptr lchk, mx_c
     v8si_t rtmp;
     uint32_t i = 0;
 
-    for (i = 0; i < I32_VALS_IN_CACHE_LINE; i += 1) {
+    for (i = 0; i < I32S_IN_CACHE_LINE; i += 1) {
         v8si_multiply_chunk_full(i,  0);
         v8si_multiply_chunk_full(i,  1);
         v8si_multiply_chunk_full(i,  2);
@@ -661,8 +662,8 @@ void mstr_v8si_multiply(mx_stor_ptr dst, mx_stor_ptr lhs, mx_stor_ptr rhs)
                 lchk = mstr_locate_chunk(lhs, i, k, &lchk_rows, &lchk_cols);
                 dchk = mstr_locate_chunk(dst, i, j, &dchk_rows, &dchk_cols);
 
-                ssel = mx_round_to_multiples_of_8(rchk_cols) / 8 - 1 + (uint32_t)(lchk_cols == I32_VALS_IN_CACHE_LINE);
-                dsel = mx_round_to_multiples_of_8(dchk_cols) / 8 - 1 + (uint32_t)(dchk_cols == I32_VALS_IN_CACHE_LINE);
+                ssel = mx_round_to_multiples_of_8(rchk_cols) / 8 - 1 + (uint32_t)(lchk_cols == I32S_IN_CACHE_LINE);
+                dsel = mx_round_to_multiples_of_8(dchk_cols) / 8 - 1 + (uint32_t)(dchk_cols == I32S_IN_CACHE_LINE);
                 (*ops[ssel][dsel])(dchk, lchk, &rchk, dchk_rows, dchk_cols, lchk_cols);
             } // for
         } // for
@@ -766,7 +767,7 @@ void mstr_v8si_multiply_scalar(mx_stor_ptr dst, mx_stor_ptr src, int32_t val)
         for (j = 0; j < mstr_chunks_in_width(src); j += 1) {
             schk = mstr_locate_chunk(src, i, j, &schk_rows, &schk_cols);
             dchk = mstr_locate_chunk(dst, i, j, &dchk_rows, &dchk_cols);
-            if (schk_rows == I32_VALS_IN_CACHE_LINE && schk_cols == I32_VALS_IN_CACHE_LINE) {
+            if (schk_rows == I32S_IN_CACHE_LINE && schk_cols == I32S_IN_CACHE_LINE) {
                 v8si_multiply_scalar_chunk_fully(dchk, schk, &vals);
             } else {
                 v8si_multiply_scalar_chunk_partly(dchk, schk, &vals, schk_rows, schk_cols);

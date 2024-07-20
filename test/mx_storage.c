@@ -24,7 +24,7 @@ Test(Location, mstr_calc_base)
 
     // -- 1x1 matrix -- //
     {
-        ms = mstr_create(1, 1, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(1, 1, I32_SIZE, I32S_IN_V8SI, I32S_IN_CACHE_LINE);
 
         base = mstr_calc_base(ms, 0, 0, 1);
         check_base(ms, base, 0);
@@ -34,7 +34,7 @@ Test(Location, mstr_calc_base)
 
     // -- 8x8 matrix -- //
     {
-        ms = mstr_create(8, 8, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(8, 8, I32_SIZE, I32S_IN_V8SI, I32S_IN_CACHE_LINE);
 
         base = mstr_calc_base(ms, 0, 0, 8);
         check_base(ms, base, 0);
@@ -44,7 +44,7 @@ Test(Location, mstr_calc_base)
 
     // -- 15x15 matrix -- //
     {
-        ms = mstr_create(15, 15, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(15, 15, I32_SIZE, I32S_IN_V8SI, I32S_IN_CACHE_LINE);
 
         base = mstr_calc_base(ms, 0, 0, 15);
         check_base(ms, base, 0);
@@ -54,7 +54,7 @@ Test(Location, mstr_calc_base)
 
     // -- 16x16 matrix -- //
     {
-        ms = mstr_create(16, 16, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(16, 16, I32_SIZE, I32S_IN_V8SI, I32S_IN_CACHE_LINE);
 
         base = mstr_calc_base(ms, 0, 0, 16);
         check_base(ms, base, 0);
@@ -64,7 +64,7 @@ Test(Location, mstr_calc_base)
 
     // -- 17x17 matrix -- //
     {
-        ms = mstr_create(17, 17, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(17, 17, I32_SIZE, I32S_IN_V8SI, I32S_IN_CACHE_LINE);
 
         base = mstr_calc_base(ms, 0, 0, 16);
         check_base(ms, base, 0);
@@ -83,7 +83,7 @@ Test(Location, mstr_calc_base)
 
     // -- 2x17 matrix -- //
     {
-        ms = mstr_create(2, 17, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(2, 17, I32_SIZE, I32S_IN_V8SI, I32S_IN_CACHE_LINE);
 
         base = mstr_calc_base(ms, 0, 0, 2);
         check_base(ms, base, 0);
@@ -96,7 +96,7 @@ Test(Location, mstr_calc_base)
 
     // -- 2x33 matrix -- //
     {
-        ms = mstr_create(2, 33, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(2, 33, I32_SIZE, I32S_IN_V8SI, I32S_IN_CACHE_LINE);
 
         base = mstr_calc_base(ms, 0, 0, 2);
         check_base(ms, base, 0);
@@ -112,7 +112,7 @@ Test(Location, mstr_calc_base)
 
     // -- 17x33 matrix -- //
     {
-        ms = mstr_create(17, 33, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(17, 33, I32_SIZE, I32S_IN_V8SI, I32S_IN_CACHE_LINE);
 
         base = mstr_calc_base(ms, 0, 0, 16);
         check_base(ms, base, 0);
@@ -137,7 +137,7 @@ Test(Location, mstr_calc_base)
 
     // -- 17x2 matrix -- //
     {
-        ms = mstr_create(17, 2, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(17, 2, I32_SIZE, I32S_IN_V8SI, I32S_IN_CACHE_LINE);
 
         base = mstr_calc_base(ms, 0, 0, 16);
         check_base(ms, base, 0);
@@ -150,7 +150,7 @@ Test(Location, mstr_calc_base)
 
     // -- 33x2 matrix -- //
     {
-        ms = mstr_create(33, 2, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(33, 2, I32_SIZE, I32S_IN_V8SI, I32S_IN_CACHE_LINE);
 
         base = mstr_calc_base(ms, 0, 0, 16);
         check_base(ms, base, 0);
@@ -166,7 +166,7 @@ Test(Location, mstr_calc_base)
 
     // -- 33x17 matrix -- //
     {
-        ms = mstr_create(33, 17, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(33, 17, I32_SIZE, I32S_IN_V8SI, I32S_IN_CACHE_LINE);
 
         base = mstr_calc_base(ms, 0, 0, 16);
         check_base(ms, base, 0);
@@ -199,7 +199,7 @@ Test(Location, mstr_locate_chunk)
 
     // -- 1x1 matrix -- //
     {
-        ms = mstr_create(1, 1, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(1, 1, I32_SIZE, I32S_IN_V8SI, I32S_IN_CACHE_LINE);
 
         chk = mstr_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk);
         check_base(ms, chk, 0);
@@ -211,7 +211,7 @@ Test(Location, mstr_locate_chunk)
 
     // -- 8x8 matrix -- //
     {
-        ms = mstr_create(8, 8, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(8, 8, I32_SIZE, I32S_IN_V8SI, I32S_IN_CACHE_LINE);
 
         chk = mstr_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk);
         check_base(ms, chk, 0);
@@ -223,7 +223,7 @@ Test(Location, mstr_locate_chunk)
 
     // -- 15x15 matrix -- //
     {
-        ms = mstr_create(15, 15, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(15, 15, I32_SIZE, I32S_IN_V8SI, I32S_IN_CACHE_LINE);
 
         chk = mstr_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk);
         check_base(ms, chk, 0);
@@ -235,7 +235,7 @@ Test(Location, mstr_locate_chunk)
 
     // -- 16x16 matrix -- //
     {
-        ms = mstr_create(16, 16, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(16, 16, I32_SIZE, I32S_IN_V8SI, I32S_IN_CACHE_LINE);
 
         chk = mstr_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk);
         check_base(ms, chk, 0);
@@ -247,7 +247,7 @@ Test(Location, mstr_locate_chunk)
 
     // -- 17x17 matrix -- //
     {
-        ms = mstr_create(17, 17, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(17, 17, I32_SIZE, I32S_IN_V8SI, I32S_IN_CACHE_LINE);
 
         chk = mstr_locate_chunk(ms, 0, 0, &rows_in_chk, &cols_in_chk);
         check_base(ms, chk, 0);
@@ -281,7 +281,7 @@ Test(GetterSetter, mstr_get_i32)
 
     // -- 1x1 matrix -- //
     {
-        ms = mstr_create(1, 1, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(1, 1, I32_SIZE, I32S_IN_V8SI, I32S_IN_CACHE_LINE);
         base = ms->data;
 
         base[0 * 8 + 0] = 4567;
@@ -293,7 +293,7 @@ Test(GetterSetter, mstr_get_i32)
 
     // -- 5x5 matrix -- //
     {
-        ms = mstr_create(5, 5, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(5, 5, I32_SIZE, I32S_IN_V8SI, I32S_IN_CACHE_LINE);
         base = ms->data;
 
         base[4 * 8 + 4] = 4567;
@@ -305,7 +305,7 @@ Test(GetterSetter, mstr_get_i32)
 
     // -- 8x8 matrix -- //
     {
-        ms = mstr_create(8, 8, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(8, 8, I32_SIZE, I32S_IN_V8SI, I32S_IN_CACHE_LINE);
         base = ms->data;
 
         base[7 * 8] = 4567;
@@ -317,7 +317,7 @@ Test(GetterSetter, mstr_get_i32)
 
     // -- 9x9 matrix -- //
     {
-        ms = mstr_create(9, 9, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(9, 9, I32_SIZE, I32S_IN_V8SI, I32S_IN_CACHE_LINE);
         base = ms->data;
 
         base[8] = 4567;
@@ -329,7 +329,7 @@ Test(GetterSetter, mstr_get_i32)
 
     // -- 16x16 matrix -- //
     {
-        ms = mstr_create(16, 16, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(16, 16, I32_SIZE, I32S_IN_V8SI, I32S_IN_CACHE_LINE);
         base = ms->data;
 
         base[15 * 16 + 15] = 4567;
@@ -341,7 +341,7 @@ Test(GetterSetter, mstr_get_i32)
 
     // -- 17x17 matrix -- //
     {
-        ms = mstr_create(17, 17, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(17, 17, I32_SIZE, I32S_IN_V8SI, I32S_IN_CACHE_LINE);
         base = ms->data;
 
         base[16 * 16 + 0 + 0] = 9876;
@@ -361,7 +361,7 @@ Test(GetterSetter, mstr_get_i32)
 
     // -- 34x34 matrix -- //
     {
-        ms = mstr_create(34, 34, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(34, 34, I32_SIZE, I32S_IN_V8SI, I32S_IN_CACHE_LINE);
         base = ms->data;
 
         base[16 * 16 * 2 + 6 * 8 + 1] = 4567;
@@ -387,7 +387,7 @@ Test(GetterSetter, mstr_set_i32)
 
     // -- 1x1 matrix -- //
     {
-        ms = mstr_create(1, 1, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(1, 1, I32_SIZE, I32S_IN_V8SI, I32S_IN_CACHE_LINE);
         base = ms->data;
 
         mstr_set_i32(ms, 0, 0, 4567);
@@ -398,7 +398,7 @@ Test(GetterSetter, mstr_set_i32)
 
     // -- 5x5 matrix -- //
     {
-        ms = mstr_create(5, 5, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(5, 5, I32_SIZE, I32S_IN_V8SI, I32S_IN_CACHE_LINE);
         base = ms->data;
 
         mstr_set_i32(ms, 4, 4, 4567);
@@ -409,7 +409,7 @@ Test(GetterSetter, mstr_set_i32)
 
     // -- 8x8 matrix -- //
     {
-        ms = mstr_create(8, 8, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(8, 8, I32_SIZE, I32S_IN_V8SI, I32S_IN_CACHE_LINE);
         base = ms->data;
 
         mstr_set_i32(ms, 7, 0, 4567);
@@ -420,7 +420,7 @@ Test(GetterSetter, mstr_set_i32)
 
     // -- 9x9 matrix -- //
     {
-        ms = mstr_create(9, 9, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(9, 9, I32_SIZE, I32S_IN_V8SI, I32S_IN_CACHE_LINE);
         base = ms->data;
 
         mstr_set_i32(ms, 0, 8, 4567);
@@ -431,7 +431,7 @@ Test(GetterSetter, mstr_set_i32)
 
     // -- 16x16 matrix -- //
     {
-        ms = mstr_create(16, 16, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(16, 16, I32_SIZE, I32S_IN_V8SI, I32S_IN_CACHE_LINE);
         base = ms->data;
 
         mstr_set_i32(ms, 15, 15, 4567);
@@ -442,7 +442,7 @@ Test(GetterSetter, mstr_set_i32)
 
     // -- 17x17 matrix -- //
     {
-        ms = mstr_create(17, 17, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(17, 17, I32_SIZE, I32S_IN_V8SI, I32S_IN_CACHE_LINE);
         base = ms->data;
 
         mstr_set_i32(ms, 0, 16, 9876);
@@ -459,7 +459,7 @@ Test(GetterSetter, mstr_set_i32)
 
     // -- 34x34 matrix -- //
     {
-        ms = mstr_create(34, 34, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(34, 34, I32_SIZE, I32S_IN_V8SI, I32S_IN_CACHE_LINE);
         base = ms->data;
 
         mstr_set_i32(ms, 6, 33, 4567);
@@ -483,7 +483,7 @@ Test(GetterSetter, mstr_get_f32)
 
     // -- 1x1 matrix -- //
     {
-        ms = mstr_create(1, 1, sizeof(float), F32_VALS_IN_V8SF, F32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(1, 1, F32_SIZE, F32S_IN_V8SF, F32S_IN_CACHE_LINE);
         base = ms->data;
 
         base[0 * 8 + 0] = 4567.0;
@@ -495,7 +495,7 @@ Test(GetterSetter, mstr_get_f32)
 
     // -- 5x5 matrix -- //
     {
-        ms = mstr_create(5, 5, sizeof(float), F32_VALS_IN_V8SF, F32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(5, 5, F32_SIZE, F32S_IN_V8SF, F32S_IN_CACHE_LINE);
         base = ms->data;
 
         base[4 * 8 + 4] = 4567.0;
@@ -507,7 +507,7 @@ Test(GetterSetter, mstr_get_f32)
 
     // -- 8x8 matrix -- //
     {
-        ms = mstr_create(8, 8, sizeof(float), F32_VALS_IN_V8SF, F32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(8, 8, F32_SIZE, F32S_IN_V8SF, F32S_IN_CACHE_LINE);
         base = ms->data;
 
         base[7 * 8] = 4567.0;
@@ -519,7 +519,7 @@ Test(GetterSetter, mstr_get_f32)
 
     // -- 9x9 matrix -- //
     {
-        ms = mstr_create(9, 9, sizeof(float), F32_VALS_IN_V8SF, F32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(9, 9, F32_SIZE, F32S_IN_V8SF, F32S_IN_CACHE_LINE);
         base = ms->data;
 
         base[8] = 4567.0;
@@ -531,7 +531,7 @@ Test(GetterSetter, mstr_get_f32)
 
     // -- 16x16 matrix -- //
     {
-        ms = mstr_create(16, 16, sizeof(float), F32_VALS_IN_V8SF, F32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(16, 16, F32_SIZE, F32S_IN_V8SF, F32S_IN_CACHE_LINE);
         base = ms->data;
 
         base[15 * 16 + 15] = 4567.0;
@@ -543,7 +543,7 @@ Test(GetterSetter, mstr_get_f32)
 
     // -- 17x17 matrix -- //
     {
-        ms = mstr_create(17, 17, sizeof(float), F32_VALS_IN_V8SF, F32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(17, 17, F32_SIZE, F32S_IN_V8SF, F32S_IN_CACHE_LINE);
         base = ms->data;
 
         base[16 * 16 + 0 + 0] = 9876;
@@ -563,7 +563,7 @@ Test(GetterSetter, mstr_get_f32)
 
     // -- 34x34 matrix -- //
     {
-        ms = mstr_create(34, 34, sizeof(float), F32_VALS_IN_V8SF, F32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(34, 34, F32_SIZE, F32S_IN_V8SF, F32S_IN_CACHE_LINE);
         base = ms->data;
 
         base[16 * 16 * 2 + 6 * 8 + 1] = 4567.0;
@@ -589,7 +589,7 @@ Test(GetterSetter, mstr_set_f32)
 
     // -- 1x1 matrix -- //
     {
-        ms = mstr_create(1, 1, sizeof(float), F32_VALS_IN_V8SF, F32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(1, 1, F32_SIZE, F32S_IN_V8SF, F32S_IN_CACHE_LINE);
         base = ms->data;
 
         mstr_set_f32(ms, 0, 0, 4567.0);
@@ -600,7 +600,7 @@ Test(GetterSetter, mstr_set_f32)
 
     // -- 5x5 matrix -- //
     {
-        ms = mstr_create(5, 5, sizeof(float), F32_VALS_IN_V8SF, F32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(5, 5, F32_SIZE, F32S_IN_V8SF, F32S_IN_CACHE_LINE);
         base = ms->data;
 
         mstr_set_f32(ms, 4, 4, 4567.0);
@@ -611,7 +611,7 @@ Test(GetterSetter, mstr_set_f32)
 
     // -- 8x8 matrix -- //
     {
-        ms = mstr_create(8, 8, sizeof(float), F32_VALS_IN_V8SF, F32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(8, 8, F32_SIZE, F32S_IN_V8SF, F32S_IN_CACHE_LINE);
         base = ms->data;
 
         mstr_set_f32(ms, 7, 0, 4567.0);
@@ -622,7 +622,7 @@ Test(GetterSetter, mstr_set_f32)
 
     // -- 9x9 matrix -- //
     {
-        ms = mstr_create(9, 9, sizeof(float), F32_VALS_IN_V8SF, F32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(9, 9, F32_SIZE, F32S_IN_V8SF, F32S_IN_CACHE_LINE);
         base = ms->data;
 
         mstr_set_f32(ms, 0, 8, 4567.0);
@@ -633,7 +633,7 @@ Test(GetterSetter, mstr_set_f32)
 
     // -- 16x16 matrix -- //
     {
-        ms = mstr_create(16, 16, sizeof(float), F32_VALS_IN_V8SF, F32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(16, 16, F32_SIZE, F32S_IN_V8SF, F32S_IN_CACHE_LINE);
         base = ms->data;
 
         mstr_set_f32(ms, 15, 15, 4567.0);
@@ -644,7 +644,7 @@ Test(GetterSetter, mstr_set_f32)
 
     // -- 17x17 matrix -- //
     {
-        ms = mstr_create(17, 17, sizeof(float), F32_VALS_IN_V8SF, F32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(17, 17, F32_SIZE, F32S_IN_V8SF, F32S_IN_CACHE_LINE);
         base = ms->data;
 
         mstr_set_f32(ms, 0, 16, 9876.0);
@@ -661,7 +661,7 @@ Test(GetterSetter, mstr_set_f32)
 
     // -- 34x34 matrix -- //
     {
-        ms = mstr_create(34, 34, sizeof(float), F32_VALS_IN_V8SF, F32_VALS_IN_CACHE_LINE);
+        ms = mstr_create(34, 34, F32_SIZE, F32S_IN_V8SF, F32S_IN_CACHE_LINE);
         base = ms->data;
 
         mstr_set_f32(ms, 6, 33, 4567.0);

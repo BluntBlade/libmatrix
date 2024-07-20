@@ -28,12 +28,12 @@ extern void mstr_v8si_transpose(mx_stor_ptr dst, mx_stor_ptr src);
 
 inline static void mstr_v8si_init(mx_stor_ptr ms, uint32_t rows, uint32_t cols)
 {
-    mstr_init(ms, rows, cols, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
+    mstr_init(ms, rows, cols, I32_SIZE, I32S_IN_V8SI, I32S_IN_CACHE_LINE);
 } // mstr_v8si_init
 
 inline static mx_stor_ptr mstr_v8si_create(uint32_t rows, uint32_t cols)
 {
-    return mstr_create(rows, cols, sizeof(int32_t), I32_VALS_IN_V8SI, I32_VALS_IN_CACHE_LINE);
+    return mstr_create(rows, cols, I32_SIZE, I32S_IN_V8SI, I32S_IN_CACHE_LINE);
 } // mstr_v8si_create
 
 inline static void mstr_v8si_destroy(mx_stor_ptr ms)

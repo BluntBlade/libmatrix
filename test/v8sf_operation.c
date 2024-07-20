@@ -12,7 +12,7 @@ inline static float value_at(mx_chunk_ptr chk, uint32_t row, uint32_t col)
     if (col < 8) {
         return mx_type_val(chk->v8sf_16x1[row][0])[col];
     } // if
-    return mx_type_val(chk->v8sf_16x2[row][mx_round_to_multiples_of_8(col) / 8 - 1])[col & 0x7];
+    return mx_type_val(chk->v8sf_16x2[row][mx_ceil_to_multiples_of_8(col) / 8 - 1])[col & 0x7];
 } // value_at
 
 #define check_value(val, expect) \

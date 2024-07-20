@@ -68,9 +68,9 @@ void mstr_v8sf_init_identity(mx_stor_ptr ms)
 
     mstr_v8sf_init_zeros(ms);
 
-    // NOTE: ms->rows maybe equal to mx_round_to_multiples(ms->rows, ms->chk_len).
-    last_rows = ms->rows - (mx_round_to_multiples(ms->rows, ms->chk_len) - ms->chk_len);
-    cols_padded = mx_round_to_multiples_of_8(last_rows);
+    // NOTE: ms->rows maybe equal to mx_ceil_to_multiples_of_16(ms->rows).
+    last_rows = ms->rows - (mx_ceil_to_multiples_of_16(ms->rows) - ms->chk_len);
+    cols_padded = mx_ceil_to_multiples_of_8(last_rows);
     val_idx = (i - 1) * F32S_IN_CACHE_LINE;
     base = mstr_calc_base(ms, val_idx, val_idx, last_rows);
     switch (last_rows) {
@@ -150,7 +150,7 @@ void mstr_v8sf_transpose_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_c
     v8si_t * mask[2];
     float * base = mstr_locate_chunk(ms, chk_ridx, chk_cidx, &schk_rows, &schk_cols);
 
-    sel = mx_round_to_multiples_of_8(schk_cols) / 8 - 1;
+    sel = mx_ceil_to_multiples_of_8(schk_cols) / 8 - 1;
     if (schk_rows <= 8) {
         mask[0] = &v8si_mask[schk_rows];
         switch (schk_cols) {
@@ -662,8 +662,8 @@ void mstr_v8sf_multiply(mx_stor_ptr dst, mx_stor_ptr lhs, mx_stor_ptr rhs)
                 lchk = mstr_locate_chunk(lhs, i, k, &lchk_rows, &lchk_cols);
                 dchk = mstr_locate_chunk(dst, i, j, &dchk_rows, &dchk_cols);
 
-                ssel = mx_round_to_multiples_of_8(rchk_cols) / 8 - 1 + (uint32_t)(lchk_cols == F32S_IN_CACHE_LINE);
-                dsel = mx_round_to_multiples_of_8(dchk_cols) / 8 - 1 + (uint32_t)(dchk_cols == F32S_IN_CACHE_LINE);
+                ssel = mx_ceil_to_multiples_of_8(rchk_cols) / 8 - 1 + (uint32_t)(lchk_cols == F32S_IN_CACHE_LINE);
+                dsel = mx_ceil_to_multiples_of_8(dchk_cols) / 8 - 1 + (uint32_t)(dchk_cols == F32S_IN_CACHE_LINE);
                 (*ops[ssel][dsel])(dchk, lchk, &rchk, dchk_rows, dchk_cols, lchk_cols);
             } // for
         } // for

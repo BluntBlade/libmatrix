@@ -106,7 +106,7 @@ inline static void * mstr_locate_value(mx_stor_ptr ms, uint32_t val_ridx, uint32
     uint32_t rows_in_chk = mx_ceil_to_or_less_than_16(ms->rows - base_ridx);
     uint32_t cols_in_chk = mx_ceil_to_or_less_than_16(ms->cols - base_cidx);
     int32_t * base = mstr_calc_base(ms, base_ridx, base_cidx, rows_in_chk);
-    return base + (val_ridx - base_ridx) * mx_round_to_multiples_of_8(cols_in_chk) + (val_cidx - base_cidx);
+    return base + (val_ridx - base_ridx) * mx_ceil_to_multiples_of_8(cols_in_chk) + (val_cidx - base_cidx);
 } // mstr_locate_value
 
 inline static int32_t mstr_get_i32(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx)

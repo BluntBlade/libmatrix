@@ -9,12 +9,12 @@ mx_stor_ptr mstr_init(mx_stor_ptr ms, uint32_t rows, uint32_t cols, uint32_t val
     ms->val_sz = val_sz;
     ms->rows = rows;
     ms->cols = cols;
-    ms->cols_padded = mx_round_to_multiples(cols, pck_len);
+    ms->cols_padded = mx_ceil_to_multiples(cols, pck_len);
     ms->bytes = ms->val_sz * ms->rows * ms->cols_padded;
     ms->pck_len = pck_len;
     ms->chk_len = chk_len;
-    ms->chks_in_width = mx_round_to_multiples(cols, chk_len) / chk_len;
-    ms->chks_in_height = mx_round_to_multiples(rows, chk_len) / chk_len;
+    ms->chks_in_width = mx_ceil_to_multiples(cols, chk_len) / chk_len;
+    ms->chks_in_height = mx_ceil_to_multiples(rows, chk_len) / chk_len;
 
     ms->alignment = ms->val_sz * ms->pck_len;
     ms->buf = malloc(ms->bytes + ms->alignment);
@@ -103,7 +103,7 @@ void mstr_transfer_row_vector(mx_stor_ptr ms, uint32_t row, uint32_t col, uint32
     rmd = cols_in_chk - (col - base_cidx);
 
     addr[0] = vec + ms->val_sz * off;
-    addr[1] = base + ms->val_sz * ((row - base_ridx) * mx_round_to_multiples_of_8(cols_in_chk) + (col - base_cidx));
+    addr[1] = base + ms->val_sz * ((row - base_ridx) * mx_ceil_to_multiples_of_8(cols_in_chk) + (col - base_cidx));
 
     memcpy(addr[dir], addr[!dir], ms->val_sz * (rmd < cnt ? rmd : cnt));
     if ((rmd >= cnt) || (col += rmd) >= ms->cols) {
@@ -120,7 +120,7 @@ void mstr_transfer_row_vector(mx_stor_ptr ms, uint32_t row, uint32_t col, uint32
     cols_in_chk = mx_ceil_to_or_less_than_16(ms->cols - col);
 
     addr[0] = vec + ms->val_sz * off;
-    addr[1] = base + ms->val_sz * ms->chk_len * ms->chk_len + ms->val_sz * (row - base_ridx) * mx_round_to_multiples_of_8(cols_in_chk);
+    addr[1] = base + ms->val_sz * ms->chk_len * ms->chk_len + ms->val_sz * (row - base_ridx) * mx_ceil_to_multiples_of_8(cols_in_chk);
 
     memcpy(addr[dir], addr[!dir], ms->val_sz * cnt);
 } // mstr_transfer_row_vector

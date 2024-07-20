@@ -85,12 +85,12 @@ uint32_t i32m_values(i32_matrix_ptr mx)
 
 int32_t i32m_get(i32_matrix_ptr mx, uint32_t row, uint32_t col)
 {
-    return mstr_v8si_get(&mx->stor, row, col);
+    return mstr_get_i32(&mx->stor, row, col);
 } // i32m_get
 
 void i32m_set(i32_matrix_ptr mx, uint32_t row, uint32_t col, int32_t src)
 {
-    mstr_v8si_set(&mx->stor, row, col, src);
+    mstr_set_i32(&mx->stor, row, col, src);
 } // i32m_set
 
 void i32m_fill(i32_matrix_ptr mx, int32_t src)

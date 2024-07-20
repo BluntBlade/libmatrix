@@ -18,16 +18,12 @@
 extern v8si_t v8si_zero;
 extern v8si_t v8si_mask[9];
 
-extern void mstr_v8si_init_zeros(mx_stor_ptr ms);
 extern void mstr_v8si_init_identity(mx_stor_ptr ms);
 
 extern void mstr_v8si_load_row_vector(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, int32_t row_off, int32_t col_off, int32_t def_val, v8si_t * dst);
 extern void mstr_v8si_store_row_vector(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, int32_t row_off, int32_t col_off, v8si_t * src);
 // TODO: extern void mstr_v8si_load_column_vector(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, int32_t row_off, int32_t def_val, v8si_t * dst);
 // TODO: extern void mstr_v8si_store_column_vector(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, int32_t row_off, v8si_t * src);
-
-extern int32_t mstr_v8si_get(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx);
-extern void mstr_v8si_set(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, int32_t src);
 
 extern void mstr_v8si_fill(mx_stor_ptr ms, int32_t src);
 
@@ -47,6 +43,11 @@ inline static void mstr_v8si_destroy(mx_stor_ptr ms)
 {
     return mstr_destroy(ms);
 } // mstr_v8si_destroy
+
+inline static void mstr_v8si_init_zeros(mx_stor_ptr ms)
+{
+    mstr_init_zeros(ms);
+} // mstr_v8si_init_zeros
 
 inline static void mstr_v8si_init_ones(mx_stor_ptr ms)
 {

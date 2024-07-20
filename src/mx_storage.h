@@ -1,6 +1,8 @@
 #ifndef MX_STORAGE_H
 #define MX_STORAGE_H 1
 
+#include <string.h>
+
 #include "src/mx_types.h"
 #include "src/mx_common.h"
 
@@ -82,6 +84,42 @@ inline static void * mstr_locate_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32
     *cols_in_chk = mx_less_than_or_equal_to(ms->cols - base_cidx, ms->chk_len);
     return mstr_calc_base(ms, base_ridx, base_cidx, *rows_in_chk);
 } // mstr_locate_chunk
+
+inline static void mstr_init_zeros(mx_stor_ptr ms)
+{
+    memset(ms->data, 0, ms->bytes);
+} // mstr_init_zeros
+
+inline static void * mstr_locate_value(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx)
+{
+    uint32_t base_ridx = mx_floor_to_multiples_of_16(val_ridx);
+    uint32_t base_cidx = mx_floor_to_multiples_of_16(val_cidx);
+    // NOTE: In the case that val's index is equal to base's index, then the difference between them will be zero.
+    uint32_t rows_in_chk = mx_ceil_to_or_less_than_16(ms->rows - base_ridx);
+    uint32_t cols_in_chk = mx_ceil_to_or_less_than_16(ms->cols - base_cidx);
+    int32_t * base = mstr_calc_base(ms, base_ridx, base_cidx, rows_in_chk);
+    return base + (val_ridx - base_ridx) * mx_round_to_multiples_of_8(cols_in_chk) + (val_cidx - base_cidx);
+} // mstr_locate_value
+
+inline static int32_t mstr_get_i32(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx)
+{
+    return ((int32_t *)mstr_locate_value(ms, val_ridx, val_cidx))[0];
+} // mstr_get_i32
+
+inline static void mstr_set_i32(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, int32_t src)
+{
+    ((int32_t *)mstr_locate_value(ms, val_ridx, val_cidx))[0] = src;
+} // mstr_set_i32
+
+inline static float mstr_get_f32(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx)
+{
+    return ((float *)mstr_locate_value(ms, val_ridx, val_cidx))[0];
+} // mstr_get_f32
+
+inline static void mstr_set_f32(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, float src)
+{
+    ((float *)mstr_locate_value(ms, val_ridx, val_cidx))[0] = src;
+} // mstr_set_f32
 
 #endif // MX_STORAGE_H
 

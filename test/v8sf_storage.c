@@ -58,7 +58,7 @@
 
 // ==== TESTS FOR THE STORAGE MODULE OF MATRIX ==== //
 
-Test(Creat, v8sf_create)
+Test(Create, mstr_v8sf_create)
 {
     mx_stor_ptr ms = NULL;
 
@@ -334,209 +334,7 @@ Test(Creat, v8sf_create)
     }
 }
 
-Test(GetterSetter, v8sf_get)
-{
-    mx_stor_ptr ms = NULL;
-    float * base = NULL;
-    float val = 0;
-
-    // -- 1x1 matrix -- //
-    {
-        ms = mstr_v8sf_create(1, 1);
-        base = ms->data;
-
-        base[0 * 8 + 0] = 4567.0;
-        val = mstr_v8sf_get(ms, 0, 0);
-        check_value(val, 4567.0);
-
-        mstr_v8sf_destroy(ms);
-    }
-
-    // -- 5x5 matrix -- //
-    {
-        ms = mstr_v8sf_create(5, 5);
-        base = ms->data;
-
-        base[4 * 8 + 4] = 4567.0;
-        val = mstr_v8sf_get(ms, 4, 4);
-        check_value(val, 4567.0);
-
-        mstr_v8sf_destroy(ms);
-    }
-
-    // -- 8x8 matrix -- //
-    {
-        ms = mstr_v8sf_create(8, 8);
-        base = ms->data;
-
-        base[7 * 8] = 4567.0;
-        val = mstr_v8sf_get(ms, 7, 0);
-        check_value(val, 4567.0);
-
-        mstr_v8sf_destroy(ms);
-    }
-
-    // -- 9x9 matrix -- //
-    {
-        ms = mstr_v8sf_create(9, 9);
-        base = ms->data;
-
-        base[8] = 4567.0;
-        val = mstr_v8sf_get(ms, 0, 8);
-        check_value(val, 4567.0);
-
-        mstr_v8sf_destroy(ms);
-    }
-
-    // -- 16x16 matrix -- //
-    {
-        ms = mstr_v8sf_create(16, 16);
-        base = ms->data;
-
-        base[15 * 16 + 15] = 4567.0;
-        val = mstr_v8sf_get(ms, 15, 15);
-        check_value(val, 4567.0);
-
-        mstr_v8sf_destroy(ms);
-    }
-
-    // -- 17x17 matrix -- //
-    {
-        ms = mstr_v8sf_create(17, 17);
-        base = ms->data;
-
-        base[16 * 16 + 0 + 0] = 9876;
-        val = mstr_v8sf_get(ms, 0, 16);
-        check_value(val, 9876);
-
-        base[16 * 16 + 16 * 8 + 0] = 1234;
-        val = mstr_v8sf_get(ms, 16, 0);
-        check_value(val, 1234);
-
-        base[16 * 16 + 16 * 8 + 1 * 16 + 0] = 4567.0;
-        val = mstr_v8sf_get(ms, 16, 16);
-        check_value(val, 4567.0);
-
-        mstr_v8sf_destroy(ms);
-    }
-
-    // -- 34x34 matrix -- //
-    {
-        ms = mstr_v8sf_create(34, 34);
-        base = ms->data;
-
-        base[16 * 16 * 2 + 6 * 8 + 1] = 4567.0;
-        val = mstr_v8sf_get(ms, 6, 33);
-        check_value(val, 4567.0);
-
-        base[16 * 16 * 2 + 16 * 8 + 1 * 16 + 1] = 9876;
-        val = mstr_v8sf_get(ms, 17, 1);
-        check_value(val, 9876);
-
-        base[16 * 16 * 2 + 16 * 8 + 16 * 16 + 8 * 16 + 8] = 1234;
-        val = mstr_v8sf_get(ms, 24, 24);
-        check_value(val, 1234);
-
-        mstr_v8sf_destroy(ms);
-    }
-}
-
-Test(GetterSetter, v8sf_set)
-{
-    mx_stor_ptr ms = NULL;
-    float * base = NULL;
-
-    // -- 1x1 matrix -- //
-    {
-        ms = mstr_v8sf_create(1, 1);
-        base = ms->data;
-
-        mstr_v8sf_set(ms, 0, 0, 4567.0);
-        check_value(base[0 * 8 + 0], 4567.0);
-
-        mstr_v8sf_destroy(ms);
-    }
-
-    // -- 5x5 matrix -- //
-    {
-        ms = mstr_v8sf_create(5, 5);
-        base = ms->data;
-
-        mstr_v8sf_set(ms, 4, 4, 4567.0);
-        check_value(base[4 * 8 + 4], 4567.0);
-
-        mstr_v8sf_destroy(ms);
-    }
-
-    // -- 8x8 matrix -- //
-    {
-        ms = mstr_v8sf_create(8, 8);
-        base = ms->data;
-
-        mstr_v8sf_set(ms, 7, 0, 4567.0);
-        check_value(base[7 * 8], 4567.0);
-
-        mstr_v8sf_destroy(ms);
-    }
-
-    // -- 9x9 matrix -- //
-    {
-        ms = mstr_v8sf_create(9, 9);
-        base = ms->data;
-
-        mstr_v8sf_set(ms, 0, 8, 4567.0);
-        check_value(base[8], 4567.0);
-
-        mstr_v8sf_destroy(ms);
-    }
-
-    // -- 16x16 matrix -- //
-    {
-        ms = mstr_v8sf_create(16, 16);
-        base = ms->data;
-
-        mstr_v8sf_set(ms, 15, 15, 4567.0);
-        check_value(base[15 * 16 + 15], 4567.0);
-
-        mstr_v8sf_destroy(ms);
-    }
-
-    // -- 17x17 matrix -- //
-    {
-        ms = mstr_v8sf_create(17, 17);
-        base = ms->data;
-
-        mstr_v8sf_set(ms, 0, 16, 9876.0);
-        check_value(base[16 * 16 + 0 + 0], 9876.0);
-
-        mstr_v8sf_set(ms, 16, 0, 1234.0);
-        check_value(base[16 * 16 + 16 * 8 + 0], 1234.0);
-
-        mstr_v8sf_set(ms, 16, 16, 4567.0);
-        check_value(base[16 * 16 + 16 * 8 + 1 * 16 + 0], 4567.0);
-
-        mstr_v8sf_destroy(ms);
-    }
-
-    // -- 34x34 matrix -- //
-    {
-        ms = mstr_v8sf_create(34, 34);
-        base = ms->data;
-
-        mstr_v8sf_set(ms, 6, 33, 4567.0);
-        check_value(base[16 * 16 * 2 + 6 * 8 + 1], 4567.0);
-
-        mstr_v8sf_set(ms, 17, 1, 9876.0);
-        check_value(base[16 * 16 * 2 + 16 * 8 + 1 * 16 + 1], 9876.0);
-
-        mstr_v8sf_set(ms, 24, 24, 1234.0);
-        check_value(base[16 * 16 * 2 + 16 * 8 + 16 * 16 + 8 * 16 + 8], 1234.0);
-
-        mstr_v8sf_destroy(ms);
-    }
-}
-
-Test(Initialization, v8sf_init_zeros)
+Test(Initialization, mstr_v8sf_init_zeros)
 {
     uint32_t i = 0;
     uint32_t j = 0;
@@ -547,7 +345,7 @@ Test(Initialization, v8sf_init_zeros)
         ms = mstr_v8sf_create(1, 1);
 
         mstr_v8sf_init_zeros(ms);
-        check_value_at(mstr_v8sf_get(ms, 0, 0), 0.0, 0, 0);
+        check_value_at(mstr_get_f32(ms, 0, 0), 0.0, 0, 0);
 
         mstr_v8sf_destroy(ms);
     }
@@ -559,7 +357,7 @@ Test(Initialization, v8sf_init_zeros)
         mstr_v8sf_init_zeros(ms);
         for (i = 0; i < 5; i += 1) {
             for (j = 0; j < 5; j += 1) {
-                check_value_at(mstr_v8sf_get(ms, i, j), 0.0, i, j);
+                check_value_at(mstr_get_f32(ms, i, j), 0.0, i, j);
             } // for
         } // for
 
@@ -573,7 +371,7 @@ Test(Initialization, v8sf_init_zeros)
         mstr_v8sf_init_zeros(ms);
         for (i = 0; i < 8; i += 1) {
             for (j = 0; j < 8; j += 1) {
-                check_value_at(mstr_v8sf_get(ms, i, j), 0.0, i, j);
+                check_value_at(mstr_get_f32(ms, i, j), 0.0, i, j);
             } // for
         } // for
 
@@ -587,7 +385,7 @@ Test(Initialization, v8sf_init_zeros)
         mstr_v8sf_init_zeros(ms);
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 9; j += 1) {
-                check_value_at(mstr_v8sf_get(ms, i, j), 0.0, i, j);
+                check_value_at(mstr_get_f32(ms, i, j), 0.0, i, j);
             } // for
         } // for
 
@@ -601,7 +399,7 @@ Test(Initialization, v8sf_init_zeros)
         mstr_v8sf_init_zeros(ms);
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 16; j += 1) {
-                check_value_at(mstr_v8sf_get(ms, i, j), 0.0, i, j);
+                check_value_at(mstr_get_f32(ms, i, j), 0.0, i, j);
             } // for
         } // for
 
@@ -615,7 +413,7 @@ Test(Initialization, v8sf_init_zeros)
         mstr_v8sf_init_zeros(ms);
         for (i = 0; i < 17; i += 1) {
             for (j = 0; j < 17; j += 1) {
-                check_value_at(mstr_v8sf_get(ms, i, j), 0.0, i, j);
+                check_value_at(mstr_get_f32(ms, i, j), 0.0, i, j);
             } // for
         } // for
 
@@ -629,7 +427,7 @@ Test(Initialization, v8sf_init_zeros)
         mstr_v8sf_init_zeros(ms);
         for (i = 0; i < 33; i += 1) {
             for (j = 0; j < 33; j += 1) {
-                check_value_at(mstr_v8sf_get(ms, i, j), 0.0, i, j);
+                check_value_at(mstr_get_f32(ms, i, j), 0.0, i, j);
             } // for
         } // for
 
@@ -637,7 +435,7 @@ Test(Initialization, v8sf_init_zeros)
     }
 }
 
-Test(Initialization, v8sf_init_identity)
+Test(Initialization, mstr_v8sf_init_identity)
 {
     uint32_t i = 0;
     uint32_t j = 0;
@@ -648,7 +446,7 @@ Test(Initialization, v8sf_init_identity)
         ms = mstr_v8sf_create(1, 1);
 
         mstr_v8sf_init_identity(ms);
-        check_value_at(mstr_v8sf_get(ms, 0, 0), 1.0, 0, 0);
+        check_value_at(mstr_get_f32(ms, 0, 0), 1.0, 0, 0);
 
         mstr_v8sf_destroy(ms);
     }
@@ -661,9 +459,9 @@ Test(Initialization, v8sf_init_identity)
         for (i = 0; i < 5; i += 1) {
             for (j = 0; j < 5; j += 1) {
                 if (i == j) {
-                    check_value_at(mstr_v8sf_get(ms, i, j), 1.0, i, j);
+                    check_value_at(mstr_get_f32(ms, i, j), 1.0, i, j);
                 } else {
-                    check_value_at(mstr_v8sf_get(ms, i, j), 0.0, i, j);
+                    check_value_at(mstr_get_f32(ms, i, j), 0.0, i, j);
                 } // if
             } // for
         } // for
@@ -679,9 +477,9 @@ Test(Initialization, v8sf_init_identity)
         for (i = 0; i < 8; i += 1) {
             for (j = 0; j < 8; j += 1) {
                 if (i == j) {
-                    check_value_at(mstr_v8sf_get(ms, i, j), 1.0, i, j);
+                    check_value_at(mstr_get_f32(ms, i, j), 1.0, i, j);
                 } else {
-                    check_value_at(mstr_v8sf_get(ms, i, j), 0.0, i, j);
+                    check_value_at(mstr_get_f32(ms, i, j), 0.0, i, j);
                 } // if
             } // for
         } // for
@@ -697,9 +495,9 @@ Test(Initialization, v8sf_init_identity)
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 9; j += 1) {
                 if (i == j) {
-                    check_value_at(mstr_v8sf_get(ms, i, j), 1.0, i, j);
+                    check_value_at(mstr_get_f32(ms, i, j), 1.0, i, j);
                 } else {
-                    check_value_at(mstr_v8sf_get(ms, i, j), 0.0, i, j);
+                    check_value_at(mstr_get_f32(ms, i, j), 0.0, i, j);
                 } // if
             } // for
         } // for
@@ -715,9 +513,9 @@ Test(Initialization, v8sf_init_identity)
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 16; j += 1) {
                 if (i == j) {
-                    check_value_at(mstr_v8sf_get(ms, i, j), 1.0, i, j);
+                    check_value_at(mstr_get_f32(ms, i, j), 1.0, i, j);
                 } else {
-                    check_value_at(mstr_v8sf_get(ms, i, j), 0.0, i, j);
+                    check_value_at(mstr_get_f32(ms, i, j), 0.0, i, j);
                 } // if
             } // for
         } // for
@@ -733,9 +531,9 @@ Test(Initialization, v8sf_init_identity)
         for (i = 0; i < 17; i += 1) {
             for (j = 0; j < 17; j += 1) {
                 if (i == j) {
-                    check_value_at(mstr_v8sf_get(ms, i, j), 1.0, i, j);
+                    check_value_at(mstr_get_f32(ms, i, j), 1.0, i, j);
                 } else {
-                    check_value_at(mstr_v8sf_get(ms, i, j), 0.0, i, j);
+                    check_value_at(mstr_get_f32(ms, i, j), 0.0, i, j);
                 } // if
             } // for
         } // for
@@ -751,9 +549,9 @@ Test(Initialization, v8sf_init_identity)
         for (i = 0; i < 33; i += 1) {
             for (j = 0; j < 33; j += 1) {
                 if (i == j) {
-                    check_value_at(mstr_v8sf_get(ms, i, j), 1.0, i, j);
+                    check_value_at(mstr_get_f32(ms, i, j), 1.0, i, j);
                 } else {
-                    check_value_at(mstr_v8sf_get(ms, i, j), 0.0, i, j);
+                    check_value_at(mstr_get_f32(ms, i, j), 0.0, i, j);
                 } // if
             } // for
         } // for
@@ -762,7 +560,7 @@ Test(Initialization, v8sf_init_identity)
     }
 }
 
-Test(Initialization, v8sf_fill)
+Test(Initialization, mstr_v8sf_fill)
 {
     uint32_t i = 0;
     uint32_t j = 0;
@@ -773,7 +571,7 @@ Test(Initialization, v8sf_fill)
         ms = mstr_v8sf_create(1, 1);
 
         mstr_v8sf_fill(ms, 4567.0);
-        check_value_at(mstr_v8sf_get(ms, 0, 0), 4567.0, 0, 0);
+        check_value_at(mstr_get_f32(ms, 0, 0), 4567.0, 0, 0);
 
         mstr_v8sf_destroy(ms);
     }
@@ -785,7 +583,7 @@ Test(Initialization, v8sf_fill)
         mstr_v8sf_fill(ms, 4567.0);
         for (i = 0; i < 5; i += 1) {
             for (j = 0; j < 5; j += 1) {
-                check_value_at(mstr_v8sf_get(ms, i, j), 4567.0, i, j);
+                check_value_at(mstr_get_f32(ms, i, j), 4567.0, i, j);
             } // for
         } // for
 
@@ -799,7 +597,7 @@ Test(Initialization, v8sf_fill)
         mstr_v8sf_fill(ms, 4567.0);
         for (i = 0; i < 8; i += 1) {
             for (j = 0; j < 8; j += 1) {
-                check_value_at(mstr_v8sf_get(ms, i, j), 4567.0, i, j);
+                check_value_at(mstr_get_f32(ms, i, j), 4567.0, i, j);
             } // for
         } // for
 
@@ -813,7 +611,7 @@ Test(Initialization, v8sf_fill)
         mstr_v8sf_fill(ms, 4567.0);
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 9; j += 1) {
-                check_value_at(mstr_v8sf_get(ms, i, j), 4567.0, i, j);
+                check_value_at(mstr_get_f32(ms, i, j), 4567.0, i, j);
             } // for
         } // for
 
@@ -827,7 +625,7 @@ Test(Initialization, v8sf_fill)
         mstr_v8sf_fill(ms, 4567.0);
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 16; j += 1) {
-                check_value_at(mstr_v8sf_get(ms, i, j), 4567.0, i, j);
+                check_value_at(mstr_get_f32(ms, i, j), 4567.0, i, j);
             } // for
         } // for
 
@@ -841,7 +639,7 @@ Test(Initialization, v8sf_fill)
         mstr_v8sf_fill(ms, 4567.0);
         for (i = 0; i < 17; i += 1) {
             for (j = 0; j < 17; j += 1) {
-                check_value_at(mstr_v8sf_get(ms, i, j), 4567.0, i, j);
+                check_value_at(mstr_get_f32(ms, i, j), 4567.0, i, j);
             } // for
         } // for
 
@@ -855,7 +653,7 @@ Test(Initialization, v8sf_fill)
         mstr_v8sf_fill(ms, 4567.0);
         for (i = 0; i < 33; i += 1) {
             for (j = 0; j < 33; j += 1) {
-                check_value_at(mstr_v8sf_get(ms, i, j), 4567.0, i, j);
+                check_value_at(mstr_get_f32(ms, i, j), 4567.0, i, j);
             } // for
         } // for
 
@@ -882,7 +680,7 @@ Test(Operation, mstr_v8sf_transpose_chunk)
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_rows(ms); i += 1) {
             for (j = 0; j < mstr_columns(ms); j += 1) {
-                mstr_v8sf_set(ms, i, j, (i + 1) * (j + 1));
+                mstr_set_f32(ms, i, j, (i + 1) * (j + 1));
             } // for
         } // for
 
@@ -890,7 +688,7 @@ Test(Operation, mstr_v8sf_transpose_chunk)
 
         check_rows_in_chunk(rows_in_chk, 1);
         check_columns_in_chunk(cols_in_chk, 1);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[0], mstr_v8sf_get(ms, 0, 0), 0, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[0], mstr_get_f32(ms, 0, 0), 0, 0);
 
         mstr_v8sf_destroy(ms);
     }
@@ -905,7 +703,7 @@ Test(Operation, mstr_v8sf_transpose_chunk)
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_rows(ms); i += 1) {
             for (j = 0; j < mstr_columns(ms); j += 1) {
-                mstr_v8sf_set(ms, i, j, (i + 1) * (j + 1));
+                mstr_set_f32(ms, i, j, (i + 1) * (j + 1));
             } // for
         } // for
 
@@ -915,11 +713,11 @@ Test(Operation, mstr_v8sf_transpose_chunk)
         check_columns_in_chunk(cols_in_chk, 5);
 
         for (i = 0; i < 5; i += 1) {
-            check_value_at(mx_type_val(dchk.v8sf_16x1[i][0])[0], mstr_v8sf_get(ms, 0, i), i, 0 * 8 + 0);
-            check_value_at(mx_type_val(dchk.v8sf_16x1[i][0])[1], mstr_v8sf_get(ms, 1, i), i, 0 * 8 + 1);
-            check_value_at(mx_type_val(dchk.v8sf_16x1[i][0])[2], mstr_v8sf_get(ms, 2, i), i, 0 * 8 + 2);
-            check_value_at(mx_type_val(dchk.v8sf_16x1[i][0])[3], mstr_v8sf_get(ms, 3, i), i, 0 * 8 + 3);
-            check_value_at(mx_type_val(dchk.v8sf_16x1[i][0])[4], mstr_v8sf_get(ms, 4, i), i, 0 * 8 + 4);
+            check_value_at(mx_type_val(dchk.v8sf_16x1[i][0])[0], mstr_get_f32(ms, 0, i), i, 0 * 8 + 0);
+            check_value_at(mx_type_val(dchk.v8sf_16x1[i][0])[1], mstr_get_f32(ms, 1, i), i, 0 * 8 + 1);
+            check_value_at(mx_type_val(dchk.v8sf_16x1[i][0])[2], mstr_get_f32(ms, 2, i), i, 0 * 8 + 2);
+            check_value_at(mx_type_val(dchk.v8sf_16x1[i][0])[3], mstr_get_f32(ms, 3, i), i, 0 * 8 + 3);
+            check_value_at(mx_type_val(dchk.v8sf_16x1[i][0])[4], mstr_get_f32(ms, 4, i), i, 0 * 8 + 4);
         } // for
 
         mstr_v8sf_destroy(ms);
@@ -935,7 +733,7 @@ Test(Operation, mstr_v8sf_transpose_chunk)
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_rows(ms); i += 1) {
             for (j = 0; j < mstr_columns(ms); j += 1) {
-                mstr_v8sf_set(ms, i, j, (i + 1) * (j + 1));
+                mstr_set_f32(ms, i, j, (i + 1) * (j + 1));
             } // for
         } // for
 
@@ -945,14 +743,14 @@ Test(Operation, mstr_v8sf_transpose_chunk)
         check_columns_in_chunk(cols_in_chk, 8);
 
         for (i = 0; i < 8; i += 1) {
-            check_value_at(mx_type_val(dchk.v8sf_16x1[i][0])[0], mstr_v8sf_get(ms, 0, i), i, 0 * 8 + 0);
-            check_value_at(mx_type_val(dchk.v8sf_16x1[i][0])[1], mstr_v8sf_get(ms, 1, i), i, 0 * 8 + 1);
-            check_value_at(mx_type_val(dchk.v8sf_16x1[i][0])[2], mstr_v8sf_get(ms, 2, i), i, 0 * 8 + 2);
-            check_value_at(mx_type_val(dchk.v8sf_16x1[i][0])[3], mstr_v8sf_get(ms, 3, i), i, 0 * 8 + 3);
-            check_value_at(mx_type_val(dchk.v8sf_16x1[i][0])[4], mstr_v8sf_get(ms, 4, i), i, 0 * 8 + 4);
-            check_value_at(mx_type_val(dchk.v8sf_16x1[i][0])[5], mstr_v8sf_get(ms, 5, i), i, 0 * 8 + 5);
-            check_value_at(mx_type_val(dchk.v8sf_16x1[i][0])[6], mstr_v8sf_get(ms, 6, i), i, 0 * 8 + 6);
-            check_value_at(mx_type_val(dchk.v8sf_16x1[i][0])[7], mstr_v8sf_get(ms, 7, i), i, 0 * 8 + 7);
+            check_value_at(mx_type_val(dchk.v8sf_16x1[i][0])[0], mstr_get_f32(ms, 0, i), i, 0 * 8 + 0);
+            check_value_at(mx_type_val(dchk.v8sf_16x1[i][0])[1], mstr_get_f32(ms, 1, i), i, 0 * 8 + 1);
+            check_value_at(mx_type_val(dchk.v8sf_16x1[i][0])[2], mstr_get_f32(ms, 2, i), i, 0 * 8 + 2);
+            check_value_at(mx_type_val(dchk.v8sf_16x1[i][0])[3], mstr_get_f32(ms, 3, i), i, 0 * 8 + 3);
+            check_value_at(mx_type_val(dchk.v8sf_16x1[i][0])[4], mstr_get_f32(ms, 4, i), i, 0 * 8 + 4);
+            check_value_at(mx_type_val(dchk.v8sf_16x1[i][0])[5], mstr_get_f32(ms, 5, i), i, 0 * 8 + 5);
+            check_value_at(mx_type_val(dchk.v8sf_16x1[i][0])[6], mstr_get_f32(ms, 6, i), i, 0 * 8 + 6);
+            check_value_at(mx_type_val(dchk.v8sf_16x1[i][0])[7], mstr_get_f32(ms, 7, i), i, 0 * 8 + 7);
         } // for
 
         mstr_v8sf_destroy(ms);
@@ -968,7 +766,7 @@ Test(Operation, mstr_v8sf_transpose_chunk)
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_rows(ms); i += 1) {
             for (j = 0; j < mstr_columns(ms); j += 1) {
-                mstr_v8sf_set(ms, i, j, (i + 1) * (j + 1));
+                mstr_set_f32(ms, i, j, (i + 1) * (j + 1));
             } // for
         } // for
 
@@ -978,16 +776,16 @@ Test(Operation, mstr_v8sf_transpose_chunk)
         check_columns_in_chunk(cols_in_chk, 9);
 
         for (i = 0; i < 9; i += 1) {
-            check_value_at(mx_type_val(dchk.v8sf_16x2[i][0])[0], mstr_v8sf_get(ms, 0, i), i, 0 * 8 + 0);
-            check_value_at(mx_type_val(dchk.v8sf_16x2[i][0])[1], mstr_v8sf_get(ms, 1, i), i, 0 * 8 + 1);
-            check_value_at(mx_type_val(dchk.v8sf_16x2[i][0])[2], mstr_v8sf_get(ms, 2, i), i, 0 * 8 + 2);
-            check_value_at(mx_type_val(dchk.v8sf_16x2[i][0])[3], mstr_v8sf_get(ms, 3, i), i, 0 * 8 + 3);
-            check_value_at(mx_type_val(dchk.v8sf_16x2[i][0])[4], mstr_v8sf_get(ms, 4, i), i, 0 * 8 + 4);
-            check_value_at(mx_type_val(dchk.v8sf_16x2[i][0])[5], mstr_v8sf_get(ms, 5, i), i, 0 * 8 + 5);
-            check_value_at(mx_type_val(dchk.v8sf_16x2[i][0])[6], mstr_v8sf_get(ms, 6, i), i, 0 * 8 + 6);
-            check_value_at(mx_type_val(dchk.v8sf_16x2[i][0])[7], mstr_v8sf_get(ms, 7, i), i, 0 * 8 + 7);
+            check_value_at(mx_type_val(dchk.v8sf_16x2[i][0])[0], mstr_get_f32(ms, 0, i), i, 0 * 8 + 0);
+            check_value_at(mx_type_val(dchk.v8sf_16x2[i][0])[1], mstr_get_f32(ms, 1, i), i, 0 * 8 + 1);
+            check_value_at(mx_type_val(dchk.v8sf_16x2[i][0])[2], mstr_get_f32(ms, 2, i), i, 0 * 8 + 2);
+            check_value_at(mx_type_val(dchk.v8sf_16x2[i][0])[3], mstr_get_f32(ms, 3, i), i, 0 * 8 + 3);
+            check_value_at(mx_type_val(dchk.v8sf_16x2[i][0])[4], mstr_get_f32(ms, 4, i), i, 0 * 8 + 4);
+            check_value_at(mx_type_val(dchk.v8sf_16x2[i][0])[5], mstr_get_f32(ms, 5, i), i, 0 * 8 + 5);
+            check_value_at(mx_type_val(dchk.v8sf_16x2[i][0])[6], mstr_get_f32(ms, 6, i), i, 0 * 8 + 6);
+            check_value_at(mx_type_val(dchk.v8sf_16x2[i][0])[7], mstr_get_f32(ms, 7, i), i, 0 * 8 + 7);
 
-            check_value_at(mx_type_val(dchk.v8sf_16x2[i][1])[0], mstr_v8sf_get(ms, 8, i), i, 1 * 8 + 0);
+            check_value_at(mx_type_val(dchk.v8sf_16x2[i][1])[0], mstr_get_f32(ms, 8, i), i, 1 * 8 + 0);
         } // for
 
         mstr_v8sf_destroy(ms);
@@ -1003,7 +801,7 @@ Test(Operation, mstr_v8sf_transpose_chunk)
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_rows(ms); i += 1) {
             for (j = 0; j < mstr_columns(ms); j += 1) {
-                mstr_v8sf_set(ms, i, j, (i + 1) * (j + 1));
+                mstr_set_f32(ms, i, j, (i + 1) * (j + 1));
             } // for
         } // for
 
@@ -1013,23 +811,23 @@ Test(Operation, mstr_v8sf_transpose_chunk)
         check_columns_in_chunk(cols_in_chk, 16);
 
         for (i = 0; i < 16; i += 1) {
-            check_value_at(mx_type_val(dchk.v8sf_16x2[i][0])[0], mstr_v8sf_get(ms,  0, i), i, 0 * 8 + 0);
-            check_value_at(mx_type_val(dchk.v8sf_16x2[i][0])[1], mstr_v8sf_get(ms,  1, i), i, 0 * 8 + 1);
-            check_value_at(mx_type_val(dchk.v8sf_16x2[i][0])[2], mstr_v8sf_get(ms,  2, i), i, 0 * 8 + 2);
-            check_value_at(mx_type_val(dchk.v8sf_16x2[i][0])[3], mstr_v8sf_get(ms,  3, i), i, 0 * 8 + 3);
-            check_value_at(mx_type_val(dchk.v8sf_16x2[i][0])[4], mstr_v8sf_get(ms,  4, i), i, 0 * 8 + 4);
-            check_value_at(mx_type_val(dchk.v8sf_16x2[i][0])[5], mstr_v8sf_get(ms,  5, i), i, 0 * 8 + 5);
-            check_value_at(mx_type_val(dchk.v8sf_16x2[i][0])[6], mstr_v8sf_get(ms,  6, i), i, 0 * 8 + 6);
-            check_value_at(mx_type_val(dchk.v8sf_16x2[i][0])[7], mstr_v8sf_get(ms,  7, i), i, 0 * 8 + 7);
+            check_value_at(mx_type_val(dchk.v8sf_16x2[i][0])[0], mstr_get_f32(ms,  0, i), i, 0 * 8 + 0);
+            check_value_at(mx_type_val(dchk.v8sf_16x2[i][0])[1], mstr_get_f32(ms,  1, i), i, 0 * 8 + 1);
+            check_value_at(mx_type_val(dchk.v8sf_16x2[i][0])[2], mstr_get_f32(ms,  2, i), i, 0 * 8 + 2);
+            check_value_at(mx_type_val(dchk.v8sf_16x2[i][0])[3], mstr_get_f32(ms,  3, i), i, 0 * 8 + 3);
+            check_value_at(mx_type_val(dchk.v8sf_16x2[i][0])[4], mstr_get_f32(ms,  4, i), i, 0 * 8 + 4);
+            check_value_at(mx_type_val(dchk.v8sf_16x2[i][0])[5], mstr_get_f32(ms,  5, i), i, 0 * 8 + 5);
+            check_value_at(mx_type_val(dchk.v8sf_16x2[i][0])[6], mstr_get_f32(ms,  6, i), i, 0 * 8 + 6);
+            check_value_at(mx_type_val(dchk.v8sf_16x2[i][0])[7], mstr_get_f32(ms,  7, i), i, 0 * 8 + 7);
 
-            check_value_at(mx_type_val(dchk.v8sf_16x2[i][1])[0], mstr_v8sf_get(ms,  8, i), i, 1 * 8 + 0);
-            check_value_at(mx_type_val(dchk.v8sf_16x2[i][1])[1], mstr_v8sf_get(ms,  9, i), i, 1 * 8 + 1);
-            check_value_at(mx_type_val(dchk.v8sf_16x2[i][1])[2], mstr_v8sf_get(ms, 10, i), i, 1 * 8 + 2);
-            check_value_at(mx_type_val(dchk.v8sf_16x2[i][1])[3], mstr_v8sf_get(ms, 11, i), i, 1 * 8 + 3);
-            check_value_at(mx_type_val(dchk.v8sf_16x2[i][1])[4], mstr_v8sf_get(ms, 12, i), i, 1 * 8 + 4);
-            check_value_at(mx_type_val(dchk.v8sf_16x2[i][1])[5], mstr_v8sf_get(ms, 13, i), i, 1 * 8 + 5);
-            check_value_at(mx_type_val(dchk.v8sf_16x2[i][1])[6], mstr_v8sf_get(ms, 14, i), i, 1 * 8 + 6);
-            check_value_at(mx_type_val(dchk.v8sf_16x2[i][1])[7], mstr_v8sf_get(ms, 15, i), i, 1 * 8 + 7);
+            check_value_at(mx_type_val(dchk.v8sf_16x2[i][1])[0], mstr_get_f32(ms,  8, i), i, 1 * 8 + 0);
+            check_value_at(mx_type_val(dchk.v8sf_16x2[i][1])[1], mstr_get_f32(ms,  9, i), i, 1 * 8 + 1);
+            check_value_at(mx_type_val(dchk.v8sf_16x2[i][1])[2], mstr_get_f32(ms, 10, i), i, 1 * 8 + 2);
+            check_value_at(mx_type_val(dchk.v8sf_16x2[i][1])[3], mstr_get_f32(ms, 11, i), i, 1 * 8 + 3);
+            check_value_at(mx_type_val(dchk.v8sf_16x2[i][1])[4], mstr_get_f32(ms, 12, i), i, 1 * 8 + 4);
+            check_value_at(mx_type_val(dchk.v8sf_16x2[i][1])[5], mstr_get_f32(ms, 13, i), i, 1 * 8 + 5);
+            check_value_at(mx_type_val(dchk.v8sf_16x2[i][1])[6], mstr_get_f32(ms, 14, i), i, 1 * 8 + 6);
+            check_value_at(mx_type_val(dchk.v8sf_16x2[i][1])[7], mstr_get_f32(ms, 15, i), i, 1 * 8 + 7);
         } // for
 
         mstr_v8sf_destroy(ms);
@@ -1045,7 +843,7 @@ Test(Operation, mstr_v8sf_transpose_chunk)
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_rows(ms); i += 1) {
             for (j = 0; j < mstr_columns(ms); j += 1) {
-                mstr_v8sf_set(ms, i, j, (i + 1) * (j + 1));
+                mstr_set_f32(ms, i, j, (i + 1) * (j + 1));
             } // for
         } // for
 
@@ -1054,11 +852,11 @@ Test(Operation, mstr_v8sf_transpose_chunk)
         check_rows_in_chunk(rows_in_chk, 5);
         check_columns_in_chunk(cols_in_chk, 1);
 
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[0], mstr_v8sf_get(ms, 0, 0), 0, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[0], mstr_v8sf_get(ms, 0, 1), 1, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[2][0])[0], mstr_v8sf_get(ms, 0, 2), 2, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[3][0])[0], mstr_v8sf_get(ms, 0, 3), 3, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[4][0])[0], mstr_v8sf_get(ms, 0, 4), 4, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[0], mstr_get_f32(ms, 0, 0), 0, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[0], mstr_get_f32(ms, 0, 1), 1, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[2][0])[0], mstr_get_f32(ms, 0, 2), 2, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[3][0])[0], mstr_get_f32(ms, 0, 3), 3, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[4][0])[0], mstr_get_f32(ms, 0, 4), 4, 0);
 
         mstr_v8sf_destroy(ms);
     }
@@ -1073,7 +871,7 @@ Test(Operation, mstr_v8sf_transpose_chunk)
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_rows(ms); i += 1) {
             for (j = 0; j < mstr_columns(ms); j += 1) {
-                mstr_v8sf_set(ms, i, j, (i + 1) * (j + 1));
+                mstr_set_f32(ms, i, j, (i + 1) * (j + 1));
             } // for
         } // for
 
@@ -1082,11 +880,11 @@ Test(Operation, mstr_v8sf_transpose_chunk)
         check_rows_in_chunk(rows_in_chk, 5);
         check_columns_in_chunk(cols_in_chk, 2);
 
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[0], mstr_v8sf_get(ms, 0, 0), 0, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[0], mstr_v8sf_get(ms, 0, 1), 1, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[2][0])[0], mstr_v8sf_get(ms, 0, 2), 2, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[3][0])[0], mstr_v8sf_get(ms, 0, 3), 3, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[4][0])[0], mstr_v8sf_get(ms, 0, 4), 4, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[0], mstr_get_f32(ms, 0, 0), 0, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[0], mstr_get_f32(ms, 0, 1), 1, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[2][0])[0], mstr_get_f32(ms, 0, 2), 2, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[3][0])[0], mstr_get_f32(ms, 0, 3), 3, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[4][0])[0], mstr_get_f32(ms, 0, 4), 4, 0);
 
         mstr_v8sf_destroy(ms);
     }
@@ -1101,7 +899,7 @@ Test(Operation, mstr_v8sf_transpose_chunk)
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_rows(ms); i += 1) {
             for (j = 0; j < mstr_columns(ms); j += 1) {
-                mstr_v8sf_set(ms, i, j, (i + 1) * (j + 1));
+                mstr_set_f32(ms, i, j, (i + 1) * (j + 1));
             } // for
         } // for
 
@@ -1110,14 +908,14 @@ Test(Operation, mstr_v8sf_transpose_chunk)
         check_rows_in_chunk(rows_in_chk, 8);
         check_columns_in_chunk(cols_in_chk, 1);
 
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[0], mstr_v8sf_get(ms, 0, 0), 0, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[0], mstr_v8sf_get(ms, 0, 1), 1, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[2][0])[0], mstr_v8sf_get(ms, 0, 2), 2, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[3][0])[0], mstr_v8sf_get(ms, 0, 3), 3, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[4][0])[0], mstr_v8sf_get(ms, 0, 4), 4, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[5][0])[0], mstr_v8sf_get(ms, 0, 5), 5, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[6][0])[0], mstr_v8sf_get(ms, 0, 6), 6, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[7][0])[0], mstr_v8sf_get(ms, 0, 7), 7, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[0], mstr_get_f32(ms, 0, 0), 0, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[0], mstr_get_f32(ms, 0, 1), 1, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[2][0])[0], mstr_get_f32(ms, 0, 2), 2, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[3][0])[0], mstr_get_f32(ms, 0, 3), 3, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[4][0])[0], mstr_get_f32(ms, 0, 4), 4, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[5][0])[0], mstr_get_f32(ms, 0, 5), 5, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[6][0])[0], mstr_get_f32(ms, 0, 6), 6, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[7][0])[0], mstr_get_f32(ms, 0, 7), 7, 0);
 
         mstr_v8sf_destroy(ms);
     }
@@ -1132,7 +930,7 @@ Test(Operation, mstr_v8sf_transpose_chunk)
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_rows(ms); i += 1) {
             for (j = 0; j < mstr_columns(ms); j += 1) {
-                mstr_v8sf_set(ms, i, j, (i + 1) * (j + 1));
+                mstr_set_f32(ms, i, j, (i + 1) * (j + 1));
             } // for
         } // for
 
@@ -1141,23 +939,23 @@ Test(Operation, mstr_v8sf_transpose_chunk)
         check_rows_in_chunk(rows_in_chk, 8);
         check_columns_in_chunk(cols_in_chk, 2);
 
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[0], mstr_v8sf_get(ms, 0, 0), 0, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[0], mstr_v8sf_get(ms, 0, 1), 1, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[2][0])[0], mstr_v8sf_get(ms, 0, 2), 2, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[3][0])[0], mstr_v8sf_get(ms, 0, 3), 3, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[4][0])[0], mstr_v8sf_get(ms, 0, 4), 4, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[5][0])[0], mstr_v8sf_get(ms, 0, 5), 5, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[6][0])[0], mstr_v8sf_get(ms, 0, 6), 6, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[7][0])[0], mstr_v8sf_get(ms, 0, 7), 7, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[0], mstr_get_f32(ms, 0, 0), 0, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[0], mstr_get_f32(ms, 0, 1), 1, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[2][0])[0], mstr_get_f32(ms, 0, 2), 2, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[3][0])[0], mstr_get_f32(ms, 0, 3), 3, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[4][0])[0], mstr_get_f32(ms, 0, 4), 4, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[5][0])[0], mstr_get_f32(ms, 0, 5), 5, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[6][0])[0], mstr_get_f32(ms, 0, 6), 6, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[7][0])[0], mstr_get_f32(ms, 0, 7), 7, 0);
 
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[1], mstr_v8sf_get(ms, 1, 0), 0, 1);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[1], mstr_v8sf_get(ms, 1, 1), 1, 1);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[2][0])[1], mstr_v8sf_get(ms, 1, 2), 2, 1);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[3][0])[1], mstr_v8sf_get(ms, 1, 3), 3, 1);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[4][0])[1], mstr_v8sf_get(ms, 1, 4), 4, 1);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[5][0])[1], mstr_v8sf_get(ms, 1, 5), 5, 1);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[6][0])[1], mstr_v8sf_get(ms, 1, 6), 6, 1);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[7][0])[1], mstr_v8sf_get(ms, 1, 7), 7, 1);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[1], mstr_get_f32(ms, 1, 0), 0, 1);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[1], mstr_get_f32(ms, 1, 1), 1, 1);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[2][0])[1], mstr_get_f32(ms, 1, 2), 2, 1);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[3][0])[1], mstr_get_f32(ms, 1, 3), 3, 1);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[4][0])[1], mstr_get_f32(ms, 1, 4), 4, 1);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[5][0])[1], mstr_get_f32(ms, 1, 5), 5, 1);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[6][0])[1], mstr_get_f32(ms, 1, 6), 6, 1);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[7][0])[1], mstr_get_f32(ms, 1, 7), 7, 1);
 
         mstr_v8sf_destroy(ms);
     }
@@ -1172,7 +970,7 @@ Test(Operation, mstr_v8sf_transpose_chunk)
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_rows(ms); i += 1) {
             for (j = 0; j < mstr_columns(ms); j += 1) {
-                mstr_v8sf_set(ms, i, j, (i + 1) * (j + 1));
+                mstr_set_f32(ms, i, j, (i + 1) * (j + 1));
             } // for
         } // for
 
@@ -1181,16 +979,16 @@ Test(Operation, mstr_v8sf_transpose_chunk)
         check_rows_in_chunk(rows_in_chk, 9);
         check_columns_in_chunk(cols_in_chk, 1);
 
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[0], mstr_v8sf_get(ms, 0, 0), 0, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[0], mstr_v8sf_get(ms, 0, 1), 1, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[2][0])[0], mstr_v8sf_get(ms, 0, 2), 2, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[3][0])[0], mstr_v8sf_get(ms, 0, 3), 3, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[4][0])[0], mstr_v8sf_get(ms, 0, 4), 4, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[5][0])[0], mstr_v8sf_get(ms, 0, 5), 5, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[6][0])[0], mstr_v8sf_get(ms, 0, 6), 6, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[7][0])[0], mstr_v8sf_get(ms, 0, 7), 7, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[0], mstr_get_f32(ms, 0, 0), 0, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[0], mstr_get_f32(ms, 0, 1), 1, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[2][0])[0], mstr_get_f32(ms, 0, 2), 2, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[3][0])[0], mstr_get_f32(ms, 0, 3), 3, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[4][0])[0], mstr_get_f32(ms, 0, 4), 4, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[5][0])[0], mstr_get_f32(ms, 0, 5), 5, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[6][0])[0], mstr_get_f32(ms, 0, 6), 6, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[7][0])[0], mstr_get_f32(ms, 0, 7), 7, 0);
 
-        check_value_at(mx_type_val(dchk.v8sf_16x1[8][0])[0], mstr_v8sf_get(ms, 0, 8), 8, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[8][0])[0], mstr_get_f32(ms, 0, 8), 8, 0);
 
         mstr_v8sf_destroy(ms);
     }
@@ -1205,7 +1003,7 @@ Test(Operation, mstr_v8sf_transpose_chunk)
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_rows(ms); i += 1) {
             for (j = 0; j < mstr_columns(ms); j += 1) {
-                mstr_v8sf_set(ms, i, j, (i + 1) * (j + 1));
+                mstr_set_f32(ms, i, j, (i + 1) * (j + 1));
             } // for
         } // for
 
@@ -1214,27 +1012,27 @@ Test(Operation, mstr_v8sf_transpose_chunk)
         check_rows_in_chunk(rows_in_chk, 9);
         check_columns_in_chunk(cols_in_chk, 2);
 
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[0], mstr_v8sf_get(ms, 0, 0), 0, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[0], mstr_v8sf_get(ms, 0, 1), 1, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[2][0])[0], mstr_v8sf_get(ms, 0, 2), 2, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[3][0])[0], mstr_v8sf_get(ms, 0, 3), 3, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[4][0])[0], mstr_v8sf_get(ms, 0, 4), 4, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[5][0])[0], mstr_v8sf_get(ms, 0, 5), 5, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[6][0])[0], mstr_v8sf_get(ms, 0, 6), 6, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[7][0])[0], mstr_v8sf_get(ms, 0, 7), 7, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[0], mstr_get_f32(ms, 0, 0), 0, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[0], mstr_get_f32(ms, 0, 1), 1, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[2][0])[0], mstr_get_f32(ms, 0, 2), 2, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[3][0])[0], mstr_get_f32(ms, 0, 3), 3, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[4][0])[0], mstr_get_f32(ms, 0, 4), 4, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[5][0])[0], mstr_get_f32(ms, 0, 5), 5, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[6][0])[0], mstr_get_f32(ms, 0, 6), 6, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[7][0])[0], mstr_get_f32(ms, 0, 7), 7, 0);
 
-        check_value_at(mx_type_val(dchk.v8sf_16x1[8][0])[0], mstr_v8sf_get(ms, 0, 8), 8, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[8][0])[0], mstr_get_f32(ms, 0, 8), 8, 0);
 
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[1], mstr_v8sf_get(ms, 1, 0), 0, 1);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[1], mstr_v8sf_get(ms, 1, 1), 1, 1);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[2][0])[1], mstr_v8sf_get(ms, 1, 2), 2, 1);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[3][0])[1], mstr_v8sf_get(ms, 1, 3), 3, 1);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[4][0])[1], mstr_v8sf_get(ms, 1, 4), 4, 1);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[5][0])[1], mstr_v8sf_get(ms, 1, 5), 5, 1);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[6][0])[1], mstr_v8sf_get(ms, 1, 6), 6, 1);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[7][0])[1], mstr_v8sf_get(ms, 1, 7), 7, 1);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[1], mstr_get_f32(ms, 1, 0), 0, 1);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[1], mstr_get_f32(ms, 1, 1), 1, 1);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[2][0])[1], mstr_get_f32(ms, 1, 2), 2, 1);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[3][0])[1], mstr_get_f32(ms, 1, 3), 3, 1);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[4][0])[1], mstr_get_f32(ms, 1, 4), 4, 1);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[5][0])[1], mstr_get_f32(ms, 1, 5), 5, 1);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[6][0])[1], mstr_get_f32(ms, 1, 6), 6, 1);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[7][0])[1], mstr_get_f32(ms, 1, 7), 7, 1);
 
-        check_value_at(mx_type_val(dchk.v8sf_16x1[8][0])[1], mstr_v8sf_get(ms, 1, 8), 8, 1);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[8][0])[1], mstr_get_f32(ms, 1, 8), 8, 1);
 
         mstr_v8sf_destroy(ms);
     }
@@ -1249,7 +1047,7 @@ Test(Operation, mstr_v8sf_transpose_chunk)
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_rows(ms); i += 1) {
             for (j = 0; j < mstr_columns(ms); j += 1) {
-                mstr_v8sf_set(ms, i, j, (i + 1) * (j + 1));
+                mstr_set_f32(ms, i, j, (i + 1) * (j + 1));
             } // for
         } // for
 
@@ -1258,11 +1056,11 @@ Test(Operation, mstr_v8sf_transpose_chunk)
         check_rows_in_chunk(rows_in_chk, 1);
         check_columns_in_chunk(cols_in_chk, 5);
 
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[0], mstr_v8sf_get(ms, 0, 0), 0, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[1], mstr_v8sf_get(ms, 1, 0), 0, 1);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[2], mstr_v8sf_get(ms, 2, 0), 0, 2);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[3], mstr_v8sf_get(ms, 3, 0), 0, 3);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[4], mstr_v8sf_get(ms, 4, 0), 0, 4);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[0], mstr_get_f32(ms, 0, 0), 0, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[1], mstr_get_f32(ms, 1, 0), 0, 1);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[2], mstr_get_f32(ms, 2, 0), 0, 2);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[3], mstr_get_f32(ms, 3, 0), 0, 3);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[4], mstr_get_f32(ms, 4, 0), 0, 4);
 
         mstr_v8sf_destroy(ms);
     }
@@ -1277,7 +1075,7 @@ Test(Operation, mstr_v8sf_transpose_chunk)
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_rows(ms); i += 1) {
             for (j = 0; j < mstr_columns(ms); j += 1) {
-                mstr_v8sf_set(ms, i, j, (i + 1) * (j + 1));
+                mstr_set_f32(ms, i, j, (i + 1) * (j + 1));
             } // for
         } // for
 
@@ -1286,17 +1084,17 @@ Test(Operation, mstr_v8sf_transpose_chunk)
         check_rows_in_chunk(rows_in_chk, 2);
         check_columns_in_chunk(cols_in_chk, 5);
 
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[0], mstr_v8sf_get(ms, 0, 0), 0, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[1], mstr_v8sf_get(ms, 1, 0), 0, 1);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[2], mstr_v8sf_get(ms, 2, 0), 0, 2);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[3], mstr_v8sf_get(ms, 3, 0), 0, 3);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[4], mstr_v8sf_get(ms, 4, 0), 0, 4);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[0], mstr_get_f32(ms, 0, 0), 0, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[1], mstr_get_f32(ms, 1, 0), 0, 1);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[2], mstr_get_f32(ms, 2, 0), 0, 2);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[3], mstr_get_f32(ms, 3, 0), 0, 3);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[4], mstr_get_f32(ms, 4, 0), 0, 4);
 
-        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[0], mstr_v8sf_get(ms, 0, 1), 1, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[1], mstr_v8sf_get(ms, 1, 1), 1, 1);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[2], mstr_v8sf_get(ms, 2, 1), 1, 2);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[3], mstr_v8sf_get(ms, 3, 1), 1, 3);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[4], mstr_v8sf_get(ms, 4, 1), 1, 4);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[0], mstr_get_f32(ms, 0, 1), 1, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[1], mstr_get_f32(ms, 1, 1), 1, 1);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[2], mstr_get_f32(ms, 2, 1), 1, 2);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[3], mstr_get_f32(ms, 3, 1), 1, 3);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[4], mstr_get_f32(ms, 4, 1), 1, 4);
 
         mstr_v8sf_destroy(ms);
     }
@@ -1311,7 +1109,7 @@ Test(Operation, mstr_v8sf_transpose_chunk)
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_rows(ms); i += 1) {
             for (j = 0; j < mstr_columns(ms); j += 1) {
-                mstr_v8sf_set(ms, i, j, (i + 1) * (j + 1));
+                mstr_set_f32(ms, i, j, (i + 1) * (j + 1));
             } // for
         } // for
 
@@ -1320,14 +1118,14 @@ Test(Operation, mstr_v8sf_transpose_chunk)
         check_rows_in_chunk(rows_in_chk, 1);
         check_columns_in_chunk(cols_in_chk, 8);
 
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[0], mstr_v8sf_get(ms, 0, 0), 0, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[1], mstr_v8sf_get(ms, 1, 0), 0, 1);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[2], mstr_v8sf_get(ms, 2, 0), 0, 2);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[3], mstr_v8sf_get(ms, 3, 0), 0, 3);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[4], mstr_v8sf_get(ms, 4, 0), 0, 4);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[5], mstr_v8sf_get(ms, 5, 0), 0, 5);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[6], mstr_v8sf_get(ms, 6, 0), 0, 6);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[7], mstr_v8sf_get(ms, 7, 0), 0, 7);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[0], mstr_get_f32(ms, 0, 0), 0, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[1], mstr_get_f32(ms, 1, 0), 0, 1);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[2], mstr_get_f32(ms, 2, 0), 0, 2);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[3], mstr_get_f32(ms, 3, 0), 0, 3);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[4], mstr_get_f32(ms, 4, 0), 0, 4);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[5], mstr_get_f32(ms, 5, 0), 0, 5);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[6], mstr_get_f32(ms, 6, 0), 0, 6);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[7], mstr_get_f32(ms, 7, 0), 0, 7);
 
         mstr_v8sf_destroy(ms);
     }
@@ -1342,7 +1140,7 @@ Test(Operation, mstr_v8sf_transpose_chunk)
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_rows(ms); i += 1) {
             for (j = 0; j < mstr_columns(ms); j += 1) {
-                mstr_v8sf_set(ms, i, j, (i + 1) * (j + 1));
+                mstr_set_f32(ms, i, j, (i + 1) * (j + 1));
             } // for
         } // for
 
@@ -1351,23 +1149,23 @@ Test(Operation, mstr_v8sf_transpose_chunk)
         check_rows_in_chunk(rows_in_chk, 2);
         check_columns_in_chunk(cols_in_chk, 8);
 
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[0], mstr_v8sf_get(ms, 0, 0), 0, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[1], mstr_v8sf_get(ms, 1, 0), 0, 1);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[2], mstr_v8sf_get(ms, 2, 0), 0, 2);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[3], mstr_v8sf_get(ms, 3, 0), 0, 3);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[4], mstr_v8sf_get(ms, 4, 0), 0, 4);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[5], mstr_v8sf_get(ms, 5, 0), 0, 5);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[6], mstr_v8sf_get(ms, 6, 0), 0, 6);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[7], mstr_v8sf_get(ms, 7, 0), 0, 7);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[0], mstr_get_f32(ms, 0, 0), 0, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[1], mstr_get_f32(ms, 1, 0), 0, 1);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[2], mstr_get_f32(ms, 2, 0), 0, 2);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[3], mstr_get_f32(ms, 3, 0), 0, 3);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[4], mstr_get_f32(ms, 4, 0), 0, 4);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[5], mstr_get_f32(ms, 5, 0), 0, 5);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[6], mstr_get_f32(ms, 6, 0), 0, 6);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[0][0])[7], mstr_get_f32(ms, 7, 0), 0, 7);
 
-        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[0], mstr_v8sf_get(ms, 0, 1), 1, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[1], mstr_v8sf_get(ms, 1, 1), 1, 1);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[2], mstr_v8sf_get(ms, 2, 1), 1, 2);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[3], mstr_v8sf_get(ms, 3, 1), 1, 3);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[4], mstr_v8sf_get(ms, 4, 1), 1, 4);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[5], mstr_v8sf_get(ms, 5, 1), 1, 5);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[6], mstr_v8sf_get(ms, 6, 1), 1, 6);
-        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[7], mstr_v8sf_get(ms, 7, 1), 1, 7);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[0], mstr_get_f32(ms, 0, 1), 1, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[1], mstr_get_f32(ms, 1, 1), 1, 1);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[2], mstr_get_f32(ms, 2, 1), 1, 2);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[3], mstr_get_f32(ms, 3, 1), 1, 3);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[4], mstr_get_f32(ms, 4, 1), 1, 4);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[5], mstr_get_f32(ms, 5, 1), 1, 5);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[6], mstr_get_f32(ms, 6, 1), 1, 6);
+        check_value_at(mx_type_val(dchk.v8sf_16x1[1][0])[7], mstr_get_f32(ms, 7, 1), 1, 7);
 
         mstr_v8sf_destroy(ms);
     }
@@ -1382,7 +1180,7 @@ Test(Operation, mstr_v8sf_transpose_chunk)
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_rows(ms); i += 1) {
             for (j = 0; j < mstr_columns(ms); j += 1) {
-                mstr_v8sf_set(ms, i, j, (i + 1) * (j + 1));
+                mstr_set_f32(ms, i, j, (i + 1) * (j + 1));
             } // for
         } // for
 
@@ -1391,16 +1189,16 @@ Test(Operation, mstr_v8sf_transpose_chunk)
         check_rows_in_chunk(rows_in_chk, 1);
         check_columns_in_chunk(cols_in_chk, 9);
 
-        check_value_at(mx_type_val(dchk.v8sf_16x2[0][0])[0], mstr_v8sf_get(ms, 0, 0), 0, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x2[0][0])[1], mstr_v8sf_get(ms, 1, 0), 0, 1);
-        check_value_at(mx_type_val(dchk.v8sf_16x2[0][0])[2], mstr_v8sf_get(ms, 2, 0), 0, 2);
-        check_value_at(mx_type_val(dchk.v8sf_16x2[0][0])[3], mstr_v8sf_get(ms, 3, 0), 0, 3);
-        check_value_at(mx_type_val(dchk.v8sf_16x2[0][0])[4], mstr_v8sf_get(ms, 4, 0), 0, 4);
-        check_value_at(mx_type_val(dchk.v8sf_16x2[0][0])[5], mstr_v8sf_get(ms, 5, 0), 0, 5);
-        check_value_at(mx_type_val(dchk.v8sf_16x2[0][0])[6], mstr_v8sf_get(ms, 6, 0), 0, 6);
-        check_value_at(mx_type_val(dchk.v8sf_16x2[0][0])[7], mstr_v8sf_get(ms, 7, 0), 0, 7);
+        check_value_at(mx_type_val(dchk.v8sf_16x2[0][0])[0], mstr_get_f32(ms, 0, 0), 0, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x2[0][0])[1], mstr_get_f32(ms, 1, 0), 0, 1);
+        check_value_at(mx_type_val(dchk.v8sf_16x2[0][0])[2], mstr_get_f32(ms, 2, 0), 0, 2);
+        check_value_at(mx_type_val(dchk.v8sf_16x2[0][0])[3], mstr_get_f32(ms, 3, 0), 0, 3);
+        check_value_at(mx_type_val(dchk.v8sf_16x2[0][0])[4], mstr_get_f32(ms, 4, 0), 0, 4);
+        check_value_at(mx_type_val(dchk.v8sf_16x2[0][0])[5], mstr_get_f32(ms, 5, 0), 0, 5);
+        check_value_at(mx_type_val(dchk.v8sf_16x2[0][0])[6], mstr_get_f32(ms, 6, 0), 0, 6);
+        check_value_at(mx_type_val(dchk.v8sf_16x2[0][0])[7], mstr_get_f32(ms, 7, 0), 0, 7);
 
-        check_value_at(mx_type_val(dchk.v8sf_16x2[0][1])[0], mstr_v8sf_get(ms, 8, 0), 0, 8);
+        check_value_at(mx_type_val(dchk.v8sf_16x2[0][1])[0], mstr_get_f32(ms, 8, 0), 0, 8);
 
         mstr_v8sf_destroy(ms);
     }
@@ -1415,7 +1213,7 @@ Test(Operation, mstr_v8sf_transpose_chunk)
         memset(&dchk, 0, sizeof(dchk));
         for (i = 0; i < mstr_rows(ms); i += 1) {
             for (j = 0; j < mstr_columns(ms); j += 1) {
-                mstr_v8sf_set(ms, i, j, (i + 1) * (j + 1));
+                mstr_set_f32(ms, i, j, (i + 1) * (j + 1));
             } // for
         } // for
 
@@ -1424,27 +1222,27 @@ Test(Operation, mstr_v8sf_transpose_chunk)
         check_rows_in_chunk(rows_in_chk, 2);
         check_columns_in_chunk(cols_in_chk, 9);
 
-        check_value_at(mx_type_val(dchk.v8sf_16x2[0][0])[0], mstr_v8sf_get(ms, 0, 0), 0, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x2[0][0])[1], mstr_v8sf_get(ms, 1, 0), 0, 1);
-        check_value_at(mx_type_val(dchk.v8sf_16x2[0][0])[2], mstr_v8sf_get(ms, 2, 0), 0, 2);
-        check_value_at(mx_type_val(dchk.v8sf_16x2[0][0])[3], mstr_v8sf_get(ms, 3, 0), 0, 3);
-        check_value_at(mx_type_val(dchk.v8sf_16x2[0][0])[4], mstr_v8sf_get(ms, 4, 0), 0, 4);
-        check_value_at(mx_type_val(dchk.v8sf_16x2[0][0])[5], mstr_v8sf_get(ms, 5, 0), 0, 5);
-        check_value_at(mx_type_val(dchk.v8sf_16x2[0][0])[6], mstr_v8sf_get(ms, 6, 0), 0, 6);
-        check_value_at(mx_type_val(dchk.v8sf_16x2[0][0])[7], mstr_v8sf_get(ms, 7, 0), 0, 7);
+        check_value_at(mx_type_val(dchk.v8sf_16x2[0][0])[0], mstr_get_f32(ms, 0, 0), 0, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x2[0][0])[1], mstr_get_f32(ms, 1, 0), 0, 1);
+        check_value_at(mx_type_val(dchk.v8sf_16x2[0][0])[2], mstr_get_f32(ms, 2, 0), 0, 2);
+        check_value_at(mx_type_val(dchk.v8sf_16x2[0][0])[3], mstr_get_f32(ms, 3, 0), 0, 3);
+        check_value_at(mx_type_val(dchk.v8sf_16x2[0][0])[4], mstr_get_f32(ms, 4, 0), 0, 4);
+        check_value_at(mx_type_val(dchk.v8sf_16x2[0][0])[5], mstr_get_f32(ms, 5, 0), 0, 5);
+        check_value_at(mx_type_val(dchk.v8sf_16x2[0][0])[6], mstr_get_f32(ms, 6, 0), 0, 6);
+        check_value_at(mx_type_val(dchk.v8sf_16x2[0][0])[7], mstr_get_f32(ms, 7, 0), 0, 7);
 
-        check_value_at(mx_type_val(dchk.v8sf_16x2[0][1])[0], mstr_v8sf_get(ms, 8, 0), 0, 8);
+        check_value_at(mx_type_val(dchk.v8sf_16x2[0][1])[0], mstr_get_f32(ms, 8, 0), 0, 8);
 
-        check_value_at(mx_type_val(dchk.v8sf_16x2[1][0])[0], mstr_v8sf_get(ms, 0, 1), 1, 0);
-        check_value_at(mx_type_val(dchk.v8sf_16x2[1][0])[1], mstr_v8sf_get(ms, 1, 1), 1, 1);
-        check_value_at(mx_type_val(dchk.v8sf_16x2[1][0])[2], mstr_v8sf_get(ms, 2, 1), 1, 2);
-        check_value_at(mx_type_val(dchk.v8sf_16x2[1][0])[3], mstr_v8sf_get(ms, 3, 1), 1, 3);
-        check_value_at(mx_type_val(dchk.v8sf_16x2[1][0])[4], mstr_v8sf_get(ms, 4, 1), 1, 4);
-        check_value_at(mx_type_val(dchk.v8sf_16x2[1][0])[5], mstr_v8sf_get(ms, 5, 1), 1, 5);
-        check_value_at(mx_type_val(dchk.v8sf_16x2[1][0])[6], mstr_v8sf_get(ms, 6, 1), 1, 6);
-        check_value_at(mx_type_val(dchk.v8sf_16x2[1][0])[7], mstr_v8sf_get(ms, 7, 1), 1, 7);
+        check_value_at(mx_type_val(dchk.v8sf_16x2[1][0])[0], mstr_get_f32(ms, 0, 1), 1, 0);
+        check_value_at(mx_type_val(dchk.v8sf_16x2[1][0])[1], mstr_get_f32(ms, 1, 1), 1, 1);
+        check_value_at(mx_type_val(dchk.v8sf_16x2[1][0])[2], mstr_get_f32(ms, 2, 1), 1, 2);
+        check_value_at(mx_type_val(dchk.v8sf_16x2[1][0])[3], mstr_get_f32(ms, 3, 1), 1, 3);
+        check_value_at(mx_type_val(dchk.v8sf_16x2[1][0])[4], mstr_get_f32(ms, 4, 1), 1, 4);
+        check_value_at(mx_type_val(dchk.v8sf_16x2[1][0])[5], mstr_get_f32(ms, 5, 1), 1, 5);
+        check_value_at(mx_type_val(dchk.v8sf_16x2[1][0])[6], mstr_get_f32(ms, 6, 1), 1, 6);
+        check_value_at(mx_type_val(dchk.v8sf_16x2[1][0])[7], mstr_get_f32(ms, 7, 1), 1, 7);
 
-        check_value_at(mx_type_val(dchk.v8sf_16x2[1][1])[0], mstr_v8sf_get(ms, 8, 1), 1, 8);
+        check_value_at(mx_type_val(dchk.v8sf_16x2[1][1])[0], mstr_get_f32(ms, 8, 1), 1, 8);
 
         mstr_v8sf_destroy(ms);
     }
@@ -1462,7 +1260,7 @@ Test(Operation, mstr_v8sf_load_row_vector)
         ms = mstr_v8sf_create(8, 8);
         for (i = 0; i < mstr_rows(ms); i += 1) {
             for (j = 0; j < mstr_columns(ms); j += 1) {
-                mstr_v8sf_set(ms, i, j, i * 100.0 + j);
+                mstr_set_f32(ms, i, j, i * 100.0 + j);
             } // for
         } // for
 
@@ -1484,7 +1282,7 @@ Test(Operation, mstr_v8sf_load_row_vector)
         ms = mstr_v8sf_create(8, 8);
         for (i = 0; i < mstr_rows(ms); i += 1) {
             for (j = 0; j < mstr_columns(ms); j += 1) {
-                mstr_v8sf_set(ms, i, j, i * 100.0 + j);
+                mstr_set_f32(ms, i, j, i * 100.0 + j);
             } // for
         } // for
 
@@ -1506,7 +1304,7 @@ Test(Operation, mstr_v8sf_load_row_vector)
         ms = mstr_v8sf_create(8, 8);
         for (i = 0; i < mstr_rows(ms); i += 1) {
             for (j = 0; j < mstr_columns(ms); j += 1) {
-                mstr_v8sf_set(ms, i, j, i * 100.0 + j);
+                mstr_set_f32(ms, i, j, i * 100.0 + j);
             } // for
         } // for
 
@@ -1538,7 +1336,7 @@ Test(Operation, mstr_v8sf_load_row_vector)
         ms = mstr_v8sf_create(8, 8);
         for (i = 0; i < mstr_rows(ms); i += 1) {
             for (j = 0; j < mstr_columns(ms); j += 1) {
-                mstr_v8sf_set(ms, i, j, i * 100.0 + j);
+                mstr_set_f32(ms, i, j, i * 100.0 + j);
             } // for
         } // for
 
@@ -1570,7 +1368,7 @@ Test(Operation, mstr_v8sf_load_row_vector)
         ms = mstr_v8sf_create(4, 4);
         for (i = 0; i < mstr_rows(ms); i += 1) {
             for (j = 0; j < mstr_columns(ms); j += 1) {
-                mstr_v8sf_set(ms, i, j, i * 100.0 + j);
+                mstr_set_f32(ms, i, j, i * 100.0 + j);
             } // for
         } // for
 
@@ -1612,7 +1410,7 @@ Test(Operation, mstr_v8sf_load_row_vector)
         ms = mstr_v8sf_create(16, 16);
         for (i = 0; i < mstr_rows(ms); i += 1) {
             for (j = 0; j < mstr_columns(ms); j += 1) {
-                mstr_v8sf_set(ms, i, j, i * 100.0 + j);
+                mstr_set_f32(ms, i, j, i * 100.0 + j);
             } // for
         } // for
 
@@ -1654,7 +1452,7 @@ Test(Operation, mstr_v8sf_load_row_vector)
         ms = mstr_v8sf_create(16, 32);
         for (i = 0; i < mstr_rows(ms); i += 1) {
             for (j = 0; j < mstr_columns(ms); j += 1) {
-                mstr_v8sf_set(ms, i, j, i * 100.0 + j);
+                mstr_set_f32(ms, i, j, i * 100.0 + j);
             } // for
         } // for
 
@@ -1687,7 +1485,7 @@ Test(Operation, mstr_v8sf_store_row_vector)
         mstr_v8sf_store_row_vector(ms, 9, 0, 0, 0, &src);
         for (i = 0; i < mstr_rows(ms); i += 1) {
             for (j = 0; j < mstr_columns(ms); j += 1) {
-                check_value(mstr_v8sf_get(ms, i, j), 0.0);
+                check_value(mstr_get_f32(ms, i, j), 0.0);
             } // for
         } // for
 
@@ -1702,7 +1500,7 @@ Test(Operation, mstr_v8sf_store_row_vector)
         mstr_v8sf_store_row_vector(ms, 0, 0, 0, -8, &src);
         for (i = 0; i < mstr_rows(ms); i += 1) {
             for (j = 0; j < mstr_columns(ms); j += 1) {
-                check_value(mstr_v8sf_get(ms, i, j), 0.0);
+                check_value(mstr_get_f32(ms, i, j), 0.0);
             } // for
         } // for
 
@@ -1717,7 +1515,7 @@ Test(Operation, mstr_v8sf_store_row_vector)
         mstr_v8sf_store_row_vector(ms, 0, 10, 0, 0, &src);
         for (i = 0; i < mstr_rows(ms); i += 1) {
             for (j = 0; j < mstr_columns(ms); j += 1) {
-                check_value(mstr_v8sf_get(ms, i, j), 0.0);
+                check_value(mstr_get_f32(ms, i, j), 0.0);
             } // for
         } // for
 
@@ -1725,7 +1523,7 @@ Test(Operation, mstr_v8sf_store_row_vector)
         mstr_v8sf_store_row_vector(ms, 0, 0, 0, 8, &src);
         for (i = 0; i < mstr_rows(ms); i += 1) {
             for (j = 0; j < mstr_columns(ms); j += 1) {
-                check_value(mstr_v8sf_get(ms, i, j), 0.0);
+                check_value(mstr_get_f32(ms, i, j), 0.0);
             } // for
         } // for
 
@@ -1738,25 +1536,25 @@ Test(Operation, mstr_v8sf_store_row_vector)
 
         mstr_v8sf_init_zeros(ms);
         mstr_v8sf_store_row_vector(ms, 0, 0, 0, -1, &src);
-        check_value(mstr_v8sf_get(ms, 0, 0), 15.0);
-        check_value(mstr_v8sf_get(ms, 0, 1), 14.0);
-        check_value(mstr_v8sf_get(ms, 0, 2), 13.0);
-        check_value(mstr_v8sf_get(ms, 0, 3), 12.0);
-        check_value(mstr_v8sf_get(ms, 0, 4), 11.0);
-        check_value(mstr_v8sf_get(ms, 0, 5), 10.0);
-        check_value(mstr_v8sf_get(ms, 0, 6),  9.0);
-        check_value(mstr_v8sf_get(ms, 0, 7),  0.0);
+        check_value(mstr_get_f32(ms, 0, 0), 15.0);
+        check_value(mstr_get_f32(ms, 0, 1), 14.0);
+        check_value(mstr_get_f32(ms, 0, 2), 13.0);
+        check_value(mstr_get_f32(ms, 0, 3), 12.0);
+        check_value(mstr_get_f32(ms, 0, 4), 11.0);
+        check_value(mstr_get_f32(ms, 0, 5), 10.0);
+        check_value(mstr_get_f32(ms, 0, 6),  9.0);
+        check_value(mstr_get_f32(ms, 0, 7),  0.0);
 
         mstr_v8sf_init_zeros(ms);
         mstr_v8sf_store_row_vector(ms, 7, 0, 0, -7, &src);
-        check_value(mstr_v8sf_get(ms, 7, 0), 9.0);
-        check_value(mstr_v8sf_get(ms, 7, 1), 0.0);
-        check_value(mstr_v8sf_get(ms, 7, 2), 0.0);
-        check_value(mstr_v8sf_get(ms, 7, 3), 0.0);
-        check_value(mstr_v8sf_get(ms, 7, 4), 0.0);
-        check_value(mstr_v8sf_get(ms, 7, 5), 0.0);
-        check_value(mstr_v8sf_get(ms, 7, 6), 0.0);
-        check_value(mstr_v8sf_get(ms, 7, 7), 0.0);
+        check_value(mstr_get_f32(ms, 7, 0), 9.0);
+        check_value(mstr_get_f32(ms, 7, 1), 0.0);
+        check_value(mstr_get_f32(ms, 7, 2), 0.0);
+        check_value(mstr_get_f32(ms, 7, 3), 0.0);
+        check_value(mstr_get_f32(ms, 7, 4), 0.0);
+        check_value(mstr_get_f32(ms, 7, 5), 0.0);
+        check_value(mstr_get_f32(ms, 7, 6), 0.0);
+        check_value(mstr_get_f32(ms, 7, 7), 0.0);
 
         mstr_v8sf_destroy(ms);
     }
@@ -1767,24 +1565,24 @@ Test(Operation, mstr_v8sf_store_row_vector)
 
         mstr_v8sf_init_zeros(ms);
         mstr_v8sf_store_row_vector(ms, 0, 0, 0, -1, &src);
-        check_value(mstr_v8sf_get(ms, 0, 0), 15.0);
-        check_value(mstr_v8sf_get(ms, 0, 1), 14.0);
-        check_value(mstr_v8sf_get(ms, 0, 2), 13.0);
-        check_value(mstr_v8sf_get(ms, 0, 3), 12.0);
+        check_value(mstr_get_f32(ms, 0, 0), 15.0);
+        check_value(mstr_get_f32(ms, 0, 1), 14.0);
+        check_value(mstr_get_f32(ms, 0, 2), 13.0);
+        check_value(mstr_get_f32(ms, 0, 3), 12.0);
 
         mstr_v8sf_init_zeros(ms);
         mstr_v8sf_store_row_vector(ms, 1, 0, 0, 0, &src);
-        check_value(mstr_v8sf_get(ms, 1, 0), 16.0);
-        check_value(mstr_v8sf_get(ms, 1, 1), 15.0);
-        check_value(mstr_v8sf_get(ms, 1, 2), 14.0);
-        check_value(mstr_v8sf_get(ms, 1, 3), 13.0);
+        check_value(mstr_get_f32(ms, 1, 0), 16.0);
+        check_value(mstr_get_f32(ms, 1, 1), 15.0);
+        check_value(mstr_get_f32(ms, 1, 2), 14.0);
+        check_value(mstr_get_f32(ms, 1, 3), 13.0);
 
         mstr_v8sf_init_zeros(ms);
         mstr_v8sf_store_row_vector(ms, 2, 0, 0, 2, &src);
-        check_value(mstr_v8sf_get(ms, 2, 0), 0.0);
-        check_value(mstr_v8sf_get(ms, 2, 1), 0.0);
-        check_value(mstr_v8sf_get(ms, 2, 2), 16.0);
-        check_value(mstr_v8sf_get(ms, 2, 3), 15.0);
+        check_value(mstr_get_f32(ms, 2, 0), 0.0);
+        check_value(mstr_get_f32(ms, 2, 1), 0.0);
+        check_value(mstr_get_f32(ms, 2, 2), 16.0);
+        check_value(mstr_get_f32(ms, 2, 3), 15.0);
 
         mstr_v8sf_destroy(ms);
     }
@@ -1795,52 +1593,52 @@ Test(Operation, mstr_v8sf_store_row_vector)
 
         mstr_v8sf_init_zeros(ms);
         mstr_v8sf_store_row_vector(ms, 15, 0, 0, 0, &src);
-        check_value(mstr_v8sf_get(ms, 15, 0), 16.0);
-        check_value(mstr_v8sf_get(ms, 15, 1), 15.0);
-        check_value(mstr_v8sf_get(ms, 15, 2), 14.0);
-        check_value(mstr_v8sf_get(ms, 15, 3), 13.0);
-        check_value(mstr_v8sf_get(ms, 15, 4), 12.0);
-        check_value(mstr_v8sf_get(ms, 15, 5), 11.0);
-        check_value(mstr_v8sf_get(ms, 15, 6), 10.0);
-        check_value(mstr_v8sf_get(ms, 15, 7),  9.0);
+        check_value(mstr_get_f32(ms, 15, 0), 16.0);
+        check_value(mstr_get_f32(ms, 15, 1), 15.0);
+        check_value(mstr_get_f32(ms, 15, 2), 14.0);
+        check_value(mstr_get_f32(ms, 15, 3), 13.0);
+        check_value(mstr_get_f32(ms, 15, 4), 12.0);
+        check_value(mstr_get_f32(ms, 15, 5), 11.0);
+        check_value(mstr_get_f32(ms, 15, 6), 10.0);
+        check_value(mstr_get_f32(ms, 15, 7),  9.0);
 
         mstr_v8sf_init_zeros(ms);
         mstr_v8sf_store_row_vector(ms, 1, 0, 0, 10, &src);
-        check_value(mstr_v8sf_get(ms, 1,  0),  0.0);
-        check_value(mstr_v8sf_get(ms, 1,  1),  0.0);
-        check_value(mstr_v8sf_get(ms, 1,  2),  0.0);
-        check_value(mstr_v8sf_get(ms, 1,  3),  0.0);
-        check_value(mstr_v8sf_get(ms, 1,  4),  0.0);
-        check_value(mstr_v8sf_get(ms, 1,  5),  0.0);
-        check_value(mstr_v8sf_get(ms, 1,  6),  0.0);
-        check_value(mstr_v8sf_get(ms, 1,  7),  0.0);
-        check_value(mstr_v8sf_get(ms, 1,  8),  0.0);
-        check_value(mstr_v8sf_get(ms, 1,  9),  0.0);
-        check_value(mstr_v8sf_get(ms, 1, 10), 16.0);
-        check_value(mstr_v8sf_get(ms, 1, 11), 15.0);
-        check_value(mstr_v8sf_get(ms, 1, 12), 14.0);
-        check_value(mstr_v8sf_get(ms, 1, 13), 13.0);
-        check_value(mstr_v8sf_get(ms, 1, 14), 12.0);
-        check_value(mstr_v8sf_get(ms, 1, 15), 11.0);
+        check_value(mstr_get_f32(ms, 1,  0),  0.0);
+        check_value(mstr_get_f32(ms, 1,  1),  0.0);
+        check_value(mstr_get_f32(ms, 1,  2),  0.0);
+        check_value(mstr_get_f32(ms, 1,  3),  0.0);
+        check_value(mstr_get_f32(ms, 1,  4),  0.0);
+        check_value(mstr_get_f32(ms, 1,  5),  0.0);
+        check_value(mstr_get_f32(ms, 1,  6),  0.0);
+        check_value(mstr_get_f32(ms, 1,  7),  0.0);
+        check_value(mstr_get_f32(ms, 1,  8),  0.0);
+        check_value(mstr_get_f32(ms, 1,  9),  0.0);
+        check_value(mstr_get_f32(ms, 1, 10), 16.0);
+        check_value(mstr_get_f32(ms, 1, 11), 15.0);
+        check_value(mstr_get_f32(ms, 1, 12), 14.0);
+        check_value(mstr_get_f32(ms, 1, 13), 13.0);
+        check_value(mstr_get_f32(ms, 1, 14), 12.0);
+        check_value(mstr_get_f32(ms, 1, 15), 11.0);
 
         mstr_v8sf_init_zeros(ms);
         mstr_v8sf_store_row_vector(ms, 2, 0, 0, 14, &src);
-        check_value(mstr_v8sf_get(ms, 2,  0),  0.0);
-        check_value(mstr_v8sf_get(ms, 2,  1),  0.0);
-        check_value(mstr_v8sf_get(ms, 2,  2),  0.0);
-        check_value(mstr_v8sf_get(ms, 2,  3),  0.0);
-        check_value(mstr_v8sf_get(ms, 2,  4),  0.0);
-        check_value(mstr_v8sf_get(ms, 2,  5),  0.0);
-        check_value(mstr_v8sf_get(ms, 2,  6),  0.0);
-        check_value(mstr_v8sf_get(ms, 2,  7),  0.0);
-        check_value(mstr_v8sf_get(ms, 2,  8),  0.0);
-        check_value(mstr_v8sf_get(ms, 2,  9),  0.0);
-        check_value(mstr_v8sf_get(ms, 2, 10),  0.0);
-        check_value(mstr_v8sf_get(ms, 2, 11),  0.0);
-        check_value(mstr_v8sf_get(ms, 2, 12),  0.0);
-        check_value(mstr_v8sf_get(ms, 2, 13),  0.0);
-        check_value(mstr_v8sf_get(ms, 2, 14), 16.0);
-        check_value(mstr_v8sf_get(ms, 2, 15), 15.0);
+        check_value(mstr_get_f32(ms, 2,  0),  0.0);
+        check_value(mstr_get_f32(ms, 2,  1),  0.0);
+        check_value(mstr_get_f32(ms, 2,  2),  0.0);
+        check_value(mstr_get_f32(ms, 2,  3),  0.0);
+        check_value(mstr_get_f32(ms, 2,  4),  0.0);
+        check_value(mstr_get_f32(ms, 2,  5),  0.0);
+        check_value(mstr_get_f32(ms, 2,  6),  0.0);
+        check_value(mstr_get_f32(ms, 2,  7),  0.0);
+        check_value(mstr_get_f32(ms, 2,  8),  0.0);
+        check_value(mstr_get_f32(ms, 2,  9),  0.0);
+        check_value(mstr_get_f32(ms, 2, 10),  0.0);
+        check_value(mstr_get_f32(ms, 2, 11),  0.0);
+        check_value(mstr_get_f32(ms, 2, 12),  0.0);
+        check_value(mstr_get_f32(ms, 2, 13),  0.0);
+        check_value(mstr_get_f32(ms, 2, 14), 16.0);
+        check_value(mstr_get_f32(ms, 2, 15), 15.0);
 
         mstr_v8sf_destroy(ms);
     }
@@ -1851,38 +1649,38 @@ Test(Operation, mstr_v8sf_store_row_vector)
 
         mstr_v8sf_init_zeros(ms);
         mstr_v8sf_store_row_vector(ms, 13, 0, 0, 12, &src);
-        check_value(mstr_v8sf_get(ms, 13,  0),  0.0);
-        check_value(mstr_v8sf_get(ms, 13,  1),  0.0);
-        check_value(mstr_v8sf_get(ms, 13,  2),  0.0);
-        check_value(mstr_v8sf_get(ms, 13,  3),  0.0);
-        check_value(mstr_v8sf_get(ms, 13,  4),  0.0);
-        check_value(mstr_v8sf_get(ms, 13,  5),  0.0);
-        check_value(mstr_v8sf_get(ms, 13,  6),  0.0);
-        check_value(mstr_v8sf_get(ms, 13,  7),  0.0);
-        check_value(mstr_v8sf_get(ms, 13,  8),  0.0);
-        check_value(mstr_v8sf_get(ms, 13,  9),  0.0);
-        check_value(mstr_v8sf_get(ms, 13, 10),  0.0);
-        check_value(mstr_v8sf_get(ms, 13, 11),  0.0);
-        check_value(mstr_v8sf_get(ms, 13, 12), 16.0);
-        check_value(mstr_v8sf_get(ms, 13, 13), 15.0);
-        check_value(mstr_v8sf_get(ms, 13, 14), 14.0);
-        check_value(mstr_v8sf_get(ms, 13, 15), 13.0);
-        check_value(mstr_v8sf_get(ms, 13, 16), 12.0);
-        check_value(mstr_v8sf_get(ms, 13, 17), 11.0);
-        check_value(mstr_v8sf_get(ms, 13, 18), 10.0);
-        check_value(mstr_v8sf_get(ms, 13, 19),  9.0);
-        check_value(mstr_v8sf_get(ms, 13, 20),  0.0);
-        check_value(mstr_v8sf_get(ms, 13, 21),  0.0);
-        check_value(mstr_v8sf_get(ms, 13, 22),  0.0);
-        check_value(mstr_v8sf_get(ms, 13, 23),  0.0);
-        check_value(mstr_v8sf_get(ms, 13, 24),  0.0);
-        check_value(mstr_v8sf_get(ms, 13, 25),  0.0);
-        check_value(mstr_v8sf_get(ms, 13, 26),  0.0);
-        check_value(mstr_v8sf_get(ms, 13, 27),  0.0);
-        check_value(mstr_v8sf_get(ms, 13, 28),  0.0);
-        check_value(mstr_v8sf_get(ms, 13, 29),  0.0);
-        check_value(mstr_v8sf_get(ms, 13, 30),  0.0);
-        check_value(mstr_v8sf_get(ms, 13, 31),  0.0);
+        check_value(mstr_get_f32(ms, 13,  0),  0.0);
+        check_value(mstr_get_f32(ms, 13,  1),  0.0);
+        check_value(mstr_get_f32(ms, 13,  2),  0.0);
+        check_value(mstr_get_f32(ms, 13,  3),  0.0);
+        check_value(mstr_get_f32(ms, 13,  4),  0.0);
+        check_value(mstr_get_f32(ms, 13,  5),  0.0);
+        check_value(mstr_get_f32(ms, 13,  6),  0.0);
+        check_value(mstr_get_f32(ms, 13,  7),  0.0);
+        check_value(mstr_get_f32(ms, 13,  8),  0.0);
+        check_value(mstr_get_f32(ms, 13,  9),  0.0);
+        check_value(mstr_get_f32(ms, 13, 10),  0.0);
+        check_value(mstr_get_f32(ms, 13, 11),  0.0);
+        check_value(mstr_get_f32(ms, 13, 12), 16.0);
+        check_value(mstr_get_f32(ms, 13, 13), 15.0);
+        check_value(mstr_get_f32(ms, 13, 14), 14.0);
+        check_value(mstr_get_f32(ms, 13, 15), 13.0);
+        check_value(mstr_get_f32(ms, 13, 16), 12.0);
+        check_value(mstr_get_f32(ms, 13, 17), 11.0);
+        check_value(mstr_get_f32(ms, 13, 18), 10.0);
+        check_value(mstr_get_f32(ms, 13, 19),  9.0);
+        check_value(mstr_get_f32(ms, 13, 20),  0.0);
+        check_value(mstr_get_f32(ms, 13, 21),  0.0);
+        check_value(mstr_get_f32(ms, 13, 22),  0.0);
+        check_value(mstr_get_f32(ms, 13, 23),  0.0);
+        check_value(mstr_get_f32(ms, 13, 24),  0.0);
+        check_value(mstr_get_f32(ms, 13, 25),  0.0);
+        check_value(mstr_get_f32(ms, 13, 26),  0.0);
+        check_value(mstr_get_f32(ms, 13, 27),  0.0);
+        check_value(mstr_get_f32(ms, 13, 28),  0.0);
+        check_value(mstr_get_f32(ms, 13, 29),  0.0);
+        check_value(mstr_get_f32(ms, 13, 30),  0.0);
+        check_value(mstr_get_f32(ms, 13, 31),  0.0);
 
         mstr_v8sf_destroy(ms);
     }

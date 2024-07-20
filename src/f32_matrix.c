@@ -70,27 +70,27 @@ void f32m_init_ones(f32_matrix_ptr mx)
 
 uint32_t f32m_rows(f32_matrix_ptr mx)
 {
-    return mstr_v8sf_rows(&mx->stor);
+    return mstr_rows(&mx->stor);
 } // f32m_rows
 
 uint32_t f32m_columns(f32_matrix_ptr mx)
 {
-    return mstr_v8sf_columns(&mx->stor);
+    return mstr_columns(&mx->stor);
 } // f32m_columns
 
 uint32_t f32m_values(f32_matrix_ptr mx)
 {
-    return mstr_v8sf_values(&mx->stor);
+    return mstr_values(&mx->stor);
 } // f32m_values
 
 float f32m_get(f32_matrix_ptr mx, uint32_t row, uint32_t col)
 {
-    return mstr_v8sf_get(&mx->stor, row, col);
+    return mstr_get_f32(&mx->stor, row, col);
 } // f32m_get
 
 void f32m_set(f32_matrix_ptr mx, uint32_t row, uint32_t col, float src)
 {
-    mstr_v8sf_set(&mx->stor, row, col, src);
+    mstr_set_f32(&mx->stor, row, col, src);
 } // f32m_set
 
 void f32m_fill(f32_matrix_ptr mx, float src)
@@ -100,12 +100,12 @@ void f32m_fill(f32_matrix_ptr mx, float src)
 
 bool f32m_can_add(f32_matrix_ptr lhs, f32_matrix_ptr rhs)
 {
-    return (mstr_v8sf_rows(&lhs->stor) == mstr_v8sf_rows(&rhs->stor)) && (mstr_v8sf_columns(&lhs->stor) == mstr_v8sf_columns(&rhs->stor));
+    return (mstr_rows(&lhs->stor) == mstr_rows(&rhs->stor)) && (mstr_columns(&lhs->stor) == mstr_columns(&rhs->stor));
 } // f32m_can_add
 
 bool f32m_can_multiply(f32_matrix_ptr lhs, f32_matrix_ptr rhs)
 {
-    return (mstr_v8sf_columns(&lhs->stor) == mstr_v8sf_rows(&rhs->stor));
+    return (mstr_columns(&lhs->stor) == mstr_rows(&rhs->stor));
 } // f32m_can_multiply
 
 void f32m_transpose_and_store(f32_matrix_ptr mx, f32_matrix_ptr src)

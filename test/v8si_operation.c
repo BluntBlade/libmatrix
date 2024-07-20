@@ -2384,16 +2384,16 @@ Test(Operation, mops_v8si_add)
     // -- 1x1 matrix addition -- //
     {
         lhs = mstr_v8si_create(1, 1);
-        mstr_v8si_set(lhs, 0, 0, 1);
+        mstr_set_i32(lhs, 0, 0, 1);
 
         rhs = mstr_v8si_create(1, 1);
-        mstr_v8si_set(rhs, 0, 0, 99);
+        mstr_set_i32(rhs, 0, 0, 99);
 
         mx = mstr_v8si_create(1, 1);
 
         mops_v8si_add(mx, lhs, rhs);
 
-        check_value_at(mstr_v8si_get(mx, 0, 0), 100, 0, 0);
+        check_value_at(mstr_get_i32(mx, 0, 0), 100, 0, 0);
 
         mstr_v8si_destroy(mx);
         mstr_v8si_destroy(rhs);
@@ -2405,14 +2405,14 @@ Test(Operation, mops_v8si_add)
         lhs = mstr_v8si_create(5, 5);
         for (i = 0; i < 5; i += 1) {
             for (j = 0; j < 5; j += 1) {
-                mstr_v8si_set(lhs, i, j, i * j);
+                mstr_set_i32(lhs, i, j, i * j);
             } // for
         } // for
 
         rhs = mstr_v8si_create(5, 5);
         for (i = 0; i < 5; i += 1) {
             for (j = 0; j < 5; j += 1) {
-                mstr_v8si_set(rhs, i, j, i - j);
+                mstr_set_i32(rhs, i, j, i - j);
             } // for
         } // for
 
@@ -2422,7 +2422,7 @@ Test(Operation, mops_v8si_add)
 
         for (i = 0; i < 5; i += 1) {
             for (j = 0; j < 5; j += 1) {
-                check_value_at(mstr_v8si_get(mx, i, j), i * j + i - j, i, j);
+                check_value_at(mstr_get_i32(mx, i, j), i * j + i - j, i, j);
             } // for
         } // for
 
@@ -2436,14 +2436,14 @@ Test(Operation, mops_v8si_add)
         lhs = mstr_v8si_create(8, 8);
         for (i = 0; i < 8; i += 1) {
             for (j = 0; j < 8; j += 1) {
-                mstr_v8si_set(lhs, i, j, i * j);
+                mstr_set_i32(lhs, i, j, i * j);
             } // for
         } // for
 
         rhs = mstr_v8si_create(8, 8);
         for (i = 0; i < 8; i += 1) {
             for (j = 0; j < 8; j += 1) {
-                mstr_v8si_set(rhs, i, j, i - j);
+                mstr_set_i32(rhs, i, j, i - j);
             } // for
         } // for
 
@@ -2453,7 +2453,7 @@ Test(Operation, mops_v8si_add)
 
         for (i = 0; i < 8; i += 1) {
             for (j = 0; j < 8; j += 1) {
-                check_value_at(mstr_v8si_get(mx, i, j), i * j + i - j, i, j);
+                check_value_at(mstr_get_i32(mx, i, j), i * j + i - j, i, j);
             } // for
         } // for
 
@@ -2467,14 +2467,14 @@ Test(Operation, mops_v8si_add)
         lhs = mstr_v8si_create(9, 9);
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 9; j += 1) {
-                mstr_v8si_set(lhs, i, j, i * j);
+                mstr_set_i32(lhs, i, j, i * j);
             } // for
         } // for
 
         rhs = mstr_v8si_create(9, 9);
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 9; j += 1) {
-                mstr_v8si_set(rhs, i, j, i - j);
+                mstr_set_i32(rhs, i, j, i - j);
             } // for
         } // for
 
@@ -2484,7 +2484,7 @@ Test(Operation, mops_v8si_add)
 
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 9; j += 1) {
-                check_value_at(mstr_v8si_get(mx, i, j), i * j + i - j, i, j);
+                check_value_at(mstr_get_i32(mx, i, j), i * j + i - j, i, j);
             } // for
         } // for
 
@@ -2498,14 +2498,14 @@ Test(Operation, mops_v8si_add)
         lhs = mstr_v8si_create(16, 16);
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 16; j += 1) {
-                mstr_v8si_set(lhs, i, j, i * j);
+                mstr_set_i32(lhs, i, j, i * j);
             } // for
         } // for
 
         rhs = mstr_v8si_create(16, 16);
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 16; j += 1) {
-                mstr_v8si_set(rhs, i, j, i - j);
+                mstr_set_i32(rhs, i, j, i - j);
             } // for
         } // for
 
@@ -2515,7 +2515,7 @@ Test(Operation, mops_v8si_add)
 
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 16; j += 1) {
-                check_value_at(mstr_v8si_get(mx, i, j), i * j + i - j, i, j);
+                check_value_at(mstr_get_i32(mx, i, j), i * j + i - j, i, j);
             } // for
         } // for
 
@@ -2529,14 +2529,14 @@ Test(Operation, mops_v8si_add)
         lhs = mstr_v8si_create(17, 17);
         for (i = 0; i < 17; i += 1) {
             for (j = 0; j < 17; j += 1) {
-                mstr_v8si_set(lhs, i, j, i * j);
+                mstr_set_i32(lhs, i, j, i * j);
             } // for
         } // for
 
         rhs = mstr_v8si_create(17, 17);
         for (i = 0; i < 17; i += 1) {
             for (j = 0; j < 17; j += 1) {
-                mstr_v8si_set(rhs, i, j, i - j);
+                mstr_set_i32(rhs, i, j, i - j);
             } // for
         } // for
 
@@ -2546,7 +2546,7 @@ Test(Operation, mops_v8si_add)
 
         for (i = 0; i < 17; i += 1) {
             for (j = 0; j < 17; j += 1) {
-                check_value_at(mstr_v8si_get(mx, i, j), i * j + i - j, i, j);
+                check_value_at(mstr_get_i32(mx, i, j), i * j + i - j, i, j);
             } // for
         } // for
 
@@ -2560,14 +2560,14 @@ Test(Operation, mops_v8si_add)
         lhs = mstr_v8si_create(2, 33);
         for (i = 0; i < 2; i += 1) {
             for (j = 0; j < 33; j += 1) {
-                mstr_v8si_set(lhs, i, j, i * j);
+                mstr_set_i32(lhs, i, j, i * j);
             } // for
         } // for
 
         rhs = mstr_v8si_create(2, 33);
         for (i = 0; i < 2; i += 1) {
             for (j = 0; j < 33; j += 1) {
-                mstr_v8si_set(rhs, i, j, i - j);
+                mstr_set_i32(rhs, i, j, i - j);
             } // for
         } // for
 
@@ -2577,7 +2577,7 @@ Test(Operation, mops_v8si_add)
 
         for (i = 0; i < 2; i += 1) {
             for (j = 0; j < 33; j += 1) {
-                check_value_at(mstr_v8si_get(mx, i, j), i * j + i - j, i, j);
+                check_value_at(mstr_get_i32(mx, i, j), i * j + i - j, i, j);
             } // for
         } // for
 
@@ -2591,14 +2591,14 @@ Test(Operation, mops_v8si_add)
         lhs = mstr_v8si_create(33, 17);
         for (i = 0; i < 33; i += 1) {
             for (j = 0; j < 17; j += 1) {
-                mstr_v8si_set(lhs, i, j, i * j);
+                mstr_set_i32(lhs, i, j, i * j);
             } // for
         } // for
 
         rhs = mstr_v8si_create(33, 17);
         for (i = 0; i < 33; i += 1) {
             for (j = 0; j < 17; j += 1) {
-                mstr_v8si_set(rhs, i, j, i - j);
+                mstr_set_i32(rhs, i, j, i - j);
             } // for
         } // for
 
@@ -2608,7 +2608,7 @@ Test(Operation, mops_v8si_add)
 
         for (i = 0; i < 33; i += 1) {
             for (j = 0; j < 17; j += 1) {
-                check_value_at(mstr_v8si_get(mx, i, j), i * j + i - j, i, j);
+                check_value_at(mstr_get_i32(mx, i, j), i * j + i - j, i, j);
             } // for
         } // for
 
@@ -2629,16 +2629,16 @@ Test(Operation, mops_v8si_subtract)
     // -- 1x1 matrix subtraction -- //
     {
         lhs = mstr_v8si_create(1, 1);
-        mstr_v8si_set(lhs, 0, 0, 1);
+        mstr_set_i32(lhs, 0, 0, 1);
 
         rhs = mstr_v8si_create(1, 1);
-        mstr_v8si_set(rhs, 0, 0, 99);
+        mstr_set_i32(rhs, 0, 0, 99);
 
         mx = mstr_v8si_create(1, 1);
 
         mops_v8si_subtract(mx, lhs, rhs);
 
-        check_value_at(mstr_v8si_get(mx, 0, 0), -98, 0, 0);
+        check_value_at(mstr_get_i32(mx, 0, 0), -98, 0, 0);
 
         mstr_v8si_destroy(mx);
         mstr_v8si_destroy(rhs);
@@ -2650,14 +2650,14 @@ Test(Operation, mops_v8si_subtract)
         lhs = mstr_v8si_create(5, 5);
         for (i = 0; i < 5; i += 1) {
             for (j = 0; j < 5; j += 1) {
-                mstr_v8si_set(lhs, i, j, i * j);
+                mstr_set_i32(lhs, i, j, i * j);
             } // for
         } // for
 
         rhs = mstr_v8si_create(5, 5);
         for (i = 0; i < 5; i += 1) {
             for (j = 0; j < 5; j += 1) {
-                mstr_v8si_set(rhs, i, j, i - j);
+                mstr_set_i32(rhs, i, j, i - j);
             } // for
         } // for
 
@@ -2667,7 +2667,7 @@ Test(Operation, mops_v8si_subtract)
 
         for (i = 0; i < 5; i += 1) {
             for (j = 0; j < 5; j += 1) {
-                check_value_at(mstr_v8si_get(mx, i, j), i * j - (i - j), i, j);
+                check_value_at(mstr_get_i32(mx, i, j), i * j - (i - j), i, j);
             } // for
         } // for
 
@@ -2681,14 +2681,14 @@ Test(Operation, mops_v8si_subtract)
         lhs = mstr_v8si_create(8, 8);
         for (i = 0; i < 8; i += 1) {
             for (j = 0; j < 8; j += 1) {
-                mstr_v8si_set(lhs, i, j, i * j);
+                mstr_set_i32(lhs, i, j, i * j);
             } // for
         } // for
 
         rhs = mstr_v8si_create(8, 8);
         for (i = 0; i < 8; i += 1) {
             for (j = 0; j < 8; j += 1) {
-                mstr_v8si_set(rhs, i, j, i - j);
+                mstr_set_i32(rhs, i, j, i - j);
             } // for
         } // for
 
@@ -2698,7 +2698,7 @@ Test(Operation, mops_v8si_subtract)
 
         for (i = 0; i < 8; i += 1) {
             for (j = 0; j < 8; j += 1) {
-                check_value_at(mstr_v8si_get(mx, i, j), i * j - (i - j), i, j);
+                check_value_at(mstr_get_i32(mx, i, j), i * j - (i - j), i, j);
             } // for
         } // for
 
@@ -2712,14 +2712,14 @@ Test(Operation, mops_v8si_subtract)
         lhs = mstr_v8si_create(9, 9);
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 9; j += 1) {
-                mstr_v8si_set(lhs, i, j, i * j);
+                mstr_set_i32(lhs, i, j, i * j);
             } // for
         } // for
 
         rhs = mstr_v8si_create(9, 9);
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 9; j += 1) {
-                mstr_v8si_set(rhs, i, j, i - j);
+                mstr_set_i32(rhs, i, j, i - j);
             } // for
         } // for
 
@@ -2729,7 +2729,7 @@ Test(Operation, mops_v8si_subtract)
 
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 9; j += 1) {
-                check_value_at(mstr_v8si_get(mx, i, j), i * j - (i - j), i, j);
+                check_value_at(mstr_get_i32(mx, i, j), i * j - (i - j), i, j);
             } // for
         } // for
 
@@ -2743,14 +2743,14 @@ Test(Operation, mops_v8si_subtract)
         lhs = mstr_v8si_create(16, 16);
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 16; j += 1) {
-                mstr_v8si_set(lhs, i, j, i * j);
+                mstr_set_i32(lhs, i, j, i * j);
             } // for
         } // for
 
         rhs = mstr_v8si_create(16, 16);
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 16; j += 1) {
-                mstr_v8si_set(rhs, i, j, i - j);
+                mstr_set_i32(rhs, i, j, i - j);
             } // for
         } // for
 
@@ -2760,7 +2760,7 @@ Test(Operation, mops_v8si_subtract)
 
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 16; j += 1) {
-                check_value_at(mstr_v8si_get(mx, i, j), i * j - (i - j), i, j);
+                check_value_at(mstr_get_i32(mx, i, j), i * j - (i - j), i, j);
             } // for
         } // for
 
@@ -2774,14 +2774,14 @@ Test(Operation, mops_v8si_subtract)
         lhs = mstr_v8si_create(17, 17);
         for (i = 0; i < 17; i += 1) {
             for (j = 0; j < 17; j += 1) {
-                mstr_v8si_set(lhs, i, j, i * j);
+                mstr_set_i32(lhs, i, j, i * j);
             } // for
         } // for
 
         rhs = mstr_v8si_create(17, 17);
         for (i = 0; i < 17; i += 1) {
             for (j = 0; j < 17; j += 1) {
-                mstr_v8si_set(rhs, i, j, i - j);
+                mstr_set_i32(rhs, i, j, i - j);
             } // for
         } // for
 
@@ -2791,7 +2791,7 @@ Test(Operation, mops_v8si_subtract)
 
         for (i = 0; i < 17; i += 1) {
             for (j = 0; j < 17; j += 1) {
-                check_value_at(mstr_v8si_get(mx, i, j), i * j - (i - j), i, j);
+                check_value_at(mstr_get_i32(mx, i, j), i * j - (i - j), i, j);
             } // for
         } // for
 
@@ -2805,14 +2805,14 @@ Test(Operation, mops_v8si_subtract)
         lhs = mstr_v8si_create(2, 33);
         for (i = 0; i < 2; i += 1) {
             for (j = 0; j < 33; j += 1) {
-                mstr_v8si_set(lhs, i, j, i * j);
+                mstr_set_i32(lhs, i, j, i * j);
             } // for
         } // for
 
         rhs = mstr_v8si_create(2, 33);
         for (i = 0; i < 2; i += 1) {
             for (j = 0; j < 33; j += 1) {
-                mstr_v8si_set(rhs, i, j, i - j);
+                mstr_set_i32(rhs, i, j, i - j);
             } // for
         } // for
 
@@ -2822,7 +2822,7 @@ Test(Operation, mops_v8si_subtract)
 
         for (i = 0; i < 2; i += 1) {
             for (j = 0; j < 33; j += 1) {
-                check_value_at(mstr_v8si_get(mx, i, j), i * j - (i - j), i, j);
+                check_value_at(mstr_get_i32(mx, i, j), i * j - (i - j), i, j);
             } // for
         } // for
 
@@ -2836,14 +2836,14 @@ Test(Operation, mops_v8si_subtract)
         lhs = mstr_v8si_create(33, 17);
         for (i = 0; i < 33; i += 1) {
             for (j = 0; j < 17; j += 1) {
-                mstr_v8si_set(lhs, i, j, i * j);
+                mstr_set_i32(lhs, i, j, i * j);
             } // for
         } // for
 
         rhs = mstr_v8si_create(33, 17);
         for (i = 0; i < 33; i += 1) {
             for (j = 0; j < 17; j += 1) {
-                mstr_v8si_set(rhs, i, j, i - j);
+                mstr_set_i32(rhs, i, j, i - j);
             } // for
         } // for
 
@@ -2853,7 +2853,7 @@ Test(Operation, mops_v8si_subtract)
 
         for (i = 0; i < 33; i += 1) {
             for (j = 0; j < 17; j += 1) {
-                check_value_at(mstr_v8si_get(mx, i, j), i * j - (i - j), i, j);
+                check_value_at(mstr_get_i32(mx, i, j), i * j - (i - j), i, j);
             } // for
         } // for
 
@@ -2873,13 +2873,13 @@ Test(Operation, mops_v8si_multiply_scalar)
     // -- 1x1 matrix scalar multiplication -- //
     {
         src = mstr_v8si_create(1, 1);
-        mstr_v8si_set(src, 0, 0, 99);
+        mstr_set_i32(src, 0, 0, 99);
 
         mx = mstr_v8si_create(1, 1);
 
         mops_v8si_multiply_scalar(mx, src, 2);
 
-        check_value_at(mstr_v8si_get(mx, 0, 0), 198, 0, 0);
+        check_value_at(mstr_get_i32(mx, 0, 0), 198, 0, 0);
 
         mstr_v8si_destroy(mx);
         mstr_v8si_destroy(src);
@@ -2890,7 +2890,7 @@ Test(Operation, mops_v8si_multiply_scalar)
         src = mstr_v8si_create(5, 5);
         for (i = 0; i < 5; i += 1) {
             for (j = 0; j < 5; j += 1) {
-                mstr_v8si_set(src, i, j, i - j);
+                mstr_set_i32(src, i, j, i - j);
             } // for
         } // for
 
@@ -2900,7 +2900,7 @@ Test(Operation, mops_v8si_multiply_scalar)
 
         for (i = 0; i < 5; i += 1) {
             for (j = 0; j < 5; j += 1) {
-                check_value_at(mstr_v8si_get(mx, i, j), 3 * (i - j), i, j);
+                check_value_at(mstr_get_i32(mx, i, j), 3 * (i - j), i, j);
             } // for
         } // for
 
@@ -2913,7 +2913,7 @@ Test(Operation, mops_v8si_multiply_scalar)
         src = mstr_v8si_create(8, 8);
         for (i = 0; i < 8; i += 1) {
             for (j = 0; j < 8; j += 1) {
-                mstr_v8si_set(src, i, j, i - j);
+                mstr_set_i32(src, i, j, i - j);
             } // for
         } // for
 
@@ -2923,7 +2923,7 @@ Test(Operation, mops_v8si_multiply_scalar)
 
         for (i = 0; i < 8; i += 1) {
             for (j = 0; j < 8; j += 1) {
-                check_value_at(mstr_v8si_get(mx, i, j), 14 * (i - j), i, j);
+                check_value_at(mstr_get_i32(mx, i, j), 14 * (i - j), i, j);
             } // for
         } // for
 
@@ -2936,7 +2936,7 @@ Test(Operation, mops_v8si_multiply_scalar)
         src = mstr_v8si_create(9, 9);
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 9; j += 1) {
-                mstr_v8si_set(src, i, j, i - j);
+                mstr_set_i32(src, i, j, i - j);
             } // for
         } // for
 
@@ -2946,7 +2946,7 @@ Test(Operation, mops_v8si_multiply_scalar)
 
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 9; j += 1) {
-                check_value_at(mstr_v8si_get(mx, i, j), 7 * (i - j), i, j);
+                check_value_at(mstr_get_i32(mx, i, j), 7 * (i - j), i, j);
             } // for
         } // for
 
@@ -2959,7 +2959,7 @@ Test(Operation, mops_v8si_multiply_scalar)
         src = mstr_v8si_create(16, 16);
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 16; j += 1) {
-                mstr_v8si_set(src, i, j, i - j);
+                mstr_set_i32(src, i, j, i - j);
             } // for
         } // for
 
@@ -2969,7 +2969,7 @@ Test(Operation, mops_v8si_multiply_scalar)
 
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 16; j += 1) {
-                check_value_at(mstr_v8si_get(mx, i, j), 25 * (i - j), i, j);
+                check_value_at(mstr_get_i32(mx, i, j), 25 * (i - j), i, j);
             } // for
         } // for
 
@@ -2982,7 +2982,7 @@ Test(Operation, mops_v8si_multiply_scalar)
         src = mstr_v8si_create(17, 17);
         for (i = 0; i < 17; i += 1) {
             for (j = 0; j < 17; j += 1) {
-                mstr_v8si_set(src, i, j, i - j);
+                mstr_set_i32(src, i, j, i - j);
             } // for
         } // for
 
@@ -2992,7 +2992,7 @@ Test(Operation, mops_v8si_multiply_scalar)
 
         for (i = 0; i < 17; i += 1) {
             for (j = 0; j < 17; j += 1) {
-                check_value_at(mstr_v8si_get(mx, i, j), 99 * (i - j), i, j);
+                check_value_at(mstr_get_i32(mx, i, j), 99 * (i - j), i, j);
             } // for
         } // for
 
@@ -3005,7 +3005,7 @@ Test(Operation, mops_v8si_multiply_scalar)
         src = mstr_v8si_create(2, 33);
         for (i = 0; i < 2; i += 1) {
             for (j = 0; j < 33; j += 1) {
-                mstr_v8si_set(src, i, j, i - j);
+                mstr_set_i32(src, i, j, i - j);
             } // for
         } // for
 
@@ -3015,7 +3015,7 @@ Test(Operation, mops_v8si_multiply_scalar)
 
         for (i = 0; i < 2; i += 1) {
             for (j = 0; j < 33; j += 1) {
-                check_value_at(mstr_v8si_get(mx, i, j), 13 * (i - j), i, j);
+                check_value_at(mstr_get_i32(mx, i, j), 13 * (i - j), i, j);
             } // for
         } // for
 
@@ -3028,7 +3028,7 @@ Test(Operation, mops_v8si_multiply_scalar)
         src = mstr_v8si_create(33, 17);
         for (i = 0; i < 33; i += 1) {
             for (j = 0; j < 17; j += 1) {
-                mstr_v8si_set(src, i, j, i - j);
+                mstr_set_i32(src, i, j, i - j);
             } // for
         } // for
 
@@ -3038,7 +3038,7 @@ Test(Operation, mops_v8si_multiply_scalar)
 
         for (i = 0; i < 33; i += 1) {
             for (j = 0; j < 17; j += 1) {
-                check_value_at(mstr_v8si_get(mx, i, j), 77 * (i - j), i, j);
+                check_value_at(mstr_get_i32(mx, i, j), 77 * (i - j), i, j);
             } // for
         } // for
 
@@ -3058,16 +3058,16 @@ Test(Operation, mops_v8si_multiply)
     // -- 1x1 matrix multiplication -- //
     {
         lhs = mstr_v8si_create(1, 1);
-        mstr_v8si_set(lhs, 0, 0, 11);
+        mstr_set_i32(lhs, 0, 0, 11);
 
         rhs = mstr_v8si_create(1, 1);
-        mstr_v8si_set(rhs, 0, 0, 2);
+        mstr_set_i32(rhs, 0, 0, 2);
 
         dst = mstr_v8si_create(1, 1);
 
         mops_v8si_multiply(dst, lhs, rhs);
 
-        check_value_at(mstr_v8si_get(dst, 0, 0), 22, 0, 0);
+        check_value_at(mstr_get_i32(dst, 0, 0), 22, 0, 0);
 
         mstr_v8si_destroy(dst);
         mstr_v8si_destroy(rhs);
@@ -3087,14 +3087,14 @@ Test(Operation, mops_v8si_multiply)
         lhs = mstr_v8si_create(5, 5);
         for (i = 0; i < 5; i += 1) {
             for (j = 0; j < 5; j += 1) {
-                mstr_v8si_set(lhs, i, j, 1);
+                mstr_set_i32(lhs, i, j, 1);
             } // for
         } // for
 
         rhs = mstr_v8si_create(5, 5);
         for (i = 0; i < 5; i += 1) {
             for (j = 0; j < 5; j += 1) {
-                mstr_v8si_set(rhs, i, j, j);
+                mstr_set_i32(rhs, i, j, j);
             } // for
         } // for
 
@@ -3104,7 +3104,7 @@ Test(Operation, mops_v8si_multiply)
 
         for (i = 0; i < 5; i += 1) {
             for (j = 0; j < 5; j += 1) {
-                check_value_at(mstr_v8si_get(dst, i, j), ret_vals[i][j], i, j);
+                check_value_at(mstr_get_i32(dst, i, j), ret_vals[i][j], i, j);
             } // for
         } // for
 
@@ -3129,14 +3129,14 @@ Test(Operation, mops_v8si_multiply)
         lhs = mstr_v8si_create(8, 8);
         for (i = 0; i < 8; i += 1) {
             for (j = 0; j < 8; j += 1) {
-                mstr_v8si_set(lhs, i, j, 1);
+                mstr_set_i32(lhs, i, j, 1);
             } // for
         } // for
 
         rhs = mstr_v8si_create(8, 8);
         for (i = 0; i < 8; i += 1) {
             for (j = 0; j < 8; j += 1) {
-                mstr_v8si_set(rhs, i, j, j);
+                mstr_set_i32(rhs, i, j, j);
             } // for
         } // for
 
@@ -3146,7 +3146,7 @@ Test(Operation, mops_v8si_multiply)
 
         for (i = 0; i < 8; i += 1) {
             for (j = 0; j < 8; j += 1) {
-                check_value_at(mstr_v8si_get(dst, i, j), ret_vals[i][j], i, j);
+                check_value_at(mstr_get_i32(dst, i, j), ret_vals[i][j], i, j);
             } // for
         } // for
 
@@ -3172,14 +3172,14 @@ Test(Operation, mops_v8si_multiply)
         lhs = mstr_v8si_create(9, 9);
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 9; j += 1) {
-                mstr_v8si_set(lhs, i, j, 1);
+                mstr_set_i32(lhs, i, j, 1);
             } // for
         } // for
 
         rhs = mstr_v8si_create(9, 9);
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 9; j += 1) {
-                mstr_v8si_set(rhs, i, j, j);
+                mstr_set_i32(rhs, i, j, j);
             } // for
         } // for
 
@@ -3189,7 +3189,7 @@ Test(Operation, mops_v8si_multiply)
 
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 9; j += 1) {
-                check_value_at(mstr_v8si_get(dst, i, j), ret_vals[i][j], i, j);
+                check_value_at(mstr_get_i32(dst, i, j), ret_vals[i][j], i, j);
             } // for
         } // for
 
@@ -3222,14 +3222,14 @@ Test(Operation, mops_v8si_multiply)
         lhs = mstr_v8si_create(16, 16);
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 16; j += 1) {
-                mstr_v8si_set(lhs, i, j, 1);
+                mstr_set_i32(lhs, i, j, 1);
             } // for
         } // for
 
         rhs = mstr_v8si_create(16, 16);
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 16; j += 1) {
-                mstr_v8si_set(rhs, i, j, j);
+                mstr_set_i32(rhs, i, j, j);
             } // for
         } // for
 
@@ -3239,7 +3239,7 @@ Test(Operation, mops_v8si_multiply)
 
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 16; j += 1) {
-                check_value_at(mstr_v8si_get(dst, i, j), ret_vals[i][j], i, j);
+                check_value_at(mstr_get_i32(dst, i, j), ret_vals[i][j], i, j);
             } // for
         } // for
 
@@ -3273,14 +3273,14 @@ Test(Operation, mops_v8si_multiply)
         lhs = mstr_v8si_create(17, 17);
         for (i = 0; i < 17; i += 1) {
             for (j = 0; j < 17; j += 1) {
-                mstr_v8si_set(lhs, i, j, 1);
+                mstr_set_i32(lhs, i, j, 1);
             } // for
         } // for
 
         rhs = mstr_v8si_create(17, 17);
         for (i = 0; i < 17; i += 1) {
             for (j = 0; j < 17; j += 1) {
-                mstr_v8si_set(rhs, i, j, j);
+                mstr_set_i32(rhs, i, j, j);
             } // for
         } // for
 
@@ -3290,7 +3290,7 @@ Test(Operation, mops_v8si_multiply)
 
         for (i = 0; i < 17; i += 1) {
             for (j = 0; j < 17; j += 1) {
-                check_value_at(mstr_v8si_get(dst, i, j), ret_vals[i][j], i, j);
+                check_value_at(mstr_get_i32(dst, i, j), ret_vals[i][j], i, j);
             } // for
         } // for
 
@@ -3316,14 +3316,14 @@ Test(Operation, mops_v8si_multiply)
         lhs = mstr_v8si_create(9, 33);
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 33; j += 1) {
-                mstr_v8si_set(lhs, i, j, 1);
+                mstr_set_i32(lhs, i, j, 1);
             } // for
         } // for
 
         rhs = mstr_v8si_create(33, 9);
         for (i = 0; i < 33; i += 1) {
             for (j = 0; j < 9; j += 1) {
-                mstr_v8si_set(rhs, i, j, j);
+                mstr_set_i32(rhs, i, j, j);
             } // for
         } // for
 
@@ -3333,7 +3333,7 @@ Test(Operation, mops_v8si_multiply)
 
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 9; j += 1) {
-                check_value_at(mstr_v8si_get(dst, i, j), ret_vals[i][j], i, j);
+                check_value_at(mstr_get_i32(dst, i, j), ret_vals[i][j], i, j);
             } // for
         } // for
 
@@ -3353,13 +3353,13 @@ Test(Operation, mops_v8si_transpose)
     // -- 1x1 matrix transpose -- //
     {
         src = mstr_v8si_create(1, 1);
-        mstr_v8si_set(src, 0, 0, 11);
+        mstr_set_i32(src, 0, 0, 11);
 
         dst = mstr_v8si_create(1, 1);
 
         mops_v8si_transpose(dst, src);
 
-        check_value_at(mstr_v8si_get(dst, 0, 0), 11, 0, 0);
+        check_value_at(mstr_get_i32(dst, 0, 0), 11, 0, 0);
 
         mstr_v8si_destroy(dst);
         mstr_v8si_destroy(src);
@@ -3371,7 +3371,7 @@ Test(Operation, mops_v8si_transpose)
 
         for (i = 0; i < 5; i += 1) {
             for (j = 0; j < 5; j += 1) {
-                mstr_v8si_set(src, i, j, i * j);
+                mstr_set_i32(src, i, j, i * j);
             } // for
         } // for
 
@@ -3381,7 +3381,7 @@ Test(Operation, mops_v8si_transpose)
 
         for (i = 0; i < 5; i += 1) {
             for (j = 0; j < 5; j += 1) {
-                check_value_at(mstr_v8si_get(dst, i, j), mstr_v8si_get(src, j, i), i, j);
+                check_value_at(mstr_get_i32(dst, i, j), mstr_get_i32(src, j, i), i, j);
             } // for
         } // for
 
@@ -3395,7 +3395,7 @@ Test(Operation, mops_v8si_transpose)
 
         for (i = 0; i < 8; i += 1) {
             for (j = 0; j < 8; j += 1) {
-                mstr_v8si_set(src, i, j, i * j);
+                mstr_set_i32(src, i, j, i * j);
             } // for
         } // for
 
@@ -3405,7 +3405,7 @@ Test(Operation, mops_v8si_transpose)
 
         for (i = 0; i < 8; i += 1) {
             for (j = 0; j < 8; j += 1) {
-                check_value_at(mstr_v8si_get(dst, i, j), mstr_v8si_get(src, j, i), i, j);
+                check_value_at(mstr_get_i32(dst, i, j), mstr_get_i32(src, j, i), i, j);
             } // for
         } // for
 
@@ -3419,7 +3419,7 @@ Test(Operation, mops_v8si_transpose)
 
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 9; j += 1) {
-                mstr_v8si_set(src, i, j, i * j);
+                mstr_set_i32(src, i, j, i * j);
             } // for
         } // for
 
@@ -3429,7 +3429,7 @@ Test(Operation, mops_v8si_transpose)
 
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 9; j += 1) {
-                check_value_at(mstr_v8si_get(dst, i, j), mstr_v8si_get(src, j, i), i, j);
+                check_value_at(mstr_get_i32(dst, i, j), mstr_get_i32(src, j, i), i, j);
             } // for
         } // for
 
@@ -3443,7 +3443,7 @@ Test(Operation, mops_v8si_transpose)
 
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 16; j += 1) {
-                mstr_v8si_set(src, i, j, i * j);
+                mstr_set_i32(src, i, j, i * j);
             } // for
         } // for
 
@@ -3453,7 +3453,7 @@ Test(Operation, mops_v8si_transpose)
 
         for (i = 0; i < 16; i += 1) {
             for (j = 0; j < 16; j += 1) {
-                check_value_at(mstr_v8si_get(dst, i, j), mstr_v8si_get(src, j, i), i, j);
+                check_value_at(mstr_get_i32(dst, i, j), mstr_get_i32(src, j, i), i, j);
             } // for
         } // for
 
@@ -3468,7 +3468,7 @@ Test(Operation, mops_v8si_transpose)
 
         for (i = 0; i < 17; i += 1) {
             for (j = 0; j < 17; j += 1) {
-                mstr_v8si_set(src, i, j, i * j);
+                mstr_set_i32(src, i, j, i * j);
             } // for
         } // for
 
@@ -3478,7 +3478,7 @@ Test(Operation, mops_v8si_transpose)
 
         for (i = 0; i < 17; i += 1) {
             for (j = 0; j < 17; j += 1) {
-                check_value_at(mstr_v8si_get(dst, i, j), mstr_v8si_get(src, j, i), i, j);
+                check_value_at(mstr_get_i32(dst, i, j), mstr_get_i32(src, j, i), i, j);
             } // for
         } // for
 
@@ -3492,7 +3492,7 @@ Test(Operation, mops_v8si_transpose)
 
         for (i = 0; i < 2; i += 1) {
             for (j = 0; j < 9; j += 1) {
-                mstr_v8si_set(src, i, j, i * j);
+                mstr_set_i32(src, i, j, i * j);
             } // for
         } // for
 
@@ -3502,7 +3502,7 @@ Test(Operation, mops_v8si_transpose)
 
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 2; j += 1) {
-                check_value_at(mstr_v8si_get(dst, i, j), mstr_v8si_get(src, j, i), i, j);
+                check_value_at(mstr_get_i32(dst, i, j), mstr_get_i32(src, j, i), i, j);
             } // for
         } // for
 
@@ -3516,7 +3516,7 @@ Test(Operation, mops_v8si_transpose)
 
         for (i = 0; i < 9; i += 1) {
             for (j = 0; j < 2; j += 1) {
-                mstr_v8si_set(src, i, j, i * j);
+                mstr_set_i32(src, i, j, i * j);
             } // for
         } // for
 
@@ -3526,7 +3526,7 @@ Test(Operation, mops_v8si_transpose)
 
         for (i = 0; i < 2; i += 1) {
             for (j = 0; j < 9; j += 1) {
-                check_value_at(mstr_v8si_get(dst, i, j), mstr_v8si_get(src, j, i), i, j);
+                check_value_at(mstr_get_i32(dst, i, j), mstr_get_i32(src, j, i), i, j);
             } // for
         } // for
 
@@ -3540,7 +3540,7 @@ Test(Operation, mops_v8si_transpose)
 
         for (i = 0; i < 17; i += 1) {
             for (j = 0; j < 33; j += 1) {
-                mstr_v8si_set(src, i, j, i * j);
+                mstr_set_i32(src, i, j, i * j);
             } // for
         } // for
 
@@ -3550,7 +3550,7 @@ Test(Operation, mops_v8si_transpose)
 
         for (i = 0; i < 33; i += 1) {
             for (j = 0; j < 17; j += 1) {
-                check_value_at(mstr_v8si_get(dst, i, j), mstr_v8si_get(src, j, i), i, j);
+                check_value_at(mstr_get_i32(dst, i, j), mstr_get_i32(src, j, i), i, j);
             } // for
         } // for
 

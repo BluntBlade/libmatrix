@@ -10,16 +10,12 @@
 extern v8sf_t v8sf_zero;
 extern v8sf_t v8sf_mask[9];
 
-extern void mstr_v8sf_init_zeros(mx_stor_ptr ms);
 extern void mstr_v8sf_init_identity(mx_stor_ptr ms);
 
 extern void mstr_v8sf_load_row_vector(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, int32_t row_off, int32_t col_off, float def_val, v8sf_t * dst);
 extern void mstr_v8sf_store_row_vector(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, int32_t row_off, int32_t col_off, v8sf_t * src);
 // TODO: extern void mstr_v8sf_load_column_vector(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, int32_t row_off, int32_t def_val, v8sf_t * dst);
 // TODO: extern void mstr_v8sf_store_column_vector(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, int32_t row_off, v8sf_t * src);
-
-extern float mstr_v8sf_get(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx);
-extern void mstr_v8sf_set(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, float src);
 
 extern void mstr_v8sf_fill(mx_stor_ptr ms, float src);
 
@@ -40,40 +36,10 @@ inline static void mstr_v8sf_destroy(mx_stor_ptr ms)
     return mstr_destroy(ms);
 } // mstr_v8sf_destroy
 
-inline static uint32_t mstr_v8sf_rows(mx_stor_ptr ms)
+inline static void mstr_v8sf_init_zeros(mx_stor_ptr ms)
 {
-    return ms->rows;
-} // mstr_v8sf_rows
-
-inline static uint32_t mstr_v8sf_columns(mx_stor_ptr ms)
-{
-    return ms->cols;
-} // mstr_v8sf_columns
-
-inline static uint32_t mstr_v8sf_values(mx_stor_ptr ms)
-{
-    return ms->rows * ms->cols;
-} // mstr_v8sf_values
-
-inline static uint32_t mstr_v8sf_value_size(mx_stor_ptr ms)
-{
-    return ms->val_sz;
-} // mstr_v8sf_value_size
-
-inline static uint32_t mstr_v8sf_chunks_in_height(mx_stor_ptr ms)
-{
-    return ms->chks_in_height;
-} // mstr_chunks_in_height
-
-inline static uint32_t mstr_v8sf_chunks_in_width(mx_stor_ptr ms)
-{
-    return ms->chks_in_width;
-} // mstr_chunks_in_width
-
-inline static uint32_t mstr_v8sf_chunks(mx_stor_ptr ms)
-{
-    return ms->chks_in_height * ms->chks_in_width;
-} // mstr_v8sf_chunks
+    mstr_init_zeros(ms);
+} // mstr_v8sf_init_zero
 
 inline static void mstr_v8sf_init_ones(mx_stor_ptr ms)
 {

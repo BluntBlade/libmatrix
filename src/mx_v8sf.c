@@ -150,8 +150,8 @@ void mstr_v8sf_transpose_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_c
     v8si_t * mask[2];
     float * base = mstr_locate_chunk(ms, chk_ridx, chk_cidx, &schk_rows, &schk_cols);
 
-    sel = mx_ceil_to_multiples_of_8(schk_cols) / 8 - 1;
-    if (schk_rows <= 8) {
+    sel = mx_ceil_to_multiples_of_8(schk_cols) / F32S_IN_V8SF - 1;
+    if (schk_rows <= F32S_IN_V8SF) {
         mask[0] = &v8si_mask[schk_rows];
         switch (schk_cols) {
             default: assert(1); break;
@@ -173,8 +173,8 @@ void mstr_v8sf_transpose_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_c
             case  1: v8sf_transpose_chunk_half(i);
         } // switch
     } else {
-        mask[0] = &v8si_mask[8];
-        mask[1] = &v8si_mask[schk_rows - 8];
+        mask[0] = &v8si_mask[F32S_IN_V8SF];
+        mask[1] = &v8si_mask[schk_rows - F32S_IN_V8SF];
         switch (schk_cols) {
             default: assert(1); break;
             case 16: v8sf_transpose_chunk_full(i); i += 1; base += 1;
@@ -239,7 +239,7 @@ static void v8sf_add_chunk_partly(mx_chunk_ptr dchk, mx_chunk_ptr lchk, mx_chunk
 {
     uint32_t i = 0;
 
-    if (lchk_cols <= 8) {
+    if (lchk_cols <= F32S_IN_V8SF) {
         switch (lchk_rows) {
             default: assert(1); break;
             case 16: v8sf_add_chunk_half(i); i += 1;
@@ -348,7 +348,7 @@ static void v8sf_subtract_chunk_partly(mx_chunk_ptr dchk, mx_chunk_ptr lchk, mx_
 {
     uint32_t i = 0;
 
-    if (lchk_cols <= 8) {
+    if (lchk_cols <= F32S_IN_V8SF) {
         switch (lchk_rows) {
             default: assert(1); break;
             case 16: v8sf_subtract_chunk_half(i); i += 1;
@@ -552,7 +552,7 @@ static void v8sf_multiply_chunk_full_to_half(mx_chunk_ptr dchk, mx_chunk_ptr lch
     v8sf_t rtmp;
     uint32_t i = 0;
     uint32_t j = 0;
-    v8si_t * mask[2] = {&v8si_mask[8], &v8si_mask[msks - 8]};
+    v8si_t * mask[2] = {&v8si_mask[F32S_IN_V8SF], &v8si_mask[msks - F32S_IN_V8SF]};
 
     for (i = 0; i < dchk_rows; i += 1, j = 0) {
         switch (dchk_cols) {
@@ -589,7 +589,7 @@ static void v8sf_multiply_chunk_full_to_full(mx_chunk_ptr dchk, mx_chunk_ptr lch
     v8sf_t rtmp;
     uint32_t i = 0;
     uint32_t j = 0;
-    v8si_t * mask[2] = {&v8si_mask[8], &v8si_mask[msks - 8]};
+    v8si_t * mask[2] = {&v8si_mask[F32S_IN_V8SF], &v8si_mask[msks - F32S_IN_V8SF]};
 
     for (i = 0; i < dchk_rows; i += 1, j = 0) {
         switch (dchk_cols) {
@@ -662,8 +662,8 @@ void mstr_v8sf_multiply(mx_stor_ptr dst, mx_stor_ptr lhs, mx_stor_ptr rhs)
                 lchk = mstr_locate_chunk(lhs, i, k, &lchk_rows, &lchk_cols);
                 dchk = mstr_locate_chunk(dst, i, j, &dchk_rows, &dchk_cols);
 
-                ssel = mx_ceil_to_multiples_of_8(rchk_cols) / 8 - 1 + (uint32_t)(lchk_cols == F32S_IN_CACHE_LINE);
-                dsel = mx_ceil_to_multiples_of_8(dchk_cols) / 8 - 1 + (uint32_t)(dchk_cols == F32S_IN_CACHE_LINE);
+                ssel = mx_ceil_to_multiples_of_8(rchk_cols) / F32S_IN_V8SF - 1 + (uint32_t)(lchk_cols == F32S_IN_CACHE_LINE);
+                dsel = mx_ceil_to_multiples_of_8(dchk_cols) / F32S_IN_V8SF - 1 + (uint32_t)(dchk_cols == F32S_IN_CACHE_LINE);
                 (*ops[ssel][dsel])(dchk, lchk, &rchk, dchk_rows, dchk_cols, lchk_cols);
             } // for
         } // for
@@ -705,7 +705,7 @@ static void v8sf_multiply_scalar_chunk_partly(mx_chunk_ptr dchk, mx_chunk_ptr sc
 {
     uint32_t i = 0;
 
-    if (src_cols <= 8) {
+    if (src_cols <= F32S_IN_V8SF) {
         switch (src_rows) {
             default: assert(1); break;
             case 16: v8sf_scalar_multiply_chunk_half(i); i += 1;

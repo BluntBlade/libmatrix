@@ -120,6 +120,140 @@ void mstr_v8si_fill(mx_stor_ptr ms, int32_t src)
     // NOTE: No need to zero out any padded int32_t values.
 } // mstr_v8si_fill
 
+void mstr_v8si_row_multiply_scalar(mx_stor_ptr ms, uint32_t row, int32_t src)
+{
+    v4si_t tmp = { .val = {src} };
+    v8si_t vals;
+    uint32_t i = 0;
+    uint32_t dchk_rows = 0;
+    uint32_t dchk_cols = 0;
+    uint32_t row_off = 0;
+    uint32_t chk_off = 0;
+    mx_chunk_ptr dchk = NULL;
+
+    mx_type_reg(vals) = _mm256_broadcastd_epi32(mx_type_reg(tmp));
+
+    row_off = row - mx_floor_to_multiples_of_16(row);
+
+    // Process the rightmost chunk, maybe full.
+    dchk = mstr_locate_chunk_by_value_index(ms, row, (mstr_chunks_in_width(ms) - 1) * I32S_IN_CACHE_LINE, &dchk_rows, &dchk_cols);
+    if (dchk_cols <= I32S_IN_V8SI) {
+        mx_type_reg(dchk->v8si_16x1[row_off][0]) = _mm256_mullo_epi32(mx_type_reg(dchk->v8si_16x1[row_off][0]), mx_type_reg(vals));
+    } else {
+        mx_type_reg(dchk->v8si_16x2[row_off][0]) = _mm256_mullo_epi32(mx_type_reg(dchk->v8si_16x2[row_off][0]), mx_type_reg(vals));
+        mx_type_reg(dchk->v8si_16x2[row_off][1]) = _mm256_mullo_epi32(mx_type_reg(dchk->v8si_16x2[row_off][1]), mx_type_reg(vals));
+    } // if
+
+    // Process other full chunks.
+    chk_off = I32_SIZE * dchk_rows * I32S_IN_CACHE_LINE;
+    i = (mstr_chunks_in_width(ms) - 1) / 8;
+    switch ((mstr_chunks_in_width(ms) - 1) % 8) {
+        case 0:
+            while (i-- > 0) {
+                dchk = (void *)dchk - chk_off;
+                mx_type_reg(dchk->v8si_16x2[row_off][0]) = _mm256_mullo_epi32(mx_type_reg(dchk->v8si_16x2[row_off][0]), mx_type_reg(vals));
+                mx_type_reg(dchk->v8si_16x2[row_off][1]) = _mm256_mullo_epi32(mx_type_reg(dchk->v8si_16x2[row_off][1]), mx_type_reg(vals));
+        case 7:
+                dchk = (void *)dchk - chk_off;
+                mx_type_reg(dchk->v8si_16x2[row_off][0]) = _mm256_mullo_epi32(mx_type_reg(dchk->v8si_16x2[row_off][0]), mx_type_reg(vals));
+                mx_type_reg(dchk->v8si_16x2[row_off][1]) = _mm256_mullo_epi32(mx_type_reg(dchk->v8si_16x2[row_off][1]), mx_type_reg(vals));
+        case 6:
+                dchk = (void *)dchk - chk_off;
+                mx_type_reg(dchk->v8si_16x2[row_off][0]) = _mm256_mullo_epi32(mx_type_reg(dchk->v8si_16x2[row_off][0]), mx_type_reg(vals));
+                mx_type_reg(dchk->v8si_16x2[row_off][1]) = _mm256_mullo_epi32(mx_type_reg(dchk->v8si_16x2[row_off][1]), mx_type_reg(vals));
+        case 5:
+                dchk = (void *)dchk - chk_off;
+                mx_type_reg(dchk->v8si_16x2[row_off][0]) = _mm256_mullo_epi32(mx_type_reg(dchk->v8si_16x2[row_off][0]), mx_type_reg(vals));
+                mx_type_reg(dchk->v8si_16x2[row_off][1]) = _mm256_mullo_epi32(mx_type_reg(dchk->v8si_16x2[row_off][1]), mx_type_reg(vals));
+        case 4:
+                dchk = (void *)dchk - chk_off;
+                mx_type_reg(dchk->v8si_16x2[row_off][0]) = _mm256_mullo_epi32(mx_type_reg(dchk->v8si_16x2[row_off][0]), mx_type_reg(vals));
+                mx_type_reg(dchk->v8si_16x2[row_off][1]) = _mm256_mullo_epi32(mx_type_reg(dchk->v8si_16x2[row_off][1]), mx_type_reg(vals));
+        case 3:
+                dchk = (void *)dchk - chk_off;
+                mx_type_reg(dchk->v8si_16x2[row_off][0]) = _mm256_mullo_epi32(mx_type_reg(dchk->v8si_16x2[row_off][0]), mx_type_reg(vals));
+                mx_type_reg(dchk->v8si_16x2[row_off][1]) = _mm256_mullo_epi32(mx_type_reg(dchk->v8si_16x2[row_off][1]), mx_type_reg(vals));
+        case 2:
+                dchk = (void *)dchk - chk_off;
+                mx_type_reg(dchk->v8si_16x2[row_off][0]) = _mm256_mullo_epi32(mx_type_reg(dchk->v8si_16x2[row_off][0]), mx_type_reg(vals));
+                mx_type_reg(dchk->v8si_16x2[row_off][1]) = _mm256_mullo_epi32(mx_type_reg(dchk->v8si_16x2[row_off][1]), mx_type_reg(vals));
+        case 1:
+                dchk = (void *)dchk - chk_off;
+                mx_type_reg(dchk->v8si_16x2[row_off][0]) = _mm256_mullo_epi32(mx_type_reg(dchk->v8si_16x2[row_off][0]), mx_type_reg(vals));
+                mx_type_reg(dchk->v8si_16x2[row_off][1]) = _mm256_mullo_epi32(mx_type_reg(dchk->v8si_16x2[row_off][1]), mx_type_reg(vals));
+            } // while
+    } // switch
+} // mstr_v8si_row_multiply_scalar
+
+void mstr_v8si_column_multiply_scalar(mx_stor_ptr ms, uint32_t col, int32_t src)
+{
+    uint32_t n = 0;
+    uint32_t i = 0;
+    uint32_t dchk_rows = 0;
+    uint32_t dchk_cols = 0;
+    uint32_t col_off = 0;
+    uint32_t base_cidx = 0;
+    mx_chunk_ptr dchk = NULL;
+
+    base_cidx = mx_floor_to_multiples_of_16(col);
+    col_off = col - base_cidx;
+    n = mstr_chunks_in_height(ms) - 1;
+    dchk = mstr_locate_chunk_by_value_index(ms, (mstr_chunks_in_height(ms) - 1) * I32S_IN_CACHE_LINE, col, &dchk_rows, &dchk_cols);
+    if (dchk_cols <= I32S_IN_V8SI) {
+        switch ((i = dchk_rows)) {
+            case 16: do { dchk->i32_16x8[--i][col_off] *= src;
+            case 15:      dchk->i32_16x8[--i][col_off] *= src;
+            case 14:      dchk->i32_16x8[--i][col_off] *= src;
+            case 13:      dchk->i32_16x8[--i][col_off] *= src;
+            case 12:      dchk->i32_16x8[--i][col_off] *= src;
+            case 11:      dchk->i32_16x8[--i][col_off] *= src;
+            case 10:      dchk->i32_16x8[--i][col_off] *= src;
+            case  9:      dchk->i32_16x8[--i][col_off] *= src;
+            case  8:      dchk->i32_16x8[--i][col_off] *= src;
+            case  7:      dchk->i32_16x8[--i][col_off] *= src;
+            case  6:      dchk->i32_16x8[--i][col_off] *= src;
+            case  5:      dchk->i32_16x8[--i][col_off] *= src;
+            case  4:      dchk->i32_16x8[--i][col_off] *= src;
+            case  3:      dchk->i32_16x8[--i][col_off] *= src;
+            case  2:      dchk->i32_16x8[--i][col_off] *= src;
+            case  1:      dchk->i32_16x8[--i][col_off] *= src;
+                        if (n-- == 0) {
+                            return;
+                        } // if
+                        i = 16;
+                        dchk = (void *)dchk - (I32_SIZE * (dchk_rows * base_cidx + I32S_IN_CACHE_LINE * (ms->cols_padded - base_cidx)));
+                        dchk_rows = I32S_IN_CACHE_LINE;
+                    } while (1);
+        } // switch
+    } else {
+        switch ((i = dchk_rows)) {
+            case 16: do { dchk->i32_16x16[--i][col_off] *= src;
+            case 15:      dchk->i32_16x16[--i][col_off] *= src;
+            case 14:      dchk->i32_16x16[--i][col_off] *= src;
+            case 13:      dchk->i32_16x16[--i][col_off] *= src;
+            case 12:      dchk->i32_16x16[--i][col_off] *= src;
+            case 11:      dchk->i32_16x16[--i][col_off] *= src;
+            case 10:      dchk->i32_16x16[--i][col_off] *= src;
+            case  9:      dchk->i32_16x16[--i][col_off] *= src;
+            case  8:      dchk->i32_16x16[--i][col_off] *= src;
+            case  7:      dchk->i32_16x16[--i][col_off] *= src;
+            case  6:      dchk->i32_16x16[--i][col_off] *= src;
+            case  5:      dchk->i32_16x16[--i][col_off] *= src;
+            case  4:      dchk->i32_16x16[--i][col_off] *= src;
+            case  3:      dchk->i32_16x16[--i][col_off] *= src;
+            case  2:      dchk->i32_16x16[--i][col_off] *= src;
+            case  1:      dchk->i32_16x16[--i][col_off] *= src;
+                        if (n-- == 0) {
+                            return;
+                        } // if
+                        i = 16;
+                        dchk = (void *)dchk - (I32_SIZE * (dchk_rows * base_cidx + I32S_IN_CACHE_LINE * (ms->cols_padded - base_cidx)));
+                        dchk_rows = I32S_IN_CACHE_LINE;
+                    } while (1);
+        } // switch
+    } // if
+} // mstr_v8si_column_multiply_scalar
+
 void mstr_v8si_transpose_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr dchk, uint32_t * dchk_rows, uint32_t * dchk_cols)
 {
 #define v8si_transpose_chunk_half(row) \

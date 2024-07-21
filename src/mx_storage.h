@@ -93,6 +93,15 @@ inline static void * mstr_locate_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32
     return mstr_calc_base(ms, base_ridx, base_cidx, *rows_in_chk);
 } // mstr_locate_chunk
 
+inline static void * mstr_locate_chunk_by_value_index(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, uint32_t * rows_in_chk, uint32_t * cols_in_chk)
+{
+    uint32_t base_ridx = mx_floor_to_multiples_of(val_ridx, ms->chk_len);
+    uint32_t base_cidx = mx_floor_to_multiples_of(val_cidx, ms->chk_len);
+    *rows_in_chk = mx_less_than_or_equal_to(ms->rows - base_ridx, ms->chk_len);
+    *cols_in_chk = mx_less_than_or_equal_to(ms->cols - base_cidx, ms->chk_len);
+    return mstr_calc_base(ms, base_ridx, base_cidx, *rows_in_chk);
+} // mstr_locate_chunk
+
 inline static void mstr_init_zeros(mx_stor_ptr ms)
 {
     memset(ms->data, 0, ms->bytes);

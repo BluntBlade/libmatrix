@@ -69,10 +69,14 @@ $(TEST_OBJ) : $(SRC)
 #$(TEST_TARGET) : $(TEST_OBJ)
 #	gcc -o $@ $^ $(LDFLAGS) $(LIBS)
 
-$(TEST_STOR_TARGET) : $(TEST_STOR_OBJ) src/mx_storage.c src/mx_v8si.c src/mx_v8sf.c
+test/v8si_operation.o : src/mx_storage.c src/mx_v8si.c
+
+test/v8sf_operation.o : src/mx_storage.c src/mx_v8sf.c
+
+$(TEST_STOR_TARGET) : $(TEST_STOR_OBJ)
 	gcc -o $@ $(TEST_STOR_OBJ) $(LDFLAGS) $(LIBS) -lcriterion
 
-$(TEST_OPER_TARGET) : $(TEST_OPER_OBJ) src/mx_storage.c src/mx_v8si.c src/mx_v8sf.c
+$(TEST_OPER_TARGET) : $(TEST_OPER_OBJ)
 	gcc -o $@ $(TEST_OPER_OBJ) $(LDFLAGS) $(LIBS) -lcriterion
 
 $(BM_MATRIX_MULTIPLY) : $(BM_MATRIX_MULTIPLY_OBJ)

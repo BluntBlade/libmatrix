@@ -3558,3 +3558,309 @@ Test(Operation, mstr_v8si_transpose)
         mstr_v8si_destroy(src);
     }
 }
+
+Test(Operation, mstr_v8si_row_multiply_scalar)
+{
+    uint32_t i = 0;
+    uint32_t j = 0;
+    mx_stor_ptr dst = NULL;
+
+    // -- 1x1 row multiplication with scalar -- //
+    {
+        dst = mstr_v8si_create(1, 1);
+        mstr_v8si_fill(dst, 11);
+
+        mstr_v8si_row_multiply_scalar(dst, 0, 11);
+
+        check_value_at(mstr_get_i32(dst, 0, 0), 121, 0, 0);
+
+        mstr_v8si_destroy(dst);
+    }
+
+    // -- 5x5 row multiplication with scalar -- //
+    {
+        dst = mstr_v8si_create(5, 5);
+        mstr_v8si_fill(dst, 11);
+
+        mstr_v8si_row_multiply_scalar(dst, 1, 11);
+
+        for (i = 0; i < mstr_rows(dst); i += 1) {
+            for (j = 0; j < mstr_columns(dst); j += 1) {
+                if (i == 1) {
+                    check_value_at(mstr_get_i32(dst, i, j), 121, i, j);
+                } else {
+                    check_value_at(mstr_get_i32(dst, i, j), 11, i, j);
+                } // if
+            } // for
+        } // for
+
+        mstr_v8si_destroy(dst);
+    }
+
+    // -- 8x8 row multiplication with scalar -- //
+    {
+        dst = mstr_v8si_create(8, 8);
+        mstr_v8si_fill(dst, 12);
+
+        mstr_v8si_row_multiply_scalar(dst, 7, 12);
+
+        for (i = 0; i < mstr_rows(dst); i += 1) {
+            for (j = 0; j < mstr_columns(dst); j += 1) {
+                if (i == 7) {
+                    check_value_at(mstr_get_i32(dst, i, j), 144, i, j);
+                } else {
+                    check_value_at(mstr_get_i32(dst, i, j), 12, i, j);
+                } // if
+            } // for
+        } // for
+
+        mstr_v8si_destroy(dst);
+    }
+
+    // -- 9x9 row multiplication with scalar -- //
+    {
+        dst = mstr_v8si_create(9, 9);
+        mstr_v8si_fill(dst, 13);
+
+        mstr_v8si_row_multiply_scalar(dst, 8, 13);
+
+        for (i = 0; i < mstr_rows(dst); i += 1) {
+            for (j = 0; j < mstr_columns(dst); j += 1) {
+                if (i == 8) {
+                    check_value_at(mstr_get_i32(dst, i, j), 169, i, j);
+                } else {
+                    check_value_at(mstr_get_i32(dst, i, j), 13, i, j);
+                } // if
+            } // for
+        } // for
+
+        mstr_v8si_destroy(dst);
+    }
+
+    // -- 16x16 row multiplication with scalar -- //
+    {
+        dst = mstr_v8si_create(16, 16);
+        mstr_v8si_fill(dst, 14);
+
+        mstr_v8si_row_multiply_scalar(dst, 0, 14);
+        mstr_v8si_row_multiply_scalar(dst, 8, 14);
+        mstr_v8si_row_multiply_scalar(dst, 9, 14);
+        mstr_v8si_row_multiply_scalar(dst, 15, 14);
+
+        for (i = 0; i < mstr_rows(dst); i += 1) {
+            for (j = 0; j < mstr_columns(dst); j += 1) {
+                if (i == 0 || i == 8 || i == 9 || i == 15) {
+                    check_value_at(mstr_get_i32(dst, i, j), 196, i, j);
+                } else {
+                    check_value_at(mstr_get_i32(dst, i, j), 14, i, j);
+                } // if
+            } // for
+        } // for
+
+        mstr_v8si_destroy(dst);
+    }
+
+    // -- 17x17 row multiplication with scalar -- //
+    {
+        dst = mstr_v8si_create(17, 17);
+        mstr_v8si_fill(dst, 15);
+
+        mstr_v8si_row_multiply_scalar(dst, 0, 15);
+        mstr_v8si_row_multiply_scalar(dst, 8, 15);
+        mstr_v8si_row_multiply_scalar(dst, 9, 15);
+        mstr_v8si_row_multiply_scalar(dst, 15, 15);
+        mstr_v8si_row_multiply_scalar(dst, 16, 15);
+
+        for (i = 0; i < mstr_rows(dst); i += 1) {
+            for (j = 0; j < mstr_columns(dst); j += 1) {
+                if (i == 0 || i == 8 || i == 9 || i == 15 || i == 16) {
+                    check_value_at(mstr_get_i32(dst, i, j), 225, i, j);
+                } else {
+                    check_value_at(mstr_get_i32(dst, i, j), 15, i, j);
+                } // if
+            } // for
+        } // for
+
+        mstr_v8si_destroy(dst);
+    }
+
+    // -- 34x34 row multiplication with scalar -- //
+    {
+        dst = mstr_v8si_create(34, 34);
+        mstr_v8si_fill(dst, 16);
+
+        mstr_v8si_row_multiply_scalar(dst, 0, 16);
+        mstr_v8si_row_multiply_scalar(dst, 8, 16);
+        mstr_v8si_row_multiply_scalar(dst, 9, 16);
+        mstr_v8si_row_multiply_scalar(dst, 15, 16);
+        mstr_v8si_row_multiply_scalar(dst, 16, 16);
+        mstr_v8si_row_multiply_scalar(dst, 17, 16);
+        mstr_v8si_row_multiply_scalar(dst, 18, 16);
+        mstr_v8si_row_multiply_scalar(dst, 33, 16);
+
+        for (i = 0; i < mstr_rows(dst); i += 1) {
+            for (j = 0; j < mstr_columns(dst); j += 1) {
+                if (i == 0 || i == 8 || i == 9 || i == 15 || i == 16 || i == 17 || i == 18 || i == 33) {
+                    check_value_at(mstr_get_i32(dst, i, j), 256, i, j);
+                } else {
+                    check_value_at(mstr_get_i32(dst, i, j), 16, i, j);
+                } // if
+            } // for
+        } // for
+
+        mstr_v8si_destroy(dst);
+    }
+}
+
+Test(Operation, mstr_v8si_column_multiply_scalar)
+{
+    uint32_t i = 0;
+    uint32_t j = 0;
+    mx_stor_ptr dst = NULL;
+
+    // -- 1x1 column multiplication with scalar -- //
+    {
+        dst = mstr_v8si_create(1, 1);
+        mstr_v8si_fill(dst, 11);
+
+        mstr_v8si_column_multiply_scalar(dst, 0, 11);
+
+        check_value_at(mstr_get_i32(dst, 0, 0), 121, 0, 0);
+
+        mstr_v8si_destroy(dst);
+    }
+
+    // -- 5x5 column multiplication with scalar -- //
+    {
+        dst = mstr_v8si_create(5, 5);
+        mstr_v8si_fill(dst, 11);
+
+        mstr_v8si_column_multiply_scalar(dst, 1, 11);
+
+        for (i = 0; i < mstr_rows(dst); i += 1) {
+            for (j = 0; j < mstr_columns(dst); j += 1) {
+                if (j == 1) {
+                    check_value_at(mstr_get_i32(dst, i, j), 121, i, j);
+                } else {
+                    check_value_at(mstr_get_i32(dst, i, j), 11, i, j);
+                } // if
+            } // for
+        } // for
+
+        mstr_v8si_destroy(dst);
+    }
+
+    // -- 8x8 column multiplication with scalar -- //
+    {
+        dst = mstr_v8si_create(8, 8);
+        mstr_v8si_fill(dst, 12);
+
+        mstr_v8si_column_multiply_scalar(dst, 7, 12);
+
+        for (i = 0; i < mstr_rows(dst); i += 1) {
+            for (j = 0; j < mstr_columns(dst); j += 1) {
+                if (j == 7) {
+                    check_value_at(mstr_get_i32(dst, i, j), 144, i, j);
+                } else {
+                    check_value_at(mstr_get_i32(dst, i, j), 12, i, j);
+                } // if
+            } // for
+        } // for
+
+        mstr_v8si_destroy(dst);
+    }
+
+    // -- 9x9 column multiplication with scalar -- //
+    {
+        dst = mstr_v8si_create(9, 9);
+        mstr_v8si_fill(dst, 13);
+
+        mstr_v8si_column_multiply_scalar(dst, 8, 13);
+
+        for (i = 0; i < mstr_rows(dst); i += 1) {
+            for (j = 0; j < mstr_columns(dst); j += 1) {
+                if (j == 8) {
+                    check_value_at(mstr_get_i32(dst, i, j), 169, i, j);
+                } else {
+                    check_value_at(mstr_get_i32(dst, i, j), 13, i, j);
+                } // if
+            } // for
+        } // for
+
+        mstr_v8si_destroy(dst);
+    }
+
+    // -- 16x16 column multiplication with scalar -- //
+    {
+        dst = mstr_v8si_create(16, 16);
+        mstr_v8si_fill(dst, 14);
+
+        mstr_v8si_column_multiply_scalar(dst, 0, 14);
+        mstr_v8si_column_multiply_scalar(dst, 8, 14);
+        mstr_v8si_column_multiply_scalar(dst, 9, 14);
+        mstr_v8si_column_multiply_scalar(dst, 15, 14);
+
+        for (i = 0; i < mstr_rows(dst); i += 1) {
+            for (j = 0; j < mstr_columns(dst); j += 1) {
+                if (j == 0 || j == 8 || j == 9 || j == 15) {
+                    check_value_at(mstr_get_i32(dst, i, j), 196, i, j);
+                } else {
+                    check_value_at(mstr_get_i32(dst, i, j), 14, i, j);
+                } // if
+            } // for
+        } // for
+
+        mstr_v8si_destroy(dst);
+    }
+
+    // -- 17x17 column multiplication with scalar -- //
+    {
+        dst = mstr_v8si_create(17, 17);
+        mstr_v8si_fill(dst, 15);
+
+        mstr_v8si_column_multiply_scalar(dst, 0, 15);
+        mstr_v8si_column_multiply_scalar(dst, 8, 15);
+        mstr_v8si_column_multiply_scalar(dst, 9, 15);
+        mstr_v8si_column_multiply_scalar(dst, 15, 15);
+        mstr_v8si_column_multiply_scalar(dst, 16, 15);
+
+        for (i = 0; i < mstr_rows(dst); i += 1) {
+            for (j = 0; j < mstr_columns(dst); j += 1) {
+                if (j == 0 || j == 8 || j == 9 || j == 15 || j == 16) {
+                    check_value_at(mstr_get_i32(dst, i, j), 225, i, j);
+                } else {
+                    check_value_at(mstr_get_i32(dst, i, j), 15, i, j);
+                } // if
+            } // for
+        } // for
+
+        mstr_v8si_destroy(dst);
+    }
+
+    // -- 34x34 column multiplication with scalar -- //
+    {
+        dst = mstr_v8si_create(34, 34);
+        mstr_v8si_fill(dst, 16);
+
+        mstr_v8si_column_multiply_scalar(dst, 0, 16);
+        mstr_v8si_column_multiply_scalar(dst, 8, 16);
+        mstr_v8si_column_multiply_scalar(dst, 9, 16);
+        mstr_v8si_column_multiply_scalar(dst, 15, 16);
+        mstr_v8si_column_multiply_scalar(dst, 16, 16);
+        mstr_v8si_column_multiply_scalar(dst, 17, 16);
+        mstr_v8si_column_multiply_scalar(dst, 18, 16);
+        mstr_v8si_column_multiply_scalar(dst, 33, 16);
+
+        for (i = 0; i < mstr_rows(dst); i += 1) {
+            for (j = 0; j < mstr_columns(dst); j += 1) {
+                if (j == 0 || j == 8 || j == 9 || j == 15 || j == 16 || j == 17 || j == 18 || j == 33) {
+                    check_value_at(mstr_get_i32(dst, i, j), 256, i, j);
+                } else {
+                    check_value_at(mstr_get_i32(dst, i, j), 16, i, j);
+                } // if
+            } // for
+        } // for
+
+        mstr_v8si_destroy(dst);
+    }
+}

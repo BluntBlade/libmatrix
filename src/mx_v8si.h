@@ -17,6 +17,9 @@ extern void mstr_v8si_store_row_vector(mx_stor_ptr ms, uint32_t val_ridx, uint32
 
 extern void mstr_v8si_fill(mx_stor_ptr ms, int32_t src);
 
+extern void mstr_v8si_row_multiply_scalar(mx_stor_ptr ms, uint32_t row, int32_t src);
+extern void mstr_v8si_column_multiply_scalar(mx_stor_ptr ms, uint32_t col, int32_t src);
+
 extern void mstr_v8si_transpose_chunk(mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx, mx_chunk_ptr dchk, uint32_t * dchk_rows, uint32_t * dchk_cols);
 
 extern void mstr_v8si_add(mx_stor_ptr dst, mx_stor_ptr lhs, mx_stor_ptr rhs);

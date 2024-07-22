@@ -54,5 +54,7 @@ inline static void mstr_v8si_init_ones(mx_stor_ptr ms)
     return mstr_v8si_fill(ms, 1);
 } // mstr_v8si_init_ones
 
+extern void mstr_v8si_bisearch(v8si_t * dst_idx, int32_t * rng, uint32_t n, v8si_t * src);
+
 #endif // MX_V8SI_H
 

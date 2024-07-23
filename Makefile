@@ -24,6 +24,7 @@ SRC = src/mx_storage.c \
       src/mx_v8si.c \
       src/mx_v8sf.c \
       src/mx_expression.c \
+      src/mx_utils.c \
       src/i32_matrix.c \
       src/f32_matrix.c
 OBJ = $(SRC:.c=.o)

@@ -66,7 +66,7 @@ void mstr_v8si_bisearch(v8si_t * dst_idx, int32_t * rng, int32_t n, v8si_t * src
                 } // while
     } // switch
 
-    *dst_idx = low;
+    *dst_idx = high;
 
 #undef v8si_bisearch
 } // mstr_v8si_bisearch
@@ -119,7 +119,7 @@ void mstr_v8sf_bisearch(v8si_t * dst_idx, float * rng, int32_t n, v8sf_t * src)
                 } // while
     } // switch
 
-    *dst_idx = low;
+    *dst_idx = high;
 
 #undef v8sf_bisearch
 } // mstr_v8sf_bisearch

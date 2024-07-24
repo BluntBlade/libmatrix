@@ -31,7 +31,7 @@ void mstr_v8si_bisearch(v8si_t * dst_idx, int32_t * rng, int32_t n, v8si_t * src
     mx_type_reg(low) = _mm256_setzero_si256();
     mx_type_reg(high) = _mm256_set1_epi32(n);
     switch (m % 8) {
-        case 0: while (i-- > 0) {
+        case 0: do {
                     v8si_bisearch();
         case 7:     v8si_bisearch();
         case 6:     v8si_bisearch();
@@ -40,7 +40,7 @@ void mstr_v8si_bisearch(v8si_t * dst_idx, int32_t * rng, int32_t n, v8si_t * src
         case 3:     v8si_bisearch();
         case 2:     v8si_bisearch();
         case 1:     v8si_bisearch();
-                } // while
+                } while (i-- > 0);
     } // switch
 
     *dst_idx = high;
@@ -78,7 +78,7 @@ void mstr_v8sf_bisearch(v8si_t * dst_idx, float * rng, int32_t n, v8sf_t * src)
     mx_type_reg(low) = _mm256_setzero_si256();
     mx_type_reg(high) = _mm256_set1_epi32(n);
     switch (m % 8) {
-        case 0: while (i-- > 0) {
+        case 0: do {
                     v8sf_bisearch();
         case 7:     v8sf_bisearch();
         case 6:     v8sf_bisearch();
@@ -87,7 +87,7 @@ void mstr_v8sf_bisearch(v8si_t * dst_idx, float * rng, int32_t n, v8sf_t * src)
         case 3:     v8sf_bisearch();
         case 2:     v8sf_bisearch();
         case 1:     v8sf_bisearch();
-                } // while
+                } while (i-- > 0);
     } // switch
 
     *dst_idx = high;

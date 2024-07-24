@@ -79,7 +79,7 @@ int main(int argc, const char * argv[])
     float * range = NULL;
     int32_t range_len = 0;
     v8si_t idx;
-    v8sf_t src = { .val = {9.0, 50.0, 37.0, 1.0, 25.0, 60.0, 100.0, 22.0} };
+    v8sf_t src = { .val = {9.0, 50.0, 37.0, 1.0, 25.0, 60.0, -5.0, 22.0} };
 
     if (argc > 1) {
         itr = atoi(argv[1]); 

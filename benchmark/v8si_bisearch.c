@@ -79,7 +79,7 @@ int main(int argc, const char * argv[])
     int32_t * range = NULL;
     uint32_t range_len = 0;
     v8si_t idx;
-    v8si_t src = { .val = {9, 50, 37, 1, 25, 60, 100, 22} };
+    v8si_t src = { .val = {9, 50, 37, 1, 25, 60, -5, 22} };
 
     if (argc > 1) {
         itr = atoi(argv[1]); 

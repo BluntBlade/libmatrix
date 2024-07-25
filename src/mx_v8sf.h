@@ -5,9 +5,6 @@
 #include "mx_common.h"
 #include "mx_storage.h"
 
-extern v8sf_t v8sf_zero;
-extern v8sf_t v8sf_mask[9];
-
 extern void mstr_v8sf_init_identity(mx_stor_ptr ms);
 
 extern void mstr_v8sf_load_row_vector(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_cidx, int32_t row_off, int32_t col_off, float def_val, v8sf_t * dst);

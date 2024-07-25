@@ -20,7 +20,8 @@ endif
 #TEST_LDFLAGS = -Wl,--wrap=malloc
 TEST_LDFLAGS = -g
 
-SRC = src/mx_storage.c \
+SRC = src/mx_types.c \
+      src/mx_storage.c \
       src/mx_v8si.c \
       src/mx_v8sf.c \
       src/mx_expression.c \
@@ -37,6 +38,7 @@ TARGET = bin/libmatrix.dylib
 TEST_STOR_SRC = test/mx_storage.c \
                 test/v8si_storage.c \
                 test/v8sf_storage.c \
+                src/mx_types.c \
                 src/mx_storage.c \
                 src/mx_v8si.c \
                 src/mx_v8sf.c
@@ -45,6 +47,7 @@ TEST_STOR_TARGET = test/storage.out
 
 TEST_OPER_SRC = test/v8si_operation.c \
                 test/v8sf_operation.c \
+                src/mx_types.c \
                 src/mx_storage.c
 TEST_OPER_OBJ = $(TEST_OPER_SRC:.c=.o)
 TEST_OPER_TARGET = test/operation.out

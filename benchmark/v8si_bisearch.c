@@ -107,11 +107,11 @@ int main(int argc, const char * argv[])
     printf("Calculating using simd code.\n");
     gettimeofday(&begin, NULL);
     for (i = 0; i < itr; i += 1) {
-        mstr_v8si_bisearch(&idx, range, range_len, &src);
+        mx_v8si_bisearch(&idx, range, range_len, &src);
     } // for
     gettimeofday(&end, NULL);
     diff = (end.tv_sec * 1000000 + end.tv_usec) - (begin.tv_sec * 1000000 + begin.tv_usec);
-    printf("Time for mstr_v8si_bisearch() using SIMD code = %7.6fs\n", (float)diff / 1000000);
+    printf("Time for mx_v8si_bisearch() using SIMD code = %7.6fs\n", (float)diff / 1000000);
 
     for (i = 0; i < 8; i += 1) {
         printf("target=%4d\tindex=%4d\tvalue=%4d\n", mx_type_val(src)[i], mx_type_val(idx)[i], range[ mx_type_val(idx)[i] ]);

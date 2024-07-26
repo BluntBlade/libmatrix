@@ -159,6 +159,7 @@ void mx_v8si_interpolate(int32_t * y_out, int32_t * xp, int32_t * fp, uint32_t p
 
         mx_type_reg(slope) = _mm256_div_ps(_mm256_cvtepi32_ps(mx_type_reg(ydiff)), _mm256_cvtepi32_ps(mx_type_reg(xdiff)));
         mx_type_reg(tmp) = _mm256_mul_ps(_mm256_cvtepi32_ps(mx_type_reg(diff)), mx_type_reg(slope));
+        mx_type_reg(tmp) = _mm256_round_ps(mx_type_reg(tmp), _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC);
 
         mx_type_reg(y[2]) = _mm256_add_epi32(mx_type_reg(y[0]), _mm256_cvtps_epi32(mx_type_reg(tmp)));
         mx_type_reg(y[2]) = _mm256_or_si256(mx_type_reg(y[2]), _mm256_and_si256(mx_type_reg(vmask_left), _mm256_set1_epi32(*left)));

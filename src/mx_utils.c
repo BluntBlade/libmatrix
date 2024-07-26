@@ -5,7 +5,7 @@
 #include "src/mx_common.h"
 #include "src/mx_utils.h"
 
-void mstr_v8si_bisearch(v8si_t * dst_idx, int32_t * rng, int32_t n, v8si_t * src)
+void mx_v8si_bisearch(v8si_t * dst_idx, int32_t * rng, int32_t n, v8si_t * src)
 {
 #define v8si_bisearch() \
     { \
@@ -47,9 +47,9 @@ void mstr_v8si_bisearch(v8si_t * dst_idx, int32_t * rng, int32_t n, v8si_t * src
     *dst_idx = high;
 
 #undef v8si_bisearch
-} // mstr_v8si_bisearch
+} // mx_v8si_bisearch
 
-void mstr_v8sf_bisearch(v8si_t * dst_idx, float * rng, int32_t n, v8sf_t * src)
+void mx_v8sf_bisearch(v8si_t * dst_idx, float * rng, int32_t n, v8sf_t * src)
 {
 #define v8sf_bisearch() \
     { \
@@ -94,9 +94,9 @@ void mstr_v8sf_bisearch(v8si_t * dst_idx, float * rng, int32_t n, v8sf_t * src)
     *dst_idx = high;
 
 #undef v8sf_bisearch
-} // mstr_v8sf_bisearch
+} // mx_v8sf_bisearch
 
-void mstr_v8si_interpolate(int32_t * y_out, int32_t * xp, int32_t * fp, uint32_t pn, int32_t * left, int32_t * right, uint32_t xn, int32_t * x_in)
+void mx_v8si_interpolate(int32_t * y_out, int32_t * xp, int32_t * fp, uint32_t pn, int32_t * left, int32_t * right, uint32_t xn, int32_t * x_in)
 {
     v8si_t x[3];
     v8si_t y[3];
@@ -139,7 +139,7 @@ void mstr_v8si_interpolate(int32_t * y_out, int32_t * xp, int32_t * fp, uint32_t
     while (i-- > 0) {        
         mx_type_reg(x[2]) = _mm256_maskload_epi32(src, mx_type_reg(*xmask));
 
-        mstr_v8si_bisearch(&idx[1], xp, pn, &x[2]);
+        mx_v8si_bisearch(&idx[1], xp, pn, &x[2]);
         mx_type_reg(idx[0]) = _mm256_sub_epi32(mx_type_reg(idx[1]), _mm256_set1_epi32(1));
 
         mx_type_reg(vmask_left) = _mm256_cmpgt_epi32(_mm256_set1_epi32(xp[0]), mx_type_reg(x[2]));
@@ -171,4 +171,4 @@ void mstr_v8si_interpolate(int32_t * y_out, int32_t * xp, int32_t * fp, uint32_t
         k = I32S_IN_V8SI;
         xmask = &v8si_mask[k];
     } // for
-} // mstr_v8si_interpolate
+} // mx_v8si_interpolate

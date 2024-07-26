@@ -52,6 +52,12 @@ TEST_OPER_SRC = test/v8si_operation.c \
 TEST_OPER_OBJ = $(TEST_OPER_SRC:.c=.o)
 TEST_OPER_TARGET = test/operation.out
 
+TEST_UTIL_SRC = test/utils.c \
+                src/mx_types.c \
+                src/mx_utils.c
+TEST_UTIL_OBJ = $(TEST_UTIL_SRC:.c=.o)
+TEST_UTIL_TARGET = test/utils.out
+
 BM_MATRIX_MULTIPLY_SRC = benchmark/matrix_multiply.c $(SRC)
 BM_MATRIX_MULTIPLY_OBJ = $(BM_MATRIX_MULTIPLY_SRC:.c=.o)
 BM_MATRIX_MULTIPLY = benchmark/matrix_multiply.out
@@ -59,7 +65,7 @@ BM_MATRIX_MULTIPLY = benchmark/matrix_multiply.out
 .PHONY : all test clean
 
 all : $(TARGET)
-test : $(TEST_STOR_TARGET) $(TEST_OPER_TARGET)
+test : $(TEST_STOR_TARGET) $(TEST_OPER_TARGET) $(TEST_UTIL_TARGET)
 benchmark : $(BM_MATRIX_MULTIPLY)
 
 clean :
@@ -82,6 +88,9 @@ $(TEST_STOR_TARGET) : $(TEST_STOR_OBJ)
 
 $(TEST_OPER_TARGET) : $(TEST_OPER_OBJ)
 	gcc -o $@ $(TEST_OPER_OBJ) $(LDFLAGS) $(LIBS) -lcriterion
+
+$(TEST_UTIL_TARGET) : $(TEST_UTIL_OBJ)
+	gcc -o $@ $(TEST_UTIL_OBJ) $(LDFLAGS) $(LIBS) -lcriterion
 
 $(BM_MATRIX_MULTIPLY) : $(BM_MATRIX_MULTIPLY_OBJ)
 	gcc -o $@ $^ $(LDFLAGS) $(LIBS)

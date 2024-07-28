@@ -116,7 +116,7 @@ Test(Interpolation, mx_v8si_interpolate)
         int32_t x[] = {4, 8, 10, 3, 12, -1, 13};
         int32_t y[sizeof(x) / sizeof(x[0])];
 
-        mx_v8si_interpolate(y, sizeof(xp) / sizeof(xp[0]), xp, fp, NULL, NULL, NULL, sizeof(x) / sizeof(x[0]), x);
+        mx_v8si_interpolate(y, sizeof(xp) / sizeof(xp[0]), xp, fp, slp, NULL, NULL, sizeof(x) / sizeof(x[0]), x);
 
         check_value(y[0], 4);
         check_value(y[1], 8);
@@ -135,10 +135,10 @@ Test(Interpolation, mx_v8si_interpolate)
         int32_t x[] = {4, 8, 10, 1, 12, -1, 13, 7};
         int32_t y[sizeof(x) / sizeof(x[0])];
 
-        mx_v8si_interpolate(y, sizeof(xp) / sizeof(xp[0]), xp, fp, NULL, NULL, NULL, sizeof(x) / sizeof(x[0]), x);
+        mx_v8si_interpolate(y, sizeof(xp) / sizeof(xp[0]), xp, fp, slp, NULL, NULL, sizeof(x) / sizeof(x[0]), x);
 
         check_value(y[0], 13);
-        check_value(y[1], 28);
+        check_value(y[1], 27);
         check_value(y[2], 35);
         check_value(y[3], 3);
         check_value(y[4], 42);
@@ -155,10 +155,10 @@ Test(Interpolation, mx_v8si_interpolate)
         int32_t x[] = {4, 8, 10, 1, 12, -1, 13, 7, 5};
         int32_t y[sizeof(x) / sizeof(x[0])];
 
-        mx_v8si_interpolate(y, sizeof(xp) / sizeof(xp[0]), xp, fp, NULL, NULL, NULL, sizeof(x) / sizeof(x[0]), x);
+        mx_v8si_interpolate(y, sizeof(xp) / sizeof(xp[0]), xp, fp, slp, NULL, NULL, sizeof(x) / sizeof(x[0]), x);
 
         check_value(y[0], 13);
-        check_value(y[1], 28);
+        check_value(y[1], 27);
         check_value(y[2], 35);
         check_value(y[3], 3);
         check_value(y[4], 42);

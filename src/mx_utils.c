@@ -139,16 +139,15 @@ void mx_v8si_interpolate(int32_t * y_out, int32_t * xp, int32_t * fp, uint32_t p
     while (i-- > 0) {        
         mx_type_reg(x[2]) = _mm256_maskload_epi32(src, mx_type_reg(*xmask));
 
-        mx_v8si_bisearch(&idx[1], xp, pn, &x[2]);
-        mx_type_reg(idx[0]) = _mm256_sub_epi32(mx_type_reg(idx[1]), _mm256_set1_epi32(1));
-
         mx_type_reg(vmask_left) = _mm256_cmpgt_epi32(_mm256_set1_epi32(xp[0]), mx_type_reg(x[2]));
         mx_type_reg(vmask_right) = _mm256_cmpgt_epi32(mx_type_reg(x[2]), _mm256_set1_epi32(xp[pn - 1]));
-        mx_type_reg(vmask) = _mm256_xor_si256(_mm256_or_si256(mx_type_reg(vmask_left), mx_type_reg(vmask_right)), _mm256_set1_epi32(~0));
-        mx_type_reg(vmask) = _mm256_and_si256(mx_type_reg(vmask), mx_type_reg(*xmask));
+        mx_type_reg(vmask) = _mm256_andnot_si256(_mm256_or_si256(mx_type_reg(vmask_left), mx_type_reg(vmask_right)), mx_type_reg(*xmask));
 
-        // NOTE: For (x1 - x0) is used as divisor, it MUSTN'T be zero. So the default values of x1 and x0 are set to 1 and 0, respectively.
-        mx_type_reg(x[1]) = _mm256_mask_i32gather_epi32(_mm256_set1_epi32(1), xp, mx_type_reg(idx[1]), mx_type_reg(vmask), I32_SIZE);
+        mx_v8si_bisearch(&idx[1], xp, pn, &x[2]);
+        mx_type_reg(idx[0]) = _mm256_add_epi32(mx_type_reg(idx[1]), _mm256_set1_epi32(~0));
+
+        // NOTE: For (x1 - x0) is used as divisor, it MUSTN'T be zero. So the default values of x1 and x0 are set to -1 and 0, respectively.
+        mx_type_reg(x[1]) = _mm256_mask_i32gather_epi32(_mm256_set1_epi32(~0), xp, mx_type_reg(idx[1]), mx_type_reg(vmask), I32_SIZE);
         mx_type_reg(x[0]) = _mm256_mask_i32gather_epi32(_mm256_setzero_si256(), xp, mx_type_reg(idx[0]), mx_type_reg(vmask), I32_SIZE);
         mx_type_reg(y[1]) = _mm256_mask_i32gather_epi32(_mm256_setzero_si256(), fp, mx_type_reg(idx[1]), mx_type_reg(vmask), I32_SIZE);
         mx_type_reg(y[0]) = _mm256_mask_i32gather_epi32(_mm256_setzero_si256(), fp, mx_type_reg(idx[0]), mx_type_reg(vmask), I32_SIZE);
@@ -162,8 +161,8 @@ void mx_v8si_interpolate(int32_t * y_out, int32_t * xp, int32_t * fp, uint32_t p
         mx_type_reg(tmp) = _mm256_round_ps(mx_type_reg(tmp), _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC);
 
         mx_type_reg(y[2]) = _mm256_add_epi32(mx_type_reg(y[0]), _mm256_cvtps_epi32(mx_type_reg(tmp)));
-        mx_type_reg(y[2]) = _mm256_or_si256(mx_type_reg(y[2]), _mm256_and_si256(mx_type_reg(vmask_left), _mm256_set1_epi32(*left)));
-        mx_type_reg(y[2]) = _mm256_or_si256(mx_type_reg(y[2]), _mm256_and_si256(mx_type_reg(vmask_right), _mm256_set1_epi32(*right)));
+        mx_type_reg(y[2]) = _mm256_blendv_epi8(mx_type_reg(y[2]), _mm256_set1_epi32(*left), mx_type_reg(vmask_left));
+        mx_type_reg(y[2]) = _mm256_blendv_epi8(mx_type_reg(y[2]), _mm256_set1_epi32(*right), mx_type_reg(vmask_right));
 
         _mm256_maskstore_epi32(dst, mx_type_reg(*xmask), mx_type_reg(y[2]));
 

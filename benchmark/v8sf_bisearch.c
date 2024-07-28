@@ -8,7 +8,7 @@ static float default_range[] = {0.0, 5.0, 10.0, 15.0, 20.0, 20.0, 20.0, 25.0, 30
 
 int32_t collect_range(float ** out)
 {
-    struct timeval waittime = {1, 0};
+    struct timeval waittime = {0, 100000};
     fd_set fs;
     int ret = 0;
     float * range = NULL;

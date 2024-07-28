@@ -8,7 +8,7 @@ static int32_t default_range[] = {0, 5, 10, 15, 20, 20, 20, 25, 30, 35, 40, 45, 
 
 uint32_t collect_range(int32_t ** out)
 {
-    struct timeval waittime = {1, 0};
+    struct timeval waittime = {0, 100000};
     fd_set fs;
     int ret = 0;
     int32_t * range = NULL;

@@ -14,8 +14,8 @@ void mx_v8si_bisearch(v8si_t * dst_idx, int32_t * rng, int32_t n, v8si_t * src)
         mx_type_reg(mid) = _mm256_add_epi32(mx_type_reg(mid), mx_type_reg(low)); \
         mx_type_reg(vals) = _mm256_i32gather_epi32(rng, mx_type_reg(mid), I32_SIZE); \
         mx_type_reg(mask) = _mm256_cmpgt_epi32(mx_type_reg(vals), mx_type_reg(*src)); \
-        mx_type_reg(high) =  _mm256_or_si256(_mm256_andnot_si256(mx_type_reg(mask), mx_type_reg(high)), _mm256_and_si256(mx_type_reg(mask), mx_type_reg(mid))); \
-        mx_type_reg(low) =  _mm256_or_si256(_mm256_and_si256(mx_type_reg(mask), mx_type_reg(low)), _mm256_andnot_si256(mx_type_reg(mask), mx_type_reg(mid))); \
+        mx_type_reg(high) = _mm256_blendv_epi8(mx_type_reg(high), mx_type_reg(mid), mx_type_reg(mask)); \
+        mx_type_reg(low) = _mm256_blendv_epi8(mx_type_reg(mid), mx_type_reg(low), mx_type_reg(mask)); \
     }
 
     v8si_t low;
@@ -58,8 +58,8 @@ void mx_v8sf_bisearch(v8si_t * dst_idx, float * rng, int32_t n, v8sf_t * src)
         mx_type_reg(mid) = _mm256_add_epi32(mx_type_reg(mid), mx_type_reg(low)); \
         mx_type_reg(vals) = _mm256_i32gather_ps(rng, mx_type_reg(mid), F32_SIZE); \
         mx_type_reg(mask.f) = _mm256_cmp_ps(mx_type_reg(vals), mx_type_reg(*src), _CMP_GT_OQ); \
-        mx_type_reg(high) =  _mm256_or_si256(_mm256_andnot_si256(mx_type_reg(mask.i), mx_type_reg(high)), _mm256_and_si256(mx_type_reg(mask.i), mx_type_reg(mid))); \
-        mx_type_reg(low) =  _mm256_or_si256(_mm256_and_si256(mx_type_reg(mask.i), mx_type_reg(low)), _mm256_andnot_si256(mx_type_reg(mask.i), mx_type_reg(mid))); \
+        mx_type_reg(high) = _mm256_blendv_epi8(mx_type_reg(high), mx_type_reg(mid), mx_type_reg(mask.i)); \
+        mx_type_reg(low) = _mm256_blendv_epi8(mx_type_reg(mid), mx_type_reg(low), mx_type_reg(mask.i)); \
     }
 
     v8si_t low;

@@ -5,19 +5,19 @@
 #include "src/mx_common.h"
 #include "src/mx_utils.h"
 
-void mx_v8si_bisearch(v8si_t * dst_idx, int32_t * rng, int32_t n, v8si_t * src)
-{
-#define v8si_bisearch() \
+#define v8si_bisearch(high, low, mid, mask, rng, src) \
     { \
         mx_type_reg(mid) = _mm256_sub_epi32(mx_type_reg(high), mx_type_reg(low)); \
         mx_type_reg(mid) = _mm256_srli_epi32(mx_type_reg(mid), 1); \
         mx_type_reg(mid) = _mm256_add_epi32(mx_type_reg(mid), mx_type_reg(low)); \
         mx_type_reg(vals) = _mm256_i32gather_epi32(rng, mx_type_reg(mid), I32_SIZE); \
-        mx_type_reg(mask) = _mm256_cmpgt_epi32(mx_type_reg(vals), mx_type_reg(*src)); \
+        mx_type_reg(mask) = _mm256_cmpgt_epi32(mx_type_reg(vals), mx_type_reg(src)); \
         mx_type_reg(high) = _mm256_blendv_epi8(mx_type_reg(high), mx_type_reg(mid), mx_type_reg(mask)); \
         mx_type_reg(low) = _mm256_blendv_epi8(mx_type_reg(mid), mx_type_reg(low), mx_type_reg(mask)); \
     }
 
+void mx_v8si_bisearch(v8si_t * dst_idx, int32_t * rng, int32_t n, v8si_t * src)
+{
     v8si_t low;
     v8si_t high;
     v8si_t mid;
@@ -33,20 +33,18 @@ void mx_v8si_bisearch(v8si_t * dst_idx, int32_t * rng, int32_t n, v8si_t * src)
     mx_type_reg(high) = _mm256_set1_epi32(n);
     switch (m % 8) {
         case 0: do {
-                    v8si_bisearch();
-        case 7:     v8si_bisearch();
-        case 6:     v8si_bisearch();
-        case 5:     v8si_bisearch();
-        case 4:     v8si_bisearch();
-        case 3:     v8si_bisearch();
-        case 2:     v8si_bisearch();
-        case 1:     v8si_bisearch();
+                    v8si_bisearch(high, low, mid, mask, rng, *src);
+        case 7:     v8si_bisearch(high, low, mid, mask, rng, *src);
+        case 6:     v8si_bisearch(high, low, mid, mask, rng, *src);
+        case 5:     v8si_bisearch(high, low, mid, mask, rng, *src);
+        case 4:     v8si_bisearch(high, low, mid, mask, rng, *src);
+        case 3:     v8si_bisearch(high, low, mid, mask, rng, *src);
+        case 2:     v8si_bisearch(high, low, mid, mask, rng, *src);
+        case 1:     v8si_bisearch(high, low, mid, mask, rng, *src);
                 } while (i-- > 0);
     } // switch
 
     *dst_idx = high;
-
-#undef v8si_bisearch
 } // mx_v8si_bisearch
 
 void mx_v8sf_bisearch(v8si_t * dst_idx, float * rng, int32_t n, v8sf_t * src)
@@ -100,7 +98,6 @@ void mx_v8si_interpolate(int32_t * y_out, int32_t * xp, int32_t * fp, uint32_t p
 {
     v8si_t x[3];
     v8si_t y[3];
-    v8si_t idx[2];
     v8si_t ydiff;
     v8si_t xdiff;
     v8si_t diff;
@@ -115,6 +112,14 @@ void mx_v8si_interpolate(int32_t * y_out, int32_t * xp, int32_t * fp, uint32_t p
     int32_t * dst = 0;
     v8si_t * xmask = NULL;
 
+    v8si_t low;
+    v8si_t high;
+    v8si_t mid;
+    v8si_t vals;
+    v8si_t mask;
+    uint32_t m = 0;
+    uint32_t j = 0;
+
     assert(pn >= 2);
     assert(xn >= 1);
 
@@ -128,6 +133,8 @@ void mx_v8si_interpolate(int32_t * y_out, int32_t * xp, int32_t * fp, uint32_t p
     src = x_in;
     dst = y_out;
     
+    m = (uint32_t)( ceilf( log2f( (float)pn ) ) );
+
     i = mx_ceil_to_multiples(xn, I32S_IN_V8SI) / I32S_IN_V8SI;
     k = I32S_IN_V8SI - (mx_ceil_to_multiples(xn, I32S_IN_V8SI) - xn);
     xmask = &v8si_mask[k];
@@ -143,14 +150,27 @@ void mx_v8si_interpolate(int32_t * y_out, int32_t * xp, int32_t * fp, uint32_t p
         mx_type_reg(vmask_right) = _mm256_cmpgt_epi32(mx_type_reg(x[2]), _mm256_set1_epi32(xp[pn - 1]));
         mx_type_reg(vmask) = _mm256_andnot_si256(_mm256_or_si256(mx_type_reg(vmask_left), mx_type_reg(vmask_right)), mx_type_reg(*xmask));
 
-        mx_v8si_bisearch(&idx[1], xp, pn, &x[2]);
-        mx_type_reg(idx[0]) = _mm256_add_epi32(mx_type_reg(idx[1]), _mm256_set1_epi32(~0));
+        j = m / 8;
+        mx_type_reg(low) = _mm256_setzero_si256();
+        mx_type_reg(high) = _mm256_set1_epi32(pn);
+        switch (m % 8) {
+            case 0: do {
+                        v8si_bisearch(high, low, mid, mask, xp, x[2]);
+            case 7:     v8si_bisearch(high, low, mid, mask, xp, x[2]);
+            case 6:     v8si_bisearch(high, low, mid, mask, xp, x[2]);
+            case 5:     v8si_bisearch(high, low, mid, mask, xp, x[2]);
+            case 4:     v8si_bisearch(high, low, mid, mask, xp, x[2]);
+            case 3:     v8si_bisearch(high, low, mid, mask, xp, x[2]);
+            case 2:     v8si_bisearch(high, low, mid, mask, xp, x[2]);
+            case 1:     v8si_bisearch(high, low, mid, mask, xp, x[2]);
+                    } while (j-- > 0);
+        } // switch
 
-        // NOTE: For (x1 - x0) is used as divisor, it MUSTN'T be zero. So the default values of x1 and x0 are set to -1 and 0, respectively.
-        mx_type_reg(x[1]) = _mm256_mask_i32gather_epi32(_mm256_set1_epi32(~0), xp, mx_type_reg(idx[1]), mx_type_reg(vmask), I32_SIZE);
-        mx_type_reg(x[0]) = _mm256_mask_i32gather_epi32(_mm256_setzero_si256(), xp, mx_type_reg(idx[0]), mx_type_reg(vmask), I32_SIZE);
-        mx_type_reg(y[1]) = _mm256_mask_i32gather_epi32(_mm256_setzero_si256(), fp, mx_type_reg(idx[1]), mx_type_reg(vmask), I32_SIZE);
-        mx_type_reg(y[0]) = _mm256_mask_i32gather_epi32(_mm256_setzero_si256(), fp, mx_type_reg(idx[0]), mx_type_reg(vmask), I32_SIZE);
+        // NOTE: For (x1 - x0) is used as divisor, it MUSTN'T be zero. So the default values of x1 and x0 are set to 1 and 0, respectively.
+        mx_type_reg(x[1]) = _mm256_mask_i32gather_epi32(_mm256_set1_epi32(1), xp, mx_type_reg(high), mx_type_reg(vmask), I32_SIZE);
+        mx_type_reg(x[0]) = _mm256_mask_i32gather_epi32(_mm256_setzero_si256(), xp, mx_type_reg(low), mx_type_reg(vmask), I32_SIZE);
+        mx_type_reg(y[1]) = _mm256_mask_i32gather_epi32(_mm256_setzero_si256(), fp, mx_type_reg(high), mx_type_reg(vmask), I32_SIZE);
+        mx_type_reg(y[0]) = _mm256_mask_i32gather_epi32(_mm256_setzero_si256(), fp, mx_type_reg(low), mx_type_reg(vmask), I32_SIZE);
 
         mx_type_reg(ydiff) = _mm256_sub_epi32(mx_type_reg(y[1]), mx_type_reg(y[0]));
         mx_type_reg(xdiff) = _mm256_sub_epi32(mx_type_reg(x[1]), mx_type_reg(x[0]));

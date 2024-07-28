@@ -94,7 +94,7 @@ void mx_v8sf_bisearch(v8si_t * dst_idx, float * rng, int32_t n, v8sf_t * src)
 #undef v8sf_bisearch
 } // mx_v8sf_bisearch
 
-void mx_v8si_interpolate(int32_t * y_out, int32_t * xp, int32_t * fp, uint32_t pn, int32_t * left, int32_t * right, uint32_t xn, int32_t * x_in)
+void mx_v8si_interpolate(int32_t * y_out, uint32_t pn, int32_t * xp, int32_t * fp, float * slp, int32_t * left, int32_t * right, uint32_t xn, int32_t * x_in)
 {
     v8si_t x[3];
     v8si_t y[3];
@@ -103,7 +103,10 @@ void mx_v8si_interpolate(int32_t * y_out, int32_t * xp, int32_t * fp, uint32_t p
     v8si_t diff;
     v8si_t vmask_left;
     v8si_t vmask_right;
-    v8si_t vmask;
+    union {
+        v8si_t i;
+        v8sf_t f;
+    } vmask;
     v8sf_t slope;
     v8sf_t tmp;
     uint32_t i = 0;
@@ -148,7 +151,7 @@ void mx_v8si_interpolate(int32_t * y_out, int32_t * xp, int32_t * fp, uint32_t p
 
         mx_type_reg(vmask_left) = _mm256_cmpgt_epi32(_mm256_set1_epi32(xp[0]), mx_type_reg(x[2]));
         mx_type_reg(vmask_right) = _mm256_cmpgt_epi32(mx_type_reg(x[2]), _mm256_set1_epi32(xp[pn - 1]));
-        mx_type_reg(vmask) = _mm256_andnot_si256(_mm256_or_si256(mx_type_reg(vmask_left), mx_type_reg(vmask_right)), mx_type_reg(*xmask));
+        mx_type_reg(vmask.i) = _mm256_andnot_si256(_mm256_or_si256(mx_type_reg(vmask_left), mx_type_reg(vmask_right)), mx_type_reg(*xmask));
 
         j = m / 8;
         mx_type_reg(low) = _mm256_setzero_si256();
@@ -166,17 +169,24 @@ void mx_v8si_interpolate(int32_t * y_out, int32_t * xp, int32_t * fp, uint32_t p
                     } while (j-- > 0);
         } // switch
 
-        // NOTE: For (x1 - x0) is used as divisor, it MUSTN'T be zero. So the default values of x1 and x0 are set to 1 and 0, respectively.
-        mx_type_reg(x[1]) = _mm256_mask_i32gather_epi32(_mm256_set1_epi32(1), xp, mx_type_reg(high), mx_type_reg(vmask), I32_SIZE);
-        mx_type_reg(x[0]) = _mm256_mask_i32gather_epi32(_mm256_setzero_si256(), xp, mx_type_reg(low), mx_type_reg(vmask), I32_SIZE);
-        mx_type_reg(y[1]) = _mm256_mask_i32gather_epi32(_mm256_setzero_si256(), fp, mx_type_reg(high), mx_type_reg(vmask), I32_SIZE);
-        mx_type_reg(y[0]) = _mm256_mask_i32gather_epi32(_mm256_setzero_si256(), fp, mx_type_reg(low), mx_type_reg(vmask), I32_SIZE);
+        mx_type_reg(x[0]) = _mm256_mask_i32gather_epi32(_mm256_setzero_si256(), xp, mx_type_reg(low), mx_type_reg(vmask.i), I32_SIZE);
+        mx_type_reg(y[0]) = _mm256_mask_i32gather_epi32(_mm256_setzero_si256(), fp, mx_type_reg(low), mx_type_reg(vmask.i), I32_SIZE);
 
-        mx_type_reg(ydiff) = _mm256_sub_epi32(mx_type_reg(y[1]), mx_type_reg(y[0]));
-        mx_type_reg(xdiff) = _mm256_sub_epi32(mx_type_reg(x[1]), mx_type_reg(x[0]));
+        if (! slp) {
+            mx_type_reg(y[1]) = _mm256_mask_i32gather_epi32(_mm256_setzero_si256(), fp, mx_type_reg(high), mx_type_reg(vmask.i), I32_SIZE);
+
+            // NOTE: For (x1 - x0) is used as divisor, it MUSTN'T be zero. So the default values of x1 and x0 are set to 1 and 0, respectively.
+            mx_type_reg(x[1]) = _mm256_mask_i32gather_epi32(_mm256_set1_epi32(1), xp, mx_type_reg(high), mx_type_reg(vmask.i), I32_SIZE);
+
+            mx_type_reg(ydiff) = _mm256_sub_epi32(mx_type_reg(y[1]), mx_type_reg(y[0]));
+            mx_type_reg(xdiff) = _mm256_sub_epi32(mx_type_reg(x[1]), mx_type_reg(x[0]));
+
+            mx_type_reg(slope) = _mm256_div_ps(_mm256_cvtepi32_ps(mx_type_reg(ydiff)), _mm256_cvtepi32_ps(mx_type_reg(xdiff)));
+        } else {
+            mx_type_reg(slope) = _mm256_mask_i32gather_ps(_mm256_setzero_ps(), slp, mx_type_reg(high), mx_type_reg(vmask.f), I32_SIZE);
+        } // if
+
         mx_type_reg(diff) = _mm256_sub_epi32(mx_type_reg(x[2]), mx_type_reg(x[0]));
-
-        mx_type_reg(slope) = _mm256_div_ps(_mm256_cvtepi32_ps(mx_type_reg(ydiff)), _mm256_cvtepi32_ps(mx_type_reg(xdiff)));
         mx_type_reg(tmp) = _mm256_mul_ps(_mm256_cvtepi32_ps(mx_type_reg(diff)), mx_type_reg(slope));
         mx_type_reg(tmp) = _mm256_round_ps(mx_type_reg(tmp), _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC);
 

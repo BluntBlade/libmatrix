@@ -58,7 +58,7 @@ Test(Interpolation, mx_v8si_interpolate)
         int32_t x[] = {4, 8, 10, 3, 12, -1, 13};
         int32_t y[sizeof(x) / sizeof(x[0])];
 
-        mx_v8si_interpolate(y, xp, fp, sizeof(xp) / sizeof(xp[0]), NULL, NULL, sizeof(x) / sizeof(x[0]), x);
+        mx_v8si_interpolate(y, sizeof(xp) / sizeof(xp[0]), xp, fp, NULL, NULL, NULL, sizeof(x) / sizeof(x[0]), x);
 
         check_value(y[0], 4);
         check_value(y[1], 8);
@@ -76,7 +76,7 @@ Test(Interpolation, mx_v8si_interpolate)
         int32_t x[] = {4, 8, 10, 1, 12, -1, 13, 7};
         int32_t y[sizeof(x) / sizeof(x[0])];
 
-        mx_v8si_interpolate(y, xp, fp, sizeof(xp) / sizeof(xp[0]), NULL, NULL, sizeof(x) / sizeof(x[0]), x);
+        mx_v8si_interpolate(y, sizeof(xp) / sizeof(xp[0]), xp, fp, NULL, NULL, NULL, sizeof(x) / sizeof(x[0]), x);
 
         check_value(y[0], 13);
         check_value(y[1], 28);
@@ -95,7 +95,67 @@ Test(Interpolation, mx_v8si_interpolate)
         int32_t x[] = {4, 8, 10, 1, 12, -1, 13, 7, 5};
         int32_t y[sizeof(x) / sizeof(x[0])];
 
-        mx_v8si_interpolate(y, xp, fp, sizeof(xp) / sizeof(xp[0]), NULL, NULL, sizeof(x) / sizeof(x[0]), x);
+        mx_v8si_interpolate(y, sizeof(xp) / sizeof(xp[0]), xp, fp, NULL, NULL, NULL, sizeof(x) / sizeof(x[0]), x);
+
+        check_value(y[0], 13);
+        check_value(y[1], 28);
+        check_value(y[2], 35);
+        check_value(y[3], 3);
+        check_value(y[4], 42);
+        check_value(y[5], 3);
+        check_value(y[6], 42);
+        check_value(y[7], 24);
+        check_value(y[8], 17);
+    }
+
+    // Case: The number of x is less than 8 and use pre-calculated slope table.
+    {
+        int32_t xp[] = {3, 6, 9, 12};
+        int32_t fp[] = {3, 6, 9, 12};
+        float slp[] = {1.0, 1.0, 1.0, 1.0};
+        int32_t x[] = {4, 8, 10, 3, 12, -1, 13};
+        int32_t y[sizeof(x) / sizeof(x[0])];
+
+        mx_v8si_interpolate(y, sizeof(xp) / sizeof(xp[0]), xp, fp, NULL, NULL, NULL, sizeof(x) / sizeof(x[0]), x);
+
+        check_value(y[0], 4);
+        check_value(y[1], 8);
+        check_value(y[2], 10);
+        check_value(y[3], 3);
+        check_value(y[4], 12);
+        check_value(y[5], 3);
+        check_value(y[6], 12);
+    }
+
+    // Case: The number of x is equal to 8 and use pre-calculated slope table.
+    {
+        int32_t xp[] = {1,  5, 10, 12};
+        int32_t fp[] = {3, 17, 35, 42};
+        float slp[] = {3.5, 3.5, 3.5, 3.5};
+        int32_t x[] = {4, 8, 10, 1, 12, -1, 13, 7};
+        int32_t y[sizeof(x) / sizeof(x[0])];
+
+        mx_v8si_interpolate(y, sizeof(xp) / sizeof(xp[0]), xp, fp, NULL, NULL, NULL, sizeof(x) / sizeof(x[0]), x);
+
+        check_value(y[0], 13);
+        check_value(y[1], 28);
+        check_value(y[2], 35);
+        check_value(y[3], 3);
+        check_value(y[4], 42);
+        check_value(y[5], 3);
+        check_value(y[6], 42);
+        check_value(y[7], 24);
+    }
+
+    // Case: The number of x is greater than 8 and use pre-calculated slope table.
+    {
+        int32_t xp[] = {1,  5, 10, 12};
+        int32_t fp[] = {3, 17, 35, 42};
+        float slp[] = {3.5, 3.5, 3.5, 3.5};
+        int32_t x[] = {4, 8, 10, 1, 12, -1, 13, 7, 5};
+        int32_t y[sizeof(x) / sizeof(x[0])];
+
+        mx_v8si_interpolate(y, sizeof(xp) / sizeof(xp[0]), xp, fp, NULL, NULL, NULL, sizeof(x) / sizeof(x[0]), x);
 
         check_value(y[0], 13);
         check_value(y[1], 28);

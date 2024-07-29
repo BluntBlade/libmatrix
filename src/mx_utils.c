@@ -115,7 +115,6 @@ void mx_v8si_interpolate(int32_t * y_out, uint32_t pn, int32_t * xp, int32_t * f
     uint32_t k = 0;
     int32_t * src = 0;
     int32_t * dst = 0;
-    v8si_t * xmask = NULL;
 
     v8si_t low;
     v8si_t high;
@@ -143,18 +142,17 @@ void mx_v8si_interpolate(int32_t * y_out, uint32_t pn, int32_t * xp, int32_t * f
 
     i = mx_ceil_to_multiples(xn, I32S_IN_V8SI) / I32S_IN_V8SI;
     k = I32S_IN_V8SI - (mx_ceil_to_multiples(xn, I32S_IN_V8SI) - xn);
-    xmask = &v8si_mask[k];
 
     // -------------------------------------------------
     // Linear interpolation equation:
     //   y = y0 + (x - x0) * ((y1 - y0) / (x1 - x0))
     // -------------------------------------------------
     while (i-- > 0) {        
-        mx_type_reg(x[2]) = _mm256_maskload_epi32(src, mx_type_reg(*xmask));
+        mx_type_reg(x[2]) = _mm256_maskload_epi32(src, mx_type_reg(v8si_mask[k]));
 
         mx_type_reg(vmask_left) = _mm256_cmpgt_epi32(_mm256_set1_epi32(xp[0]), mx_type_reg(x[2]));
         mx_type_reg(vmask_right) = _mm256_cmpgt_epi32(mx_type_reg(x[2]), _mm256_set1_epi32(xp[pn - 1]));
-        mx_type_reg(vmask.i) = _mm256_andnot_si256(_mm256_or_si256(mx_type_reg(vmask_left), mx_type_reg(vmask_right)), mx_type_reg(*xmask));
+        mx_type_reg(vmask.i) = _mm256_andnot_si256(_mm256_or_si256(mx_type_reg(vmask_left), mx_type_reg(vmask_right)), mx_type_reg(v8si_mask[k]));
 
         mx_type_reg(low) = _mm256_setzero_si256();
         mx_type_reg(high) = _mm256_set1_epi32(pn);
@@ -198,11 +196,10 @@ void mx_v8si_interpolate(int32_t * y_out, uint32_t pn, int32_t * xp, int32_t * f
         mx_type_reg(y[2]) = _mm256_blendv_epi8(mx_type_reg(y[2]), _mm256_set1_epi32(*left), mx_type_reg(vmask_left));
         mx_type_reg(y[2]) = _mm256_blendv_epi8(mx_type_reg(y[2]), _mm256_set1_epi32(*right), mx_type_reg(vmask_right));
 
-        _mm256_maskstore_epi32(dst, mx_type_reg(*xmask), mx_type_reg(y[2]));
+        _mm256_maskstore_epi32(dst, mx_type_reg(v8si_mask[k]), mx_type_reg(y[2]));
 
         src += k;
         dst += k;
         k = I32S_IN_V8SI;
-        xmask = &v8si_mask[k];
     } // for
 } // mx_v8si_interpolate

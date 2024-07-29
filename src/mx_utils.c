@@ -96,6 +96,12 @@ void mx_v8sf_bisearch(v8si_t * dst_idx, float * rng, int32_t n, v8sf_t * src)
 #undef v8sf_bisearch
 } // mx_v8sf_bisearch
 
+inline static __m256i __mm256_i32mask_si256(uint32_t mask)
+{
+  __m256i vmask = _mm256_shuffle_epi8(_mm256_set1_epi32(mask), _mm256_setr_epi64x(0x0000000000000000, 0x0101010101010101, 0x0202020202020202, 0x0303030303030303));
+  return _mm256_cmpeq_epi8(_mm256_or_si256(vmask, _mm256_set1_epi64x(0x7fbfdfeff7fbfdfe)), _mm256_set1_epi32(~0));
+} // __mm256_i32mask_si256
+
 void mx_v8si_interpolate(int32_t * y_out, uint32_t pn, int32_t * xp, int32_t * fp, float * slp, int32_t * left, int32_t * right, uint32_t xn, int32_t * x_in)
 {
     v8si_t x[3];
@@ -143,7 +149,7 @@ void mx_v8si_interpolate(int32_t * y_out, uint32_t pn, int32_t * xp, int32_t * f
 
     i = mx_ceil_to_multiples(xn, I32S_IN_V8SI) / I32S_IN_V8SI;
     k = I32S_IN_V8SI - (mx_ceil_to_multiples(xn, I32S_IN_V8SI) - xn);
-    xmask = v8si_mask[k];
+    mx_type_reg(xmask) = _mm256_blendv_epi8(_mm256_setzero_si256(), _mm256_set1_epi32(~0), __mm256_i32mask_si256(~0 >> (8 - k)));
 
     // -------------------------------------------------
     // Linear interpolation equation:

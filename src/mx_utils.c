@@ -26,7 +26,8 @@ void mx_v8si_bisearch(v8si_t * dst_idx, int32_t * rng, int32_t n, v8si_t * src)
     uint32_t m = 0;
     uint32_t i = 0;
 
-    m = (uint32_t)( ceilf( log2f( (float)n ) ) );
+    //m = (uint32_t)( ceilf( log2f( (float)n ) ) );
+    m = 32 - _lzcnt_u32(n); // Depends on the LZCNT flag of CPU.
     i = m / 8;
 
     mx_type_reg(low) = _mm256_setzero_si256();
@@ -71,7 +72,8 @@ void mx_v8sf_bisearch(v8si_t * dst_idx, float * rng, int32_t n, v8sf_t * src)
     uint32_t m = 0;
     uint32_t i = 0;
 
-    m = (uint32_t)( ceilf( log2f( (float)n ) ) );
+    //m = (uint32_t)( ceilf( log2f( (float)n ) ) );
+    m = 32 - _lzcnt_u32(n); // Depends on the LZCNT flag of CPU.
     i = m / 8;
 
     mx_type_reg(low) = _mm256_setzero_si256();
@@ -136,7 +138,8 @@ void mx_v8si_interpolate(int32_t * y_out, uint32_t pn, int32_t * xp, int32_t * f
     src = x_in;
     dst = y_out;
     
-    m = (uint32_t)( ceilf( log2f( (float)pn ) ) );
+    //m = (uint32_t)( ceilf( log2f( (float)pn ) ) );
+    m = 32 - _lzcnt_u32(pn); // Depends on the LZCNT flag of CPU.
 
     i = mx_ceil_to_multiples(xn, I32S_IN_V8SI) / I32S_IN_V8SI;
     k = I32S_IN_V8SI - (mx_ceil_to_multiples(xn, I32S_IN_V8SI) - xn);

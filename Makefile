@@ -4,7 +4,7 @@ else
     CC = /usr/local/bin/gcc
 endif
 
-CFLAGS = -g -fPIC -I. -I/usr/local/include -msse4.1 -mavx2 -Wno-int-conversion
+CFLAGS = -g -fPIC -I. -I/usr/local/include -mlzcnt -msse4.1 -mavx2 -Wno-int-conversion
 
 ifdef RELEASE
     CFLAGS := $(CFLAGS) -O3

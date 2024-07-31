@@ -11,6 +11,7 @@ int main(int argc, const char * argv[])
     struct timeval end = {0};
     long long diff = 0;
     int i = 0;
+    int j = 0;
     int cnt = 1000;
     int n = 256;
     unsigned int code = 0;
@@ -43,6 +44,17 @@ int main(int argc, const char * argv[])
     gettimeofday(&end, NULL);
     diff = (end.tv_sec * 1000000 + end.tv_usec) - (begin.tv_sec * 1000000 + begin.tv_usec);
     printf("Time for mtx_multiply_and_store() using SIMD code = %7.6fs\n", (float)diff / 1000000);
+
+    int32_t ret = i32m_get(mx, 0, 0);
+    printf("(0,0)=%d\n", ret);
+
+    for (i = 0; i < n; i += 1) {
+        for (j = 0; j < n; j += 1) {
+            if (ret != i32m_get(mx, i, j)) {
+                printf("(%d,%d)=%d\n", i, j, i32m_get(mx, i, j));
+            } // if
+        } // for
+    } // for
 
     i32m_destroy(mx);
     i32m_destroy(rhs);

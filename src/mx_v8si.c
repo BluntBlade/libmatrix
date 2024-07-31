@@ -1,6 +1,9 @@
 #include <assert.h>
 #include <string.h>
+
 #include <immintrin.h>
+
+#include <omp.h>
 
 #include "src/config.h"
 #include "src/mx_common.h"
@@ -759,27 +762,26 @@ void mstr_v8si_multiply(mx_stor_ptr dst, mx_stor_ptr lhs, mx_stor_ptr rhs)
         },
     };
 
-    mx_chunk_t rchk;
-    uint32_t i = 0;
-    uint32_t j = 0;
-    uint32_t k = 0;
-    uint32_t lchk_rows = 0;
-    uint32_t lchk_cols = 0;
-    uint32_t rchk_rows = 0;
-    uint32_t rchk_cols = 0;
-    uint32_t dchk_rows = 0;
-    uint32_t dchk_cols = 0;
-    uint32_t ssel = 0;
-    uint32_t dsel = 0;
-    mx_chunk_ptr lchk = NULL;
-    mx_chunk_ptr dchk = NULL;
-
     mstr_v8si_init_zeros(dst);
-    for (k = 0; k < mstr_chunks_in_height(rhs); k += 1) {
-        for (j = 0; j < mstr_chunks_in_width(rhs); j += 1) {
+
+    for (uint32_t k = 0; k < mstr_chunks_in_height(rhs); k += 1) {
+        #pragma omp parallel for schedule(dynamic, 1)
+        for (uint32_t j = 0; j < mstr_chunks_in_width(rhs); j += 1) {
+            mx_chunk_t rchk;
+            uint32_t lchk_rows = 0;
+            uint32_t lchk_cols = 0;
+            uint32_t rchk_rows = 0;
+            uint32_t rchk_cols = 0;
+            uint32_t dchk_rows = 0;
+            uint32_t dchk_cols = 0;
+            uint32_t ssel = 0;
+            uint32_t dsel = 0;
+            mx_chunk_ptr lchk = NULL;
+            mx_chunk_ptr dchk = NULL;
+
             mstr_v8si_transpose_chunk(rhs, k, j, &rchk, &rchk_rows, &rchk_cols);
 
-            for (i = 0; i < mstr_chunks_in_height(lhs); i += 1) {
+            for (uint32_t i = 0; i < mstr_chunks_in_height(lhs); i += 1) {
                 lchk = mstr_locate_chunk(lhs, i, k, &lchk_rows, &lchk_cols);
                 dchk = mstr_locate_chunk(dst, i, j, &dchk_rows, &dchk_cols);
 

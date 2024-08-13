@@ -9,12 +9,15 @@
 //      model and features.
 // =============================================================================
 
+#include <stdarg.h>
 #include <string.h>
 
 #include "src/mx_types.h"
 #include "src/mx_common.h"
 
 enum {
+    MSTR_LOAD_VALUES    = 0,
+    MSTR_STORE_VALUES   = 1,
     MSTR_LOAD_VECTOR    = 0,
     MSTR_STORE_VECTOR   = 1,
 };
@@ -43,6 +46,7 @@ extern void mstr_destroy(mx_stor_ptr ms);
 
 extern void mstr_calibrate_index(mx_stor_ptr ms, uint32_t * row, uint32_t * col, int32_t * row_off, int32_t * col_off);
 extern void mstr_transfer_row_vector(mx_stor_ptr ms, uint32_t row, uint32_t col, uint32_t off, uint32_t dir, void * vec);
+extern void mstr_transfer_column_vector(mx_stor_ptr ms, uint32_t row, uint32_t col, uint32_t off, uint32_t dir, void * vec);
 
 inline static uint32_t mstr_rows(mx_stor_ptr ms)
 {
@@ -100,7 +104,7 @@ inline static void * mstr_locate_chunk_by_value_index(mx_stor_ptr ms, uint32_t v
     *rows_in_chk = mx_less_than_or_equal_to(ms->rows - base_ridx, ms->chk_len);
     *cols_in_chk = mx_less_than_or_equal_to(ms->cols - base_cidx, ms->chk_len);
     return mstr_calc_base(ms, base_ridx, base_cidx, *rows_in_chk);
-} // mstr_locate_chunk
+} // mstr_locate_chunk_by_value_index
 
 inline static void mstr_init_zeros(mx_stor_ptr ms)
 {
@@ -137,6 +141,78 @@ inline static void mstr_set_f32(mx_stor_ptr ms, uint32_t val_ridx, uint32_t val_
 {
     ((float *)mstr_locate_value(ms, val_ridx, val_cidx))[0] = src;
 } // mstr_set_f32
+
+struct MX_ITERATOR;
+typedef struct MX_ITERATOR * mx_iter_ptr;
+
+typedef bool (*mitr_next_fn)(mx_iter_ptr itr, uint32_t step);
+typedef void (*mitr_transfer_fn)(mx_iter_ptr itr, uint32_t dir, uint32_t vn, void * vec, va_list * args);
+
+typedef struct MX_ITERATOR {
+    mx_stor_ptr ms;
+    uint32_t    row;
+    uint32_t    col;
+    uint32_t    row_begin;
+    uint32_t    col_begin;
+    uint32_t    row_end;
+    uint32_t    col_end;
+
+    mitr_next_fn        next;
+    mitr_transfer_fn    transfer;
+
+    union {
+        v8si_t i32;
+        v8sf_t f32;
+    } dval;
+} mx_iter_t;
+
+extern void mitr_init_for_iterating_in_rows(mx_iter_ptr itr, mx_stor_ptr ms, uint32_t row_begin, uint32_t col_begin, uint32_t row_end, uint32_t col_end);
+extern void mitr_init_for_iterating_in_columns(mx_iter_ptr itr, mx_stor_ptr ms, uint32_t row_begin, uint32_t col_begin, uint32_t row_end, uint32_t col_end);
+extern void mitr_init_for_iterating_in_chunk(mx_iter_ptr itr, mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx);
+
+extern void mitr_set_default_i32(mx_iter_ptr itr, int32_t dval);
+extern void mitr_set_default_f32(mx_iter_ptr itr, float dval);
+
+inline static void mitr_move_to_next_value(mx_iter_ptr itr)
+{
+    itr->next(itr, 1);
+} // mitr_move_to_next_value
+
+inline static void mitr_move_to_next_vector(mx_iter_ptr itr)
+{
+    itr->next(itr, itr->ms->pck_len);
+} // mitr_move_to_next_vector
+
+extern bool mitr_get_values(mx_iter_ptr itr, bool move, uint32_t vn, void * val, ...);
+extern bool mitr_set_values(mx_iter_ptr itr, bool move, uint32_t vn, void * val, ...);
+
+inline static bool mitr_get_vectors(mx_iter_ptr itr, bool move, uint32_t vn, void * vec, ...)
+{
+    va_list args;
+
+    va_start(args, vec);
+    itr->transfer(itr, MSTR_LOAD_VECTOR, vn, vec, &args);
+    va_end(args);
+
+    if (move) {
+        return itr->next(itr, itr->ms->pck_len);
+    } // if
+    return true;
+} // mitr_get_vectors
+
+inline static bool mitr_set_vectors(mx_iter_ptr itr, bool move, uint32_t vn, void * vec, ...)
+{
+    va_list args;
+
+    va_start(args, vec);
+    itr->transfer(itr, MSTR_STORE_VECTOR, vn, vec, &args);
+    va_end(args);
+
+    if (move) {
+        return itr->next(itr, itr->ms->pck_len);
+    } // if
+    return true;
+} // mitr_set_vectors
 
 #endif // MX_STORAGE_H
 

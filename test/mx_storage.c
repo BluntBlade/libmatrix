@@ -2,6 +2,12 @@
 
 #include "src/mx_storage.h"
 
+#define check_pointer(val, expect) \
+    cr_expect(val == expect, "Wrong value - Expect %p, got %p.", expect, val)
+
+#define check_value(val, expect) \
+    cr_expect(val == expect, "Wrong value - Expect %d, got %d.", expect, val)
+
 #define check_i32_value(val, expect) \
     cr_expect(val == expect, "Wrong value - Expect %d, got %d.", expect, val)
 
@@ -675,4 +681,86 @@ Test(GetterSetter, mstr_set_f32)
 
         mstr_destroy(ms);
     }
+}
+
+Test(Iterator, mitr_init_for_iterating_in_rows)
+{
+    mx_stor_t ms;
+    mx_iter_t itr;
+
+    mitr_init_for_iterating_in_rows(&itr, &ms, 1, 2, 3, 4);
+
+    check_pointer(itr.ms, &ms);
+
+    check_value(itr.row, 1);
+    check_value(itr.col, 2);
+    check_value(itr.row_begin, 1);
+    check_value(itr.col_begin, 2);
+    check_value(itr.row_end, 3);
+    check_value(itr.col_end, 4);
+
+    check_i32_value(mx_type_val(itr.dval.i32)[0], 0);
+    check_i32_value(mx_type_val(itr.dval.i32)[1], 0);
+    check_i32_value(mx_type_val(itr.dval.i32)[2], 0);
+    check_i32_value(mx_type_val(itr.dval.i32)[3], 0);
+    check_i32_value(mx_type_val(itr.dval.i32)[4], 0);
+    check_i32_value(mx_type_val(itr.dval.i32)[5], 0);
+    check_i32_value(mx_type_val(itr.dval.i32)[6], 0);
+    check_i32_value(mx_type_val(itr.dval.i32)[7], 0);
+}
+
+Test(Iterator, mitr_init_for_iterating_in_columns)
+{
+    mx_stor_t ms;
+    mx_iter_t itr;
+
+    mitr_init_for_iterating_in_columns(&itr, &ms, 1, 2, 3, 4);
+
+    check_pointer(itr.ms, &ms);
+
+    check_value(itr.row, 1);
+    check_value(itr.col, 2);
+    check_value(itr.row_begin, 1);
+    check_value(itr.col_begin, 2);
+    check_value(itr.row_end, 3);
+    check_value(itr.col_end, 4);
+
+    check_f32_value(mx_type_val(itr.dval.f32)[0], 0);
+    check_f32_value(mx_type_val(itr.dval.f32)[1], 0);
+    check_f32_value(mx_type_val(itr.dval.f32)[2], 0);
+    check_f32_value(mx_type_val(itr.dval.f32)[3], 0);
+    check_f32_value(mx_type_val(itr.dval.f32)[4], 0);
+    check_f32_value(mx_type_val(itr.dval.f32)[5], 0);
+    check_f32_value(mx_type_val(itr.dval.f32)[6], 0);
+    check_f32_value(mx_type_val(itr.dval.f32)[7], 0);
+}
+
+Test(Iterator, mitr_set_default_i32)
+{
+    mx_iter_t itr;
+
+    mitr_set_default_i32(&itr, 1);
+    check_i32_value(mx_type_val(itr.dval.i32)[0], 1);
+    check_i32_value(mx_type_val(itr.dval.i32)[1], 1);
+    check_i32_value(mx_type_val(itr.dval.i32)[2], 1);
+    check_i32_value(mx_type_val(itr.dval.i32)[3], 1);
+    check_i32_value(mx_type_val(itr.dval.i32)[4], 1);
+    check_i32_value(mx_type_val(itr.dval.i32)[5], 1);
+    check_i32_value(mx_type_val(itr.dval.i32)[6], 1);
+    check_i32_value(mx_type_val(itr.dval.i32)[7], 1);
+}
+
+Test(Iterator, mitr_set_default_f32)
+{
+    mx_iter_t itr;
+
+    mitr_set_default_f32(&itr, 2.0);
+    check_f32_value(mx_type_val(itr.dval.f32)[0], 2.0);
+    check_f32_value(mx_type_val(itr.dval.f32)[1], 2.0);
+    check_f32_value(mx_type_val(itr.dval.f32)[2], 2.0);
+    check_f32_value(mx_type_val(itr.dval.f32)[3], 2.0);
+    check_f32_value(mx_type_val(itr.dval.f32)[4], 2.0);
+    check_f32_value(mx_type_val(itr.dval.f32)[5], 2.0);
+    check_f32_value(mx_type_val(itr.dval.f32)[6], 2.0);
+    check_f32_value(mx_type_val(itr.dval.f32)[7], 2.0);
 }

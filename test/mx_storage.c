@@ -725,14 +725,123 @@ Test(Iterator, mitr_init_for_iterating_in_columns)
     check_value(itr.row_end, 3);
     check_value(itr.col_end, 4);
 
-    check_f32_value(mx_type_val(itr.dval.f32)[0], 0);
-    check_f32_value(mx_type_val(itr.dval.f32)[1], 0);
-    check_f32_value(mx_type_val(itr.dval.f32)[2], 0);
-    check_f32_value(mx_type_val(itr.dval.f32)[3], 0);
-    check_f32_value(mx_type_val(itr.dval.f32)[4], 0);
-    check_f32_value(mx_type_val(itr.dval.f32)[5], 0);
-    check_f32_value(mx_type_val(itr.dval.f32)[6], 0);
-    check_f32_value(mx_type_val(itr.dval.f32)[7], 0);
+    check_f32_value(mx_type_val(itr.dval.f32)[0], 0.0);
+    check_f32_value(mx_type_val(itr.dval.f32)[1], 0.0);
+    check_f32_value(mx_type_val(itr.dval.f32)[2], 0.0);
+    check_f32_value(mx_type_val(itr.dval.f32)[3], 0.0);
+    check_f32_value(mx_type_val(itr.dval.f32)[4], 0.0);
+    check_f32_value(mx_type_val(itr.dval.f32)[5], 0.0);
+    check_f32_value(mx_type_val(itr.dval.f32)[6], 0.0);
+    check_f32_value(mx_type_val(itr.dval.f32)[7], 0.0);
+}
+
+Test(Iterator, mitr_init_for_iterating_in_chunk)
+{
+    mx_iter_t itr;
+
+    {
+        mx_stor_ptr ms = mstr_create(17, 17, 1, 8, 16);
+
+        mitr_init_for_iterating_in_chunk(&itr, ms, 0, 0);
+
+        check_pointer(itr.ms, ms);
+
+        check_value(itr.row, 0);
+        check_value(itr.col, 0);
+        check_value(itr.row_begin, 0);
+        check_value(itr.col_begin, 0);
+        check_value(itr.row_end, 16);
+        check_value(itr.col_end, 16);
+
+        check_f32_value(mx_type_val(itr.dval.f32)[0], 0.0);
+        check_f32_value(mx_type_val(itr.dval.f32)[1], 0.0);
+        check_f32_value(mx_type_val(itr.dval.f32)[2], 0.0);
+        check_f32_value(mx_type_val(itr.dval.f32)[3], 0.0);
+        check_f32_value(mx_type_val(itr.dval.f32)[4], 0.0);
+        check_f32_value(mx_type_val(itr.dval.f32)[5], 0.0);
+        check_f32_value(mx_type_val(itr.dval.f32)[6], 0.0);
+        check_f32_value(mx_type_val(itr.dval.f32)[7], 0.0);
+        
+        mstr_destroy(ms);
+    }
+
+    {
+        mx_stor_ptr ms = mstr_create(17, 17, 1, 8, 16);
+
+        mitr_init_for_iterating_in_chunk(&itr, ms, 0, 1);
+
+        check_pointer(itr.ms, ms);
+
+        check_value(itr.row, 0);
+        check_value(itr.col, 16);
+        check_value(itr.row_begin, 0);
+        check_value(itr.col_begin, 16);
+        check_value(itr.row_end, 16);
+        check_value(itr.col_end, 17);
+
+        check_f32_value(mx_type_val(itr.dval.f32)[0], 0.0);
+        check_f32_value(mx_type_val(itr.dval.f32)[1], 0.0);
+        check_f32_value(mx_type_val(itr.dval.f32)[2], 0.0);
+        check_f32_value(mx_type_val(itr.dval.f32)[3], 0.0);
+        check_f32_value(mx_type_val(itr.dval.f32)[4], 0.0);
+        check_f32_value(mx_type_val(itr.dval.f32)[5], 0.0);
+        check_f32_value(mx_type_val(itr.dval.f32)[6], 0.0);
+        check_f32_value(mx_type_val(itr.dval.f32)[7], 0.0);
+        
+        mstr_destroy(ms);
+    }
+
+    {
+        mx_stor_ptr ms = mstr_create(17, 17, 1, 8, 16);
+
+        mitr_init_for_iterating_in_chunk(&itr, ms, 1, 0);
+
+        check_pointer(itr.ms, ms);
+
+        check_value(itr.row, 16);
+        check_value(itr.col, 0);
+        check_value(itr.row_begin, 16);
+        check_value(itr.col_begin, 0);
+        check_value(itr.row_end, 17);
+        check_value(itr.col_end, 16);
+
+        check_f32_value(mx_type_val(itr.dval.f32)[0], 0.0);
+        check_f32_value(mx_type_val(itr.dval.f32)[1], 0.0);
+        check_f32_value(mx_type_val(itr.dval.f32)[2], 0.0);
+        check_f32_value(mx_type_val(itr.dval.f32)[3], 0.0);
+        check_f32_value(mx_type_val(itr.dval.f32)[4], 0.0);
+        check_f32_value(mx_type_val(itr.dval.f32)[5], 0.0);
+        check_f32_value(mx_type_val(itr.dval.f32)[6], 0.0);
+        check_f32_value(mx_type_val(itr.dval.f32)[7], 0.0);
+        
+        mstr_destroy(ms);
+    }
+
+    {
+        mx_stor_ptr ms = mstr_create(17, 17, 1, 8, 16);
+
+        mitr_init_for_iterating_in_chunk(&itr, ms, 1, 1);
+
+        check_pointer(itr.ms, ms);
+
+        check_value(itr.row, 16);
+        check_value(itr.col, 16);
+        check_value(itr.row_begin, 16);
+        check_value(itr.col_begin, 16);
+        check_value(itr.row_end, 17);
+        check_value(itr.col_end, 17);
+
+        check_f32_value(mx_type_val(itr.dval.f32)[0], 0.0);
+        check_f32_value(mx_type_val(itr.dval.f32)[1], 0.0);
+        check_f32_value(mx_type_val(itr.dval.f32)[2], 0.0);
+        check_f32_value(mx_type_val(itr.dval.f32)[3], 0.0);
+        check_f32_value(mx_type_val(itr.dval.f32)[4], 0.0);
+        check_f32_value(mx_type_val(itr.dval.f32)[5], 0.0);
+        check_f32_value(mx_type_val(itr.dval.f32)[6], 0.0);
+        check_f32_value(mx_type_val(itr.dval.f32)[7], 0.0);
+        
+        mstr_destroy(ms);
+    }
 }
 
 Test(Iterator, mitr_set_default_i32)
@@ -769,12 +878,6 @@ Test(Iterator, next_position_in_row)
 {
     mx_stor_ptr ms = mstr_create(17, 17, 1, 8, 16);
     
-    for (uint32_t i = 0; i < mstr_rows(ms); i += 1) {
-        for (uint32_t j = 0; j < mstr_columns(ms); j += 1) {
-            mstr_set_i32(ms, i, j, i * mstr_columns(ms) + j);
-        } // for
-    } // for
-
     {
         mx_iter_t itr;
         bool ret;
@@ -855,12 +958,6 @@ Test(Iterator, next_position_in_column)
 {
     mx_stor_ptr ms = mstr_create(17, 17, 1, 8, 16);
     
-    for (uint32_t i = 0; i < mstr_rows(ms); i += 1) {
-        for (uint32_t j = 0; j < mstr_columns(ms); j += 1) {
-            mstr_set_i32(ms, i, j, i * mstr_columns(ms) + j);
-        } // for
-    } // for
-
     {
         mx_iter_t itr;
         bool ret;
@@ -936,3 +1033,12 @@ Test(Iterator, next_position_in_column)
 
     mstr_destroy(ms);
 }
+
+/*
+    for (uint32_t i = 0; i < mstr_rows(ms); i += 1) {
+        for (uint32_t j = 0; j < mstr_columns(ms); j += 1) {
+            mstr_set_i32(ms, i, j, i * mstr_columns(ms) + j);
+        } // for
+    } // for
+*/
+

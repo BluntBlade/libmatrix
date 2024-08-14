@@ -256,8 +256,8 @@ void mitr_init_for_iterating_in_chunk(mx_iter_ptr itr, mx_stor_ptr ms, uint32_t 
 
     itr->row_begin = chk_ridx * ms->chk_len;
     itr->col_begin = chk_cidx * ms->chk_len;
-    itr->row_end = itr->row_begin + ms->chk_len;
-    itr->col_end = itr->col_begin + ms->chk_len;
+    itr->row_end = itr->row_begin + mx_ceil_to_or_less_than_16(ms->rows - itr->row_begin);
+    itr->col_end = itr->col_begin + mx_ceil_to_or_less_than_16(ms->cols - itr->col_begin);
 
     itr->next = &next_position_in_row;
     itr->transfer = &transfer_vectors_in_row;

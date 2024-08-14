@@ -764,3 +764,175 @@ Test(Iterator, mitr_set_default_f32)
     check_f32_value(mx_type_val(itr.dval.f32)[6], 2.0);
     check_f32_value(mx_type_val(itr.dval.f32)[7], 2.0);
 }
+
+Test(Iterator, next_position_in_row)
+{
+    mx_stor_ptr ms = mstr_create(17, 17, 1, 8, 16);
+    
+    for (uint32_t i = 0; i < mstr_rows(ms); i += 1) {
+        for (uint32_t j = 0; j < mstr_columns(ms); j += 1) {
+            mstr_set_i32(ms, i, j, i * mstr_columns(ms) + j);
+        } // for
+    } // for
+
+    {
+        mx_iter_t itr;
+        bool ret;
+
+        mitr_init_for_iterating_in_rows(&itr, ms, 0, 0, 17, 17);
+
+        ret = itr.next(&itr, 1);
+        check_value(mitr_row(&itr), 0);
+        check_value(mitr_column(&itr), 1);
+        check_value(ret, true);
+
+        ret = itr.next(&itr, 1);
+        check_value(mitr_row(&itr), 0);
+        check_value(mitr_column(&itr), 2);
+        check_value(ret, true);
+
+        itr.col = 16;
+        ret = itr.next(&itr, 1);
+        check_value(mitr_row(&itr), 1);
+        check_value(mitr_column(&itr), 0);
+        check_value(ret, true);
+
+        itr.row = 16;
+        itr.col = 16;
+        ret = itr.next(&itr, 1);
+        check_value(mitr_row(&itr), 17);
+        check_value(mitr_column(&itr), 17);
+        check_value(ret, false);
+    }
+
+    {
+        mx_iter_t itr;
+        bool ret;
+
+        mitr_init_for_iterating_in_rows(&itr, ms, 0, 0, 17, 17);
+
+        ret = itr.next(&itr, 8);
+        check_value(mitr_row(&itr), 0);
+        check_value(mitr_column(&itr), 8);
+        check_value(ret, true);
+
+        ret = itr.next(&itr, 8);
+        check_value(mitr_row(&itr), 0);
+        check_value(mitr_column(&itr), 16);
+        check_value(ret, true);
+
+        ret = itr.next(&itr, 8);
+        check_value(mitr_row(&itr), 1);
+        check_value(mitr_column(&itr), 0);
+        check_value(ret, true);
+
+        itr.row = 0;
+        itr.col = 8;
+        ret = itr.next(&itr, 8);
+        check_value(mitr_row(&itr), 0);
+        check_value(mitr_column(&itr), 16);
+        check_value(ret, true);
+
+        itr.row = 0;
+        itr.col = 16;
+        ret = itr.next(&itr, 8);
+        check_value(mitr_row(&itr), 1);
+        check_value(mitr_column(&itr), 0);
+        check_value(ret, true);
+
+        itr.row = 16;
+        itr.col = 16;
+        ret = itr.next(&itr, 8);
+        check_value(mitr_row(&itr), 17);
+        check_value(mitr_column(&itr), 17);
+        check_value(ret, false);
+    }
+
+    mstr_destroy(ms);
+}
+
+Test(Iterator, next_position_in_column)
+{
+    mx_stor_ptr ms = mstr_create(17, 17, 1, 8, 16);
+    
+    for (uint32_t i = 0; i < mstr_rows(ms); i += 1) {
+        for (uint32_t j = 0; j < mstr_columns(ms); j += 1) {
+            mstr_set_i32(ms, i, j, i * mstr_columns(ms) + j);
+        } // for
+    } // for
+
+    {
+        mx_iter_t itr;
+        bool ret;
+
+        mitr_init_for_iterating_in_columns(&itr, ms, 0, 0, 17, 17);
+
+        ret = itr.next(&itr, 1);
+        check_value(mitr_row(&itr), 1);
+        check_value(mitr_column(&itr), 0);
+        check_value(ret, true);
+
+        ret = itr.next(&itr, 1);
+        check_value(mitr_row(&itr), 2);
+        check_value(mitr_column(&itr), 0);
+        check_value(ret, true);
+
+        itr.row = 16;
+        ret = itr.next(&itr, 1);
+        check_value(mitr_row(&itr), 0);
+        check_value(mitr_column(&itr), 1);
+        check_value(ret, true);
+
+        itr.row = 16;
+        itr.col = 16;
+        ret = itr.next(&itr, 1);
+        check_value(mitr_row(&itr), 17);
+        check_value(mitr_column(&itr), 17);
+        check_value(ret, false);
+    }
+
+    {
+        mx_iter_t itr;
+        bool ret;
+
+        mitr_init_for_iterating_in_columns(&itr, ms, 0, 0, 17, 17);
+
+        ret = itr.next(&itr, 8);
+        check_value(mitr_row(&itr), 8);
+        check_value(mitr_column(&itr), 0);
+        check_value(ret, true);
+
+        ret = itr.next(&itr, 8);
+        check_value(mitr_row(&itr), 16);
+        check_value(mitr_column(&itr), 0);
+        check_value(ret, true);
+
+        ret = itr.next(&itr, 8);
+        check_value(mitr_row(&itr), 0);
+        check_value(mitr_column(&itr), 1);
+        check_value(ret, true);
+
+        itr.row = 8;
+        itr.col = 0;
+        ret = itr.next(&itr, 8);
+        check_value(mitr_row(&itr), 16);
+        check_value(mitr_column(&itr), 0);
+        check_value(ret, true);
+
+        itr.row = 16;
+        itr.col = 0;
+        ret = itr.next(&itr, 8);
+        check_value(mitr_row(&itr), 0);
+        check_value(mitr_column(&itr), 1);
+        check_value(ret, true);
+
+        itr.row = 16;
+        itr.col = 16;
+        ret = itr.next(&itr, 8);
+        check_value(mitr_row(&itr), 17);
+        check_value(mitr_column(&itr), 17);
+        check_value(ret, false);
+    }
+
+    mstr_destroy(ms);
+}

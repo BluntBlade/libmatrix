@@ -184,6 +184,7 @@ static bool next_position_in_row(mx_iter_ptr itr, uint32_t step)
 
     if ((itr->col + step) >= itr->col_end) {
         if (++itr->row >= itr->row_end) {
+            itr->col = itr->col_end;
             return false;
         } // if
         itr->col = itr->col_begin;
@@ -200,6 +201,7 @@ static bool next_position_in_column(mx_iter_ptr itr, uint32_t step)
 
     if ((itr->row + step) >= itr->row_end) {
         if (++itr->col >= itr->col_end) {
+            itr->row = itr->row_end;
             return false;
         } // if
         itr->row = itr->row_begin;

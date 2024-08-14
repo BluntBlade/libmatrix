@@ -170,6 +170,16 @@ extern void mitr_init_for_iterating_in_rows(mx_iter_ptr itr, mx_stor_ptr ms, uin
 extern void mitr_init_for_iterating_in_columns(mx_iter_ptr itr, mx_stor_ptr ms, uint32_t row_begin, uint32_t col_begin, uint32_t row_end, uint32_t col_end);
 extern void mitr_init_for_iterating_in_chunk(mx_iter_ptr itr, mx_stor_ptr ms, uint32_t chk_ridx, uint32_t chk_cidx);
 
+inline static uint32_t mitr_row(mx_iter_ptr itr)
+{
+    return itr->row;
+} // mitr_row
+
+inline static uint32_t mitr_column(mx_iter_ptr itr)
+{
+    return itr->col;
+} // mitr_column
+
 extern void mitr_set_default_i32(mx_iter_ptr itr, int32_t dval);
 extern void mitr_set_default_f32(mx_iter_ptr itr, float dval);
 

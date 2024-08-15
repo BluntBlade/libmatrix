@@ -174,7 +174,12 @@ void mstr_transfer_column_vector(mx_stor_ptr ms, uint32_t row, uint32_t col, uin
 
         base_ridx = (row += cnt);
         rows_in_chk = mx_ceil_to_or_less_than_16(ms->rows - base_ridx);
-    } while ((cnt = ms->pck_len - off - cnt) > 0);
+
+        cnt = ms->pck_len - (off += cnt);
+        if (rows_in_chk < cnt) {
+            cnt = rows_in_chk;
+        } // if
+    } while (cnt > 0);
 } // mstr_transfer_column_vector
 
 static bool next_position_in_row(mx_iter_ptr itr, uint32_t step)

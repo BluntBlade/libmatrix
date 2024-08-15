@@ -1281,6 +1281,64 @@ Test(Iterator, mitr_get_vectors_in_row)
         check_value(mitr_column(&itr), 0);
     }
 
+    // Case: Get five vectors and don't move to next. One of them is beyond the bottom of the matrix.
+    {
+        mx_iter_t itr;
+        mitr_init_for_iterating_in_rows(&itr, ms, 17, 0, 18, 18);
+        mitr_set_default_i32(&itr, 9999);
+
+        v8si_t vec[5];
+        mitr_get_vectors(&itr, false, 5, &vec, 0, 0, -1, 0, 1, 0, 0, -1, 0, 1);
+
+        check_i32_value(mx_type_val(vec[0])[0], 1700);
+        check_i32_value(mx_type_val(vec[0])[1], 1701);
+        check_i32_value(mx_type_val(vec[0])[2], 1702);
+        check_i32_value(mx_type_val(vec[0])[3], 1703);
+        check_i32_value(mx_type_val(vec[0])[4], 1704);
+        check_i32_value(mx_type_val(vec[0])[5], 1705);
+        check_i32_value(mx_type_val(vec[0])[6], 1706);
+        check_i32_value(mx_type_val(vec[0])[7], 1707);
+
+        check_i32_value(mx_type_val(vec[1])[0], 1600);
+        check_i32_value(mx_type_val(vec[1])[1], 1601);
+        check_i32_value(mx_type_val(vec[1])[2], 1602);
+        check_i32_value(mx_type_val(vec[1])[3], 1603);
+        check_i32_value(mx_type_val(vec[1])[4], 1604);
+        check_i32_value(mx_type_val(vec[1])[5], 1605);
+        check_i32_value(mx_type_val(vec[1])[6], 1606);
+        check_i32_value(mx_type_val(vec[1])[7], 1607);
+
+        check_i32_value(mx_type_val(vec[2])[0], 9999);
+        check_i32_value(mx_type_val(vec[2])[1], 9999);
+        check_i32_value(mx_type_val(vec[2])[2], 9999);
+        check_i32_value(mx_type_val(vec[2])[3], 9999);
+        check_i32_value(mx_type_val(vec[2])[4], 9999);
+        check_i32_value(mx_type_val(vec[2])[5], 9999);
+        check_i32_value(mx_type_val(vec[2])[6], 9999);
+        check_i32_value(mx_type_val(vec[2])[7], 9999);
+
+        check_i32_value(mx_type_val(vec[3])[0], 9999);
+        check_i32_value(mx_type_val(vec[3])[1], 1700);
+        check_i32_value(mx_type_val(vec[3])[2], 1701);
+        check_i32_value(mx_type_val(vec[3])[3], 1702);
+        check_i32_value(mx_type_val(vec[3])[4], 1703);
+        check_i32_value(mx_type_val(vec[3])[5], 1704);
+        check_i32_value(mx_type_val(vec[3])[6], 1705);
+        check_i32_value(mx_type_val(vec[3])[7], 1706);
+
+        check_i32_value(mx_type_val(vec[4])[0], 1701);
+        check_i32_value(mx_type_val(vec[4])[1], 1702);
+        check_i32_value(mx_type_val(vec[4])[2], 1703);
+        check_i32_value(mx_type_val(vec[4])[3], 1704);
+        check_i32_value(mx_type_val(vec[4])[4], 1705);
+        check_i32_value(mx_type_val(vec[4])[5], 1706);
+        check_i32_value(mx_type_val(vec[4])[6], 1707);
+        check_i32_value(mx_type_val(vec[4])[7], 1708);
+
+        check_value(mitr_row(&itr), 17);
+        check_value(mitr_column(&itr), 0);
+    }
+
     mstr_destroy(ms);
 }
 
@@ -1529,6 +1587,64 @@ Test(Iterator, mitr_get_vectors_in_column)
 
         check_value(mitr_row(&itr), 0);
         check_value(mitr_column(&itr), 1);
+    }
+
+    // Case: Get five vectors and don't move to next. One of them is beyond the right of the matrix.
+    {
+        mx_iter_t itr;
+        mitr_init_for_iterating_in_columns(&itr, ms, 0, 17, 18, 18);
+        mitr_set_default_i32(&itr, 9999);
+
+        v8si_t vec[5];
+        mitr_get_vectors(&itr, false, 5, &vec, 0, 0, -1, 0, 1, 0, 0, -1, 0, 1);
+
+        check_i32_value(mx_type_val(vec[0])[0], 17);
+        check_i32_value(mx_type_val(vec[0])[1], 117);
+        check_i32_value(mx_type_val(vec[0])[2], 217);
+        check_i32_value(mx_type_val(vec[0])[3], 317);
+        check_i32_value(mx_type_val(vec[0])[4], 417);
+        check_i32_value(mx_type_val(vec[0])[5], 517);
+        check_i32_value(mx_type_val(vec[0])[6], 617);
+        check_i32_value(mx_type_val(vec[0])[7], 717);
+
+        check_i32_value(mx_type_val(vec[1])[0], 9999);
+        check_i32_value(mx_type_val(vec[1])[1], 17);
+        check_i32_value(mx_type_val(vec[1])[2], 117);
+        check_i32_value(mx_type_val(vec[1])[3], 217);
+        check_i32_value(mx_type_val(vec[1])[4], 317);
+        check_i32_value(mx_type_val(vec[1])[5], 417);
+        check_i32_value(mx_type_val(vec[1])[6], 517);
+        check_i32_value(mx_type_val(vec[1])[7], 617);
+
+        check_i32_value(mx_type_val(vec[2])[0], 117);
+        check_i32_value(mx_type_val(vec[2])[1], 217);
+        check_i32_value(mx_type_val(vec[2])[2], 317);
+        check_i32_value(mx_type_val(vec[2])[3], 417);
+        check_i32_value(mx_type_val(vec[2])[4], 517);
+        check_i32_value(mx_type_val(vec[2])[5], 617);
+        check_i32_value(mx_type_val(vec[2])[6], 717);
+        check_i32_value(mx_type_val(vec[2])[7], 817);
+
+        check_i32_value(mx_type_val(vec[3])[0], 16);
+        check_i32_value(mx_type_val(vec[3])[1], 116);
+        check_i32_value(mx_type_val(vec[3])[2], 216);
+        check_i32_value(mx_type_val(vec[3])[3], 316);
+        check_i32_value(mx_type_val(vec[3])[4], 416);
+        check_i32_value(mx_type_val(vec[3])[5], 516);
+        check_i32_value(mx_type_val(vec[3])[6], 616);
+        check_i32_value(mx_type_val(vec[3])[7], 716);
+
+        check_i32_value(mx_type_val(vec[4])[0], 9999);
+        check_i32_value(mx_type_val(vec[4])[1], 9999);
+        check_i32_value(mx_type_val(vec[4])[2], 9999);
+        check_i32_value(mx_type_val(vec[4])[3], 9999);
+        check_i32_value(mx_type_val(vec[4])[4], 9999);
+        check_i32_value(mx_type_val(vec[4])[5], 9999);
+        check_i32_value(mx_type_val(vec[4])[6], 9999);
+        check_i32_value(mx_type_val(vec[4])[7], 9999);
+
+        check_value(mitr_row(&itr), 0);
+        check_value(mitr_column(&itr), 17);
     }
 
     mstr_destroy(ms);

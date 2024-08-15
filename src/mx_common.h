@@ -1,10 +1,10 @@
 #ifndef MX_COMMON_H
 #define MX_COMMON_H 1
 
-inline static uint32_t mx_ceil_to_multiples(uint32_t cnt, uint32_t n)
+inline static uint32_t mx_ceil_to_multiples_of(uint32_t cnt, uint32_t n)
 {
     return (cnt + (n - 1)) & (~(n - 1));
-} // mx_ceil_to_multiples
+} // mx_ceil_to_multiples_of
 
 inline static uint32_t mx_ceil_to_multiples_of_8(uint32_t cnt)
 {

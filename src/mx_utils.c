@@ -147,8 +147,8 @@ void mx_v8si_interpolate(int32_t * y_out, uint32_t pn, int32_t * xp, int32_t * f
     //m = (uint32_t)( ceilf( log2f( (float)pn ) ) );
     m = 32 - _lzcnt_u32(pn); // Depends on the LZCNT flag of CPU.
 
-    i = mx_ceil_to_multiples(xn, I32S_IN_V8SI) / I32S_IN_V8SI;
-    k = I32S_IN_V8SI - (mx_ceil_to_multiples(xn, I32S_IN_V8SI) - xn);
+    i = mx_ceil_to_multiples_of(xn, I32S_IN_V8SI) / I32S_IN_V8SI;
+    k = I32S_IN_V8SI - (mx_ceil_to_multiples_of(xn, I32S_IN_V8SI) - xn);
     mx_type_reg(xmask) = _mm256_blendv_epi8(_mm256_setzero_si256(), _mm256_set1_epi32(~0), __mm256_i32mask_si256(~0 >> (8 - k)));
 
     // -------------------------------------------------

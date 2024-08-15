@@ -10,12 +10,12 @@ mx_stor_ptr mstr_init(mx_stor_ptr ms, uint32_t rows, uint32_t cols, uint32_t val
     ms->val_sz = val_sz;
     ms->rows = rows;
     ms->cols = cols;
-    ms->cols_padded = mx_ceil_to_multiples(cols, pck_len);
+    ms->cols_padded = mx_ceil_to_multiples_of(cols, pck_len);
     ms->bytes = ms->val_sz * ms->rows * ms->cols_padded;
     ms->pck_len = pck_len;
     ms->chk_len = chk_len;
-    ms->chks_in_width = mx_ceil_to_multiples(cols, chk_len) / chk_len;
-    ms->chks_in_height = mx_ceil_to_multiples(rows, chk_len) / chk_len;
+    ms->chks_in_width = mx_ceil_to_multiples_of(cols, chk_len) / chk_len;
+    ms->chks_in_height = mx_ceil_to_multiples_of(rows, chk_len) / chk_len;
 
     ms->alignment = ms->val_sz * ms->pck_len;
     ms->buf = malloc(ms->bytes + ms->alignment);
@@ -349,7 +349,7 @@ static void transfer_values(mx_iter_ptr itr, uint32_t dir, uint32_t vn, void * v
             uint32_t rows_in_chk;
             uint32_t cols_in_chk;
             addr[1] = mstr_locate_chunk_by_value_index(itr->ms, row, col, &rows_in_chk, &cols_in_chk);
-            addr[1] += itr->ms->val_sz * (row_diff * mx_ceil_to_multiples(cols_in_chk, itr->ms->pck_len) + col_diff);
+            addr[1] += itr->ms->val_sz * (row_diff * mx_ceil_to_multiples_of(cols_in_chk, itr->ms->pck_len) + col_diff);
             memcpy(addr[dir], addr[!dir], itr->ms->val_sz);
         } // if
 

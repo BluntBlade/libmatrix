@@ -123,7 +123,7 @@ void mstr_transfer_row_vector(mx_stor_ptr ms, uint32_t row, uint32_t col, uint32
     addr[0] = vec + ms->val_sz * off;
     addr[1] = base + ms->val_sz * ms->chk_len * ms->chk_len + ms->val_sz * (row - base_ridx) * mx_ceil_to_multiples_of_8(cols_in_chk);
 
-    memcpy(addr[dir], addr[!dir], ms->val_sz * cnt);
+    memcpy(addr[dir], addr[!dir], ms->val_sz * (cols_in_chk < cnt ? cols_in_chk : cnt));
 } // mstr_transfer_row_vector
 
 void mstr_transfer_column_vector(mx_stor_ptr ms, uint32_t row, uint32_t col, uint32_t off, uint32_t dir, void * vec)

@@ -61,27 +61,46 @@ void mstr_destroy(mx_stor_ptr ms)
 void mstr_calibrate_index(mx_stor_ptr ms, uint32_t * row, uint32_t * col, int32_t * row_off, int32_t * col_off)
 {
     // Calibrate the row index.
-    if (*row_off < 0 && *row < abs(*row_off)) {
-        // The calibrated row index is beyond the TOP boundary.
-        *row_off += *row;
-        *row = 0;
-    } else {
-        *row += *row_off;
-        *row_off = 0;
+    if (*row_off < 0) {
+        if (*row < abs(*row_off)) {
+            // The calibrated row index is beyond the TOP boundary.
+            *row_off += *row;
+            *row = 0;
+        } else {
+            *row += *row_off;
+            *row_off = 0;
+        } // if
+    } else if (*row_off > 0) {
+        if (*row + *row_off >= ms->rows) {
+            // The calibrated row index is beyond the BOTTOM boundary.
+            *row_off -= (ms->rows - *row) - 1;
+            *row = ms->rows;
+        } else {
+            *row += *row_off;
+            *row_off = 0;
+        } // if
     } // if
 
     // Calibrate the column index.
-    if (*col_off < 0 && *col < abs(*col_off)) {
-        // The actual column index is beyond the LEFT boundary.
-        *col_off += *col;
-        *col = 0;
-    } else {
-        *col += *col_off;
-        *col_off = 0;
+    if (*col_off < 0) {
+        if (*col < abs(*col_off)) {
+            // The actual column index is beyond the LEFT boundary.
+            *col_off += *col;
+            *col = 0;
+        } else {
+            *col += *col_off;
+            *col_off = 0;
+        } // if
+    } else if (*col_off > 0) {
+        if (*col + *col_off >= ms->cols) {
+            // The actual column index is beyond the RIGHT boundary.
+            *col_off -= (ms->cols - *col) - 1;
+            *col = ms->cols;
+        } else {
+            *col += *col_off;
+            *col_off = 0;
+        } // if
     } // if
-
-    assert(*row_off <= 0);
-    assert(*col_off <= 0);
 } // mstr_calibrate_index
 
 void mstr_transfer_row_vector(mx_stor_ptr ms, uint32_t row, uint32_t col, uint32_t off, uint32_t dir, void * vec)
@@ -151,25 +170,26 @@ void mstr_transfer_column_vector(mx_stor_ptr ms, uint32_t row, uint32_t col, uin
     do {
         base = mstr_calc_base(ms, base_ridx, base_cidx, rows_in_chk);
         addr[1] = base + ms->val_sz * ((row - base_ridx) * mx_ceil_to_multiples_of_8(cols_in_chk) + (col - base_cidx));
+        uint32_t delta = ms->val_sz * mx_ceil_to_multiples_of_8(cols_in_chk);
 
         switch (cnt) {
             default: assert(1); break;
-            case 16: memcpy(addr[dir], addr[!dir], ms->val_sz); addr[0] += ms->val_sz; addr[1] += ms->val_sz * ms->chk_len;
-            case 15: memcpy(addr[dir], addr[!dir], ms->val_sz); addr[0] += ms->val_sz; addr[1] += ms->val_sz * ms->chk_len;
-            case 14: memcpy(addr[dir], addr[!dir], ms->val_sz); addr[0] += ms->val_sz; addr[1] += ms->val_sz * ms->chk_len;
-            case 13: memcpy(addr[dir], addr[!dir], ms->val_sz); addr[0] += ms->val_sz; addr[1] += ms->val_sz * ms->chk_len;
-            case 12: memcpy(addr[dir], addr[!dir], ms->val_sz); addr[0] += ms->val_sz; addr[1] += ms->val_sz * ms->chk_len;
-            case 11: memcpy(addr[dir], addr[!dir], ms->val_sz); addr[0] += ms->val_sz; addr[1] += ms->val_sz * ms->chk_len;
-            case 10: memcpy(addr[dir], addr[!dir], ms->val_sz); addr[0] += ms->val_sz; addr[1] += ms->val_sz * ms->chk_len;
-            case  9: memcpy(addr[dir], addr[!dir], ms->val_sz); addr[0] += ms->val_sz; addr[1] += ms->val_sz * ms->chk_len;
-            case  8: memcpy(addr[dir], addr[!dir], ms->val_sz); addr[0] += ms->val_sz; addr[1] += ms->val_sz * ms->chk_len;
-            case  7: memcpy(addr[dir], addr[!dir], ms->val_sz); addr[0] += ms->val_sz; addr[1] += ms->val_sz * ms->chk_len;
-            case  6: memcpy(addr[dir], addr[!dir], ms->val_sz); addr[0] += ms->val_sz; addr[1] += ms->val_sz * ms->chk_len;
-            case  5: memcpy(addr[dir], addr[!dir], ms->val_sz); addr[0] += ms->val_sz; addr[1] += ms->val_sz * ms->chk_len;
-            case  4: memcpy(addr[dir], addr[!dir], ms->val_sz); addr[0] += ms->val_sz; addr[1] += ms->val_sz * ms->chk_len;
-            case  3: memcpy(addr[dir], addr[!dir], ms->val_sz); addr[0] += ms->val_sz; addr[1] += ms->val_sz * ms->chk_len;
-            case  2: memcpy(addr[dir], addr[!dir], ms->val_sz); addr[0] += ms->val_sz; addr[1] += ms->val_sz * ms->chk_len;
-            case  1: memcpy(addr[dir], addr[!dir], ms->val_sz); addr[0] += ms->val_sz; addr[1] += ms->val_sz * ms->chk_len;
+            case 16: memcpy(addr[dir], addr[!dir], ms->val_sz); addr[0] += ms->val_sz; addr[1] += delta;
+            case 15: memcpy(addr[dir], addr[!dir], ms->val_sz); addr[0] += ms->val_sz; addr[1] += delta;
+            case 14: memcpy(addr[dir], addr[!dir], ms->val_sz); addr[0] += ms->val_sz; addr[1] += delta;
+            case 13: memcpy(addr[dir], addr[!dir], ms->val_sz); addr[0] += ms->val_sz; addr[1] += delta;
+            case 12: memcpy(addr[dir], addr[!dir], ms->val_sz); addr[0] += ms->val_sz; addr[1] += delta;
+            case 11: memcpy(addr[dir], addr[!dir], ms->val_sz); addr[0] += ms->val_sz; addr[1] += delta;
+            case 10: memcpy(addr[dir], addr[!dir], ms->val_sz); addr[0] += ms->val_sz; addr[1] += delta;
+            case  9: memcpy(addr[dir], addr[!dir], ms->val_sz); addr[0] += ms->val_sz; addr[1] += delta;
+            case  8: memcpy(addr[dir], addr[!dir], ms->val_sz); addr[0] += ms->val_sz; addr[1] += delta;
+            case  7: memcpy(addr[dir], addr[!dir], ms->val_sz); addr[0] += ms->val_sz; addr[1] += delta;
+            case  6: memcpy(addr[dir], addr[!dir], ms->val_sz); addr[0] += ms->val_sz; addr[1] += delta;
+            case  5: memcpy(addr[dir], addr[!dir], ms->val_sz); addr[0] += ms->val_sz; addr[1] += delta;
+            case  4: memcpy(addr[dir], addr[!dir], ms->val_sz); addr[0] += ms->val_sz; addr[1] += delta;
+            case  3: memcpy(addr[dir], addr[!dir], ms->val_sz); addr[0] += ms->val_sz; addr[1] += delta;
+            case  2: memcpy(addr[dir], addr[!dir], ms->val_sz); addr[0] += ms->val_sz; addr[1] += delta;
+            case  1: memcpy(addr[dir], addr[!dir], ms->val_sz); addr[0] += ms->val_sz; addr[1] += delta;
         } // switch
 
         base_ridx = (row += cnt);

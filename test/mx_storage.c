@@ -740,7 +740,7 @@ Test(Iterator, mitr_init_for_iterating_in_chunk)
     mx_iter_t itr;
 
     {
-        mx_stor_ptr ms = mstr_create(17, 17, 1, 8, 16);
+        mx_stor_ptr ms = mstr_create(17, 17, 4, 8, 16);
 
         mitr_init_for_iterating_in_chunk(&itr, ms, 0, 0);
 
@@ -766,7 +766,7 @@ Test(Iterator, mitr_init_for_iterating_in_chunk)
     }
 
     {
-        mx_stor_ptr ms = mstr_create(17, 17, 1, 8, 16);
+        mx_stor_ptr ms = mstr_create(17, 17, 4, 8, 16);
 
         mitr_init_for_iterating_in_chunk(&itr, ms, 0, 1);
 
@@ -792,7 +792,7 @@ Test(Iterator, mitr_init_for_iterating_in_chunk)
     }
 
     {
-        mx_stor_ptr ms = mstr_create(17, 17, 1, 8, 16);
+        mx_stor_ptr ms = mstr_create(17, 17, 4, 8, 16);
 
         mitr_init_for_iterating_in_chunk(&itr, ms, 1, 0);
 
@@ -818,7 +818,7 @@ Test(Iterator, mitr_init_for_iterating_in_chunk)
     }
 
     {
-        mx_stor_ptr ms = mstr_create(17, 17, 1, 8, 16);
+        mx_stor_ptr ms = mstr_create(17, 17, 4, 8, 16);
 
         mitr_init_for_iterating_in_chunk(&itr, ms, 1, 1);
 
@@ -876,7 +876,7 @@ Test(Iterator, mitr_set_default_f32)
 
 Test(Iterator, next_position_in_row)
 {
-    mx_stor_ptr ms = mstr_create(17, 17, 1, 8, 16);
+    mx_stor_ptr ms = mstr_create(17, 17, 4, 8, 16);
     
     {
         mx_iter_t itr;
@@ -956,7 +956,7 @@ Test(Iterator, next_position_in_row)
 
 Test(Iterator, next_position_in_column)
 {
-    mx_stor_ptr ms = mstr_create(17, 17, 1, 8, 16);
+    mx_stor_ptr ms = mstr_create(17, 17, 4, 8, 16);
     
     {
         mx_iter_t itr;
@@ -1034,11 +1034,252 @@ Test(Iterator, next_position_in_column)
     mstr_destroy(ms);
 }
 
-/*
+Test(Iterator, mitr_get_vectors)
+{
+    mx_stor_ptr ms = mstr_create(18, 18, 4, 8, 16);
+
     for (uint32_t i = 0; i < mstr_rows(ms); i += 1) {
         for (uint32_t j = 0; j < mstr_columns(ms); j += 1) {
-            mstr_set_i32(ms, i, j, i * mstr_columns(ms) + j);
+            mstr_set_i32(ms, i, j, i * 100 + j);
         } // for
     } // for
-*/
 
+    // Case: Get only one vector and don't move to next.
+    {
+        mx_iter_t itr;
+        mitr_init_for_iterating_in_rows(&itr, ms, 0, 0, 18, 18);
+
+        v8si_t vec;
+        mitr_get_vectors(&itr, false, 1, &vec, 0, 0);
+
+        check_i32_value(mx_type_val(vec)[0], 0);
+        check_i32_value(mx_type_val(vec)[1], 1);
+        check_i32_value(mx_type_val(vec)[2], 2);
+        check_i32_value(mx_type_val(vec)[3], 3);
+        check_i32_value(mx_type_val(vec)[4], 4);
+        check_i32_value(mx_type_val(vec)[5], 5);
+        check_i32_value(mx_type_val(vec)[6], 6);
+        check_i32_value(mx_type_val(vec)[7], 7);
+
+        check_value(mitr_row(&itr), 0);
+        check_value(mitr_column(&itr), 0);
+    }
+
+    // Case: Get five vectors and don't move to next.
+    {
+        mx_iter_t itr;
+        mitr_init_for_iterating_in_rows(&itr, ms, 0, 0, 18, 18);
+        mitr_set_default_i32(&itr, 9999);
+
+        v8si_t vec[5];
+        mitr_get_vectors(&itr, false, 5, &vec, 0, 0, -1, 0, 1, 0, 0, -1, 0, 1);
+
+        check_i32_value(mx_type_val(vec[0])[0], 0);
+        check_i32_value(mx_type_val(vec[0])[1], 1);
+        check_i32_value(mx_type_val(vec[0])[2], 2);
+        check_i32_value(mx_type_val(vec[0])[3], 3);
+        check_i32_value(mx_type_val(vec[0])[4], 4);
+        check_i32_value(mx_type_val(vec[0])[5], 5);
+        check_i32_value(mx_type_val(vec[0])[6], 6);
+        check_i32_value(mx_type_val(vec[0])[7], 7);
+
+        check_i32_value(mx_type_val(vec[1])[0], 9999);
+        check_i32_value(mx_type_val(vec[1])[1], 9999);
+        check_i32_value(mx_type_val(vec[1])[2], 9999);
+        check_i32_value(mx_type_val(vec[1])[3], 9999);
+        check_i32_value(mx_type_val(vec[1])[4], 9999);
+        check_i32_value(mx_type_val(vec[1])[5], 9999);
+        check_i32_value(mx_type_val(vec[1])[6], 9999);
+        check_i32_value(mx_type_val(vec[1])[7], 9999);
+
+        check_i32_value(mx_type_val(vec[2])[0], 100);
+        check_i32_value(mx_type_val(vec[2])[1], 101);
+        check_i32_value(mx_type_val(vec[2])[2], 102);
+        check_i32_value(mx_type_val(vec[2])[3], 103);
+        check_i32_value(mx_type_val(vec[2])[4], 104);
+        check_i32_value(mx_type_val(vec[2])[5], 105);
+        check_i32_value(mx_type_val(vec[2])[6], 106);
+        check_i32_value(mx_type_val(vec[2])[7], 107);
+
+        check_i32_value(mx_type_val(vec[3])[0], 9999);
+        check_i32_value(mx_type_val(vec[3])[1], 0);
+        check_i32_value(mx_type_val(vec[3])[2], 1);
+        check_i32_value(mx_type_val(vec[3])[3], 2);
+        check_i32_value(mx_type_val(vec[3])[4], 3);
+        check_i32_value(mx_type_val(vec[3])[5], 4);
+        check_i32_value(mx_type_val(vec[3])[6], 5);
+        check_i32_value(mx_type_val(vec[3])[7], 6);
+
+        check_i32_value(mx_type_val(vec[4])[0], 1);
+        check_i32_value(mx_type_val(vec[4])[1], 2);
+        check_i32_value(mx_type_val(vec[4])[2], 3);
+        check_i32_value(mx_type_val(vec[4])[3], 4);
+        check_i32_value(mx_type_val(vec[4])[4], 5);
+        check_i32_value(mx_type_val(vec[4])[5], 6);
+        check_i32_value(mx_type_val(vec[4])[6], 7);
+        check_i32_value(mx_type_val(vec[4])[7], 8);
+
+        check_value(mitr_row(&itr), 0);
+        check_value(mitr_column(&itr), 0);
+    }
+
+    // Case: Get five vectors and move to next, then get another five vectors, and again.
+    {
+        mx_iter_t itr;
+        mitr_init_for_iterating_in_rows(&itr, ms, 0, 0, 18, 18);
+        mitr_set_default_i32(&itr, 9999);
+
+        v8si_t vec[5];
+        mitr_get_vectors(&itr, true, 5, &vec, 0, 0, -1, 0, 1, 0, 0, -1, 0, 1);
+
+        check_i32_value(mx_type_val(vec[0])[0], 0);
+        check_i32_value(mx_type_val(vec[0])[1], 1);
+        check_i32_value(mx_type_val(vec[0])[2], 2);
+        check_i32_value(mx_type_val(vec[0])[3], 3);
+        check_i32_value(mx_type_val(vec[0])[4], 4);
+        check_i32_value(mx_type_val(vec[0])[5], 5);
+        check_i32_value(mx_type_val(vec[0])[6], 6);
+        check_i32_value(mx_type_val(vec[0])[7], 7);
+
+        check_i32_value(mx_type_val(vec[1])[0], 9999);
+        check_i32_value(mx_type_val(vec[1])[1], 9999);
+        check_i32_value(mx_type_val(vec[1])[2], 9999);
+        check_i32_value(mx_type_val(vec[1])[3], 9999);
+        check_i32_value(mx_type_val(vec[1])[4], 9999);
+        check_i32_value(mx_type_val(vec[1])[5], 9999);
+        check_i32_value(mx_type_val(vec[1])[6], 9999);
+        check_i32_value(mx_type_val(vec[1])[7], 9999);
+
+        check_i32_value(mx_type_val(vec[2])[0], 100);
+        check_i32_value(mx_type_val(vec[2])[1], 101);
+        check_i32_value(mx_type_val(vec[2])[2], 102);
+        check_i32_value(mx_type_val(vec[2])[3], 103);
+        check_i32_value(mx_type_val(vec[2])[4], 104);
+        check_i32_value(mx_type_val(vec[2])[5], 105);
+        check_i32_value(mx_type_val(vec[2])[6], 106);
+        check_i32_value(mx_type_val(vec[2])[7], 107);
+
+        check_i32_value(mx_type_val(vec[3])[0], 9999);
+        check_i32_value(mx_type_val(vec[3])[1], 0);
+        check_i32_value(mx_type_val(vec[3])[2], 1);
+        check_i32_value(mx_type_val(vec[3])[3], 2);
+        check_i32_value(mx_type_val(vec[3])[4], 3);
+        check_i32_value(mx_type_val(vec[3])[5], 4);
+        check_i32_value(mx_type_val(vec[3])[6], 5);
+        check_i32_value(mx_type_val(vec[3])[7], 6);
+
+        check_i32_value(mx_type_val(vec[4])[0], 1);
+        check_i32_value(mx_type_val(vec[4])[1], 2);
+        check_i32_value(mx_type_val(vec[4])[2], 3);
+        check_i32_value(mx_type_val(vec[4])[3], 4);
+        check_i32_value(mx_type_val(vec[4])[4], 5);
+        check_i32_value(mx_type_val(vec[4])[5], 6);
+        check_i32_value(mx_type_val(vec[4])[6], 7);
+        check_i32_value(mx_type_val(vec[4])[7], 8);
+
+        check_value(mitr_row(&itr), 0);
+        check_value(mitr_column(&itr), 8);
+
+        mitr_get_vectors(&itr, true, 5, &vec, 0, 0, -1, 0, 1, 0, 0, -1, 0, 1);
+
+        check_i32_value(mx_type_val(vec[0])[0], 8);
+        check_i32_value(mx_type_val(vec[0])[1], 9);
+        check_i32_value(mx_type_val(vec[0])[2], 10);
+        check_i32_value(mx_type_val(vec[0])[3], 11);
+        check_i32_value(mx_type_val(vec[0])[4], 12);
+        check_i32_value(mx_type_val(vec[0])[5], 13);
+        check_i32_value(mx_type_val(vec[0])[6], 14);
+        check_i32_value(mx_type_val(vec[0])[7], 15);
+
+        check_i32_value(mx_type_val(vec[1])[0], 9999);
+        check_i32_value(mx_type_val(vec[1])[1], 9999);
+        check_i32_value(mx_type_val(vec[1])[2], 9999);
+        check_i32_value(mx_type_val(vec[1])[3], 9999);
+        check_i32_value(mx_type_val(vec[1])[4], 9999);
+        check_i32_value(mx_type_val(vec[1])[5], 9999);
+        check_i32_value(mx_type_val(vec[1])[6], 9999);
+        check_i32_value(mx_type_val(vec[1])[7], 9999);
+
+        check_i32_value(mx_type_val(vec[2])[0], 108);
+        check_i32_value(mx_type_val(vec[2])[1], 109);
+        check_i32_value(mx_type_val(vec[2])[2], 110);
+        check_i32_value(mx_type_val(vec[2])[3], 111);
+        check_i32_value(mx_type_val(vec[2])[4], 112);
+        check_i32_value(mx_type_val(vec[2])[5], 113);
+        check_i32_value(mx_type_val(vec[2])[6], 114);
+        check_i32_value(mx_type_val(vec[2])[7], 115);
+
+        check_i32_value(mx_type_val(vec[3])[0], 7);
+        check_i32_value(mx_type_val(vec[3])[1], 8);
+        check_i32_value(mx_type_val(vec[3])[2], 9);
+        check_i32_value(mx_type_val(vec[3])[3], 10);
+        check_i32_value(mx_type_val(vec[3])[4], 11);
+        check_i32_value(mx_type_val(vec[3])[5], 12);
+        check_i32_value(mx_type_val(vec[3])[6], 13);
+        check_i32_value(mx_type_val(vec[3])[7], 14);
+
+        check_i32_value(mx_type_val(vec[4])[0], 9);
+        check_i32_value(mx_type_val(vec[4])[1], 10);
+        check_i32_value(mx_type_val(vec[4])[2], 11);
+        check_i32_value(mx_type_val(vec[4])[3], 12);
+        check_i32_value(mx_type_val(vec[4])[4], 13);
+        check_i32_value(mx_type_val(vec[4])[5], 14);
+        check_i32_value(mx_type_val(vec[4])[6], 15);
+        check_i32_value(mx_type_val(vec[4])[7], 16);
+
+        check_value(mitr_row(&itr), 0);
+        check_value(mitr_column(&itr), 16);
+
+        mitr_get_vectors(&itr, true, 5, &vec, 0, 0, -1, 0, 1, 0, 0, -1, 0, 1);
+
+        check_i32_value(mx_type_val(vec[0])[0], 16);
+        check_i32_value(mx_type_val(vec[0])[1], 17);
+        check_i32_value(mx_type_val(vec[0])[2], 9999);
+        check_i32_value(mx_type_val(vec[0])[3], 9999);
+        check_i32_value(mx_type_val(vec[0])[4], 9999);
+        check_i32_value(mx_type_val(vec[0])[5], 9999);
+        check_i32_value(mx_type_val(vec[0])[6], 9999);
+        check_i32_value(mx_type_val(vec[0])[7], 9999);
+
+        check_i32_value(mx_type_val(vec[1])[0], 9999);
+        check_i32_value(mx_type_val(vec[1])[1], 9999);
+        check_i32_value(mx_type_val(vec[1])[2], 9999);
+        check_i32_value(mx_type_val(vec[1])[3], 9999);
+        check_i32_value(mx_type_val(vec[1])[4], 9999);
+        check_i32_value(mx_type_val(vec[1])[5], 9999);
+        check_i32_value(mx_type_val(vec[1])[6], 9999);
+        check_i32_value(mx_type_val(vec[1])[7], 9999);
+
+        check_i32_value(mx_type_val(vec[2])[0], 116);
+        check_i32_value(mx_type_val(vec[2])[1], 117);
+        check_i32_value(mx_type_val(vec[2])[2], 9999);
+        check_i32_value(mx_type_val(vec[2])[3], 9999);
+        check_i32_value(mx_type_val(vec[2])[4], 9999);
+        check_i32_value(mx_type_val(vec[2])[5], 9999);
+        check_i32_value(mx_type_val(vec[2])[6], 9999);
+        check_i32_value(mx_type_val(vec[2])[7], 9999);
+
+        check_i32_value(mx_type_val(vec[3])[0], 15);
+        check_i32_value(mx_type_val(vec[3])[1], 16);
+        check_i32_value(mx_type_val(vec[3])[2], 17);
+        check_i32_value(mx_type_val(vec[3])[3], 9999);
+        check_i32_value(mx_type_val(vec[3])[4], 9999);
+        check_i32_value(mx_type_val(vec[3])[5], 9999);
+        check_i32_value(mx_type_val(vec[3])[6], 9999);
+        check_i32_value(mx_type_val(vec[3])[7], 9999);
+
+        check_i32_value(mx_type_val(vec[4])[0], 17);
+        check_i32_value(mx_type_val(vec[4])[1], 9999);
+        check_i32_value(mx_type_val(vec[4])[2], 9999);
+        check_i32_value(mx_type_val(vec[4])[3], 9999);
+        check_i32_value(mx_type_val(vec[4])[4], 9999);
+        check_i32_value(mx_type_val(vec[4])[5], 9999);
+        check_i32_value(mx_type_val(vec[4])[6], 9999);
+        check_i32_value(mx_type_val(vec[4])[7], 9999);
+
+        check_value(mitr_row(&itr), 1);
+        check_value(mitr_column(&itr), 0);
+    }
+
+    mstr_destroy(ms);
+}

@@ -377,7 +377,7 @@ static void transfer_vectors_in_row(mx_iter_ptr itr, uint32_t dir, uint32_t vn, 
         int32_t col_off = va_arg(args2, int32_t);
 
         mstr_calibrate_index(itr->ms, &row, &col, &row_off, &col_off);
-        if (abs(col_off) <= itr->ms->pck_len) {
+        if (row_off == 0 && abs(col_off) <= itr->ms->pck_len) {
             mstr_transfer_row_vector(itr->ms, row, col, abs(col_off), dir, vec);
         } // if
 
@@ -402,7 +402,7 @@ static void transfer_vectors_in_column(mx_iter_ptr itr, uint32_t dir, uint32_t v
         int32_t col_off = va_arg(args2, int32_t);
 
         mstr_calibrate_index(itr->ms, &row, &col, &row_off, &col_off);
-        if (abs(row_off) <= itr->ms->pck_len) {
+        if (col_off == 0 && abs(row_off) <= itr->ms->pck_len) {
             mstr_transfer_column_vector(itr->ms, row, col, abs(row_off), dir, vec);
         } // if
 

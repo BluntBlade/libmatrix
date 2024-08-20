@@ -141,8 +141,6 @@ void mb32_i32_fill(mb32_stor_ptr ms, int32_t val)
     int32_t cnum_r = ms->cnum - (ms->cnum & ~(MB32_CHK_LEN - 1));
 
     mb32_chk_ptr dchk = ms->chks;
-    mb32_chk_ptr ichk = ms->chks; // Used to fill inner chunks.
-    mb32_chk_ptr rchk = ms->chks + chk_cnum - 1; // Used to fill right-edge chunks.
 
 FILL_A_LINE_OF_CHUNKS:
     // Fill the first chunk.
@@ -150,23 +148,26 @@ FILL_A_LINE_OF_CHUNKS:
 
     if (chk_cnum > 1) {
         if (chk_cnum > 2) {
-            i32_chk_copy(dchk + 1, chk_cnum - 2, 0, ichk);
+            i32_chk_copy(dchk + 1, chk_cnum - 2, 0, dchk);
         } // if
-        i32_chk_fill(rchk, rnum, cnum_r, val);
+        i32_chk_fill(dchk + chk_cnum - 1, rnum, cnum_r, val);
     } // if
 
     if (end) { return; } // if
 
     // Copy the [2, m - 1] lines.
-    dchk += chk_cnum;
     if (chk_rnum > 2) {
-        for (int32_t i = 1; i < chk_rnum - 2; i += 1) {
+        mb32_chk_ptr ichk = ms->chks; // Used to fill inner chunks.
+        mb32_chk_ptr rchk = ms->chks + chk_cnum - 1; // Used to fill right-edge chunks.
+
+        for (int32_t i = 1; i < chk_rnum - 1; i += 1) {
             i32_chk_copy(dchk + i * chk_cnum, chk_cnum - 1, 0, ichk);
         } // for
-        i32_chk_copy(dchk + chk_cnum - 1, chk_rnum - 2, chk_cnum, rchk);
+        i32_chk_copy(dchk + 1 * chk_cnum + chk_cnum - 1, chk_rnum - 2, chk_cnum, rchk);
     } // if
 
     // Fill the bottom line.
+    dchk += (chk_rnum - 1) * chk_cnum;
     rnum = ms->rnum - (ms->rnum & ~(MB32_CHK_LEN - 1)); // The number of rows in the last line.
     end = true;
     goto FILL_A_LINE_OF_CHUNKS;

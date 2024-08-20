@@ -106,16 +106,12 @@ extern void mb32_i32_mul_scalar(mb32_stor_ptr ms, mb32_stor_ptr lhs, int32_t rhs
 
 inline static int32_t mb32_i32_get(mb32_stor_ptr ms, int32_t ridx, int32_t cidx)
 {
-    assert(0 <= ridx && ridx < ms->rnum);
-    assert(0 <= cidx && cidx < ms->cnum);
     mb32_chk_ptr schk = mb32_chk_locate(ms, ridx, cidx);
     return schk->arr.i32[mb32_chk_delta(ridx)][mb32_chk_delta(cidx)];
 } // mb32_i32_get
 
 inline static void mb32_i32_set(mb32_stor_ptr ms, int32_t ridx, int32_t cidx, int32_t val)
 {
-    assert(0 <= ridx && ridx < ms->rnum);
-    assert(0 <= cidx && cidx < ms->cnum);
     mb32_chk_ptr schk = mb32_chk_locate(ms, ridx, cidx);
     schk->arr.i32[mb32_chk_delta(ridx)][mb32_chk_delta(cidx)] = val;
 } // mb32_i32_set

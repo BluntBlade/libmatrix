@@ -8,6 +8,9 @@
 #define check_value(expect, val) \
     cr_expect((expect) == (val), "Wrong value - Expect %d, got %d from '%s'.", expect, val, #val)
 
+#define check_value_at(expect, val, x, y) \
+    cr_expect((expect) == (val), "Wrong value - Expect %d, got %d from '%s' at (%d,%d).", expect, val, #val, x, y)
+
 #define check_pointer(expect, val) \
     cr_expect((expect) == (val), "Wrong value - Expect %p, got %p from '%s'.", expect, val, #val)
 
@@ -337,4 +340,167 @@ Test(Utilities, mb32_chk_delta)
     check_value(2, mb32_chk_delta(2));
     check_value(0, mb32_chk_delta(8));
     check_value(1, mb32_chk_delta(9));
+}
+
+Test(Initialization, mb32_i32_init_zeros)
+{
+    // Case: 1x2 matrix
+    {
+        mb32_stor_t ms;
+
+        mb32_init(&ms, 1, 2, 4, 8);
+        mb32_i32_init_zeros(&ms);
+
+        for (int32_t i = 0; i < mb32_rnum(&ms); i += 1) {
+            for (int32_t j = 0; j < mb32_cnum(&ms); j += 1) {
+                check_value_at(0, mb32_i32_get(&ms, i, j), i, j);
+            } // for
+        } // for
+
+        mb32_clean(&ms);
+    }
+
+    // Case: 1x8 matrix
+    {
+        mb32_stor_t ms;
+
+        mb32_init(&ms, 1, 8, 4, 8);
+        mb32_i32_init_zeros(&ms);
+
+        for (int32_t i = 0; i < mb32_rnum(&ms); i += 1) {
+            for (int32_t j = 0; j < mb32_cnum(&ms); j += 1) {
+                check_value_at(0, mb32_i32_get(&ms, i, j), i, j);
+            } // for
+        } // for
+
+        mb32_clean(&ms);
+    }
+
+    // Case: 1x9 matrix
+    {
+        mb32_stor_t ms;
+
+        mb32_init(&ms, 1, 9, 4, 8);
+        mb32_i32_init_zeros(&ms);
+
+        for (int32_t i = 0; i < mb32_rnum(&ms); i += 1) {
+            for (int32_t j = 0; j < mb32_cnum(&ms); j += 1) {
+                check_value_at(0, mb32_i32_get(&ms, i, j), i, j);
+            } // for
+        } // for
+
+        mb32_clean(&ms);
+    }
+
+    // Case: 2x1 matrix
+    {
+        mb32_stor_t ms;
+
+        mb32_init(&ms, 2, 1, 4, 8);
+        mb32_i32_init_zeros(&ms);
+
+        for (int32_t i = 0; i < mb32_rnum(&ms); i += 1) {
+            for (int32_t j = 0; j < mb32_cnum(&ms); j += 1) {
+                check_value_at(0, mb32_i32_get(&ms, i, j), i, j);
+            } // for
+        } // for
+
+        mb32_clean(&ms);
+    }
+
+    // Case: 8x1 matrix
+    {
+        mb32_stor_t ms;
+
+        mb32_init(&ms, 8, 1, 4, 8);
+        mb32_i32_init_zeros(&ms);
+
+        for (int32_t i = 0; i < mb32_rnum(&ms); i += 1) {
+            for (int32_t j = 0; j < mb32_cnum(&ms); j += 1) {
+                check_value_at(0, mb32_i32_get(&ms, i, j), i, j);
+            } // for
+        } // for
+
+        mb32_clean(&ms);
+    }
+
+    // Case: 9x1 matrix
+    {
+        mb32_stor_t ms;
+
+        mb32_init(&ms, 9, 1, 4, 8);
+        mb32_i32_init_zeros(&ms);
+
+        for (int32_t i = 0; i < mb32_rnum(&ms); i += 1) {
+            for (int32_t j = 0; j < mb32_cnum(&ms); j += 1) {
+                check_value_at(0, mb32_i32_get(&ms, i, j), i, j);
+            } // for
+        } // for
+
+        mb32_clean(&ms);
+    }
+
+    // Case: 8x8 matrix
+    {
+        mb32_stor_t ms;
+
+        mb32_init(&ms, 8, 8, 4, 8);
+        mb32_i32_init_zeros(&ms);
+
+        for (int32_t i = 0; i < mb32_rnum(&ms); i += 1) {
+            for (int32_t j = 0; j < mb32_cnum(&ms); j += 1) {
+                check_value_at(0, mb32_i32_get(&ms, i, j), i, j);
+            } // for
+        } // for
+
+        mb32_clean(&ms);
+    }
+
+    // Case: 9x9 matrix
+    {
+        mb32_stor_t ms;
+
+        mb32_init(&ms, 9, 9, 4, 8);
+        mb32_i32_init_zeros(&ms);
+
+        for (int32_t i = 0; i < mb32_rnum(&ms); i += 1) {
+            for (int32_t j = 0; j < mb32_cnum(&ms); j += 1) {
+                check_value_at(0, mb32_i32_get(&ms, i, j), i, j);
+            } // for
+        } // for
+
+        mb32_clean(&ms);
+    }
+
+    // Case: 17x17 matrix
+    {
+        mb32_stor_t ms;
+
+        mb32_init(&ms, 9, 9, 4, 8);
+        mb32_i32_init_zeros(&ms);
+
+        for (int32_t i = 0; i < mb32_rnum(&ms); i += 1) {
+            for (int32_t j = 0; j < mb32_cnum(&ms); j += 1) {
+                check_value_at(0, mb32_i32_get(&ms, i, j), i, j);
+            } // for
+        } // for
+
+        mb32_clean(&ms);
+    }
+
+    // Case: 17x17 matrix
+    {
+        mb32_stor_t ms;
+
+        mb32_init(&ms, 17, 17, 4, 8);
+        mb32_i32_init_zeros(&ms);
+
+        for (int32_t i = 0; i < mb32_rnum(&ms); i += 1) {
+            for (int32_t j = 0; j < mb32_cnum(&ms); j += 1) {
+                check_value_at(0, mb32_i32_get(&ms, i, j), i, j);
+            } // for
+        } // for
+
+        mb32_clean(&ms);
+    }
 }

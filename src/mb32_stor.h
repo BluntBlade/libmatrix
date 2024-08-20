@@ -81,14 +81,15 @@ inline static size_t mb32_padded_bytes(mb32_stor_ptr ms)
     return ms->val_sz * mb32_padded_rnum(ms) * mb32_padded_cnum(ms);
 } // mb32_padded_bytes
 
-inline static mb32_chk_ptr mb32_chk_locate(mb32_stor_ptr ms, int32_t ridx, int32_t cidx, int32_t * roff, int32_t * coff)
+inline static mb32_chk_ptr mb32_chk_locate(mb32_stor_ptr ms, int32_t ridx, int32_t cidx)
 {
-    int32_t chk_ridx = ridx & ~(MB32_CHK_LEN - 1);
-    int32_t chk_cidx = cidx & ~(MB32_CHK_LEN - 1);
-    *roff = ridx & (MB32_CHK_LEN - 1);
-    *coff = cidx & (MB32_CHK_LEN - 1);
-    return ms->chks + chk_ridx * mb32_chknum_in_width(ms) + chk_cidx;
+    return ms->chks + (ridx / MB32_CHK_LEN) * mb32_chknum_in_width(ms) + (cidx / MB32_CHK_LEN);
 } // mb32_chk_locate
+
+inline static int32_t mb32_chk_delta(int32_t idx)
+{
+    return idx & (MB32_CHK_LEN - 1);
+} // mb32_chk_delta
 
 // ---- Functions processing int32_t elements ---- //
 
@@ -107,20 +108,16 @@ inline static int32_t mb32_i32_get(mb32_stor_ptr ms, int32_t ridx, int32_t cidx)
 {
     assert(0 <= ridx && ridx < ms->rnum);
     assert(0 <= cidx && cidx < ms->cnum);
-    int32_t roff;
-    int32_t coff;
-    mb32_chk_ptr schk = mb32_chk_locate(ms, ridx, cidx, &roff, &coff);
-    return schk->arr.i32[roff][coff];
+    mb32_chk_ptr schk = mb32_chk_locate(ms, ridx, cidx);
+    return schk->arr.i32[mb32_chk_delta(ridx)][mb32_chk_delta(cidx)];
 } // mb32_i32_get
 
 inline static void mb32_i32_set(mb32_stor_ptr ms, int32_t ridx, int32_t cidx, int32_t val)
 {
     assert(0 <= ridx && ridx < ms->rnum);
     assert(0 <= cidx && cidx < ms->cnum);
-    int32_t roff;
-    int32_t coff;
-    mb32_chk_ptr schk = mb32_chk_locate(ms, ridx, cidx, &roff, &coff);
-    schk->arr.i32[roff][coff] = val;
+    mb32_chk_ptr schk = mb32_chk_locate(ms, ridx, cidx);
+    schk->arr.i32[mb32_chk_delta(ridx)][mb32_chk_delta(cidx)] = val;
 } // mb32_i32_set
 
 inline static void mb32_i32_init_ones(mb32_stor_ptr ms)

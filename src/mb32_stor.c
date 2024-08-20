@@ -61,8 +61,8 @@ void mb32_i32_init_identity(mb32_stor_ptr ms)
 
     mb32_chk_ptr dchk = ms->chks + mb32_chknum(ms) - 1;
     int32_t dn = mb32_chknum_in_width(ms);
-    int32_t i = dn;
-    switch (ms->rnum % MB32_CHK_LEN) {
+    int32_t i = dn - 1;
+    switch (ms->rnum & (MB32_CHK_LEN - 1)) {
         // NOTE: This action *NEVER* touch padding elements.
         case 0: do {
                     dchk->arr.i32[7][7] = 1;

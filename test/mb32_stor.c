@@ -687,3 +687,106 @@ Test(Initialization, mb32_i32_init_ones)
         mb32_clean(&ms);
     }
 }
+
+Test(Initialization, mb32_i32_init_identity)
+{
+    // Case: 1x1 matrix
+    {
+        mb32_stor_t ms;
+
+        mb32_init(&ms, 1, 1, 4, 8);
+        mb32_i32_init_identity(&ms);
+
+        for (int32_t i = 0; i < mb32_rnum(&ms); i += 1) {
+            for (int32_t j = 0; j < mb32_cnum(&ms); j += 1) {
+                if (i == j) {
+                    check_value_at(1, mb32_i32_get(&ms, i, j), i, j);
+                } else {
+                    check_value_at(0, mb32_i32_get(&ms, i, j), i, j);
+                } // if
+            } // for
+        } // for
+
+        mb32_clean(&ms);
+    }
+
+    // Case: 7x7 matrix
+    {
+        mb32_stor_t ms;
+
+        mb32_init(&ms, 7, 7, 4, 8);
+        mb32_i32_init_identity(&ms);
+
+        for (int32_t i = 0; i < mb32_rnum(&ms); i += 1) {
+            for (int32_t j = 0; j < mb32_cnum(&ms); j += 1) {
+                if (i == j) {
+                    check_value_at(1, mb32_i32_get(&ms, i, j), i, j);
+                } else {
+                    check_value_at(0, mb32_i32_get(&ms, i, j), i, j);
+                } // if
+            } // for
+        } // for
+
+        mb32_clean(&ms);
+    }
+
+    // Case: 8x8 matrix
+    {
+        mb32_stor_t ms;
+
+        mb32_init(&ms, 8, 8, 4, 8);
+        mb32_i32_init_identity(&ms);
+
+        for (int32_t i = 0; i < mb32_rnum(&ms); i += 1) {
+            for (int32_t j = 0; j < mb32_cnum(&ms); j += 1) {
+                if (i == j) {
+                    check_value_at(1, mb32_i32_get(&ms, i, j), i, j);
+                } else {
+                    check_value_at(0, mb32_i32_get(&ms, i, j), i, j);
+                } // if
+            } // for
+        } // for
+
+        mb32_clean(&ms);
+    }
+
+    // Case: 9x9 matrix
+    {
+        mb32_stor_t ms;
+
+        mb32_init(&ms, 9, 9, 4, 8);
+        mb32_i32_init_identity(&ms);
+
+        for (int32_t i = 0; i < mb32_rnum(&ms); i += 1) {
+            for (int32_t j = 0; j < mb32_cnum(&ms); j += 1) {
+                if (i == j) {
+                    check_value_at(1, mb32_i32_get(&ms, i, j), i, j);
+                } else {
+                    check_value_at(0, mb32_i32_get(&ms, i, j), i, j);
+                } // if
+            } // for
+        } // for
+
+        mb32_clean(&ms);
+    }
+
+    // Case: 17x17 matrix
+    {
+        mb32_stor_t ms;
+
+        mb32_init(&ms, 17, 17, 4, 8);
+        mb32_i32_init_identity(&ms);
+
+        for (int32_t i = 0; i < mb32_rnum(&ms); i += 1) {
+            for (int32_t j = 0; j < mb32_cnum(&ms); j += 1) {
+                if (i == j) {
+                    check_value_at(1, mb32_i32_get(&ms, i, j), i, j);
+                } else {
+                    check_value_at(0, mb32_i32_get(&ms, i, j), i, j);
+                } // if
+            } // for
+        } // for
+
+        mb32_clean(&ms);
+    }
+}

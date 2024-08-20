@@ -1,0 +1,134 @@
+#ifndef MB32_STOR_H
+#define MB32_STOR_H 1
+
+#include <assert.h>
+#include <string.h>
+
+#include "src/mx_types.h"
+#include "src/mx_common.h"
+
+enum {
+    MB32_CHK_LEN    = 8,
+    MB32_ALIGNMENT  = 8 * 4,
+};
+
+typedef union MB32_CHUNK {
+    union {
+        int32_t i32[MB32_CHK_LEN][MB32_CHK_LEN];
+        float   f32[MB32_CHK_LEN][MB32_CHK_LEN];
+    } arr;
+
+    union {
+        v8si_t i32[MB32_CHK_LEN];
+        v8sf_t f32[MB32_CHK_LEN];
+    } pck;
+} mb32_chk_t, *mb32_chk_ptr;
+
+typedef struct MB32_STOR {
+    int16_t     val_sz;             // The size of one value, in bytes.
+    int16_t     vec_len;            // The number of values in one vector.
+    int32_t     rnum;               // The number of rows.
+    int32_t     cnum;               // The number of columns.
+
+    void *          buf;           // Non-aligned address of allocated memory, only for calling free().
+    mb32_chk_ptr    chks;          // Aligned address of allocated memory.
+} mb32_stor_t, *mb32_stor_ptr;
+
+extern mb32_stor_ptr mb32_init(mb32_stor_ptr ms, int32_t rnum, int32_t cnum, uint16_t val_sz, uint16_t vec_len);
+
+inline static void mb32_clean(mb32_stor_ptr ms)
+{
+    free(ms->buf);
+} // mb32_clean
+
+inline static int32_t mb32_rnum(mb32_stor_ptr ms)
+{
+    return ms->rnum;
+} // mb32_rnum
+
+inline static int32_t mb32_cnum(mb32_stor_ptr ms)
+{
+    return ms->cnum;
+} // mb32_cnum
+
+inline static int32_t mb32_padded_rnum(mb32_stor_ptr ms)
+{
+    return mx_ceil_to_multiples_of(ms->rnum, ms->vec_len);
+} // mb32_padded_rnum
+
+inline static int32_t mb32_padded_cnum(mb32_stor_ptr ms)
+{
+    return mx_ceil_to_multiples_of(ms->cnum, ms->vec_len);
+} // mb32_padded_cnum
+
+inline static int32_t mb32_chknum_in_height(mb32_stor_ptr ms)
+{
+    return mb32_padded_rnum(ms) / MB32_CHK_LEN;
+} // mb32_chknum_in_height
+
+inline static int32_t mb32_chknum_in_width(mb32_stor_ptr ms)
+{
+    return mb32_padded_cnum(ms) / MB32_CHK_LEN;
+} // mb32_chknum_in_width
+
+inline static int32_t mb32_chknum(mb32_stor_ptr ms)
+{
+    return mb32_chknum_in_height(ms) * mb32_chknum_in_width(ms);
+} // mb32_chknum
+
+inline static size_t mb32_padded_bytes(mb32_stor_ptr ms)
+{
+    return ms->val_sz * mb32_padded_rnum(ms) * mb32_padded_cnum(ms);
+} // mb32_padded_bytes
+
+inline static mb32_chk_ptr mb32_chk_locate(mb32_stor_ptr ms, int32_t ridx, int32_t cidx, int32_t * roff, int32_t * coff)
+{
+    int32_t chk_ridx = ridx & ~(MB32_CHK_LEN - 1);
+    int32_t chk_cidx = cidx & ~(MB32_CHK_LEN - 1);
+    *roff = ridx & (MB32_CHK_LEN - 1);
+    *coff = cidx & (MB32_CHK_LEN - 1);
+    return ms->chks + chk_ridx * mb32_chknum_in_width(ms) + chk_cidx;
+} // mb32_chk_locate
+
+// ---- Functions processing int32_t elements ---- //
+
+extern void mb32_i32_init_zeros(mb32_stor_ptr ms);
+extern void mb32_i32_init_identity(mb32_stor_ptr ms);
+
+extern void mb32_i32_fill(mb32_stor_ptr ms, int32_t val);
+extern void mb32_i32_transpose(mb32_stor_ptr ms);
+
+extern void mb32_i32_add(mb32_stor_ptr ms, mb32_stor_ptr lhs, mb32_stor_ptr rhs);
+extern void mb32_i32_sub(mb32_stor_ptr ms, mb32_stor_ptr lhs, mb32_stor_ptr rhs);
+extern void mb32_i32_mul(mb32_stor_ptr ms, mb32_stor_ptr lhs, mb32_stor_ptr rhs);
+extern void mb32_i32_mul_scalar(mb32_stor_ptr ms, mb32_stor_ptr lhs, int32_t rhs);
+
+inline static int32_t mb32_i32_get(mb32_stor_ptr ms, int32_t ridx, int32_t cidx)
+{
+    assert(0 <= ridx && ridx < ms->rnum);
+    assert(0 <= cidx && cidx < ms->cnum);
+    int32_t roff;
+    int32_t coff;
+    mb32_chk_ptr schk = mb32_chk_locate(ms, ridx, cidx, &roff, &coff);
+    return schk->arr.i32[roff][coff];
+} // mb32_i32_get
+
+inline static void mb32_i32_set(mb32_stor_ptr ms, int32_t ridx, int32_t cidx, int32_t val)
+{
+    assert(0 <= ridx && ridx < ms->rnum);
+    assert(0 <= cidx && cidx < ms->cnum);
+    int32_t roff;
+    int32_t coff;
+    mb32_chk_ptr schk = mb32_chk_locate(ms, ridx, cidx, &roff, &coff);
+    schk->arr.i32[roff][coff] = val;
+} // mb32_i32_set
+
+inline static void mb32_i32_init_ones(mb32_stor_ptr ms)
+{
+    mb32_i32_fill(ms, 1);
+} // mb32_i32_init_ones
+
+// ---- Functions processing float elements ---- //
+
+#endif // MB32_STOR_H
+

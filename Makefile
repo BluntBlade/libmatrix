@@ -27,7 +27,8 @@ SRC = src/mx_types.c \
       src/mx_expression.c \
       src/mx_utils.c \
       src/i32_matrix.c \
-      src/f32_matrix.c
+      src/f32_matrix.c \
+      src/mb32_stor.c
 OBJ = $(SRC:.c=.o)
 TARGET = bin/libmatrix.dylib
 
@@ -38,6 +39,7 @@ TARGET = bin/libmatrix.dylib
 TEST_STOR_SRC = test/mx_storage.c \
                 test/v8si_storage.c \
                 test/v8sf_storage.c \
+                test/mb32_stor.c \
                 src/mx_types.c \
                 src/mx_storage.c \
                 src/mx_v8si.c \
@@ -82,6 +84,8 @@ $(TEST_OBJ) : $(SRC)
 test/v8si_operation.o : src/mx_storage.c src/mx_v8si.c
 
 test/v8sf_operation.o : src/mx_storage.c src/mx_v8sf.c
+
+test/mb32_stor.o : src/mb32_stor.c
 
 $(TEST_STOR_TARGET) : $(TEST_STOR_OBJ)
 	gcc -o $@ $(TEST_STOR_OBJ) $(LDFLAGS) $(LIBS) -lcriterion

@@ -39,7 +39,6 @@ TARGET = bin/libmatrix.dylib
 TEST_STOR_SRC = test/mx_storage.c \
                 test/v8si_storage.c \
                 test/v8sf_storage.c \
-                test/mb32_stor.c \
                 src/mx_types.c \
                 src/mx_storage.c \
                 src/mx_v8si.c \
@@ -60,6 +59,11 @@ TEST_UTIL_SRC = test/utils.c \
 TEST_UTIL_OBJ = $(TEST_UTIL_SRC:.c=.o)
 TEST_UTIL_TARGET = test/utils.out
 
+TEST_MB32_SRC = test/mb32_stor.c \
+                src/mx_types.c
+TEST_MB32_OBJ = $(TEST_MB32_SRC:.c=.o)
+TEST_MB32_TARGET = test/mb32.out
+
 BM_MATRIX_MULTIPLY_SRC = benchmark/matrix_multiply.c $(SRC)
 BM_MATRIX_MULTIPLY_OBJ = $(BM_MATRIX_MULTIPLY_SRC:.c=.o)
 BM_MATRIX_MULTIPLY = benchmark/matrix_multiply.out
@@ -67,7 +71,7 @@ BM_MATRIX_MULTIPLY = benchmark/matrix_multiply.out
 .PHONY : all test clean
 
 all : $(TARGET)
-test : $(TEST_STOR_TARGET) $(TEST_OPER_TARGET) $(TEST_UTIL_TARGET)
+test : $(TEST_STOR_TARGET) $(TEST_OPER_TARGET) $(TEST_UTIL_TARGET) $(TEST_MB32_TARGET)
 benchmark : $(BM_MATRIX_MULTIPLY)
 
 clean :
@@ -95,6 +99,9 @@ $(TEST_OPER_TARGET) : $(TEST_OPER_OBJ)
 
 $(TEST_UTIL_TARGET) : $(TEST_UTIL_OBJ)
 	gcc -o $@ $(TEST_UTIL_OBJ) $(LDFLAGS) $(LIBS) -lcriterion
+
+$(TEST_MB32_TARGET) : $(TEST_MB32_OBJ)
+	gcc -o $@ $(TEST_MB32_OBJ) $(LDFLAGS) $(LIBS) -lcriterion
 
 $(BM_MATRIX_MULTIPLY) : $(BM_MATRIX_MULTIPLY_OBJ)
 	gcc -o $@ $^ $(LDFLAGS) $(LIBS)

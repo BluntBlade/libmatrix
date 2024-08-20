@@ -11,7 +11,7 @@
 #define check_non_null(val) \
     cr_expect((val) != NULL, "Wrong value - Expect NON-NULL, got NULL.")
 
-Test(MB32, Initialization)
+Test(Initialization, mb32_init)
 {
     // mb32_init
     {
@@ -31,7 +31,7 @@ Test(MB32, Initialization)
     }
 }
 
-Test(MB32, PropertyAccess)
+Test(PropertyAccess, properties)
 {
     // Case: 1x2 matrix
     {
@@ -45,6 +45,7 @@ Test(MB32, PropertyAccess)
         check_value(8, mb32_padded_cnum(&ms));
         check_value(1, mb32_chknum_in_height(&ms));
         check_value(1, mb32_chknum_in_width(&ms));
+        check_value(1, mb32_chknum(&ms));
         check_value(256, mb32_padded_bytes(&ms));
     }
 
@@ -60,6 +61,7 @@ Test(MB32, PropertyAccess)
         check_value(8, mb32_padded_cnum(&ms));
         check_value(1, mb32_chknum_in_height(&ms));
         check_value(1, mb32_chknum_in_width(&ms));
+        check_value(1, mb32_chknum(&ms));
         check_value(256, mb32_padded_bytes(&ms));
     }
 
@@ -75,6 +77,7 @@ Test(MB32, PropertyAccess)
         check_value(16, mb32_padded_cnum(&ms));
         check_value(1, mb32_chknum_in_height(&ms));
         check_value(2, mb32_chknum_in_width(&ms));
+        check_value(2, mb32_chknum(&ms));
         check_value(512, mb32_padded_bytes(&ms));
     }
 
@@ -90,6 +93,7 @@ Test(MB32, PropertyAccess)
         check_value(8, mb32_padded_cnum(&ms));
         check_value(1, mb32_chknum_in_height(&ms));
         check_value(1, mb32_chknum_in_width(&ms));
+        check_value(1, mb32_chknum(&ms));
         check_value(256, mb32_padded_bytes(&ms));
     }
 
@@ -105,6 +109,7 @@ Test(MB32, PropertyAccess)
         check_value(8, mb32_padded_cnum(&ms));
         check_value(1, mb32_chknum_in_height(&ms));
         check_value(1, mb32_chknum_in_width(&ms));
+        check_value(1, mb32_chknum(&ms));
         check_value(256, mb32_padded_bytes(&ms));
     }
 
@@ -120,6 +125,7 @@ Test(MB32, PropertyAccess)
         check_value(8, mb32_padded_cnum(&ms));
         check_value(2, mb32_chknum_in_height(&ms));
         check_value(1, mb32_chknum_in_width(&ms));
+        check_value(2, mb32_chknum(&ms));
         check_value(512, mb32_padded_bytes(&ms));
     }
 
@@ -135,6 +141,7 @@ Test(MB32, PropertyAccess)
         check_value(8, mb32_padded_cnum(&ms));
         check_value(1, mb32_chknum_in_height(&ms));
         check_value(1, mb32_chknum_in_width(&ms));
+        check_value(1, mb32_chknum(&ms));
         check_value(256, mb32_padded_bytes(&ms));
     }
 
@@ -150,6 +157,15 @@ Test(MB32, PropertyAccess)
         check_value(16, mb32_padded_cnum(&ms));
         check_value(2, mb32_chknum_in_height(&ms));
         check_value(2, mb32_chknum_in_width(&ms));
+        check_value(4, mb32_chknum(&ms));
         check_value(1024, mb32_padded_bytes(&ms));
     }
+}
+
+Test(Utilities, mb32_chk_delta)
+{
+    check_value(1, mb32_chk_delta(1));
+    check_value(2, mb32_chk_delta(2));
+    check_value(0, mb32_chk_delta(8));
+    check_value(1, mb32_chk_delta(9));
 }

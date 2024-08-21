@@ -102,7 +102,7 @@ extern void mb32_i32_transpose(mb32_stor_ptr ms, mb32_stor_ptr src);
 extern void mb32_i32_add(mb32_stor_ptr ms, mb32_stor_ptr lhs, mb32_stor_ptr rhs);
 extern void mb32_i32_sub(mb32_stor_ptr ms, mb32_stor_ptr lhs, mb32_stor_ptr rhs);
 extern void mb32_i32_mul(mb32_stor_ptr ms, mb32_stor_ptr lhs, mb32_stor_ptr rhs);
-extern void mb32_i32_mul_scalar(mb32_stor_ptr ms, mb32_stor_ptr lhs, int32_t rhs);
+extern void mb32_i32_mul_scalar(mb32_stor_ptr ms, mb32_stor_ptr src, int32_t val);
 
 inline static int32_t mb32_i32_get(mb32_stor_ptr ms, int32_t ridx, int32_t cidx)
 {

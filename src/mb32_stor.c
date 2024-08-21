@@ -173,7 +173,33 @@ FILL_A_LINE_OF_CHUNKS:
     goto FILL_A_LINE_OF_CHUNKS;
 } // mb32_i32_fill
 
-extern void mb32_i32_transpose(mb32_stor_ptr ms);
+inline static void i32_chk_transpose(mb32_chk_ptr dchk, mb32_chk_ptr schk)
+{
+    static v8si_t idx = { .val = {0, 8, 16, 24, 32, 40, 48, 56} };
+    mx_type_reg(dchk->vec.i32[0]) = _mm256_i32gather_epi32(&schk->arr.i32[0][0], mx_type_reg(idx), I32_SIZE);
+    mx_type_reg(dchk->vec.i32[1]) = _mm256_i32gather_epi32(&schk->arr.i32[0][1], mx_type_reg(idx), I32_SIZE);
+    mx_type_reg(dchk->vec.i32[2]) = _mm256_i32gather_epi32(&schk->arr.i32[0][2], mx_type_reg(idx), I32_SIZE);
+    mx_type_reg(dchk->vec.i32[3]) = _mm256_i32gather_epi32(&schk->arr.i32[0][3], mx_type_reg(idx), I32_SIZE);
+    mx_type_reg(dchk->vec.i32[4]) = _mm256_i32gather_epi32(&schk->arr.i32[0][4], mx_type_reg(idx), I32_SIZE);
+    mx_type_reg(dchk->vec.i32[5]) = _mm256_i32gather_epi32(&schk->arr.i32[0][5], mx_type_reg(idx), I32_SIZE);
+    mx_type_reg(dchk->vec.i32[6]) = _mm256_i32gather_epi32(&schk->arr.i32[0][6], mx_type_reg(idx), I32_SIZE);
+    mx_type_reg(dchk->vec.i32[7]) = _mm256_i32gather_epi32(&schk->arr.i32[0][7], mx_type_reg(idx), I32_SIZE);
+} // i32_chk_transpose
+
+void mb32_i32_transpose(mb32_stor_ptr ms, mb32_stor_ptr src)
+{
+    assert(mb32_chknum_in_height(ms) == mb32_chknum_in_height(src));
+    assert(mb32_chknum_in_width(ms) == mb32_chknum_in_width(src));
+
+    for (int32_t i = 0; i < mb32_chknum_in_height(src); i += 1) {
+        for (int32_t j = 0; j < mb32_chknum_in_width(src); j += 1) {
+            i32_chk_transpose(mb32_chk_locate(ms, j, i), mb32_chk_locate(src, i, j));
+        } // for
+    } // for
+
+    ms->rnum = src->cnum;
+    ms->cnum = src->rnum;
+} // mb32_stor_ptr
 
 extern void mb32_i32_add(mb32_stor_ptr ms, mb32_stor_ptr lhs, mb32_stor_ptr rhs);
 extern void mb32_i32_sub(mb32_stor_ptr ms, mb32_stor_ptr lhs, mb32_stor_ptr rhs);

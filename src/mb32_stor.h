@@ -97,7 +97,7 @@ extern void mb32_i32_init_zeros(mb32_stor_ptr ms);
 extern void mb32_i32_init_identity(mb32_stor_ptr ms);
 
 extern void mb32_i32_fill(mb32_stor_ptr ms, int32_t val);
-extern void mb32_i32_transpose(mb32_stor_ptr ms);
+extern void mb32_i32_transpose(mb32_stor_ptr ms, mb32_stor_ptr src);
 
 extern void mb32_i32_add(mb32_stor_ptr ms, mb32_stor_ptr lhs, mb32_stor_ptr rhs);
 extern void mb32_i32_sub(mb32_stor_ptr ms, mb32_stor_ptr lhs, mb32_stor_ptr rhs);

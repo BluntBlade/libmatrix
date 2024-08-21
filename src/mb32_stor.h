@@ -21,7 +21,7 @@ typedef union MB32_CHUNK {
     union {
         v8si_t i32[MB32_CHK_LEN];
         v8sf_t f32[MB32_CHK_LEN];
-    } pck;
+    } vec;
 } mb32_chk_t, *mb32_chk_ptr;
 
 typedef struct MB32_STOR {

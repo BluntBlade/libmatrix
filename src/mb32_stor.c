@@ -25,14 +25,14 @@ mb32_stor_ptr mb32_init(mb32_stor_ptr ms, int32_t rnum, int32_t cnum, uint16_t v
 
 inline static void i32_chk_zero(mb32_chk_ptr dchk)
 {
-    mx_type_reg(dchk->pck.i32[0]) = _mm256_setzero_si256();
-    mx_type_reg(dchk->pck.i32[1]) = _mm256_setzero_si256();
-    mx_type_reg(dchk->pck.i32[2]) = _mm256_setzero_si256();
-    mx_type_reg(dchk->pck.i32[3]) = _mm256_setzero_si256();
-    mx_type_reg(dchk->pck.i32[4]) = _mm256_setzero_si256();
-    mx_type_reg(dchk->pck.i32[5]) = _mm256_setzero_si256();
-    mx_type_reg(dchk->pck.i32[6]) = _mm256_setzero_si256();
-    mx_type_reg(dchk->pck.i32[7]) = _mm256_setzero_si256();
+    mx_type_reg(dchk->vec.i32[0]) = _mm256_setzero_si256();
+    mx_type_reg(dchk->vec.i32[1]) = _mm256_setzero_si256();
+    mx_type_reg(dchk->vec.i32[2]) = _mm256_setzero_si256();
+    mx_type_reg(dchk->vec.i32[3]) = _mm256_setzero_si256();
+    mx_type_reg(dchk->vec.i32[4]) = _mm256_setzero_si256();
+    mx_type_reg(dchk->vec.i32[5]) = _mm256_setzero_si256();
+    mx_type_reg(dchk->vec.i32[6]) = _mm256_setzero_si256();
+    mx_type_reg(dchk->vec.i32[7]) = _mm256_setzero_si256();
 } // i32_chk_zero
 
 void mb32_i32_init_zeros(mb32_stor_ptr ms)
@@ -84,49 +84,49 @@ inline static void i32_chk_fill(mb32_chk_ptr dchk, int32_t rnum, int32_t cnum, i
     mx_type_reg(vals) = _mm256_and_si256(_mm256_set1_epi32(val), mx_type_reg(v8si_mask[cnum]));
 
     int32_t t = 0xFF >> (MB32_CHK_LEN - rnum);
-    mx_type_reg(dchk->pck.i32[0]) = _mm256_and_si256(mx_type_reg(vals), _mm256_set1_epi32((~((t >> 0) & 0x1)) + 1));
-    mx_type_reg(dchk->pck.i32[1]) = _mm256_and_si256(mx_type_reg(vals), _mm256_set1_epi32((~((t >> 1) & 0x1)) + 1));
-    mx_type_reg(dchk->pck.i32[2]) = _mm256_and_si256(mx_type_reg(vals), _mm256_set1_epi32((~((t >> 2) & 0x1)) + 1));
-    mx_type_reg(dchk->pck.i32[3]) = _mm256_and_si256(mx_type_reg(vals), _mm256_set1_epi32((~((t >> 3) & 0x1)) + 1));
-    mx_type_reg(dchk->pck.i32[4]) = _mm256_and_si256(mx_type_reg(vals), _mm256_set1_epi32((~((t >> 4) & 0x1)) + 1));
-    mx_type_reg(dchk->pck.i32[5]) = _mm256_and_si256(mx_type_reg(vals), _mm256_set1_epi32((~((t >> 5) & 0x1)) + 1));
-    mx_type_reg(dchk->pck.i32[6]) = _mm256_and_si256(mx_type_reg(vals), _mm256_set1_epi32((~((t >> 6) & 0x1)) + 1));
-    mx_type_reg(dchk->pck.i32[7]) = _mm256_and_si256(mx_type_reg(vals), _mm256_set1_epi32((~((t >> 7) & 0x1)) + 1));
+    mx_type_reg(dchk->vec.i32[0]) = _mm256_and_si256(mx_type_reg(vals), _mm256_set1_epi32((~((t >> 0) & 0x1)) + 1));
+    mx_type_reg(dchk->vec.i32[1]) = _mm256_and_si256(mx_type_reg(vals), _mm256_set1_epi32((~((t >> 1) & 0x1)) + 1));
+    mx_type_reg(dchk->vec.i32[2]) = _mm256_and_si256(mx_type_reg(vals), _mm256_set1_epi32((~((t >> 2) & 0x1)) + 1));
+    mx_type_reg(dchk->vec.i32[3]) = _mm256_and_si256(mx_type_reg(vals), _mm256_set1_epi32((~((t >> 3) & 0x1)) + 1));
+    mx_type_reg(dchk->vec.i32[4]) = _mm256_and_si256(mx_type_reg(vals), _mm256_set1_epi32((~((t >> 4) & 0x1)) + 1));
+    mx_type_reg(dchk->vec.i32[5]) = _mm256_and_si256(mx_type_reg(vals), _mm256_set1_epi32((~((t >> 5) & 0x1)) + 1));
+    mx_type_reg(dchk->vec.i32[6]) = _mm256_and_si256(mx_type_reg(vals), _mm256_set1_epi32((~((t >> 6) & 0x1)) + 1));
+    mx_type_reg(dchk->vec.i32[7]) = _mm256_and_si256(mx_type_reg(vals), _mm256_set1_epi32((~((t >> 7) & 0x1)) + 1));
 } // i32_chk_fill
 
 inline static void i32_chk_assign(mb32_chk_ptr dchk, mb32_chk_ptr schk)
 {
-    _mm256_store_si256(&mx_type_reg(dchk->pck.i32[0]), _mm256_load_si256(&mx_type_reg(schk->pck.i32[0])));
-    _mm256_store_si256(&mx_type_reg(dchk->pck.i32[1]), _mm256_load_si256(&mx_type_reg(schk->pck.i32[1])));
-    _mm256_store_si256(&mx_type_reg(dchk->pck.i32[2]), _mm256_load_si256(&mx_type_reg(schk->pck.i32[2])));
-    _mm256_store_si256(&mx_type_reg(dchk->pck.i32[3]), _mm256_load_si256(&mx_type_reg(schk->pck.i32[3])));
-    _mm256_store_si256(&mx_type_reg(dchk->pck.i32[4]), _mm256_load_si256(&mx_type_reg(schk->pck.i32[4])));
-    _mm256_store_si256(&mx_type_reg(dchk->pck.i32[5]), _mm256_load_si256(&mx_type_reg(schk->pck.i32[5])));
-    _mm256_store_si256(&mx_type_reg(dchk->pck.i32[6]), _mm256_load_si256(&mx_type_reg(schk->pck.i32[6])));
-    _mm256_store_si256(&mx_type_reg(dchk->pck.i32[7]), _mm256_load_si256(&mx_type_reg(schk->pck.i32[7])));
+    _mm256_store_si256(&mx_type_reg(dchk->vec.i32[0]), _mm256_load_si256(&mx_type_reg(schk->vec.i32[0])));
+    _mm256_store_si256(&mx_type_reg(dchk->vec.i32[1]), _mm256_load_si256(&mx_type_reg(schk->vec.i32[1])));
+    _mm256_store_si256(&mx_type_reg(dchk->vec.i32[2]), _mm256_load_si256(&mx_type_reg(schk->vec.i32[2])));
+    _mm256_store_si256(&mx_type_reg(dchk->vec.i32[3]), _mm256_load_si256(&mx_type_reg(schk->vec.i32[3])));
+    _mm256_store_si256(&mx_type_reg(dchk->vec.i32[4]), _mm256_load_si256(&mx_type_reg(schk->vec.i32[4])));
+    _mm256_store_si256(&mx_type_reg(dchk->vec.i32[5]), _mm256_load_si256(&mx_type_reg(schk->vec.i32[5])));
+    _mm256_store_si256(&mx_type_reg(dchk->vec.i32[6]), _mm256_load_si256(&mx_type_reg(schk->vec.i32[6])));
+    _mm256_store_si256(&mx_type_reg(dchk->vec.i32[7]), _mm256_load_si256(&mx_type_reg(schk->vec.i32[7])));
 } // i32_chk_assign
 
 static void i32_chk_copy(mb32_chk_ptr dchk, int32_t dn, int32_t off, mb32_chk_ptr schk)
 {
     v8si_t t[8];
-    mx_type_reg(t[0]) = _mm256_load_si256(&mx_type_reg(schk->pck.i32[0]));
-    mx_type_reg(t[1]) = _mm256_load_si256(&mx_type_reg(schk->pck.i32[1]));
-    mx_type_reg(t[2]) = _mm256_load_si256(&mx_type_reg(schk->pck.i32[2]));
-    mx_type_reg(t[3]) = _mm256_load_si256(&mx_type_reg(schk->pck.i32[3]));
-    mx_type_reg(t[4]) = _mm256_load_si256(&mx_type_reg(schk->pck.i32[4]));
-    mx_type_reg(t[5]) = _mm256_load_si256(&mx_type_reg(schk->pck.i32[5]));
-    mx_type_reg(t[6]) = _mm256_load_si256(&mx_type_reg(schk->pck.i32[6]));
-    mx_type_reg(t[7]) = _mm256_load_si256(&mx_type_reg(schk->pck.i32[7]));
+    mx_type_reg(t[0]) = _mm256_load_si256(&mx_type_reg(schk->vec.i32[0]));
+    mx_type_reg(t[1]) = _mm256_load_si256(&mx_type_reg(schk->vec.i32[1]));
+    mx_type_reg(t[2]) = _mm256_load_si256(&mx_type_reg(schk->vec.i32[2]));
+    mx_type_reg(t[3]) = _mm256_load_si256(&mx_type_reg(schk->vec.i32[3]));
+    mx_type_reg(t[4]) = _mm256_load_si256(&mx_type_reg(schk->vec.i32[4]));
+    mx_type_reg(t[5]) = _mm256_load_si256(&mx_type_reg(schk->vec.i32[5]));
+    mx_type_reg(t[6]) = _mm256_load_si256(&mx_type_reg(schk->vec.i32[6]));
+    mx_type_reg(t[7]) = _mm256_load_si256(&mx_type_reg(schk->vec.i32[7]));
 
     for (int32_t i = 0; i < dn; i += 1, dchk += off) {
-        _mm256_store_si256(&mx_type_reg(dchk[i].pck.i32[0]), mx_type_reg(t[0]));
-        _mm256_store_si256(&mx_type_reg(dchk[i].pck.i32[1]), mx_type_reg(t[1]));
-        _mm256_store_si256(&mx_type_reg(dchk[i].pck.i32[2]), mx_type_reg(t[2]));
-        _mm256_store_si256(&mx_type_reg(dchk[i].pck.i32[3]), mx_type_reg(t[3]));
-        _mm256_store_si256(&mx_type_reg(dchk[i].pck.i32[4]), mx_type_reg(t[4]));
-        _mm256_store_si256(&mx_type_reg(dchk[i].pck.i32[5]), mx_type_reg(t[5]));
-        _mm256_store_si256(&mx_type_reg(dchk[i].pck.i32[6]), mx_type_reg(t[6]));
-        _mm256_store_si256(&mx_type_reg(dchk[i].pck.i32[7]), mx_type_reg(t[7]));
+        _mm256_store_si256(&mx_type_reg(dchk[i].vec.i32[0]), mx_type_reg(t[0]));
+        _mm256_store_si256(&mx_type_reg(dchk[i].vec.i32[1]), mx_type_reg(t[1]));
+        _mm256_store_si256(&mx_type_reg(dchk[i].vec.i32[2]), mx_type_reg(t[2]));
+        _mm256_store_si256(&mx_type_reg(dchk[i].vec.i32[3]), mx_type_reg(t[3]));
+        _mm256_store_si256(&mx_type_reg(dchk[i].vec.i32[4]), mx_type_reg(t[4]));
+        _mm256_store_si256(&mx_type_reg(dchk[i].vec.i32[5]), mx_type_reg(t[5]));
+        _mm256_store_si256(&mx_type_reg(dchk[i].vec.i32[6]), mx_type_reg(t[6]));
+        _mm256_store_si256(&mx_type_reg(dchk[i].vec.i32[7]), mx_type_reg(t[7]));
     } // for
 } // i32_chk_copy
 

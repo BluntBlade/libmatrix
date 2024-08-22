@@ -259,6 +259,28 @@ void mb32_i32_sub(mb32_stor_ptr ms, mb32_stor_ptr lhs, mb32_stor_ptr rhs)
     ms->cnum = lhs->cnum;
 } // mb32_i32_sub
 
+// ---- Algorithm for i32_chk_mul ---- //
+//   AAAAAAAA BBBBBBBB vphaddd (Add horizontal dwords)
+//   AABBAABB
+//   EEEEEEEE FFFFFFFF vphaddd
+//   EEFFEEFF
+//   
+//   AABBAABB EEFFEEFF vphaddd
+//   ABEFABEF          vpermd (Reorder sums)
+//   AABBEEFF
+//   
+//   CCCCCCCC DDDDDDDD vphaddd
+//   CCDDCCDD
+//   GGGGGGGG HHHHHHHH vphaddd
+//   GGHHGGHH
+//   
+//   CCDDCCDD GGHHGGHH vphaddd
+//   CDGHCDGH          vpermd
+//   CCDDGGHH
+//   
+//   AABBEEFF CCDDGGHH vphaddd
+//   ABCDEFGH
+
 inline static void i32_chk_mul(mb32_chk_ptr dchk, mb32_chk_ptr lchk, mb32_chk_ptr rchk)
 {
 #define vec_mul(i, row, col) \

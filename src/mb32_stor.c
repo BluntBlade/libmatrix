@@ -261,87 +261,61 @@ void mb32_i32_sub(mb32_stor_ptr ms, mb32_stor_ptr lhs, mb32_stor_ptr rhs)
 
 inline static void i32_chk_mul(mb32_chk_ptr dchk, mb32_chk_ptr lchk, mb32_chk_ptr rchk)
 {
-#define vec_mul_and_add(i, row, col) \
-    { \
-        mx_type_reg(tmp[i]) = _mm256_mullo_epi32(mx_type_reg(lchk->vec.i32[row]), mx_type_reg(rchk->vec.i32[col])); \
-        mx_type_reg(tmp[i]) = _mm256_hadd_epi32(mx_type_reg(tmp[i]), _mm256_setzero_si256()); \
-        mx_type_reg(tmp[i]) = _mm256_hadd_epi32(mx_type_reg(tmp[i]), _mm256_setzero_si256()); \
-        dchk->arr.i32[row][col] += mx_type_val(tmp[i])[0] + mx_type_val(tmp[i])[4]; \
-    }
+#define vec_mul(i, row, col) \
+    mx_type_reg(tmp[i]) = _mm256_mullo_epi32(mx_type_reg(lchk->vec.i32[row]), mx_type_reg(rchk->vec.i32[col]));
+
+#define vec_phadd(l, r) \
+    mx_type_reg(tmp[l]) = _mm256_hadd_epi32(mx_type_reg(tmp[l]), mx_type_reg(tmp[r]));
+
+#define vec_permd(l, idx) \
+    mx_type_reg(tmp[l]) = _mm256_permutevar8x32_epi32(mx_type_reg(tmp[l]), mx_type_reg(idx));
+
+#define vec_stor(row, l) \
+    mx_type_reg(dchk->vec.i32[row]) = _mm256_add_epi32(mx_type_reg(dchk->vec.i32[row]), mx_type_reg(tmp[l]));
+
+    static v8si_t pm_idx = { .val = {0, 4, 1, 5, 2, 6, 3, 7} };
 
     v8si_t tmp[8];
 
-    vec_mul_and_add(0, 0, 0);
-    vec_mul_and_add(1, 0, 1);
-    vec_mul_and_add(2, 0, 2);
-    vec_mul_and_add(3, 0, 3);
-    vec_mul_and_add(4, 0, 4);
-    vec_mul_and_add(5, 0, 5);
-    vec_mul_and_add(6, 0, 6);
-    vec_mul_and_add(7, 0, 7);
+    vec_mul(0, 0, 0); vec_mul(1, 0, 1); vec_phadd(0, 1);
+    vec_mul(2, 0, 4); vec_mul(3, 0, 5); vec_phadd(2, 3); vec_phadd(0, 2); vec_permd(0, pm_idx);
+    vec_mul(4, 0, 2); vec_mul(5, 0, 3); vec_phadd(4, 5);
+    vec_mul(6, 0, 6); vec_mul(7, 0, 7); vec_phadd(6, 7); vec_phadd(4, 6); vec_permd(4, pm_idx); vec_phadd(0, 4); vec_stor(0, 0);
 
-    vec_mul_and_add(0, 1, 0);
-    vec_mul_and_add(1, 1, 1);
-    vec_mul_and_add(2, 1, 2);
-    vec_mul_and_add(3, 1, 3);
-    vec_mul_and_add(4, 1, 4);
-    vec_mul_and_add(5, 1, 5);
-    vec_mul_and_add(6, 1, 6);
-    vec_mul_and_add(7, 1, 7);
+    vec_mul(0, 1, 0); vec_mul(1, 1, 1); vec_phadd(0, 1);
+    vec_mul(2, 1, 4); vec_mul(3, 1, 5); vec_phadd(2, 3); vec_phadd(0, 2); vec_permd(0, pm_idx);
+    vec_mul(4, 1, 2); vec_mul(5, 1, 3); vec_phadd(4, 5);
+    vec_mul(6, 1, 6); vec_mul(7, 1, 7); vec_phadd(6, 7); vec_phadd(4, 6); vec_permd(4, pm_idx); vec_phadd(0, 4); vec_stor(1, 0);
 
-    vec_mul_and_add(0, 2, 0);
-    vec_mul_and_add(1, 2, 1);
-    vec_mul_and_add(2, 2, 2);
-    vec_mul_and_add(3, 2, 3);
-    vec_mul_and_add(4, 2, 4);
-    vec_mul_and_add(5, 2, 5);
-    vec_mul_and_add(6, 2, 6);
-    vec_mul_and_add(7, 2, 7);
+    vec_mul(0, 2, 0); vec_mul(1, 2, 1); vec_phadd(0, 1);
+    vec_mul(2, 2, 4); vec_mul(3, 2, 5); vec_phadd(2, 3); vec_phadd(0, 2); vec_permd(0, pm_idx);
+    vec_mul(4, 2, 2); vec_mul(5, 2, 3); vec_phadd(4, 5);
+    vec_mul(6, 2, 6); vec_mul(7, 2, 7); vec_phadd(6, 7); vec_phadd(4, 6); vec_permd(4, pm_idx); vec_phadd(0, 4); vec_stor(2, 0);
 
-    vec_mul_and_add(0, 3, 0);
-    vec_mul_and_add(1, 3, 1);
-    vec_mul_and_add(2, 3, 2);
-    vec_mul_and_add(3, 3, 3);
-    vec_mul_and_add(4, 3, 4);
-    vec_mul_and_add(5, 3, 5);
-    vec_mul_and_add(6, 3, 6);
-    vec_mul_and_add(7, 3, 7);
+    vec_mul(0, 3, 0); vec_mul(1, 3, 1); vec_phadd(0, 1);
+    vec_mul(2, 3, 4); vec_mul(3, 3, 5); vec_phadd(2, 3); vec_phadd(0, 2); vec_permd(0, pm_idx);
+    vec_mul(4, 3, 2); vec_mul(5, 3, 3); vec_phadd(4, 5);
+    vec_mul(6, 3, 6); vec_mul(7, 3, 7); vec_phadd(6, 7); vec_phadd(4, 6); vec_permd(4, pm_idx); vec_phadd(0, 4); vec_stor(3, 0);
 
-    vec_mul_and_add(0, 4, 0);
-    vec_mul_and_add(1, 4, 1);
-    vec_mul_and_add(2, 4, 2);
-    vec_mul_and_add(3, 4, 3);
-    vec_mul_and_add(4, 4, 4);
-    vec_mul_and_add(5, 4, 5);
-    vec_mul_and_add(6, 4, 6);
-    vec_mul_and_add(7, 4, 7);
+    vec_mul(0, 4, 0); vec_mul(1, 4, 1); vec_phadd(0, 1);
+    vec_mul(2, 4, 4); vec_mul(3, 4, 5); vec_phadd(2, 3); vec_phadd(0, 2); vec_permd(0, pm_idx);
+    vec_mul(4, 4, 2); vec_mul(5, 4, 3); vec_phadd(4, 5);
+    vec_mul(6, 4, 6); vec_mul(7, 4, 7); vec_phadd(6, 7); vec_phadd(4, 6); vec_permd(4, pm_idx); vec_phadd(0, 4); vec_stor(4, 0);
 
-    vec_mul_and_add(0, 5, 0);
-    vec_mul_and_add(1, 5, 1);
-    vec_mul_and_add(2, 5, 2);
-    vec_mul_and_add(3, 5, 3);
-    vec_mul_and_add(4, 5, 4);
-    vec_mul_and_add(5, 5, 5);
-    vec_mul_and_add(6, 5, 6);
-    vec_mul_and_add(7, 5, 7);
+    vec_mul(0, 5, 0); vec_mul(1, 5, 1); vec_phadd(0, 1);
+    vec_mul(2, 5, 4); vec_mul(3, 5, 5); vec_phadd(2, 3); vec_phadd(0, 2); vec_permd(0, pm_idx);
+    vec_mul(4, 5, 2); vec_mul(5, 5, 3); vec_phadd(4, 5);
+    vec_mul(6, 5, 6); vec_mul(7, 5, 7); vec_phadd(6, 7); vec_phadd(4, 6); vec_permd(4, pm_idx); vec_phadd(0, 4); vec_stor(5, 0);
 
-    vec_mul_and_add(0, 6, 0);
-    vec_mul_and_add(1, 6, 1);
-    vec_mul_and_add(2, 6, 2);
-    vec_mul_and_add(3, 6, 3);
-    vec_mul_and_add(4, 6, 4);
-    vec_mul_and_add(5, 6, 5);
-    vec_mul_and_add(6, 6, 6);
-    vec_mul_and_add(7, 6, 7);
+    vec_mul(0, 6, 0); vec_mul(1, 6, 1); vec_phadd(0, 1);
+    vec_mul(2, 6, 4); vec_mul(3, 6, 5); vec_phadd(2, 3); vec_phadd(0, 2); vec_permd(0, pm_idx);
+    vec_mul(4, 6, 2); vec_mul(5, 6, 3); vec_phadd(4, 5);
+    vec_mul(6, 6, 6); vec_mul(7, 6, 7); vec_phadd(6, 7); vec_phadd(4, 6); vec_permd(4, pm_idx); vec_phadd(0, 4); vec_stor(6, 0);
 
-    vec_mul_and_add(0, 7, 0);
-    vec_mul_and_add(1, 7, 1);
-    vec_mul_and_add(2, 7, 2);
-    vec_mul_and_add(3, 7, 3);
-    vec_mul_and_add(4, 7, 4);
-    vec_mul_and_add(5, 7, 5);
-    vec_mul_and_add(6, 7, 6);
-    vec_mul_and_add(7, 7, 7);
+    vec_mul(0, 7, 0); vec_mul(1, 7, 1); vec_phadd(0, 1);
+    vec_mul(2, 7, 4); vec_mul(3, 7, 5); vec_phadd(2, 3); vec_phadd(0, 2); vec_permd(0, pm_idx);
+    vec_mul(4, 7, 2); vec_mul(5, 7, 3); vec_phadd(4, 5);
+    vec_mul(6, 7, 6); vec_mul(7, 7, 7); vec_phadd(6, 7); vec_phadd(4, 6); vec_permd(4, pm_idx); vec_phadd(0, 4); vec_stor(7, 0);
 
 #undef vec_mul_and_add
 } // i32_chk_mul

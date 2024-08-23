@@ -1,8 +1,8 @@
 #include <criterion/criterion.h>
 
-#ifndef MB32_STOR_SOURCE
-#define MB32_STOR_SOURCE 1
-#include "src/mb32_stor.c"
+#ifndef MB32_SOURCE
+#define MB32_SOURCE 1
+#include "src/mb32.c"
 #endif
 
 #define check_value(expect, val) \
@@ -791,6 +791,276 @@ Test(Initialization, mb32_i32_init_identity)
     }
 }
 
+Test(Internals, i32_chk_zero)
+{
+    mb32_chk_t dchk;
+    i32_chk_zero(&dchk);
+
+    for (int32_t i = 0; i < 8; i += 1) {
+        for (int32_t j = 0; j < 8; j += 1) {
+            check_value_at(0, dchk.arr.i32[i][j], i, j);
+        } // for
+    } // for
+}
+
+Test(Internals, i32_chk_fill)
+{
+    // Case: 1x1 chunk
+    {
+        mb32_chk_t dchk;
+        i32_chk_fill(&dchk, 1, 1, 99);
+
+        for (int32_t i = 0; i < 8; i += 1) {
+            for (int32_t j = 0; j < 8; j += 1) {
+                if (i < 1 && j < 1) {
+                    check_value_at(99, dchk.arr.i32[i][j], i, j);
+                } else {
+                    check_value_at(0, dchk.arr.i32[i][j], i, j);
+                } // if
+            } // for
+        } // for
+    }
+
+    // Case: 1x8 chunk
+    {
+        mb32_chk_t dchk;
+        i32_chk_fill(&dchk, 1, 8, 99);
+
+        for (int32_t i = 0; i < 8; i += 1) {
+            for (int32_t j = 0; j < 8; j += 1) {
+                if (i < 1 && j < 8) {
+                    check_value_at(99, dchk.arr.i32[i][j], i, j);
+                } else {
+                    check_value_at(0, dchk.arr.i32[i][j], i, j);
+                } // if
+            } // for
+        } // for
+    }
+
+    // Case: 8x1 chunk
+    {
+        mb32_chk_t dchk;
+        i32_chk_fill(&dchk, 8, 1, 99);
+
+        for (int32_t i = 0; i < 8; i += 1) {
+            for (int32_t j = 0; j < 8; j += 1) {
+                if (i < 8 && j < 1) {
+                    check_value_at(99, dchk.arr.i32[i][j], i, j);
+                } else {
+                    check_value_at(0, dchk.arr.i32[i][j], i, j);
+                } // if
+            } // for
+        } // for
+    }
+
+    // Case: 4x4 chunk
+    {
+        mb32_chk_t dchk;
+        i32_chk_fill(&dchk, 4, 4, 88);
+
+        for (int32_t i = 0; i < 8; i += 1) {
+            for (int32_t j = 0; j < 8; j += 1) {
+                if (i < 4 && j < 4) {
+                    check_value_at(88, dchk.arr.i32[i][j], i, j);
+                } else {
+                    check_value_at(0, dchk.arr.i32[i][j], i, j);
+                } // if
+            } // for
+        } // for
+    }
+
+    // Case: 8x8 chunk
+    {
+        mb32_chk_t dchk;
+        i32_chk_fill(&dchk, 8, 8, 77);
+
+        for (int32_t i = 0; i < 8; i += 1) {
+            for (int32_t j = 0; j < 8; j += 1) {
+                check_value_at(77, dchk.arr.i32[i][j], i, j);
+            } // for
+        } // for
+    }
+}
+
+Test(Internals, i32_chk_copy)
+{
+    // Case: Copy 1 chunk
+    {
+        mb32_chk_t dchk;
+        mb32_chk_t vchk = {
+            .arr.i32 = {
+                {36, 72, 108, 144, 180, 216, 252, 288},
+                {44, 88, 132, 176, 220, 264, 308, 352},
+                {52, 104, 156, 208, 260, 312, 364, 416},
+                {60, 120, 180, 240, 300, 360, 420, 480},
+                {68, 136, 204, 272, 340, 408, 476, 544},
+                {76, 152, 228, 304, 380, 456, 532, 608},
+                {84, 168, 252, 336, 420, 504, 588, 672},
+                {92, 184, 276, 368, 460, 552, 644, 736},
+            },
+        };
+
+        memset(&dchk, 0, sizeof(dchk));
+        i32_chk_copy(&dchk, 1, 0, &vchk);
+
+        for (int32_t i = 0; i < 8; i += 1) {
+            for (int32_t j = 0; j < 8; j += 1) {
+                check_value_at(vchk.arr.i32[i][j], dchk.arr.i32[i][j], i, j);
+            } // for
+        } // for
+    }
+
+    // Case: Copy 2 chunks
+    {
+        mb32_chk_t dchk[2];
+        mb32_chk_t vchk = {
+            .arr.i32 = {
+                {36, 72, 108, 144, 180, 216, 252, 288},
+                {44, 88, 132, 176, 220, 264, 308, 352},
+                {52, 104, 156, 208, 260, 312, 364, 416},
+                {60, 120, 180, 240, 300, 360, 420, 480},
+                {68, 136, 204, 272, 340, 408, 476, 544},
+                {76, 152, 228, 304, 380, 456, 532, 608},
+                {84, 168, 252, 336, 420, 504, 588, 672},
+                {92, 184, 276, 368, 460, 552, 644, 736},
+            },
+        };
+
+        memset(&dchk, 0, sizeof(dchk));
+        i32_chk_copy(&dchk[0], 1, 0, &vchk);
+        i32_chk_copy(&dchk[0], 2, 0, &vchk);
+
+        for (int32_t i = 0; i < 8; i += 1) {
+            for (int32_t j = 0; j < 8; j += 1) {
+                check_value_at(vchk.arr.i32[i][j], dchk[0].arr.i32[i][j], i, j);
+            } // for
+        } // for
+        for (int32_t i = 0; i < 8; i += 1) {
+            for (int32_t j = 0; j < 8; j += 1) {
+                check_value_at(vchk.arr.i32[i][j], dchk[1].arr.i32[i][j], i, j);
+            } // for
+        } // for
+    }
+
+    // Case: Copy 2 chunks in the last column
+    {
+        mb32_chk_t dchk[2][2];
+        mb32_chk_t vchk = {
+            .arr.i32 = {
+                {36, 72, 108, 144, 180, 216, 252, 288},
+                {44, 88, 132, 176, 220, 264, 308, 352},
+                {52, 104, 156, 208, 260, 312, 364, 416},
+                {60, 120, 180, 240, 300, 360, 420, 480},
+                {68, 136, 204, 272, 340, 408, 476, 544},
+                {76, 152, 228, 304, 380, 456, 532, 608},
+                {84, 168, 252, 336, 420, 504, 588, 672},
+                {92, 184, 276, 368, 460, 552, 644, 736},
+            },
+        };
+
+        memset(&dchk, 0, sizeof(dchk));
+        i32_chk_copy(&dchk[0][1], 2, 1, &vchk);
+
+        for (int32_t i = 0; i < 8; i += 1) {
+            for (int32_t j = 0; j < 8; j += 1) {
+                check_value_at(0, dchk[0][0].arr.i32[i][j], i, j);
+            } // for
+        } // for
+        for (int32_t i = 0; i < 8; i += 1) {
+            for (int32_t j = 0; j < 8; j += 1) {
+                check_value_at(vchk.arr.i32[i][j], dchk[0][1].arr.i32[i][j], i, j);
+            } // for
+        } // for
+        for (int32_t i = 0; i < 8; i += 1) {
+            for (int32_t j = 0; j < 8; j += 1) {
+                check_value_at(0, dchk[1][0].arr.i32[i][j], i, j);
+            } // for
+        } // for
+        for (int32_t i = 0; i < 8; i += 1) {
+            for (int32_t j = 0; j < 8; j += 1) {
+                check_value_at(vchk.arr.i32[i][j], dchk[1][1].arr.i32[i][j], i, j);
+            } // for
+        } // for
+    }
+}
+
+Test(Internals, i32_chk_transpose)
+{
+    mb32_chk_t dchk;
+    mb32_chk_t vchk = {
+        .arr.i32 = {
+            {36, 72, 108, 144, 180, 216, 252, 288},
+            {44, 88, 132, 176, 220, 264, 308, 352},
+            {52, 104, 156, 208, 260, 312, 364, 416},
+            {60, 120, 180, 240, 300, 360, 420, 480},
+            {68, 136, 204, 272, 340, 408, 476, 544},
+            {76, 152, 228, 304, 380, 456, 532, 608},
+            {84, 168, 252, 336, 420, 504, 588, 672},
+            {92, 184, 276, 368, 460, 552, 644, 736},
+        },
+    };
+
+    i32_chk_transpose(&dchk, &vchk);
+
+    for (int32_t i = 0; i < 8; i += 1) {
+        for (int32_t j = 0; j < 8; j += 1) {
+            check_value_at(vchk.arr.i32[j][i], dchk.arr.i32[i][j], i, j);
+        } // for
+    } // for
+}
+
+Test(Internals, i32_chk_add)
+{
+    mb32_chk_t dchk;
+    mb32_chk_t vchk = {
+        .arr.i32 = {
+            {36, 72, 108, 144, 180, 216, 252, 288},
+            {44, 88, 132, 176, 220, 264, 308, 352},
+            {52, 104, 156, 208, 260, 312, 364, 416},
+            {60, 120, 180, 240, 300, 360, 420, 480},
+            {68, 136, 204, 272, 340, 408, 476, 544},
+            {76, 152, 228, 304, 380, 456, 532, 608},
+            {84, 168, 252, 336, 420, 504, 588, 672},
+            {92, 184, 276, 368, 460, 552, 644, 736},
+        },
+    };
+
+    memset(&dchk, 99, sizeof(dchk));
+    i32_chk_add(&dchk, &vchk, &vchk);
+
+    for (int32_t i = 0; i < 8; i += 1) {
+        for (int32_t j = 0; j < 8; j += 1) {
+            check_value_at(vchk.arr.i32[i][j] * 2, dchk.arr.i32[i][j], i, j);
+        } // for
+    } // for
+}
+
+Test(Internals, i32_chk_sub)
+{
+    mb32_chk_t dchk;
+    mb32_chk_t vchk = {
+        .arr.i32 = {
+            {36, 72, 108, 144, 180, 216, 252, 288},
+            {44, 88, 132, 176, 220, 264, 308, 352},
+            {52, 104, 156, 208, 260, 312, 364, 416},
+            {60, 120, 180, 240, 300, 360, 420, 480},
+            {68, 136, 204, 272, 340, 408, 476, 544},
+            {76, 152, 228, 304, 380, 456, 532, 608},
+            {84, 168, 252, 336, 420, 504, 588, 672},
+            {92, 184, 276, 368, 460, 552, 644, 736},
+        },
+    };
+
+    memset(&dchk, 99, sizeof(dchk));
+    i32_chk_sub(&dchk, &vchk, &vchk);
+
+    for (int32_t i = 0; i < 8; i += 1) {
+        for (int32_t j = 0; j < 8; j += 1) {
+            check_value_at(0, dchk.arr.i32[i][j], i, j);
+        } // for
+    } // for
+}
+
 Test(Internals, i32_chk_mul)
 {
     // Case: 1x1 chunk
@@ -942,4 +1212,30 @@ Test(Internals, i32_chk_mul)
             } // for
         } // for
     }
+}
+
+Test(Internals, i32_chk_mul_scalar)
+{
+    mb32_chk_t dchk;
+    mb32_chk_t vchk = {
+        .arr.i32 = {
+            {36, 72, 108, 144, 180, 216, 252, 288},
+            {44, 88, 132, 176, 220, 264, 308, 352},
+            {52, 104, 156, 208, 260, 312, 364, 416},
+            {60, 120, 180, 240, 300, 360, 420, 480},
+            {68, 136, 204, 272, 340, 408, 476, 544},
+            {76, 152, 228, 304, 380, 456, 532, 608},
+            {84, 168, 252, 336, 420, 504, 588, 672},
+            {92, 184, 276, 368, 460, 552, 644, 736},
+        },
+    };
+
+    memset(&dchk, 9999, sizeof(dchk));
+    i32_chk_mul_scalar(&dchk, &vchk, 3);
+
+    for (int32_t i = 0; i < 8; i += 1) {
+        for (int32_t j = 0; j < 8; j += 1) {
+            check_value_at(vchk.arr.i32[i][j] * 3, dchk.arr.i32[i][j], i, j);
+        } // for
+    } // for
 }

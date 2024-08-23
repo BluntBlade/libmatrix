@@ -1,5 +1,5 @@
-#ifndef MB32_STOR_H
-#define MB32_STOR_H 1
+#ifndef MB32_H
+#define MB32_H 1
 
 #include <assert.h>
 #include <string.h>
@@ -123,5 +123,5 @@ inline static void mb32_i32_init_ones(mb32_stor_ptr ms)
 
 // ---- Functions processing float elements ---- //
 
-#endif // MB32_STOR_H
+#endif // MB32_H
 

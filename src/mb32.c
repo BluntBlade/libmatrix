@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <immintrin.h>
 
-#include "src/mb32_stor.h"
+#include "src/mb32.h"
 
 // ---- Common functions ---- //
 

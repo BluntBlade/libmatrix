@@ -386,7 +386,7 @@ void mb32_i32_mul_scalar(mb32_stor_ptr ms, mb32_stor_ptr src, int32_t val)
 
     for (int32_t i = 0; i < mb32_chknum_in_height(src); i += 1) {
         for (int32_t j = 0; j < mb32_chknum_in_width(src); j += 1) {
-            i32_chk_mul_scalar(mb32_chk_locate_by_number(ms, i, j), mb32_chk_locate_by_number(src, i, j), src);
+            i32_chk_mul_scalar(mb32_chk_locate_by_number(ms, i, j), mb32_chk_locate_by_number(src, i, j), val);
         } // for
     } // for
 

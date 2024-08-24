@@ -38,9 +38,9 @@ inline static void i32_chk_zero(mb32_chk_ptr dchk)
 void mb32_i32_init_zeros(mb32_stor_ptr ms)
 {
     mb32_chk_ptr dchk = ms->chks;
-    int32_t i = mb32_chknum(ms) / 8;
+    int32_t i = (mb32_chknum(ms) + 7) / 8;
     switch (mb32_chknum(ms) % 8) {
-        case 8: do {
+        case 0: do {
                     i32_chk_zero(dchk++);
         case 7:     i32_chk_zero(dchk++);
         case 6:     i32_chk_zero(dchk++);
@@ -49,7 +49,7 @@ void mb32_i32_init_zeros(mb32_stor_ptr ms)
         case 3:     i32_chk_zero(dchk++);
         case 2:     i32_chk_zero(dchk++);
         case 1:     i32_chk_zero(dchk++);
-                } while (i-- > 0);
+                } while (--i > 0);
     } // switch
 } // mb32_i32_init_zeros
 

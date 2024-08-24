@@ -86,6 +86,11 @@ inline static mb32_chk_ptr mb32_chk_locate(mb32_stor_ptr ms, int32_t ridx, int32
     return ms->chks + (ridx / MB32_CHK_LEN) * mb32_chknum_in_width(ms) + (cidx / MB32_CHK_LEN);
 } // mb32_chk_locate
 
+inline static mb32_chk_ptr mb32_chk_locate_by_number(mb32_stor_ptr ms, int32_t chk_ridx, int32_t chk_cidx)
+{
+    return ms->chks + chk_ridx * mb32_chknum_in_width(ms) + chk_cidx;
+} // mb32_chk_locate_by_number
+
 inline static int32_t mb32_chk_delta(int32_t idx)
 {
     return idx & (MB32_CHK_LEN - 1);

@@ -193,7 +193,7 @@ void mb32_i32_transpose(mb32_stor_ptr ms, mb32_stor_ptr src)
 
     for (int32_t i = 0; i < mb32_chknum_in_height(src); i += 1) {
         for (int32_t j = 0; j < mb32_chknum_in_width(src); j += 1) {
-            i32_chk_transpose(mb32_chk_locate(ms, j, i), mb32_chk_locate(src, i, j));
+            i32_chk_transpose(mb32_chk_locate_by_number(ms, j, i), mb32_chk_locate_by_number(src, i, j));
         } // for
     } // for
 
@@ -222,7 +222,7 @@ void mb32_i32_add(mb32_stor_ptr ms, mb32_stor_ptr lhs, mb32_stor_ptr rhs)
 
     for (int32_t i = 0; i < mb32_chknum_in_height(lhs); i += 1) {
         for (int32_t j = 0; j < mb32_chknum_in_width(lhs); j += 1) {
-            i32_chk_add(mb32_chk_locate(ms, i, j), mb32_chk_locate(lhs, i, j), mb32_chk_locate(rhs, i, j));
+            i32_chk_add(mb32_chk_locate_by_number(ms, i, j), mb32_chk_locate_by_number(lhs, i, j), mb32_chk_locate_by_number(rhs, i, j));
         } // for
     } // for
 
@@ -251,7 +251,7 @@ void mb32_i32_sub(mb32_stor_ptr ms, mb32_stor_ptr lhs, mb32_stor_ptr rhs)
 
     for (int32_t i = 0; i < mb32_chknum_in_height(lhs); i += 1) {
         for (int32_t j = 0; j < mb32_chknum_in_width(lhs); j += 1) {
-            i32_chk_sub(mb32_chk_locate(ms, i, j), mb32_chk_locate(lhs, i, j), mb32_chk_locate(rhs, i, j));
+            i32_chk_sub(mb32_chk_locate_by_number(ms, i, j), mb32_chk_locate_by_number(lhs, i, j), mb32_chk_locate_by_number(rhs, i, j));
         } // for
     } // for
 
@@ -353,10 +353,10 @@ void mb32_i32_mul(mb32_stor_ptr ms, mb32_stor_ptr lhs, mb32_stor_ptr rhs)
     for (int32_t k = 0; k < mb32_chknum_in_height(rhs); k += 1) {
         for (int32_t j = 0; j < mb32_chknum_in_width(rhs); j += 1) {
             mb32_chk_t trn;
-            i32_chk_transpose(&trn, mb32_chk_locate(rhs, k, j));
+            i32_chk_transpose(&trn, mb32_chk_locate_by_number(rhs, k, j));
 
             for (int32_t i = 0; i < mb32_chknum_in_height(lhs); i += 1) {
-                i32_chk_mul(mb32_chk_locate(ms, i, j), mb32_chk_locate(lhs, i, k), &trn);
+                i32_chk_mul(mb32_chk_locate_by_number(ms, i, j), mb32_chk_locate_by_number(lhs, i, k), &trn);
             } // for
         } // for
     } // for
@@ -386,7 +386,7 @@ void mb32_i32_mul_scalar(mb32_stor_ptr ms, mb32_stor_ptr src, int32_t val)
 
     for (int32_t i = 0; i < mb32_chknum_in_height(src); i += 1) {
         for (int32_t j = 0; j < mb32_chknum_in_width(src); j += 1) {
-            i32_chk_mul_scalar(mb32_chk_locate(ms, i, j), mb32_chk_locate(src, i, j), src);
+            i32_chk_mul_scalar(mb32_chk_locate_by_number(ms, i, j), mb32_chk_locate_by_number(src, i, j), src);
         } // for
     } // for
 

@@ -1038,6 +1038,38 @@ Test(Initialization, mb32_i32_init_zeros)
 
         mb32_clean(&ms);
     }
+
+    // Case: 32x32 matrix
+    {
+        mb32_stor_t ms;
+
+        mb32_init(&ms, 32, 32, 4, 8);
+        mb32_i32_init_zeros(&ms);
+
+        for (int32_t i = 0; i < mb32_rnum(&ms); i += 1) {
+            for (int32_t j = 0; j < mb32_cnum(&ms); j += 1) {
+                check_value_at(0, mb32_i32_get(&ms, i, j), i, j);
+            } // for
+        } // for
+
+        mb32_clean(&ms);
+    }
+
+    // Case: 33x33 matrix
+    {
+        mb32_stor_t ms;
+
+        mb32_init(&ms, 33, 33, 4, 8);
+        mb32_i32_init_zeros(&ms);
+
+        for (int32_t i = 0; i < mb32_rnum(&ms); i += 1) {
+            for (int32_t j = 0; j < mb32_cnum(&ms); j += 1) {
+                check_value_at(0, mb32_i32_get(&ms, i, j), i, j);
+            } // for
+        } // for
+
+        mb32_clean(&ms);
+    }
 }
 
 Test(Initialization, mb32_i32_init_ones)

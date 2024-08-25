@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <immintrin.h>
 
+#include <omp.h>
+
 #include "src/mb32.h"
 
 // ---- Common functions ---- //
@@ -350,16 +352,50 @@ void mb32_i32_mul(mb32_stor_ptr ms, mb32_stor_ptr lhs, mb32_stor_ptr rhs)
 
     mb32_i32_init_zeros(ms);
 
-    for (int32_t k = 0; k < mb32_chknum_in_height(rhs); k += 1) {
-        for (int32_t j = 0; j < mb32_chknum_in_width(rhs); j += 1) {
-            mb32_chk_t trn;
-            i32_chk_transpose(&trn, mb32_chk_locate_by_number(rhs, k, j));
-
-            for (int32_t i = 0; i < mb32_chknum_in_height(lhs); i += 1) {
-                i32_chk_mul(mb32_chk_locate_by_number(ms, i, j), mb32_chk_locate_by_number(lhs, i, k), &trn);
+    int32_t inum = mb32_chknum_in_height(lhs);
+    int32_t knum = mb32_chknum_in_height(rhs);
+    int32_t jnum = mb32_chknum_in_width(rhs);
+    int32_t jcnt = mb32_chknum_in_width(rhs) / 4;
+    int32_t jrmd = mb32_chknum_in_width(rhs) % 4;
+    if (jcnt) {
+        for (int32_t k = 0; k < knum; k += 1) {
+            #pragma omp parallel for schedule(dynamic, 1)
+            for (int32_t j = 0; j < jcnt; j += 4) {
+                mb32_chk_t trn[4];
+                i32_chk_transpose(&trn[0], mb32_chk_locate_by_number(rhs, k, j + 0));
+                i32_chk_transpose(&trn[1], mb32_chk_locate_by_number(rhs, k, j + 1));
+                i32_chk_transpose(&trn[2], mb32_chk_locate_by_number(rhs, k, j + 2));
+                i32_chk_transpose(&trn[3], mb32_chk_locate_by_number(rhs, k, j + 3));
+                for (int32_t i = 0; i < inum; i += 1) {
+                    i32_chk_mul(mb32_chk_locate_by_number(ms, i, j + 0), mb32_chk_locate_by_number(lhs, i, k), &trn[0]);
+                    i32_chk_mul(mb32_chk_locate_by_number(ms, i, j + 1), mb32_chk_locate_by_number(lhs, i, k), &trn[1]);
+                    i32_chk_mul(mb32_chk_locate_by_number(ms, i, j + 2), mb32_chk_locate_by_number(lhs, i, k), &trn[2]);
+                    i32_chk_mul(mb32_chk_locate_by_number(ms, i, j + 3), mb32_chk_locate_by_number(lhs, i, k), &trn[3]);
+                } // for
             } // for
         } // for
-    } // for
+    } // if
+
+    if (jrmd) {
+        mb32_chk_t trn[3];
+        int32_t off = 0;
+        for (int32_t k = 0; k < knum; k += 1) {
+            switch (jrmd) {
+                case 3: i32_chk_transpose(&trn[2], mb32_chk_locate_by_number(rhs, k, jnum - (++off)));
+                case 2: i32_chk_transpose(&trn[1], mb32_chk_locate_by_number(rhs, k, jnum - (++off)));
+                case 1: i32_chk_transpose(&trn[0], mb32_chk_locate_by_number(rhs, k, jnum - (++off)));
+            } // switch
+
+            for (int32_t i = 0; i < inum; i += 1) {
+                off = 0;
+                switch (jrmd) {
+                    case 3: i32_chk_mul(mb32_chk_locate_by_number(ms, i, jnum - (++off)), mb32_chk_locate_by_number(lhs, i, k), &trn[2]);
+                    case 2: i32_chk_mul(mb32_chk_locate_by_number(ms, i, jnum - (++off)), mb32_chk_locate_by_number(lhs, i, k), &trn[1]);
+                    case 1: i32_chk_mul(mb32_chk_locate_by_number(ms, i, jnum - (++off)), mb32_chk_locate_by_number(lhs, i, k), &trn[0]);
+                } // switch
+            } // for
+        } // for
+    } // if
 
     ms->rnum = lhs->rnum;
     ms->cnum = rhs->cnum;

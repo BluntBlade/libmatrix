@@ -344,6 +344,60 @@ inline static void i32_chk_mul(mb32_chk_ptr dchk, mb32_chk_ptr lchk, mb32_chk_pt
 #undef vec_mul_and_add
 } // i32_chk_mul
 
+static void i32_mul_by_last_1_rchk(mb32_stor_ptr ms, mb32_stor_ptr lhs, mb32_stor_ptr rhs)
+{
+    int32_t inum = mb32_chknum_in_height(lhs);
+    int32_t knum = mb32_chknum_in_height(rhs);
+    int32_t jnum = mb32_chknum_in_width(rhs);
+
+    mb32_chk_t trn;
+    for (int32_t k = 0; k < knum; k += 1) {
+        i32_chk_transpose(&trn, mb32_chk_locate_by_number(rhs, k, jnum - 1));
+
+        for (int32_t i = 0; i < inum; i += 1) {
+            i32_chk_mul(mb32_chk_locate_by_number(ms, i, jnum - 1), mb32_chk_locate_by_number(lhs, i, k), &trn);
+        } // for
+    } // for
+} // i32_mul_by_last_1_rchk
+
+static void i32_mul_by_last_2_rchk(mb32_stor_ptr ms, mb32_stor_ptr lhs, mb32_stor_ptr rhs)
+{
+    int32_t inum = mb32_chknum_in_height(lhs);
+    int32_t knum = mb32_chknum_in_height(rhs);
+    int32_t jnum = mb32_chknum_in_width(rhs);
+
+    mb32_chk_t trn[2];
+    for (int32_t k = 0; k < knum; k += 1) {
+        i32_chk_transpose(&trn[0], mb32_chk_locate_by_number(rhs, k, jnum - 2));
+        i32_chk_transpose(&trn[1], mb32_chk_locate_by_number(rhs, k, jnum - 1));
+
+        for (int32_t i = 0; i < inum; i += 1) {
+            i32_chk_mul(mb32_chk_locate_by_number(ms, i, jnum - 2), mb32_chk_locate_by_number(lhs, i, k), &trn[0]);
+            i32_chk_mul(mb32_chk_locate_by_number(ms, i, jnum - 1), mb32_chk_locate_by_number(lhs, i, k), &trn[1]);
+        } // for
+    } // for
+} // i32_mul_by_last_2_rchk
+
+static void i32_mul_by_last_3_rchk(mb32_stor_ptr ms, mb32_stor_ptr lhs, mb32_stor_ptr rhs)
+{
+    int32_t inum = mb32_chknum_in_height(lhs);
+    int32_t knum = mb32_chknum_in_height(rhs);
+    int32_t jnum = mb32_chknum_in_width(rhs);
+
+    mb32_chk_t trn[3];
+    for (int32_t k = 0; k < knum; k += 1) {
+        i32_chk_transpose(&trn[0], mb32_chk_locate_by_number(rhs, k, jnum - 3));
+        i32_chk_transpose(&trn[1], mb32_chk_locate_by_number(rhs, k, jnum - 2));
+        i32_chk_transpose(&trn[2], mb32_chk_locate_by_number(rhs, k, jnum - 1));
+
+        for (int32_t i = 0; i < inum; i += 1) {
+            i32_chk_mul(mb32_chk_locate_by_number(ms, i, jnum - 3), mb32_chk_locate_by_number(lhs, i, k), &trn[0]);
+            i32_chk_mul(mb32_chk_locate_by_number(ms, i, jnum - 2), mb32_chk_locate_by_number(lhs, i, k), &trn[1]);
+            i32_chk_mul(mb32_chk_locate_by_number(ms, i, jnum - 1), mb32_chk_locate_by_number(lhs, i, k), &trn[2]);
+        } // for
+    } // for
+} // i32_mul_by_last_3_rchk
+
 void mb32_i32_mul(mb32_stor_ptr ms, mb32_stor_ptr lhs, mb32_stor_ptr rhs)
 {
     assert(mb32_rnum(ms) == mb32_rnum(lhs));
@@ -376,26 +430,12 @@ void mb32_i32_mul(mb32_stor_ptr ms, mb32_stor_ptr lhs, mb32_stor_ptr rhs)
         } // for
     } // if
 
-    if (jrmd) {
-        mb32_chk_t trn[3];
-        int32_t off = 0;
-        for (int32_t k = 0; k < knum; k += 1) {
-            switch (jrmd) {
-                case 3: i32_chk_transpose(&trn[2], mb32_chk_locate_by_number(rhs, k, jnum - (++off)));
-                case 2: i32_chk_transpose(&trn[1], mb32_chk_locate_by_number(rhs, k, jnum - (++off)));
-                case 1: i32_chk_transpose(&trn[0], mb32_chk_locate_by_number(rhs, k, jnum - (++off)));
-            } // switch
-
-            for (int32_t i = 0; i < inum; i += 1) {
-                off = 0;
-                switch (jrmd) {
-                    case 3: i32_chk_mul(mb32_chk_locate_by_number(ms, i, jnum - (++off)), mb32_chk_locate_by_number(lhs, i, k), &trn[2]);
-                    case 2: i32_chk_mul(mb32_chk_locate_by_number(ms, i, jnum - (++off)), mb32_chk_locate_by_number(lhs, i, k), &trn[1]);
-                    case 1: i32_chk_mul(mb32_chk_locate_by_number(ms, i, jnum - (++off)), mb32_chk_locate_by_number(lhs, i, k), &trn[0]);
-                } // switch
-            } // for
-        } // for
-    } // if
+    switch (jrmd) {
+        default: break;
+        case 1: i32_mul_by_last_1_rchk(ms, lhs, rhs); break;
+        case 2: i32_mul_by_last_2_rchk(ms, lhs, rhs); break;
+        case 3: i32_mul_by_last_3_rchk(ms, lhs, rhs); break;
+    } // switch
 
     ms->rnum = lhs->rnum;
     ms->cnum = rhs->cnum;

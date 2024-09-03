@@ -5,6 +5,8 @@
 
 #include "src/mb32.h"
 
+// ==== Definition of MB32 storage ==== //
+
 // ---- Common functions ---- //
 
 mb32_stor_ptr mb32_init(mb32_stor_ptr ms, int32_t rnum, int32_t cnum, uint16_t val_sz, uint16_t vec_len)
@@ -469,3 +471,136 @@ void mb32_i32_mul_scalar(mb32_stor_ptr ms, mb32_stor_ptr src, int32_t val)
     ms->rnum = src->rnum;
     ms->cnum = src->cnum;
 } // mb32_i32_mul_scalar
+
+// ==== Definition of MB32 iterator ==== //
+
+#if 0
+bool mb32_itr_get_v8si_in_row_ori(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb32_off_t * off, int32_t dval, bool move)
+{
+    for (int32_t i = 0; i < vn; i += 1) {
+        mx_type_reg(vec[i]) = _mm256_set1_epi32(dval);
+
+        int32_t ridx = mb32_itr_ridx(it) + off[i].roff;
+        if (ridx < it->rbegin || ridx >= it->rend) {
+            continue;
+        } // if
+
+        int32_t cidx = mb32_itr_cidx(it) + off[i].coff;
+        if (cidx <= -8 || cidx >= it->cend) {
+            continue;
+        } // if
+
+        int32_t off = 0;
+        if (cidx < 0) {
+            off = abs(cidx);
+            cidx = 0;
+        } // if
+
+        mb32_chk_ptr schk = mb32_chk_locate_by_index(it->ms, ridx, cidx);
+        void * dst = (void *)&vec[i] + I32_SIZE * off;
+        void * src = (void *)schk + I32_SIZE * (mb32_chk_delta(ridx) * MB32_CHK_LEN + mb32_chk_delta(cidx));
+
+        int32_t cnt = MB32_CHK_LEN - off;
+        int32_t rmd = mb32_chk_inum(it->ms->cnum, cidx) - mb32_chk_delta(cidx);
+
+        memcpy(dst, src, I32_SIZE * (rmd < cnt ? rmd : cnt));
+        if ((rmd >= cnt) || (cidx += rmd) >= it->cend) {
+            continue;
+        } // if
+
+        // The previous chunk is full, then the copying action will cross the boundary.
+        cnt -= rmd;
+        off += rmd;
+
+        dst += I32_SIZE * rmd;
+        src += I32_SIZE * MB32_CHK_LEN * MB32_CHK_LEN + I32_SIZE * mb32_chk_delta(ridx) * mb32_chk_inum(it->ms->cnum, cidx);
+        memcpy(dst, src, I32_SIZE * (mb32_chk_inum(it->ms->cnum, cidx) < cnt ? mb32_chk_inum(it->ms->cnum, cidx) : cnt));
+    } // for
+} // mb32_itr_get_v8si_in_row_ori
+#endif
+
+inline static int32_t itr_calc_copy_bytes(mb32_iter_ptr it, int32_t cidx, int32_t off, int32_t rmd)
+{
+    return (mb32_chk_irmd(it->ms->cnum, cidx) - off) < rmd ? (mb32_chk_irmd(it->ms->cnum, cidx) - off) : rmd;
+} // itr_calc_copy_bytes
+
+bool mb32_itr_get_v8si_in_row(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb32_off_t * off, int32_t dval, bool move)
+{
+    static v8si_t shift_mask[] = {
+        { .val = {7, 0, 0, 0, 0, 0, 0, 0} }, //  0 -> -7
+        { .val = {6, 7, 0, 0, 0, 0, 0, 0} }, //  1 -> -6
+        { .val = {5, 6, 7, 0, 0, 0, 0, 0} }, //  2 -> -5
+        { .val = {4, 5, 6, 7, 0, 0, 0, 0} }, //  3 -> -4
+        { .val = {3, 4, 5, 6, 7, 0, 0, 0} }, //  4 -> -3
+        { .val = {2, 3, 4, 5, 6, 7, 0, 0} }, //  5 -> -2
+        { .val = {1, 2, 3, 4, 5, 6, 7, 0} }, //  6 -> -1
+        { .val = {0, 1, 2, 3, 4, 5, 6, 7} }, //  7 ->  0
+        { .val = {7, 0, 1, 2, 3, 4, 5, 6} }, //  8 ->  1
+        { .val = {7, 7, 0, 1, 2, 3, 4, 5} }, //  9 ->  2
+        { .val = {7, 7, 7, 0, 1, 2, 3, 4} }, // 10 ->  3
+        { .val = {7, 7, 7, 7, 0, 1, 2, 3} }, // 11 ->  4
+        { .val = {7, 7, 7, 7, 7, 0, 1, 2} }, // 12 ->  5
+        { .val = {7, 7, 7, 7, 7, 7, 0, 1} }, // 13 ->  6
+        { .val = {7, 7, 7, 7, 7, 7, 7, 0} }, // 14 ->  7
+        { .val = {7, 7, 7, 7, 7, 7, 7, 7} }, // 15 ->  8
+    };
+
+    for (int32_t i = 0; i < vn; i += 1) {
+        mx_type_reg(vec[i]) = _mm256_set1_epi32(dval);
+
+        int32_t ridx = mb32_itr_ridx(it) + off[i].roff;
+        if (ridx < it->rbegin || it->rend <= ridx) {
+            // Out of range.
+            continue;
+        } // if
+
+        int32_t cidx = mb32_itr_cidx(it) + off[i].coff;
+        int32_t voff = cidx - it->cbegin;
+        if (voff <= (0 - I32S_IN_V8SI) || it->cend <= cidx) {
+            // Out of range.
+            continue;
+        } // if
+
+        int32_t mov;
+        if (voff < 0) {
+            cidx = it->cbegin;
+            voff = abs(voff);
+            mov = voff - mb32_chk_delta(cidx);
+        } else {
+            mov = 0 - mb32_chk_delta(cidx) - voff;
+            voff = 0;
+        } // if
+
+        int32_t rmd = I32S_IN_V8SI - voff;
+        int32_t cpy = itr_calc_copy_bytes(it, cidx, voff, rmd);
+        v8si_t tmp;
+        mb32_chk_ptr schk = mb32_chk_locate_by_index(it->ms, ridx, cidx);
+
+        mx_type_reg(tmp) = _mm256_permutevar8x32_epi32(mx_type_reg(schk->vec.i32[mb32_chk_delta(ridx)]), mx_type_reg(shift_mask[mov + 7]));
+        mx_type_reg(vec[i]) = _mm256_blendv_epi8(mx_type_reg(vec[i]), mx_type_reg(tmp), mx_type_reg(v8si_mask[voff]));
+
+        voff += cpy;
+        rmd -= cpy;
+
+        cidx = mb32_chk_next_boundary(cidx);
+        schk = mb32_chk_locate_by_index(it->ms, ridx, cidx);
+        cpy = itr_calc_copy_bytes(it, cidx, 0, rmd);
+
+        mx_type_reg(tmp) = _mm256_permutevar8x32_epi32(mx_type_reg(schk->vec.i32[mb32_chk_delta(ridx)]), mx_type_reg(shift_mask[voff + 7]));
+        mx_type_reg(vec[i]) = _mm256_blendv_epi8(mx_type_reg(vec[i]), mx_type_reg(tmp), mx_type_reg(v8si_mask[voff]));
+
+        mx_type_reg(vec[i]) = _mm256_blendv_epi8(mx_type_reg(vec[i]), _mm256_set1_epi32(dval), mx_type_reg(v8si_mask[voff + cpy]));
+    } // for
+} // mb32_itr_get_v8si_in_row
+
+bool mb32_itr_get_v8si_in_column(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb32_off_t * off, int32_t dval, bool move)
+{
+} // mb32_itr_get_v8si_in_column
+
+bool mb32_itr_set_v8si_in_row(mb32_iter_ptr it, v8si_t * vec, bool move)
+{
+} // mb32_itr_set_v8si_in_row
+
+bool mb32_itr_set_v8si_in_column(mb32_iter_ptr it, v8si_t * vec, bool move)
+{
+} // mb32_itr_set_v8si_in_column

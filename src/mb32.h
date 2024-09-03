@@ -311,17 +311,17 @@ inline static bool mb32_itr_to_next_value_in_chunk(mb32_iter_ptr it)
 
 inline static bool mb32_itr_to_next_v8si_in_row(mb32_iter_ptr it)
 {
-    return mb32_itr_to_next_position_in_row(it, 8, it->cend);
+    return mb32_itr_to_next_position_in_row(it, I32S_IN_V8SI, it->cend);
 } // mb32_itr_to_next_v8si_in_row
 
 inline static bool mb32_itr_to_next_v8si_in_column(mb32_iter_ptr it)
 {
-    return mb32_itr_to_next_position_in_column(it, 8, it->rend);
+    return mb32_itr_to_next_position_in_column(it, I32S_IN_V8SI, it->rend);
 } // mb32_itr_to_next_v8si_in_column
 
 inline static bool mb32_itr_to_next_v8si_in_chunk(mb32_iter_ptr it)
 {
-    return mb32_itr_to_next_position_in_row(it, 8, mb32_chk_next_boundary(it->cidx));
+    return mb32_itr_to_next_position_in_row(it, I32S_IN_V8SI, mb32_chk_next_boundary(it->cidx));
 } // mb32_itr_to_next_v8si_in_chunk
 
 extern bool mb32_itr_get_v8si_in_row(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb32_off_t * off, int32_t dval, bool move);

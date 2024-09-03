@@ -519,10 +519,15 @@ bool mb32_itr_get_v8si_in_row_ori(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, m
 } // mb32_itr_get_v8si_in_row_ori
 #endif
 
-inline static int32_t itr_calc_copy_bytes(mb32_iter_ptr it, int32_t cidx, int32_t off, int32_t rmd)
+inline static __m256i itr_get_shift_mask(int32_t mov)
 {
-    return (mb32_chk_irmd(it->ms->cnum, cidx) - off) < rmd ? (mb32_chk_irmd(it->ms->cnum, cidx) - off) : rmd;
-} // itr_calc_copy_bytes
+    static const int32_t mask[] = {
+        7, 7, 7, 7, 7, 7, 7, 7,
+        0, 1, 2, 3, 4, 5, 6, 7,
+        0, 0, 0, 0, 0, 0, 0, 0,
+    };
+    return _mm256_loadu_si256((__m256i const *)&mask[8 - mov]);
+} // itr_get_shift_mask
 
 bool mb32_itr_get_v8si_in_row(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb32_off_t * off, int32_t dval, bool move)
 {
@@ -546,18 +551,12 @@ bool mb32_itr_get_v8si_in_row(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb32_
     };
 
     for (int32_t i = 0; i < vn; i += 1) {
-        mx_type_reg(vec[i]) = _mm256_set1_epi32(dval);
-
         int32_t ridx = mb32_itr_ridx(it) + off[i].roff;
-        if (ridx < it->rbegin || it->rend <= ridx) {
-            // Out of range.
-            continue;
-        } // if
-
         int32_t cidx = mb32_itr_cidx(it) + off[i].coff;
         int32_t voff = cidx - it->cbegin;
-        if (voff <= (0 - I32S_IN_V8SI) || it->cend <= cidx) {
+        if (ridx < it->rbegin || it->rend <= ridx || voff <= (0 - I32S_IN_V8SI) || it->cend <= cidx) {
             // Out of range.
+            mx_type_reg(vec[i]) = _mm256_set1_epi32(dval);
             continue;
         } // if
 
@@ -571,26 +570,31 @@ bool mb32_itr_get_v8si_in_row(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb32_
             voff = 0;
         } // if
 
-        int32_t rmd = I32S_IN_V8SI - voff;
-        int32_t cpy = itr_calc_copy_bytes(it, cidx, voff, rmd);
         v8si_t tmp;
+        v8si_t ret;
         mb32_chk_ptr schk = mb32_chk_locate_by_index(it->ms, ridx, cidx);
 
-        mx_type_reg(tmp) = _mm256_permutevar8x32_epi32(mx_type_reg(schk->vec.i32[mb32_chk_delta(ridx)]), mx_type_reg(shift_mask[mov + 7]));
-        mx_type_reg(vec[i]) = _mm256_blendv_epi8(mx_type_reg(vec[i]), mx_type_reg(tmp), mx_type_reg(v8si_mask[voff]));
+        mx_type_reg(tmp) = _mm256_permutevar8x32_epi32(mx_type_reg(schk->vec.i32[mb32_chk_delta(ridx)]), itr_get_shift_mask(mov));
+        mx_type_reg(ret) = _mm256_blendv_epi8(_mm256_set1_epi32(dval), mx_type_reg(tmp), mx_type_reg(v8si_mask[voff]));
 
-        voff += cpy;
-        rmd -= cpy;
+        voff += mb32_chk_irmd(it->ms->cnum, cidx) < (I32S_IN_V8SI - voff) ? mb32_chk_irmd(it->ms->cnum, cidx) : (I32S_IN_V8SI - voff);
 
         cidx = mb32_chk_next_boundary(cidx);
-        schk = mb32_chk_locate_by_index(it->ms, ridx, cidx);
-        cpy = itr_calc_copy_bytes(it, cidx, 0, rmd);
+        if (cidx < it->cend) {
+            schk += 1;
 
-        mx_type_reg(tmp) = _mm256_permutevar8x32_epi32(mx_type_reg(schk->vec.i32[mb32_chk_delta(ridx)]), mx_type_reg(shift_mask[voff + 7]));
-        mx_type_reg(vec[i]) = _mm256_blendv_epi8(mx_type_reg(vec[i]), mx_type_reg(tmp), mx_type_reg(v8si_mask[voff]));
+            mx_type_reg(tmp) = _mm256_permutevar8x32_epi32(mx_type_reg(schk->vec.i32[mb32_chk_delta(ridx)]), itr_get_shift_mask(voff));
+            mx_type_reg(ret) = _mm256_blendv_epi8(mx_type_reg(ret), mx_type_reg(tmp), mx_type_reg(v8si_mask[voff]));
 
-        mx_type_reg(vec[i]) = _mm256_blendv_epi8(mx_type_reg(vec[i]), _mm256_set1_epi32(dval), mx_type_reg(v8si_mask[voff + cpy]));
+            voff += mb32_chk_irmd(it->ms->cnum, cidx) < (I32S_IN_V8SI - voff) ? mb32_chk_irmd(it->ms->cnum, cidx) : (I32S_IN_V8SI - voff);
+        } // if
+
+        mx_type_reg(vec[i]) = _mm256_blendv_epi8(mx_type_reg(ret), _mm256_set1_epi32(dval), mx_type_reg(v8si_mask[voff]));
     } // for
+
+    if (move) {
+        mb32_itr_to_next_v8si_in_row(it);
+    } // if
 } // mb32_itr_get_v8si_in_row
 
 bool mb32_itr_get_v8si_in_column(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb32_off_t * off, int32_t dval, bool move)

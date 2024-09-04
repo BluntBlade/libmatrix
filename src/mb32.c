@@ -592,9 +592,7 @@ bool mb32_itr_get_v8si_in_row(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb32_
         mx_type_reg(vec[i]) = _mm256_blendv_epi8(mx_type_reg(ret), _mm256_set1_epi32(dval), mx_type_reg(v8si_mask[voff]));
     } // for
 
-    if (move) {
-        mb32_itr_to_next_v8si_in_row(it);
-    } // if
+    return move ? mb32_itr_to_next_v8si_in_row(it) : true;
 } // mb32_itr_get_v8si_in_row
 
 bool mb32_itr_get_v8si_in_column(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb32_off_t * off, int32_t dval, bool move)

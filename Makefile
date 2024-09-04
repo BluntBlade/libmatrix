@@ -60,6 +60,7 @@ TEST_UTIL_OBJ = $(TEST_UTIL_SRC:.c=.o)
 TEST_UTIL_TARGET = test/utils.out
 
 TEST_MB32_SRC = test/mb32.c \
+                test/mb32_iter.c \
                 src/mx_types.c
 TEST_MB32_OBJ = $(TEST_MB32_SRC:.c=.o)
 TEST_MB32_TARGET = test/mb32.out

@@ -521,12 +521,8 @@ bool mb32_itr_get_v8si_in_row_ori(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, m
 
 inline static __m256i itr_get_shift_mask(int32_t mov)
 {
-    static const int32_t mask[] = {
-        7, 7, 7, 7, 7, 7, 7, 7,
-        0, 1, 2, 3, 4, 5, 6, 7,
-        0, 0, 0, 0, 0, 0, 0, 0,
-    };
-    return _mm256_loadu_si256((__m256i const *)&mask[8 - mov]);
+    static const v8si_t mask = { .val = { 0, 1, 2, 3, 4, 5, 6, 7 } };
+    return _mm256_sub_epi32(mx_type_reg(mask), _mm256_set1_epi32(mov));
 } // itr_get_shift_mask
 
 inline static int32_t itr_min(int32_t a, int32_t b)

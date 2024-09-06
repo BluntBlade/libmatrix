@@ -535,7 +535,8 @@ bool mb32_itr_get_v8si_in_row(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb32_
     for (int32_t i = 0; i < vn; i += 1) {
         int32_t ridx = mb32_itr_ridx(it) + off[i].roff;
         int32_t cidx = mb32_itr_cidx(it) + off[i].coff;
-        if (ridx < 0 || it->ms->rnum <= ridx || cidx <= (0 - I32S_IN_V8SI) || it->ms->cnum <= cidx) {
+        bool out = (ridx < 0) | (it->ms->rnum <= ridx) | (cidx <= (0 - I32S_IN_V8SI)) | (it->ms->cnum <= cidx);
+        if (out) {
             // Out of matrix.
             mx_type_reg(vec[i]) = _mm256_set1_epi32(dval);
             continue;

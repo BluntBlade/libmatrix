@@ -566,9 +566,11 @@ bool mb32_itr_get_v8si_in_row(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb32_
             voff = abs(voff);
             mov = voff - mb32_chk_delta(cidx);
         } else {
-            mov = 0 - mb32_chk_delta(mb32_itr_cidx(it)) - voff;
+            //mov = 0 - mb32_chk_delta(mb32_itr_cidx(it)) - voff;
+            mov = (mb32_chk_next_boundary(cidx) - cidx) - MB32_CHK_LEN;
             voff = 0;
         } // if
+
 
         v8si_t tmp;
         v8si_t ret;

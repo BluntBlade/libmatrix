@@ -545,22 +545,17 @@ bool mb32_itr_get_v8si_in_row(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb32_
             continue;
         } // if
 
-        int32_t mov;
-        int32_t voff = cidx - it->cbegin;
-        if (voff < 0) {
-            cidx = it->cbegin;
-            voff = abs(voff);
-            mov = voff - mb32_chk_delta(cidx);
-        } else {
-            mov = (mb32_chk_next_boundary(cidx) - cidx) - MB32_CHK_LEN;
-            voff = 0;
+        int32_t voff = 0;
+        if (cidx < 0) {
+            voff = 0 - cidx;
+            cidx = 0;
         } // if
 
         v8si_t tmp;
         v8si_t ret;
         mb32_chk_ptr schk = mb32_chk_locate_by_index(it->ms, ridx, cidx);
 
-        mx_type_reg(tmp) = itr_get_shift_mask(mov);
+        mx_type_reg(tmp) = itr_get_shift_mask(voff - mb32_chk_delta(cidx));
         mx_type_reg(tmp) = _mm256_permutevar8x32_epi32(mx_type_reg(schk->vec.i32[mb32_chk_delta(ridx)]), mx_type_reg(tmp));
         mx_type_reg(ret) = _mm256_blendv_epi8(mx_type_reg(tmp), _mm256_set1_epi32(dval), mx_type_reg(v8si_mask[voff]));
 

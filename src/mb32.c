@@ -529,6 +529,11 @@ inline static __m256i itr_get_shift_mask(int32_t mov)
     return _mm256_loadu_si256((__m256i const *)&mask[8 - mov]);
 } // itr_get_shift_mask
 
+inline static int32_t itr_min(int32_t a, int32_t b)
+{
+    return a < b ? a : b;
+} // itr_min
+
 bool mb32_itr_get_v8si_in_row(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb32_off_t * off, int32_t dval, bool move)
 {
     static v8si_t shift_mask[] = {
@@ -571,24 +576,27 @@ bool mb32_itr_get_v8si_in_row(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb32_
             voff = 0;
         } // if
 
-
         v8si_t tmp;
         v8si_t ret;
         mb32_chk_ptr schk = mb32_chk_locate_by_index(it->ms, ridx, cidx);
 
-        mx_type_reg(tmp) = _mm256_permutevar8x32_epi32(mx_type_reg(schk->vec.i32[mb32_chk_delta(ridx)]), itr_get_shift_mask(mov));
+        mx_type_reg(tmp) = itr_get_shift_mask(mov);
+        mx_type_reg(tmp) = _mm256_permutevar8x32_epi32(mx_type_reg(schk->vec.i32[mb32_chk_delta(ridx)]), mx_type_reg(tmp));
         mx_type_reg(ret) = _mm256_blendv_epi8(mx_type_reg(tmp), _mm256_set1_epi32(dval), mx_type_reg(v8si_mask[voff]));
 
-        voff += mb32_chk_irmd(it->ms->cnum, cidx) < (I32S_IN_V8SI - voff) ? mb32_chk_irmd(it->ms->cnum, cidx) : (I32S_IN_V8SI - voff);
+        int32_t rboundary = itr_min(mb32_chk_next_boundary(cidx), it->cend);
+        voff += itr_min((rboundary - cidx), (I32S_IN_V8SI - voff));
 
         cidx = mb32_chk_next_boundary(cidx);
         if (cidx < it->cend) {
             schk += 1;
 
-            mx_type_reg(tmp) = _mm256_permutevar8x32_epi32(mx_type_reg(schk->vec.i32[mb32_chk_delta(ridx)]), itr_get_shift_mask(voff));
+            mx_type_reg(tmp) = itr_get_shift_mask(voff);
+            mx_type_reg(tmp) = _mm256_permutevar8x32_epi32(mx_type_reg(schk->vec.i32[mb32_chk_delta(ridx)]), mx_type_reg(tmp));
             mx_type_reg(ret) = _mm256_blendv_epi8(mx_type_reg(tmp), mx_type_reg(ret), mx_type_reg(v8si_mask[voff]));
 
-            voff += mb32_chk_irmd(it->ms->cnum, cidx) < (I32S_IN_V8SI - voff) ? mb32_chk_irmd(it->ms->cnum, cidx) : (I32S_IN_V8SI - voff);
+            rboundary = itr_min(cidx + MB32_CHK_LEN, it->cend);
+            voff += itr_min((rboundary - cidx), (I32S_IN_V8SI - voff));
         } // if
 
         mx_type_reg(vec[i]) = _mm256_blendv_epi8(_mm256_set1_epi32(dval), mx_type_reg(ret), mx_type_reg(v8si_mask[voff]));

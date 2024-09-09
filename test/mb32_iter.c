@@ -479,12 +479,182 @@ Test(Iterator, mb32_itr_get_v8si_in_row)
         check_value( 107, mx_type_val(vec[1])[5]);
         check_value( 108, mx_type_val(vec[1])[6]);
         check_value( 109, mx_type_val(vec[1])[7]);
+
+        // Out of range, beyond the bottom boundary.
+        check_value(1002, mx_type_val(vec[2])[0]);
+        check_value(1003, mx_type_val(vec[2])[1]);
+        check_value(1004, mx_type_val(vec[2])[2]);
+        check_value(1005, mx_type_val(vec[2])[3]);
+        check_value(1006, mx_type_val(vec[2])[4]);
+        check_value(1007, mx_type_val(vec[2])[5]);
+        check_value(1008, mx_type_val(vec[2])[6]);
+        check_value(1009, mx_type_val(vec[2])[7]);
+
+        // Out of range, beyond the left boundary.
+        check_value(dval, mx_type_val(vec[3])[0]);
+        check_value(dval, mx_type_val(vec[3])[1]);
+        check_value(dval, mx_type_val(vec[3])[2]);
+        check_value(dval, mx_type_val(vec[3])[3]);
+        check_value(dval, mx_type_val(vec[3])[4]);
+        check_value(dval, mx_type_val(vec[3])[5]);
+        check_value( 200, mx_type_val(vec[3])[6]);
+        check_value( 201, mx_type_val(vec[3])[7]);
+
+        // Out of range, beyond the right boundary.
+        check_value( 210, mx_type_val(vec[4])[0]);
+        check_value( 211, mx_type_val(vec[4])[1]);
+        check_value( 212, mx_type_val(vec[4])[2]);
+        check_value( 213, mx_type_val(vec[4])[3]);
+        check_value( 214, mx_type_val(vec[4])[4]);
+        check_value( 215, mx_type_val(vec[4])[5]);
+        check_value( 216, mx_type_val(vec[4])[6]);
+        check_value( 217, mx_type_val(vec[4])[7]);
+
+        // In range, beyond the left boundary of the range one element.
+        check_value( 201, mx_type_val(vec[5])[0]);
+        check_value( 202, mx_type_val(vec[5])[1]);
+        check_value( 203, mx_type_val(vec[5])[2]);
+        check_value( 204, mx_type_val(vec[5])[3]);
+        check_value( 205, mx_type_val(vec[5])[4]);
+        check_value( 206, mx_type_val(vec[5])[5]);
+        check_value( 207, mx_type_val(vec[5])[6]);
+        check_value( 208, mx_type_val(vec[5])[7]);
+
+        // In range, beyond the left boundary of the range two elements.
+        check_value( 200, mx_type_val(vec[6])[0]);
+        check_value( 201, mx_type_val(vec[6])[1]);
+        check_value( 202, mx_type_val(vec[6])[2]);
+        check_value( 203, mx_type_val(vec[6])[3]);
+        check_value( 204, mx_type_val(vec[6])[4]);
+        check_value( 205, mx_type_val(vec[6])[5]);
+        check_value( 206, mx_type_val(vec[6])[6]);
+        check_value( 207, mx_type_val(vec[6])[7]);
+
+        // In range, beyond the left boundary of the range three elements.
+        check_value(dval, mx_type_val(vec[7])[0]);
+        check_value( 200, mx_type_val(vec[7])[1]);
+        check_value( 201, mx_type_val(vec[7])[2]);
+        check_value( 202, mx_type_val(vec[7])[3]);
+        check_value( 203, mx_type_val(vec[7])[4]);
+        check_value( 204, mx_type_val(vec[7])[5]);
+        check_value( 205, mx_type_val(vec[7])[6]);
+        check_value( 206, mx_type_val(vec[7])[7]);
+
+        // In range, beyond the left boundary of the range four elements.
+        check_value(dval, mx_type_val(vec[8])[0]);
+        check_value(dval, mx_type_val(vec[8])[1]);
+        check_value( 200, mx_type_val(vec[8])[2]);
+        check_value( 201, mx_type_val(vec[8])[3]);
+        check_value( 202, mx_type_val(vec[8])[4]);
+        check_value( 203, mx_type_val(vec[8])[5]);
+        check_value( 204, mx_type_val(vec[8])[6]);
+        check_value( 205, mx_type_val(vec[8])[7]);
+
+        // In range, beyond the left boundary of the range five elements.
+        check_value(dval, mx_type_val(vec[9])[0]);
+        check_value(dval, mx_type_val(vec[9])[1]);
+        check_value(dval, mx_type_val(vec[9])[2]);
+        check_value( 200, mx_type_val(vec[9])[3]);
+        check_value( 201, mx_type_val(vec[9])[4]);
+        check_value( 202, mx_type_val(vec[9])[5]);
+        check_value( 203, mx_type_val(vec[9])[6]);
+        check_value( 204, mx_type_val(vec[9])[7]);
+
+        // In range, beyond the left boundary of the range six elements.
+        check_value(dval, mx_type_val(vec[10])[0]);
+        check_value(dval, mx_type_val(vec[10])[1]);
+        check_value(dval, mx_type_val(vec[10])[2]);
+        check_value(dval, mx_type_val(vec[10])[3]);
+        check_value( 200, mx_type_val(vec[10])[4]);
+        check_value( 201, mx_type_val(vec[10])[5]);
+        check_value( 202, mx_type_val(vec[10])[6]);
+        check_value( 203, mx_type_val(vec[10])[7]);
+
+        // In range, beyond the left boundary of the range seven elements.
+        check_value(dval, mx_type_val(vec[11])[0]);
+        check_value(dval, mx_type_val(vec[11])[1]);
+        check_value(dval, mx_type_val(vec[11])[2]);
+        check_value(dval, mx_type_val(vec[11])[3]);
+        check_value(dval, mx_type_val(vec[11])[4]);
+        check_value( 200, mx_type_val(vec[11])[5]);
+        check_value( 201, mx_type_val(vec[11])[6]);
+        check_value( 202, mx_type_val(vec[11])[7]);
+
+        // In range, beyond the right boundary of the range one element.
+        check_value( 203, mx_type_val(vec[12])[0]);
+        check_value( 204, mx_type_val(vec[12])[1]);
+        check_value( 205, mx_type_val(vec[12])[2]);
+        check_value( 206, mx_type_val(vec[12])[3]);
+        check_value( 207, mx_type_val(vec[12])[4]);
+        check_value( 208, mx_type_val(vec[12])[5]);
+        check_value( 209, mx_type_val(vec[12])[6]);
+        check_value( 210, mx_type_val(vec[12])[7]);
+
+        // In range, beyond the right boundary of the range two elements.
+        check_value( 204, mx_type_val(vec[13])[0]);
+        check_value( 205, mx_type_val(vec[13])[1]);
+        check_value( 206, mx_type_val(vec[13])[2]);
+        check_value( 207, mx_type_val(vec[13])[3]);
+        check_value( 208, mx_type_val(vec[13])[4]);
+        check_value( 209, mx_type_val(vec[13])[5]);
+        check_value( 210, mx_type_val(vec[13])[6]);
+        check_value( 211, mx_type_val(vec[13])[7]);
+
+        // In range, beyond the right boundary of the range three elements.
+        check_value( 205, mx_type_val(vec[14])[0]);
+        check_value( 206, mx_type_val(vec[14])[1]);
+        check_value( 207, mx_type_val(vec[14])[2]);
+        check_value( 208, mx_type_val(vec[14])[3]);
+        check_value( 209, mx_type_val(vec[14])[4]);
+        check_value( 210, mx_type_val(vec[14])[5]);
+        check_value( 211, mx_type_val(vec[14])[6]);
+        check_value( 212, mx_type_val(vec[14])[7]);
+
+        // In range, beyond the right boundary of the range four elements.
+        check_value( 206, mx_type_val(vec[15])[0]);
+        check_value( 207, mx_type_val(vec[15])[1]);
+        check_value( 208, mx_type_val(vec[15])[2]);
+        check_value( 209, mx_type_val(vec[15])[3]);
+        check_value( 210, mx_type_val(vec[15])[4]);
+        check_value( 211, mx_type_val(vec[15])[5]);
+        check_value( 212, mx_type_val(vec[15])[6]);
+        check_value( 213, mx_type_val(vec[15])[7]);
+
+        // In range, beyond the right boundary of the range five elements.
+        check_value( 207, mx_type_val(vec[16])[0]);
+        check_value( 208, mx_type_val(vec[16])[1]);
+        check_value( 209, mx_type_val(vec[16])[2]);
+        check_value( 210, mx_type_val(vec[16])[3]);
+        check_value( 211, mx_type_val(vec[16])[4]);
+        check_value( 212, mx_type_val(vec[16])[5]);
+        check_value( 213, mx_type_val(vec[16])[6]);
+        check_value( 214, mx_type_val(vec[16])[7]);
+
+        // In range, beyond the right boundary of the range six elements.
+        check_value( 208, mx_type_val(vec[17])[0]);
+        check_value( 209, mx_type_val(vec[17])[1]);
+        check_value( 210, mx_type_val(vec[17])[2]);
+        check_value( 211, mx_type_val(vec[17])[3]);
+        check_value( 212, mx_type_val(vec[17])[4]);
+        check_value( 213, mx_type_val(vec[17])[5]);
+        check_value( 214, mx_type_val(vec[17])[6]);
+        check_value( 215, mx_type_val(vec[17])[7]);
+
+        // In range, beyond the right boundary of the range seven elements.
+        check_value( 209, mx_type_val(vec[18])[0]);
+        check_value( 210, mx_type_val(vec[18])[1]);
+        check_value( 211, mx_type_val(vec[18])[2]);
+        check_value( 212, mx_type_val(vec[18])[3]);
+        check_value( 213, mx_type_val(vec[18])[4]);
+        check_value( 214, mx_type_val(vec[18])[5]);
+        check_value( 215, mx_type_val(vec[18])[6]);
+        check_value( 216, mx_type_val(vec[18])[7]);
     }
 
-    // Case: Range covers 1 non-full chunk.
+    // Case: Range covers 1 non-full chunk aligning to the left boundary.
     {
         mb32_iter_t it;
-        mb32_itr_init_for_iterating_in_range(&it, &ms, 2, 2, 6, 6);
+        mb32_itr_init_for_iterating_in_range(&it, &ms, 8, 8, 14, 14);
 
         v8si_t vec[vn];
         int32_t dval = 9999;
@@ -493,15 +663,398 @@ Test(Iterator, mb32_itr_get_v8si_in_row)
 
         check_value(true, ret);
 
-        // Get one full vector.
-        check_value( 202, mx_type_val(vec[0])[0]);
-        check_value( 203, mx_type_val(vec[0])[1]);
-        check_value( 204, mx_type_val(vec[0])[2]);
-        check_value( 205, mx_type_val(vec[0])[3]);
-        check_value( 206, mx_type_val(vec[0])[4]);
-        check_value( 207, mx_type_val(vec[0])[5]);
-        check_value( 208, mx_type_val(vec[0])[6]);
-        check_value( 209, mx_type_val(vec[0])[7]);
+        // Part filled vector.
+        check_value( 808, mx_type_val(vec[0])[0]);
+        check_value( 809, mx_type_val(vec[0])[1]);
+        check_value( 810, mx_type_val(vec[0])[2]);
+        check_value( 811, mx_type_val(vec[0])[3]);
+        check_value( 812, mx_type_val(vec[0])[4]);
+        check_value( 813, mx_type_val(vec[0])[5]);
+        check_value( 814, mx_type_val(vec[0])[6]);
+        check_value( 815, mx_type_val(vec[0])[7]);
+
+        // Out of range, beyond the top boundary.
+        check_value( 708, mx_type_val(vec[1])[0]);
+        check_value( 709, mx_type_val(vec[1])[1]);
+        check_value( 710, mx_type_val(vec[1])[2]);
+        check_value( 711, mx_type_val(vec[1])[3]);
+        check_value( 712, mx_type_val(vec[1])[4]);
+        check_value( 713, mx_type_val(vec[1])[5]);
+        check_value( 714, mx_type_val(vec[1])[6]);
+        check_value( 715, mx_type_val(vec[1])[7]);
+
+        // Out of range, beyond the bottom boundary.
+        check_value(1608, mx_type_val(vec[2])[0]);
+        check_value(1609, mx_type_val(vec[2])[1]);
+        check_value(1610, mx_type_val(vec[2])[2]);
+        check_value(1611, mx_type_val(vec[2])[3]);
+        check_value(1612, mx_type_val(vec[2])[4]);
+        check_value(1613, mx_type_val(vec[2])[5]);
+        check_value(1614, mx_type_val(vec[2])[6]);
+        check_value(1615, mx_type_val(vec[2])[7]);
+
+        // Out of range, beyond the left boundary.
+        check_value( 800, mx_type_val(vec[3])[0]);
+        check_value( 801, mx_type_val(vec[3])[1]);
+        check_value( 802, mx_type_val(vec[3])[2]);
+        check_value( 803, mx_type_val(vec[3])[3]);
+        check_value( 804, mx_type_val(vec[3])[4]);
+        check_value( 805, mx_type_val(vec[3])[5]);
+        check_value( 806, mx_type_val(vec[3])[6]);
+        check_value( 807, mx_type_val(vec[3])[7]);
+
+        // Out of range, beyond the right boundary.
+        check_value( 816, mx_type_val(vec[4])[0]);
+        check_value( 817, mx_type_val(vec[4])[1]);
+        check_value( 818, mx_type_val(vec[4])[2]);
+        check_value( 819, mx_type_val(vec[4])[3]);
+        check_value(dval, mx_type_val(vec[4])[4]);
+        check_value(dval, mx_type_val(vec[4])[5]);
+        check_value(dval, mx_type_val(vec[4])[6]);
+        check_value(dval, mx_type_val(vec[4])[7]);
+
+        // In range, beyond the left boundary of the range one element.
+        check_value( 807, mx_type_val(vec[5])[0]);
+        check_value( 808, mx_type_val(vec[5])[1]);
+        check_value( 809, mx_type_val(vec[5])[2]);
+        check_value( 810, mx_type_val(vec[5])[3]);
+        check_value( 811, mx_type_val(vec[5])[4]);
+        check_value( 812, mx_type_val(vec[5])[5]);
+        check_value( 813, mx_type_val(vec[5])[6]);
+        check_value( 814, mx_type_val(vec[5])[7]);
+
+        // In range, beyond the left boundary of the range two elements.
+        check_value( 806, mx_type_val(vec[6])[0]);
+        check_value( 807, mx_type_val(vec[6])[1]);
+        check_value( 808, mx_type_val(vec[6])[2]);
+        check_value( 809, mx_type_val(vec[6])[3]);
+        check_value( 810, mx_type_val(vec[6])[4]);
+        check_value( 811, mx_type_val(vec[6])[5]);
+        check_value( 812, mx_type_val(vec[6])[6]);
+        check_value( 813, mx_type_val(vec[6])[7]);
+
+        // In range, beyond the left boundary of the range three elements.
+        check_value( 805, mx_type_val(vec[7])[0]);
+        check_value( 806, mx_type_val(vec[7])[1]);
+        check_value( 807, mx_type_val(vec[7])[2]);
+        check_value( 808, mx_type_val(vec[7])[3]);
+        check_value( 809, mx_type_val(vec[7])[4]);
+        check_value( 810, mx_type_val(vec[7])[5]);
+        check_value( 811, mx_type_val(vec[7])[6]);
+        check_value( 812, mx_type_val(vec[7])[7]);
+
+        // In range, beyond the left boundary of the range four elements.
+        check_value( 804, mx_type_val(vec[8])[0]);
+        check_value( 805, mx_type_val(vec[8])[1]);
+        check_value( 806, mx_type_val(vec[8])[2]);
+        check_value( 807, mx_type_val(vec[8])[3]);
+        check_value( 808, mx_type_val(vec[8])[4]);
+        check_value( 809, mx_type_val(vec[8])[5]);
+        check_value( 810, mx_type_val(vec[8])[6]);
+        check_value( 811, mx_type_val(vec[8])[7]);
+
+        // In range, beyond the left boundary of the range five elements.
+        check_value( 803, mx_type_val(vec[9])[0]);
+        check_value( 804, mx_type_val(vec[9])[1]);
+        check_value( 805, mx_type_val(vec[9])[2]);
+        check_value( 806, mx_type_val(vec[9])[3]);
+        check_value( 807, mx_type_val(vec[9])[4]);
+        check_value( 808, mx_type_val(vec[9])[5]);
+        check_value( 809, mx_type_val(vec[9])[6]);
+        check_value( 810, mx_type_val(vec[9])[7]);
+
+        // In range, beyond the left boundary of the range six elements.
+        check_value( 802, mx_type_val(vec[10])[0]);
+        check_value( 803, mx_type_val(vec[10])[1]);
+        check_value( 804, mx_type_val(vec[10])[2]);
+        check_value( 805, mx_type_val(vec[10])[3]);
+        check_value( 806, mx_type_val(vec[10])[4]);
+        check_value( 807, mx_type_val(vec[10])[5]);
+        check_value( 808, mx_type_val(vec[10])[6]);
+        check_value( 809, mx_type_val(vec[10])[7]);
+
+        // In range, beyond the left boundary of the range seven elements.
+        check_value( 801, mx_type_val(vec[11])[0]);
+        check_value( 802, mx_type_val(vec[11])[1]);
+        check_value( 803, mx_type_val(vec[11])[2]);
+        check_value( 804, mx_type_val(vec[11])[3]);
+        check_value( 805, mx_type_val(vec[11])[4]);
+        check_value( 806, mx_type_val(vec[11])[5]);
+        check_value( 807, mx_type_val(vec[11])[6]);
+        check_value( 808, mx_type_val(vec[11])[7]);
+
+        // In range, beyond the right boundary of the range one element.
+        check_value( 809, mx_type_val(vec[12])[0]);
+        check_value( 810, mx_type_val(vec[12])[1]);
+        check_value( 811, mx_type_val(vec[12])[2]);
+        check_value( 812, mx_type_val(vec[12])[3]);
+        check_value( 813, mx_type_val(vec[12])[4]);
+        check_value( 814, mx_type_val(vec[12])[5]);
+        check_value( 815, mx_type_val(vec[12])[6]);
+        check_value( 816, mx_type_val(vec[12])[7]);
+
+        // In range, beyond the right boundary of the range two elements.
+        check_value( 810, mx_type_val(vec[13])[0]);
+        check_value( 811, mx_type_val(vec[13])[1]);
+        check_value( 812, mx_type_val(vec[13])[2]);
+        check_value( 813, mx_type_val(vec[13])[3]);
+        check_value( 814, mx_type_val(vec[13])[4]);
+        check_value( 815, mx_type_val(vec[13])[5]);
+        check_value( 816, mx_type_val(vec[13])[6]);
+        check_value( 817, mx_type_val(vec[13])[7]);
+
+        // In range, beyond the right boundary of the range three elements.
+        check_value( 811, mx_type_val(vec[14])[0]);
+        check_value( 812, mx_type_val(vec[14])[1]);
+        check_value( 813, mx_type_val(vec[14])[2]);
+        check_value( 814, mx_type_val(vec[14])[3]);
+        check_value( 815, mx_type_val(vec[14])[4]);
+        check_value( 816, mx_type_val(vec[14])[5]);
+        check_value( 817, mx_type_val(vec[14])[6]);
+        check_value( 818, mx_type_val(vec[14])[7]);
+
+        // In range, beyond the right boundary of the range four elements.
+        check_value( 812, mx_type_val(vec[15])[0]);
+        check_value( 813, mx_type_val(vec[15])[1]);
+        check_value( 814, mx_type_val(vec[15])[2]);
+        check_value( 815, mx_type_val(vec[15])[3]);
+        check_value( 816, mx_type_val(vec[15])[4]);
+        check_value( 817, mx_type_val(vec[15])[5]);
+        check_value( 818, mx_type_val(vec[15])[6]);
+        check_value( 819, mx_type_val(vec[15])[7]);
+
+        // In range, beyond the right boundary of the range five elements.
+        check_value( 813, mx_type_val(vec[16])[0]);
+        check_value( 814, mx_type_val(vec[16])[1]);
+        check_value( 815, mx_type_val(vec[16])[2]);
+        check_value( 816, mx_type_val(vec[16])[3]);
+        check_value( 817, mx_type_val(vec[16])[4]);
+        check_value( 818, mx_type_val(vec[16])[5]);
+        check_value( 819, mx_type_val(vec[16])[6]);
+        check_value(dval, mx_type_val(vec[16])[7]);
+
+        // In range, beyond the right boundary of the range six elements.
+        check_value( 814, mx_type_val(vec[17])[0]);
+        check_value( 815, mx_type_val(vec[17])[1]);
+        check_value( 816, mx_type_val(vec[17])[2]);
+        check_value( 817, mx_type_val(vec[17])[3]);
+        check_value( 818, mx_type_val(vec[17])[4]);
+        check_value( 819, mx_type_val(vec[17])[5]);
+        check_value(dval, mx_type_val(vec[17])[6]);
+        check_value(dval, mx_type_val(vec[17])[7]);
+
+        // In range, beyond the right boundary of the range seven elements.
+        check_value( 815, mx_type_val(vec[18])[0]);
+        check_value( 816, mx_type_val(vec[18])[1]);
+        check_value( 817, mx_type_val(vec[18])[2]);
+        check_value( 818, mx_type_val(vec[18])[3]);
+        check_value( 819, mx_type_val(vec[18])[4]);
+        check_value(dval, mx_type_val(vec[18])[5]);
+        check_value(dval, mx_type_val(vec[18])[6]);
+        check_value(dval, mx_type_val(vec[18])[7]);
+    }
+
+    // Case: Range covers 1 non-full chunk.
+    {
+        mb32_iter_t it;
+        mb32_itr_init_for_iterating_in_range(&it, &ms, 3, 16, 11, 18);
+
+        v8si_t vec[vn];
+        int32_t dval = 9999;
+
+        bool ret = mb32_itr_get_v8si_in_row(&it, vec, vn, off, dval, true);
+
+        check_value(true, ret);
+
+        // Part filled vector.
+        check_value( 316, mx_type_val(vec[0])[0]);
+        check_value( 317, mx_type_val(vec[0])[1]);
+        check_value( 318, mx_type_val(vec[0])[2]);
+        check_value( 319, mx_type_val(vec[0])[3]);
+        check_value(dval, mx_type_val(vec[0])[4]);
+        check_value(dval, mx_type_val(vec[0])[5]);
+        check_value(dval, mx_type_val(vec[0])[6]);
+        check_value(dval, mx_type_val(vec[0])[7]);
+
+        // Out of range, beyond the top boundary.
+        check_value( 216, mx_type_val(vec[1])[0]);
+        check_value( 217, mx_type_val(vec[1])[1]);
+        check_value( 218, mx_type_val(vec[1])[2]);
+        check_value( 219, mx_type_val(vec[1])[3]);
+        check_value(dval, mx_type_val(vec[1])[4]);
+        check_value(dval, mx_type_val(vec[1])[5]);
+        check_value(dval, mx_type_val(vec[1])[6]);
+        check_value(dval, mx_type_val(vec[1])[7]);
+
+        // Out of range, beyond the bottom boundary.
+        check_value(1116, mx_type_val(vec[2])[0]);
+        check_value(1117, mx_type_val(vec[2])[1]);
+        check_value(1118, mx_type_val(vec[2])[2]);
+        check_value(1119, mx_type_val(vec[2])[3]);
+        check_value(dval, mx_type_val(vec[2])[4]);
+        check_value(dval, mx_type_val(vec[2])[5]);
+        check_value(dval, mx_type_val(vec[2])[6]);
+        check_value(dval, mx_type_val(vec[2])[7]);
+
+        // Out of range, beyond the left boundary.
+        check_value( 308, mx_type_val(vec[3])[0]);
+        check_value( 309, mx_type_val(vec[3])[1]);
+        check_value( 310, mx_type_val(vec[3])[2]);
+        check_value( 311, mx_type_val(vec[3])[3]);
+        check_value( 312, mx_type_val(vec[3])[4]);
+        check_value( 313, mx_type_val(vec[3])[5]);
+        check_value( 314, mx_type_val(vec[3])[6]);
+        check_value( 315, mx_type_val(vec[3])[7]);
+
+        // Out of range, beyond the right boundary.
+        check_value(dval, mx_type_val(vec[4])[0]);
+        check_value(dval, mx_type_val(vec[4])[1]);
+        check_value(dval, mx_type_val(vec[4])[2]);
+        check_value(dval, mx_type_val(vec[4])[3]);
+        check_value(dval, mx_type_val(vec[4])[4]);
+        check_value(dval, mx_type_val(vec[4])[5]);
+        check_value(dval, mx_type_val(vec[4])[6]);
+        check_value(dval, mx_type_val(vec[4])[7]);
+
+        // In range, beyond the left boundary of the range one element.
+        check_value( 315, mx_type_val(vec[5])[0]);
+        check_value( 316, mx_type_val(vec[5])[1]);
+        check_value( 317, mx_type_val(vec[5])[2]);
+        check_value( 318, mx_type_val(vec[5])[3]);
+        check_value( 319, mx_type_val(vec[5])[4]);
+        check_value(dval, mx_type_val(vec[5])[5]);
+        check_value(dval, mx_type_val(vec[5])[6]);
+        check_value(dval, mx_type_val(vec[5])[7]);
+
+        // In range, beyond the left boundary of the range two elements.
+        check_value( 314, mx_type_val(vec[6])[0]);
+        check_value( 315, mx_type_val(vec[6])[1]);
+        check_value( 316, mx_type_val(vec[6])[2]);
+        check_value( 317, mx_type_val(vec[6])[3]);
+        check_value( 318, mx_type_val(vec[6])[4]);
+        check_value( 319, mx_type_val(vec[6])[5]);
+        check_value(dval, mx_type_val(vec[6])[6]);
+        check_value(dval, mx_type_val(vec[6])[7]);
+
+        // In range, beyond the left boundary of the range three elements.
+        check_value( 313, mx_type_val(vec[7])[0]);
+        check_value( 314, mx_type_val(vec[7])[1]);
+        check_value( 315, mx_type_val(vec[7])[2]);
+        check_value( 316, mx_type_val(vec[7])[3]);
+        check_value( 317, mx_type_val(vec[7])[4]);
+        check_value( 318, mx_type_val(vec[7])[5]);
+        check_value( 319, mx_type_val(vec[7])[6]);
+        check_value(dval, mx_type_val(vec[7])[7]);
+
+        // In range, beyond the left boundary of the range four elements.
+        check_value( 312, mx_type_val(vec[8])[0]);
+        check_value( 313, mx_type_val(vec[8])[1]);
+        check_value( 314, mx_type_val(vec[8])[2]);
+        check_value( 315, mx_type_val(vec[8])[3]);
+        check_value( 316, mx_type_val(vec[8])[4]);
+        check_value( 317, mx_type_val(vec[8])[5]);
+        check_value( 318, mx_type_val(vec[8])[6]);
+        check_value( 319, mx_type_val(vec[8])[7]);
+
+        // In range, beyond the left boundary of the range five elements.
+        check_value( 311, mx_type_val(vec[9])[0]);
+        check_value( 312, mx_type_val(vec[9])[1]);
+        check_value( 313, mx_type_val(vec[9])[2]);
+        check_value( 314, mx_type_val(vec[9])[3]);
+        check_value( 315, mx_type_val(vec[9])[4]);
+        check_value( 316, mx_type_val(vec[9])[5]);
+        check_value( 317, mx_type_val(vec[9])[6]);
+        check_value( 318, mx_type_val(vec[9])[7]);
+
+        // In range, beyond the left boundary of the range six elements.
+        check_value( 310, mx_type_val(vec[10])[0]);
+        check_value( 311, mx_type_val(vec[10])[1]);
+        check_value( 312, mx_type_val(vec[10])[2]);
+        check_value( 313, mx_type_val(vec[10])[3]);
+        check_value( 314, mx_type_val(vec[10])[4]);
+        check_value( 315, mx_type_val(vec[10])[5]);
+        check_value( 316, mx_type_val(vec[10])[6]);
+        check_value( 317, mx_type_val(vec[10])[7]);
+
+        // In range, beyond the left boundary of the range seven elements.
+        check_value( 309, mx_type_val(vec[11])[0]);
+        check_value( 310, mx_type_val(vec[11])[1]);
+        check_value( 311, mx_type_val(vec[11])[2]);
+        check_value( 312, mx_type_val(vec[11])[3]);
+        check_value( 313, mx_type_val(vec[11])[4]);
+        check_value( 314, mx_type_val(vec[11])[5]);
+        check_value( 315, mx_type_val(vec[11])[6]);
+        check_value( 316, mx_type_val(vec[11])[7]);
+
+        // In range, beyond the right boundary of the range one element.
+        check_value( 317, mx_type_val(vec[12])[0]);
+        check_value( 318, mx_type_val(vec[12])[1]);
+        check_value( 319, mx_type_val(vec[12])[2]);
+        check_value(dval, mx_type_val(vec[12])[3]);
+        check_value(dval, mx_type_val(vec[12])[4]);
+        check_value(dval, mx_type_val(vec[12])[5]);
+        check_value(dval, mx_type_val(vec[12])[6]);
+        check_value(dval, mx_type_val(vec[12])[7]);
+
+        // In range, beyond the right boundary of the range two element.
+        check_value( 318, mx_type_val(vec[13])[0]);
+        check_value( 319, mx_type_val(vec[13])[1]);
+        check_value(dval, mx_type_val(vec[13])[2]);
+        check_value(dval, mx_type_val(vec[13])[3]);
+        check_value(dval, mx_type_val(vec[13])[4]);
+        check_value(dval, mx_type_val(vec[13])[5]);
+        check_value(dval, mx_type_val(vec[13])[6]);
+        check_value(dval, mx_type_val(vec[13])[7]);
+
+        // In range, beyond the right boundary of the range three elements.
+        check_value( 319, mx_type_val(vec[14])[0]);
+        check_value(dval, mx_type_val(vec[14])[1]);
+        check_value(dval, mx_type_val(vec[14])[2]);
+        check_value(dval, mx_type_val(vec[14])[3]);
+        check_value(dval, mx_type_val(vec[14])[4]);
+        check_value(dval, mx_type_val(vec[14])[5]);
+        check_value(dval, mx_type_val(vec[14])[6]);
+        check_value(dval, mx_type_val(vec[14])[7]);
+
+        // In range, beyond the right boundary of the range four elements.
+        check_value(dval, mx_type_val(vec[15])[0]);
+        check_value(dval, mx_type_val(vec[15])[1]);
+        check_value(dval, mx_type_val(vec[15])[2]);
+        check_value(dval, mx_type_val(vec[15])[3]);
+        check_value(dval, mx_type_val(vec[15])[4]);
+        check_value(dval, mx_type_val(vec[15])[5]);
+        check_value(dval, mx_type_val(vec[15])[6]);
+        check_value(dval, mx_type_val(vec[15])[7]);
+
+        // In range, beyond the right boundary of the range five elements.
+        check_value(dval, mx_type_val(vec[16])[0]);
+        check_value(dval, mx_type_val(vec[16])[1]);
+        check_value(dval, mx_type_val(vec[16])[2]);
+        check_value(dval, mx_type_val(vec[16])[3]);
+        check_value(dval, mx_type_val(vec[16])[4]);
+        check_value(dval, mx_type_val(vec[16])[5]);
+        check_value(dval, mx_type_val(vec[16])[6]);
+        check_value(dval, mx_type_val(vec[16])[7]);
+
+        // In range, beyond the right boundary of the range six elements.
+        check_value(dval, mx_type_val(vec[17])[0]);
+        check_value(dval, mx_type_val(vec[17])[1]);
+        check_value(dval, mx_type_val(vec[17])[2]);
+        check_value(dval, mx_type_val(vec[17])[3]);
+        check_value(dval, mx_type_val(vec[17])[4]);
+        check_value(dval, mx_type_val(vec[17])[5]);
+        check_value(dval, mx_type_val(vec[17])[6]);
+        check_value(dval, mx_type_val(vec[17])[7]);
+
+        // In range, beyond the right boundary of the range seven elements.
+        check_value(dval, mx_type_val(vec[18])[0]);
+        check_value(dval, mx_type_val(vec[18])[1]);
+        check_value(dval, mx_type_val(vec[18])[2]);
+        check_value(dval, mx_type_val(vec[18])[3]);
+        check_value(dval, mx_type_val(vec[18])[4]);
+        check_value(dval, mx_type_val(vec[18])[5]);
+        check_value(dval, mx_type_val(vec[18])[6]);
+        check_value(dval, mx_type_val(vec[18])[7]);
     }
 
     mb32_clean(&ms);

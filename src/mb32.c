@@ -578,19 +578,6 @@ bool mb32_itr_get_v8si_in_row(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb32_
 
 bool mb32_itr_get_v8si_in_column(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb32_off_t * off, int32_t dval, bool move)
 {
-    static v8si_t cpy_idx = {
-        .val = {
-            0 * MB32_CHK_LEN,
-            1 * MB32_CHK_LEN,
-            2 * MB32_CHK_LEN,
-            3 * MB32_CHK_LEN,
-            4 * MB32_CHK_LEN,
-            5 * MB32_CHK_LEN,
-            6 * MB32_CHK_LEN,
-            7 * MB32_CHK_LEN,
-        },
-    };
-
     for (int32_t i = 0; i < vn; i += 1) {
         int32_t ridx = mb32_itr_ridx(it) + off[i].roff;
         int32_t cidx = mb32_itr_cidx(it) + off[i].coff;
@@ -608,31 +595,32 @@ bool mb32_itr_get_v8si_in_column(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb
         } // if
 
         v8si_t idx;
+        v8si_t tidx;
         v8si_t mask;
         v8si_t tmp;
-        int32_t boff = 0;
 
+        mx_type_reg(tidx) = _mm256_mullo_epi32(mx_type_reg(v8si_idx), _mm256_set1_epi32(MB32_CHK_LEN));
         mx_type_reg(mask) = _mm256_xor_si256(mx_type_reg(v8si_mask[voff]), _mm256_set1_epi32(~0));
 
         mx_type_reg(tmp) = itr_get_shift_mask(voff - mb32_chk_delta(ridx));
-        mx_type_reg(tmp) = _mm256_permutevar8x32_epi32(mx_type_reg(cpy_idx), mx_type_reg(tmp));
-        mx_type_reg(idx) = _mm256_blendv_epi8(mx_type_reg(tmp), _mm256_setzero_si256(), mx_type_reg(v8si_mask[voff]));
+        mx_type_reg(idx) = _mm256_permutevar8x32_epi32(mx_type_reg(tidx), mx_type_reg(tmp));
 
         int32_t bboundary = itr_min(mb32_chk_next_boundary(ridx), it->ms->rnum);
         voff += itr_min((bboundary - ridx), (I32S_IN_V8SI - voff));
 
         ridx = mb32_chk_next_boundary(ridx);
         if (voff < I32S_IN_V8SI & ridx < it->ms->rnum) {
-            bboundary = itr_min(ridx + MB32_CHK_LEN, it->ms->rnum);
-            boff = itr_min((bboundary - ridx), (I32S_IN_V8SI - voff));
+            mx_type_reg(tidx) = _mm256_add_epi32(mx_type_reg(tidx), _mm256_set1_epi32(mb32_padded_cnum(it->ms)));
 
             mx_type_reg(tmp) = itr_get_shift_mask(voff);
-            mx_type_reg(tmp) = _mm256_permutevar8x32_epi32(mx_type_reg(cpy_idx), mx_type_reg(tmp));
-            mx_type_reg(tmp) = _mm256_add_epi32(mx_type_reg(tmp), _mm256_set1_epi32(it->ms->cnum));
+            mx_type_reg(tmp) = _mm256_permutevar8x32_epi32(mx_type_reg(tidx), mx_type_reg(tmp));
             mx_type_reg(idx) = _mm256_blendv_epi8(mx_type_reg(tmp), mx_type_reg(idx), mx_type_reg(v8si_mask[voff]));
+
+            bboundary = itr_min(ridx + MB32_CHK_LEN, it->ms->rnum);
+            voff += itr_min((bboundary - ridx), (I32S_IN_V8SI - voff));
         } // if
 
-        mx_type_reg(mask) = _mm256_and_si256(mx_type_reg(mask), mx_type_reg(v8si_mask[boff]));
+        mx_type_reg(mask) = _mm256_and_si256(mx_type_reg(mask), mx_type_reg(v8si_mask[voff]));
         mx_type_reg(idx) = _mm256_and_si256(mx_type_reg(idx), mx_type_reg(mask));
 
         mb32_chk_ptr schk = mb32_chk_locate_by_index(it->ms, ridx, cidx);

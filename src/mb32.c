@@ -599,6 +599,8 @@ bool mb32_itr_get_v8si_in_column(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb
         v8si_t mask;
         v8si_t tmp;
 
+        mb32_chk_ptr schk = mb32_chk_locate_by_index(it->ms, ridx, cidx);
+
         mx_type_reg(tidx) = _mm256_mullo_epi32(mx_type_reg(v8si_idx), _mm256_set1_epi32(MB32_CHK_LEN));
         mx_type_reg(mask) = _mm256_xor_si256(mx_type_reg(v8si_mask[voff]), _mm256_set1_epi32(~0));
 
@@ -610,7 +612,7 @@ bool mb32_itr_get_v8si_in_column(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb
 
         ridx = mb32_chk_next_boundary(ridx);
         if (voff < I32S_IN_V8SI & ridx < it->ms->rnum) {
-            mx_type_reg(tidx) = _mm256_add_epi32(mx_type_reg(tidx), _mm256_set1_epi32(mb32_padded_cnum(it->ms)));
+            mx_type_reg(tidx) = _mm256_add_epi32(mx_type_reg(tidx), _mm256_set1_epi32(mb32_padded_cnum(it->ms) * MB32_CHK_LEN));
 
             mx_type_reg(tmp) = itr_get_shift_mask(voff);
             mx_type_reg(tmp) = _mm256_permutevar8x32_epi32(mx_type_reg(tidx), mx_type_reg(tmp));
@@ -623,7 +625,6 @@ bool mb32_itr_get_v8si_in_column(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb
         mx_type_reg(mask) = _mm256_and_si256(mx_type_reg(mask), mx_type_reg(v8si_mask[voff]));
         mx_type_reg(idx) = _mm256_and_si256(mx_type_reg(idx), mx_type_reg(mask));
 
-        mb32_chk_ptr schk = mb32_chk_locate_by_index(it->ms, ridx, cidx);
         mx_type_reg(vec[i]) = _mm256_mask_i32gather_epi32(_mm256_set1_epi32(dval), &schk->arr.i32[0][mb32_chk_delta(cidx)], mx_type_reg(idx), mx_type_reg(mask), I32_SIZE);
     } // for
 

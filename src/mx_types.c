@@ -1,5 +1,6 @@
 #include "src/mx_types.h"
 
+v8si_t v8si_idx = { .val = {0, 1, 2, 3, 4, 5, 6, 7} };
 v8si_t v8si_zero = { .val = {0, 0, 0, 0, 0, 0, 0, 0} };
 v8si_t v8si_mask[9] = {
     { .val = { 0,  0,  0,  0,  0,  0,  0,  0} },

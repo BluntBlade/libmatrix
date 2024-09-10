@@ -559,7 +559,7 @@ bool mb32_itr_get_v8si_in_row(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb32_
         voff += itr_min((rboundary - cidx), (I32S_IN_V8SI - voff));
 
         cidx = mb32_chk_next_boundary(cidx);
-        if (voff < I32S_IN_V8SI & cidx < it->ms->cnum) {
+        if ((voff < I32S_IN_V8SI) & (cidx < it->ms->cnum)) {
             schk += 1;
 
             mx_type_reg(tmp) = itr_get_shift_mask(voff);
@@ -611,7 +611,7 @@ bool mb32_itr_get_v8si_in_column(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb
         voff += itr_min((bboundary - ridx), (I32S_IN_V8SI - voff));
 
         ridx = mb32_chk_next_boundary(ridx);
-        if (voff < I32S_IN_V8SI & ridx < it->ms->rnum) {
+        if ((voff < I32S_IN_V8SI) & (ridx < it->ms->rnum)) {
             mx_type_reg(tidx) = _mm256_add_epi32(mx_type_reg(tidx), _mm256_set1_epi32(mb32_padded_cnum(it->ms) * MB32_CHK_LEN));
 
             mx_type_reg(tmp) = itr_get_shift_mask(voff);

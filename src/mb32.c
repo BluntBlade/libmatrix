@@ -502,11 +502,8 @@ bool mb32_itr_get_v8si_in_row(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb32_
             continue;
         } // if
 
-        int32_t voff = 0;
-        if (cidx < 0) {
-            voff = 0 - cidx;
-            cidx = 0;
-        } // if
+        int32_t voff = (cidx < 0) ? -cidx : 0;
+        cidx = (cidx < 0) ? 0 : cidx;
 
         mb32_chk_ptr schk = mb32_chk_locate_by_index(it->ms, ridx, cidx);
 
@@ -550,11 +547,8 @@ bool mb32_itr_get_v8si_in_column(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb
             continue;
         } // if
 
-        int32_t voff = 0;
-        if (ridx < 0) {
-            voff = 0 - ridx;
-            ridx = 0;
-        } // if
+        int32_t voff = (ridx < 0) ? -ridx : 0;
+        ridx = (ridx < 0) ? 0 : ridx;
 
         mb32_chk_ptr schk = mb32_chk_locate_by_index(it->ms, ridx, cidx);
 

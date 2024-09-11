@@ -479,6 +479,11 @@ inline static int32_t itr_min(int32_t a, int32_t b)
     return a < b ? a : b;
 } // itr_min
 
+inline static int32_t itr_max(int32_t a, int32_t b)
+{
+    return a > b ? a : b;
+} // itr_max
+
 bool mb32_itr_get_v8si_in_row(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb32_off_t * off, int32_t dval, bool move)
 {
     static const int32_t mov_mask[] = {
@@ -512,10 +517,8 @@ bool mb32_itr_get_v8si_in_row(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb32_
         voff += itr_min((rboundary - cidx), (I32S_IN_V8SI - voff));
 
         cidx = mb32_chk_next_boundary(cidx);
-        if ((voff < I32S_IN_V8SI) & (cidx < it->ms->cnum)) {
-            rboundary = itr_min(cidx + MB32_CHK_LEN, it->ms->cnum);
-            voff += itr_min((rboundary - cidx), (I32S_IN_V8SI - voff));
-        } // if
+        rboundary = itr_min(cidx + MB32_CHK_LEN, it->ms->cnum);
+        voff += itr_min(itr_max((rboundary - cidx), 0), (I32S_IN_V8SI - voff));
 
         mx_type_reg(mask) = _mm256_and_si256(mx_type_reg(mask), mx_type_reg(v8si_mask[voff]));
 
@@ -562,10 +565,8 @@ bool mb32_itr_get_v8si_in_column(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb
         voff += itr_min((bboundary - ridx), (I32S_IN_V8SI - voff));
 
         ridx = mb32_chk_next_boundary(ridx);
-        if ((voff < I32S_IN_V8SI) & (ridx < it->ms->rnum)) {
-            bboundary = itr_min(ridx + MB32_CHK_LEN, it->ms->rnum);
-            voff += itr_min((bboundary - ridx), (I32S_IN_V8SI - voff));
-        } // if
+        bboundary = itr_min(ridx + MB32_CHK_LEN, it->ms->rnum);
+        voff += itr_min(itr_max((bboundary - ridx), 0), (I32S_IN_V8SI - voff));
 
         mx_type_reg(mask) = _mm256_and_si256(mx_type_reg(mask), mx_type_reg(v8si_mask[voff]));
 

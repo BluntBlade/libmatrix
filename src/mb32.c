@@ -484,7 +484,7 @@ bool mb32_itr_get_v8si_in_row(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb32_
     static const int32_t mov_mask[] = {
         0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
         0x80000000, 0x80000001, 0x80000002, 0x80000003, 0x80000004, 0x80000005, 0x80000006, 0x80000007,
-        0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+        0x80000040, 0x80000041, 0x80000042, 0x80000043, 0x80000044, 0x80000045, 0x80000046, 0x80000047,
     };
 
     for (int32_t i = 0; i < vn; i += 1) {
@@ -504,28 +504,19 @@ bool mb32_itr_get_v8si_in_row(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb32_
         } // if
 
         mb32_chk_ptr schk = mb32_chk_locate_by_index(it->ms, ridx, cidx);
-        v8si_t lmask;
-        v8si_t rmask;
 
-        mx_type_reg(lmask) = _mm256_lddqu_si256((__m256i *)&mov_mask[8 - (voff - mb32_chk_delta(cidx))]);
-        mx_type_reg(rmask) = _mm256_setzero_si256();
+        v8si_t mask;
+        mx_type_reg(mask) = _mm256_lddqu_si256((__m256i *)&mov_mask[8 - (voff - mb32_chk_delta(cidx))]);
 
         int32_t rboundary = itr_min(mb32_chk_next_boundary(cidx), it->ms->cnum);
         voff += itr_min((rboundary - cidx), (I32S_IN_V8SI - voff));
 
-        int32_t moff = voff;
-
         cidx = mb32_chk_next_boundary(cidx);
         if ((voff < I32S_IN_V8SI) & (cidx < it->ms->cnum)) {
-            mx_type_reg(rmask) = _mm256_lddqu_si256((__m256i *)&mov_mask[8 - voff]);
-            mx_type_reg(rmask) = _mm256_add_epi32(mx_type_reg(rmask), _mm256_set1_epi32(MB32_CHK_LEN * MB32_CHK_LEN));
-
             rboundary = itr_min(cidx + MB32_CHK_LEN, it->ms->cnum);
             voff += itr_min((rboundary - cidx), (I32S_IN_V8SI - voff));
         } // if
 
-        v8si_t mask;
-        mx_type_reg(mask) = _mm256_blendv_epi8(mx_type_reg(rmask), mx_type_reg(lmask), mx_type_reg(v8si_mask[moff]));
         mx_type_reg(mask) = _mm256_and_si256(mx_type_reg(mask), mx_type_reg(v8si_mask[voff]));
 
         v8si_t idx;

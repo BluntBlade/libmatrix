@@ -530,11 +530,12 @@ bool mb32_itr_get_v8si_in_row(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb32_
 
 bool mb32_itr_get_v8si_in_column(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb32_off_t * off, int32_t dval, bool move)
 {
-    static const int32_t mov_mask[] = {
-        0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-        0x80000000, 0x80000008, 0x80000010, 0x80000018, 0x80000020, 0x80000028, 0x80000030, 0x80000038,
-        0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-    };
+    static const v8si_t shf_mask = { .val = { 0x80000000, 0x80000008, 0x80000010, 0x80000018, 0x80000020, 0x80000028, 0x80000030, 0x80000038 } };
+
+    v8si_t mov_mask[3];
+    mx_type_reg(mov_mask[0]) = _mm256_setzero_si256(); 
+    mx_type_reg(mov_mask[1]) = _mm256_load_si256(&mx_type_reg(shf_mask)); 
+    mx_type_reg(mov_mask[2]) = _mm256_add_epi32(mx_type_reg(mov_mask[1]), _mm256_set1_epi32(mb32_padded_cnum(it->ms) * MB32_CHK_LEN));
 
     for (int32_t i = 0; i < vn; i += 1) {
         int32_t ridx = mb32_itr_ridx(it) + off[i].roff;
@@ -553,28 +554,19 @@ bool mb32_itr_get_v8si_in_column(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb
         } // if
 
         mb32_chk_ptr schk = mb32_chk_locate_by_index(it->ms, ridx, cidx);
-        v8si_t lmask;
-        v8si_t rmask;
 
-        mx_type_reg(lmask) = _mm256_lddqu_si256((__m256i *)&mov_mask[8 - (voff - mb32_chk_delta(ridx))]);
-        mx_type_reg(rmask) = _mm256_setzero_si256();
+        v8si_t mask;
+        mx_type_reg(mask) = _mm256_lddqu_si256((__m256i *)((int32_t *)mov_mask + 8 - (voff - mb32_chk_delta(ridx))));
 
         int32_t bboundary = itr_min(mb32_chk_next_boundary(ridx), it->ms->rnum);
         voff += itr_min((bboundary - ridx), (I32S_IN_V8SI - voff));
 
-        int32_t moff = voff;
-
         ridx = mb32_chk_next_boundary(ridx);
         if ((voff < I32S_IN_V8SI) & (ridx < it->ms->rnum)) {
-            mx_type_reg(rmask) = _mm256_lddqu_si256((__m256i *)&mov_mask[8 - voff]);
-            mx_type_reg(rmask) = _mm256_add_epi32(mx_type_reg(rmask), _mm256_set1_epi32(mb32_padded_cnum(it->ms) * MB32_CHK_LEN));
-
             bboundary = itr_min(ridx + MB32_CHK_LEN, it->ms->rnum);
             voff += itr_min((bboundary - ridx), (I32S_IN_V8SI - voff));
         } // if
 
-        v8si_t mask;
-        mx_type_reg(mask) = _mm256_blendv_epi8(mx_type_reg(rmask), mx_type_reg(lmask), mx_type_reg(v8si_mask[moff]));
         mx_type_reg(mask) = _mm256_and_si256(mx_type_reg(mask), mx_type_reg(v8si_mask[voff]));
 
         v8si_t idx;

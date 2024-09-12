@@ -270,27 +270,17 @@ inline static bool mb32_itr_to_next_chunk(mb32_iter_ptr it)
 
 inline static bool mb32_itr_to_next_position_in_row(mb32_iter_ptr it, int32_t step, int32_t boundary)
 {
-    if (it->ridx >= it->rend) {
-        return false;
-    } // if
     it->cidx += step;
-    if (it->cidx >= boundary) {
-        it->cidx = it->cbegin;
-        it->ridx += 1;
-    } // if
+    it->ridx = (it->cidx < boundary) ? it->ridx : mx_i32_min(it->ridx + 1, it->rend);
+    it->cidx = (it->cidx < boundary) ? it->cidx : it->cbegin;
     return it->ridx < it->rend;
 } // mb32_itr_to_next_position_in_row
 
 inline static bool mb32_itr_to_next_position_in_column(mb32_iter_ptr it, int32_t step, int32_t boundary)
 {
-    if (it->cidx >= it->cend) {
-        return false;
-    } // if
     it->ridx += step;
-    if (it->ridx >= boundary) {
-        it->ridx = it->rbegin;
-        it->cidx += 1;
-    } // if
+    it->cidx = (it->ridx < boundary) ? it->cidx : mx_i32_min(it->cidx + 1, it->cend);
+    it->ridx = (it->ridx < boundary) ? it->ridx : it->rbegin;
     return it->cidx < it->cend;
 } // mb32_itr_to_next_position_in_column
 

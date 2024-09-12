@@ -161,9 +161,9 @@ inline static void mb32_i32_init_ones(mb32_stor_ptr ms)
 struct MB32_ITER;
 typedef struct MB32_ITER * mb32_iter_ptr;
 
-typedef bool (*itr_advance_fn)(mb32_iter_ptr it, uint32_t step);
-
 typedef struct MB32_ITER {
+    v8si_t          cmask[3];
+
     mb32_stor_ptr   ms;
     int32_t         ridx;
     int32_t         cidx;
@@ -171,29 +171,20 @@ typedef struct MB32_ITER {
     int32_t         cbegin;
     int32_t         rend;
     int32_t         cend;
-} mb32_iter_t;
+} mb32_iter_t __attribute__ ((aligned (32)));
 
-inline static void mb32_itr_init_for_iterating_in_range(mb32_iter_ptr it, mb32_stor_ptr ms, int32_t rbegin, int32_t cbegin, int32_t rend, int32_t cend)
-{
-    it->ms = ms;
-    it->ridx = rbegin;
-    it->cidx = cbegin;
-    it->rbegin = rbegin;
-    it->cbegin = cbegin;
-    it->rend = rend;
-    it->cend = cend;
-} // mb32_itr_init_for_iterating_in_range
+extern void mb32_itr_init_for_iterating_in_range(mb32_iter_ptr it, mb32_stor_ptr ms, int32_t rbegin, int32_t cbegin, int32_t rend, int32_t cend);
 
 inline static void mb32_itr_init_for_iterating(mb32_iter_ptr it, mb32_stor_ptr ms)
 {
     return mb32_itr_init_for_iterating_in_range(it, ms, 0, 0, ms->rnum, ms->cnum);
 } // mb32_itr_init_for_iterating
 
-inline static void mb32_itr_restart(mb32_iter_ptr it)
+inline static void mb32_itr_reset(mb32_iter_ptr it)
 {
     it->ridx = it->rbegin;
     it->cidx = it->cbegin;
-} // mb32_itr_restart
+} // mb32_itr_reset
 
 inline static int32_t mb32_itr_ridx(mb32_iter_ptr it)
 {

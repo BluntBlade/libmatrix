@@ -90,7 +90,11 @@ test/v8si_operation.o : src/mx_storage.c src/mx_v8si.c
 
 test/v8sf_operation.o : src/mx_storage.c src/mx_v8sf.c
 
+src/mb32.o : src/mb32.h
+
 test/mb32.o : src/mb32.h src/mb32.c
+
+test/mb32_iter.o : src/mb32.h src/mb32.c
 
 $(TEST_STOR_TARGET) : $(TEST_STOR_OBJ)
 	gcc -o $@ $(TEST_STOR_OBJ) $(LDFLAGS) $(LIBS) -lcriterion

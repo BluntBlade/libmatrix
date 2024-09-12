@@ -491,10 +491,10 @@ void mb32_itr_init_for_iterating_in_range(mb32_iter_ptr it, mb32_stor_ptr ms, in
 
 bool mb32_itr_get_v8si_in_row(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb32_off_t * off, int32_t dval, bool move)
 {
-    static const int32_t mov_mask[] = {
-        0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-        0x80000000, 0x80000001, 0x80000002, 0x80000003, 0x80000004, 0x80000005, 0x80000006, 0x80000007,
-        0x80000040, 0x80000041, 0x80000042, 0x80000043, 0x80000044, 0x80000045, 0x80000046, 0x80000047,
+    static const v8si_t rmask[] = {
+        { .val = { 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000 } },
+        { .val = { 0x80000000, 0x80000001, 0x80000002, 0x80000003, 0x80000004, 0x80000005, 0x80000006, 0x80000007 } },
+        { .val = { 0x80000040, 0x80000041, 0x80000042, 0x80000043, 0x80000044, 0x80000045, 0x80000046, 0x80000047 } },
     };
 
     for (int32_t i = 0; i < vn; i += 1) {
@@ -513,7 +513,7 @@ bool mb32_itr_get_v8si_in_row(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb32_
         mb32_chk_ptr schk = mb32_chk_locate_by_index(it->ms, ridx, cidx);
 
         v8si_t mask;
-        mx_type_reg(mask) = _mm256_lddqu_si256((__m256i *)&mov_mask[8 - (voff - mb32_chk_delta(cidx))]);
+        mx_type_reg(mask) = _mm256_lddqu_si256((__m256i *)((int32_t *)&rmask[1] - (voff - mb32_chk_delta(cidx))));
 
         int32_t rboundary = mx_i32_min(mb32_chk_next_boundary(cidx), it->ms->cnum);
         voff += mx_i32_min((rboundary - cidx), (I32S_IN_V8SI - voff));

@@ -36,5 +36,15 @@ inline static uint32_t mx_less_than_or_equal_to(uint32_t cnt, uint32_t n)
     return (cnt < n) ? cnt : n;
 } // mx_less_than_or_equal_to
 
+inline static int32_t mx_i32_min(int32_t a, int32_t b)
+{
+    return (a < b) ? a : b;
+} // mx_i32_min
+
+inline static int32_t mx_i32_max(int32_t a, int32_t b)
+{
+    return (a > b) ? a : b;
+} // mx_i32_max
+
 #endif // MX_COMMON_H
 

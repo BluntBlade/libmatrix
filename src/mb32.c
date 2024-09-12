@@ -474,16 +474,6 @@ void mb32_i32_mul_scalar(mb32_stor_ptr ms, mb32_stor_ptr src, int32_t val)
 
 // ==== Definition of MB32 iterator ==== //
 
-inline static int32_t itr_min(int32_t a, int32_t b)
-{
-    return a < b ? a : b;
-} // itr_min
-
-inline static int32_t itr_max(int32_t a, int32_t b)
-{
-    return a > b ? a : b;
-} // itr_max
-
 bool mb32_itr_get_v8si_in_row(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb32_off_t * off, int32_t dval, bool move)
 {
     static const int32_t mov_mask[] = {
@@ -510,12 +500,12 @@ bool mb32_itr_get_v8si_in_row(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb32_
         v8si_t mask;
         mx_type_reg(mask) = _mm256_lddqu_si256((__m256i *)&mov_mask[8 - (voff - mb32_chk_delta(cidx))]);
 
-        int32_t rboundary = itr_min(mb32_chk_next_boundary(cidx), it->ms->cnum);
-        voff += itr_min((rboundary - cidx), (I32S_IN_V8SI - voff));
+        int32_t rboundary = mx_i32_min(mb32_chk_next_boundary(cidx), it->ms->cnum);
+        voff += mx_i32_min((rboundary - cidx), (I32S_IN_V8SI - voff));
 
         cidx = mb32_chk_next_boundary(cidx);
-        rboundary = itr_min(cidx + MB32_CHK_LEN, it->ms->cnum);
-        voff += itr_min(itr_max((rboundary - cidx), 0), (I32S_IN_V8SI - voff));
+        rboundary = mx_i32_min(cidx + MB32_CHK_LEN, it->ms->cnum);
+        voff += mx_i32_min(mx_i32_max((rboundary - cidx), 0), (I32S_IN_V8SI - voff));
 
         mx_type_reg(mask) = _mm256_and_si256(mx_type_reg(mask), mx_type_reg(v8si_mask[voff]));
 
@@ -555,12 +545,12 @@ bool mb32_itr_get_v8si_in_column(mb32_iter_ptr it, v8si_t * vec, uint32_t vn, mb
         v8si_t mask;
         mx_type_reg(mask) = _mm256_lddqu_si256((__m256i *)((int32_t *)mov_mask + 8 - (voff - mb32_chk_delta(ridx))));
 
-        int32_t bboundary = itr_min(mb32_chk_next_boundary(ridx), it->ms->rnum);
-        voff += itr_min((bboundary - ridx), (I32S_IN_V8SI - voff));
+        int32_t bboundary = mx_i32_min(mb32_chk_next_boundary(ridx), it->ms->rnum);
+        voff += mx_i32_min((bboundary - ridx), (I32S_IN_V8SI - voff));
 
         ridx = mb32_chk_next_boundary(ridx);
-        bboundary = itr_min(ridx + MB32_CHK_LEN, it->ms->rnum);
-        voff += itr_min(itr_max((bboundary - ridx), 0), (I32S_IN_V8SI - voff));
+        bboundary = mx_i32_min(ridx + MB32_CHK_LEN, it->ms->rnum);
+        voff += mx_i32_min(mx_i32_max((bboundary - ridx), 0), (I32S_IN_V8SI - voff));
 
         mx_type_reg(mask) = _mm256_and_si256(mx_type_reg(mask), mx_type_reg(v8si_mask[voff]));
 

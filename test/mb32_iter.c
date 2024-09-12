@@ -21,7 +21,7 @@ Test(Iterator, mb32_itr_get_v8si_in_row)
 
     mb32_off_t off[] = {
         { 0,  0}, // Get one full vector.
-        {-1,  0}, // Out of range, beyond the top boundary.
+        {-8,  0}, // Out of range, beyond the top boundary.
         { 8,  0}, // Out of range, beyond the bottom boundary.
         { 0, -8}, // Out of range, beyond the left boundary.
         { 0,  8}, // Out of range, beyond the right boundary.
@@ -471,14 +471,14 @@ Test(Iterator, mb32_itr_get_v8si_in_row)
         check_value( 209, mx_type_val(vec[0])[7]);
 
         // Out of range, beyond the top boundary.
-        check_value( 102, mx_type_val(vec[1])[0]);
-        check_value( 103, mx_type_val(vec[1])[1]);
-        check_value( 104, mx_type_val(vec[1])[2]);
-        check_value( 105, mx_type_val(vec[1])[3]);
-        check_value( 106, mx_type_val(vec[1])[4]);
-        check_value( 107, mx_type_val(vec[1])[5]);
-        check_value( 108, mx_type_val(vec[1])[6]);
-        check_value( 109, mx_type_val(vec[1])[7]);
+        check_value(dval, mx_type_val(vec[1])[0]);
+        check_value(dval, mx_type_val(vec[1])[1]);
+        check_value(dval, mx_type_val(vec[1])[2]);
+        check_value(dval, mx_type_val(vec[1])[3]);
+        check_value(dval, mx_type_val(vec[1])[4]);
+        check_value(dval, mx_type_val(vec[1])[5]);
+        check_value(dval, mx_type_val(vec[1])[6]);
+        check_value(dval, mx_type_val(vec[1])[7]);
 
         // Out of range, beyond the bottom boundary.
         check_value(1002, mx_type_val(vec[2])[0]);
@@ -674,14 +674,14 @@ Test(Iterator, mb32_itr_get_v8si_in_row)
         check_value( 815, mx_type_val(vec[0])[7]);
 
         // Out of range, beyond the top boundary.
-        check_value( 708, mx_type_val(vec[1])[0]);
-        check_value( 709, mx_type_val(vec[1])[1]);
-        check_value( 710, mx_type_val(vec[1])[2]);
-        check_value( 711, mx_type_val(vec[1])[3]);
-        check_value( 712, mx_type_val(vec[1])[4]);
-        check_value( 713, mx_type_val(vec[1])[5]);
-        check_value( 714, mx_type_val(vec[1])[6]);
-        check_value( 715, mx_type_val(vec[1])[7]);
+        check_value(   8, mx_type_val(vec[1])[0]);
+        check_value(   9, mx_type_val(vec[1])[1]);
+        check_value(  10, mx_type_val(vec[1])[2]);
+        check_value(  11, mx_type_val(vec[1])[3]);
+        check_value(  12, mx_type_val(vec[1])[4]);
+        check_value(  13, mx_type_val(vec[1])[5]);
+        check_value(  14, mx_type_val(vec[1])[6]);
+        check_value(  15, mx_type_val(vec[1])[7]);
 
         // Out of range, beyond the bottom boundary.
         check_value(1608, mx_type_val(vec[2])[0]);
@@ -877,10 +877,10 @@ Test(Iterator, mb32_itr_get_v8si_in_row)
         check_value(dval, mx_type_val(vec[0])[7]);
 
         // Out of range, beyond the top boundary.
-        check_value( 216, mx_type_val(vec[1])[0]);
-        check_value( 217, mx_type_val(vec[1])[1]);
-        check_value( 218, mx_type_val(vec[1])[2]);
-        check_value( 219, mx_type_val(vec[1])[3]);
+        check_value(dval, mx_type_val(vec[1])[0]);
+        check_value(dval, mx_type_val(vec[1])[1]);
+        check_value(dval, mx_type_val(vec[1])[2]);
+        check_value(dval, mx_type_val(vec[1])[3]);
         check_value(dval, mx_type_val(vec[1])[4]);
         check_value(dval, mx_type_val(vec[1])[5]);
         check_value(dval, mx_type_val(vec[1])[6]);

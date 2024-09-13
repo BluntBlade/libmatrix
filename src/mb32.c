@@ -577,4 +577,40 @@ bool mb32_itr_set_v8si_in_row(mb32_iter_ptr it, v8si_t * vec, bool move)
 
 bool mb32_itr_set_v8si_in_column(mb32_iter_ptr it, v8si_t * vec, bool move)
 {
+    int32_t ridx = mb32_itr_ridx(it);
+    int32_t cidx = mb32_itr_cidx(it);
+
+    bool out = (ridx <= (0 - I32S_IN_V8SI)) | (it->ms->rnum <= ridx) | (cidx < 0) | (it->ms->cnum <= cidx);
+    if (out) {
+        // Out of matrix.
+        return true;
+    } // if
+
+    int32_t soff = (ridx < 0) ? -ridx : 0;
+    ridx = (ridx < 0) ? 0 : ridx;
+
+    mb32_chk_ptr dchk = mb32_chk_locate_by_index(it->ms, ridx, cidx);
+    int32_t * dst = &dchk->arr.i32[0][0] + mb32_chk_delta(ridx) * MB32_CHK_LEN + mb32_chk_delta(cidx);
+    int32_t slots = mb32_chk_inum(it->ms->rnum, ridx) - mb32_chk_delta(ridx);
+    do {
+        switch (mx_i32_min(slots, I32S_IN_V8SI - soff)) {
+            case 8: *dst = mx_type_val(*vec)[soff++]; dst += MB32_CHK_LEN;
+            case 7: *dst = mx_type_val(*vec)[soff++]; dst += MB32_CHK_LEN;
+            case 6: *dst = mx_type_val(*vec)[soff++]; dst += MB32_CHK_LEN;
+            case 5: *dst = mx_type_val(*vec)[soff++]; dst += MB32_CHK_LEN;
+            case 4: *dst = mx_type_val(*vec)[soff++]; dst += MB32_CHK_LEN;
+            case 3: *dst = mx_type_val(*vec)[soff++]; dst += MB32_CHK_LEN;
+            case 2: *dst = mx_type_val(*vec)[soff++]; dst += MB32_CHK_LEN;
+            case 1: *dst = mx_type_val(*vec)[soff++];
+            default: break;
+        } // switch
+
+        if (soff >= I32S_IN_V8SI) {
+            break;
+        } // if
+
+        dchk += mb32_chknum_in_width(it->ms);
+        dst = &dchk->arr.i32[0][0] + 0 * MB32_CHK_LEN + mb32_chk_delta(cidx);
+        slots = mb32_chk_inum(it->ms->rnum, mb32_chk_next_boundary(ridx));
+    } while (1);
 } // mb32_itr_set_v8si_in_column
